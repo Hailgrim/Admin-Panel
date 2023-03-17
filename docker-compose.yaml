@@ -1,0 +1,68 @@
+version: "3.8"
+
+volumes:
+  postgres_data:
+    name: ${PROJECT_TAG}_postgres_data
+  nest_node_modules:
+    name: ${PROJECT_TAG}_nest_node_modules
+  next_node_modules:
+    name: ${PROJECT_TAG}_next_node_modules
+
+services:
+
+  postgres:
+    image: postgres:alpine
+    container_name: ${PROJECT_TAG}_postgres
+    restart: always
+    env_file:
+      - .env
+    expose:
+      - ${POSTGRES_PORT}
+    volumes:
+      - "postgres_data:/var/lib/postgresql/data"
+
+  nest:
+    build:
+      context: ./nest
+      args:
+        - PROJECT_TAG=${PROJECT_TAG}
+    container_name: ${PROJECT_TAG}_nest
+    restart: always
+    env_file:
+      - .env
+    expose:
+      - ${NEST_PORT}
+    depends_on:
+      - postgres
+    volumes:
+      - "nest_node_modules:/home/${PROJECT_TAG}/nest/node_modules"
+
+  next:
+    build:
+      context: ./next
+      args:
+        - PROJECT_TAG=${PROJECT_TAG}
+    container_name: ${PROJECT_TAG}_next
+    restart: always
+    env_file:
+      - .env
+    expose:
+      - ${NEXT_PORT}
+    volumes:
+      - "next_node_modules:/home/${PROJECT_TAG}/next/node_modules"
+
+  nginx:
+    build:
+      context: ./nginx
+      args:
+        - PROJECT_TAG=${PROJECT_TAG}
+    container_name: ${PROJECT_TAG}_nginx
+    restart: always
+    env_file:
+      - .env
+    expose:
+      - ${NGINX_PORT}
+      - ${NGINX_SSL_PORT}
+    ports:
+      - ${NGINX_PORT}:${NGINX_PORT}
+      - ${NGINX_SSL_PORT}:${NGINX_SSL_PORT}

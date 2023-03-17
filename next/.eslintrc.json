@@ -1,0 +1,15 @@
+{
+  // "extends": "next/core-web-vitals"
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "tsconfig.json",
+    "sourceType": "module"
+  },
+  "plugins": [
+    "@typescript-eslint/eslint-plugin"
+  ],
+  "extends": [
+    "next",
+    "plugin:@typescript-eslint/recommended"
+  ]
+}

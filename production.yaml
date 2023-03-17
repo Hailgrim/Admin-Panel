@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+
+  nest:
+    build:
+      target: production
+
+  next:
+    build:
+      target: production
+
+  nginx:
+    build:
+      target: production

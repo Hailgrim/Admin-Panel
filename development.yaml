@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+
+  adminer:
+    image: adminer:standalone
+    container_name: ${PROJECT_TAG}_adminer
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - ${ADMINER_PORT}:${ADMINER_PORT}
+    depends_on:
+      - postgres
+
+  nest:
+    build:
+      target: development
+    volumes:
+      - "./nest:/home/${PROJECT_TAG}/nest"
+
+  next:
+    build:
+      target: development
+    volumes:
+      - "./next:/home/${PROJECT_TAG}/next"
+
+  nginx:
+    build:
+      target: development
+    volumes:
+      - "./nginx:/home/${PROJECT_TAG}/nginx"

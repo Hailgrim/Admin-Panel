@@ -1,0 +1,61 @@
+client_max_body_size 128m;
+
+# Redirect to HTTPS
+# server {
+#     listen ${NGINX_PORT};
+#     listen [::]:${NGINX_PORT};
+#     server_name ${NGINX_HOST};
+#     return 301 https://${NGINX_HOST}$request_uri;
+# }
+
+server {
+    # HTTP
+	listen ${NGINX_PORT};
+	listen [::]:${NGINX_PORT};
+
+    # HTTPS
+    # listen ${NGINX_SSL_PORT} ssl default_server;
+    # listen [::]:${NGINX_SSL_PORT} ssl default_server;
+
+    # SSL
+    # ssl_certificate /home/${PROJECT_TAG}/nginx/ssl/chained.crt;
+    # ssl_certificate_key /home/${PROJECT_TAG}/nginx/ssl/${NGINX_HOST}.key;
+
+    server_name ${NGINX_HOST};
+
+    location / {
+        proxy_pass http://${NEXT_HOST}:${NEXT_PORT};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Content-Type-Options nosniff;
+        # Websockets
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+
+    location /service {
+        rewrite /service/(.*) /$1 break;
+        proxy_pass http://${NEST_HOST}:${NEST_PORT};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Content-Type-Options nosniff;
+    }
+
+    location /files {
+        autoindex off;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root /home/${PROJECT_TAG}/nginx/html;
+    }
+
+    location ~ /\. {
+        deny all;
+    }
+}
