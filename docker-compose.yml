@@ -3,23 +3,58 @@ version: "3.8"
 volumes:
   postgres_data:
     name: ${PROJECT_TAG}_postgres_data
+  redis_data:
+    name: ${PROJECT_TAG}_redis_data
   nest_node_modules:
     name: ${PROJECT_TAG}_nest_node_modules
   next_node_modules:
     name: ${PROJECT_TAG}_next_node_modules
 
+networks:
+  main:
+    name: ${PROJECT_TAG}_main
+
 services:
 
   postgres:
-    image: postgres:alpine
+    build:
+      context: ./postgres
     container_name: ${PROJECT_TAG}_postgres
     restart: always
     env_file:
       - .env
+    networks:
+      - main
     expose:
       - ${POSTGRES_PORT}
     volumes:
       - "postgres_data:/var/lib/postgresql/data"
+
+  adminer:
+    build:
+      context: ./adminer
+    container_name: ${PROJECT_TAG}_adminer
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - main
+    depends_on:
+      - postgres
+
+  redis:
+    build:
+      context: ./redis
+    container_name: ${PROJECT_TAG}_redis
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - main
+    expose:
+      - ${REDIS_PORT}
+    volumes:
+      - "redis_data:/data"
 
   nest:
     build:
@@ -30,10 +65,13 @@ services:
     restart: always
     env_file:
       - .env
+    networks:
+      - main
     expose:
       - ${NEST_PORT}
     depends_on:
       - postgres
+      - redis
     volumes:
       - "nest_node_modules:/home/${PROJECT_TAG}/nest/node_modules"
 
@@ -46,6 +84,8 @@ services:
     restart: always
     env_file:
       - .env
+    networks:
+      - main
     expose:
       - ${NEXT_PORT}
     volumes:
@@ -60,6 +100,8 @@ services:
     restart: always
     env_file:
       - .env
+    networks:
+      - main
     expose:
       - ${NGINX_PORT}
       - ${NGINX_SSL_PORT}

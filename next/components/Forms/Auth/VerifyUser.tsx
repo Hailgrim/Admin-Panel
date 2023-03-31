@@ -80,6 +80,9 @@ const VerifyUser: React.FC<{
       >
         {isLoading ? lang.get(userLang)?.loading : lang.get(userLang)?.confirm}
       </AuthButtonStyled>
+      <AuthButtonStyled color="error" type="button" onClick={callback}>
+        {lang.get(userLang)?.close}
+      </AuthButtonStyled>
     </FormBoxStyled>
   );
 };

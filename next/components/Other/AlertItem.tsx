@@ -76,4 +76,5 @@ const AlertItem = React.forwardRef<unknown, IAlertItem>(({ data, callback }, ref
     </Snackbar>
   );
 });
+AlertItem.displayName = 'AlertItem';
 export default AlertItem;

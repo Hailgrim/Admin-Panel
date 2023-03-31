@@ -26,7 +26,11 @@ import { JwtGuard } from './jwt.guard';
 import { JwtRefreshGuard } from './jwt-refresh.guard';
 import { getCookies } from 'libs/functions';
 import { SignInDto } from './dto/sign-in-auth.dto';
-import { ACCESS_TOKEN_LIFETIME, REFRESH_TOKEN_LIFETIME } from 'libs/config';
+import {
+  ACCESS_TOKEN_LIFETIME,
+  PROJECT_TAG,
+  REFRESH_TOKEN_LIFETIME,
+} from 'libs/config';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
 import { SignUpDto } from './dto/sign-up.dts';
@@ -43,7 +47,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @ApiOperation({ summary: lang.get('en')?.signUp })
-  @ApiResponse({ status: 201, type: IUser })
+  @ApiResponse({ status: HttpStatus.CREATED, type: IUser })
   @Post('sign-up')
   async signUp(
     @Res({ passthrough: true }) res: FastifyReply,
@@ -54,21 +58,21 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: lang.get('en')?.confirmRegistration })
-  @ApiResponse({ status: 200, type: Boolean })
+  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Post('verify-user')
   async verifyUser(@Body() verifyUserDto: VerifyUserDto): Promise<boolean> {
     return this.authService.verifyUser(verifyUserDto);
   }
 
   @ApiOperation({ summary: lang.get('en')?.forgotPassword })
-  @ApiResponse({ status: 200, type: Boolean })
+  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Post('forgot-password')
   async forgotPassword(@Body() email: string): Promise<boolean> {
     return this.authService.forgotPassword(email);
   }
 
   @ApiOperation({ summary: lang.get('en')?.resetPassword })
-  @ApiResponse({ status: 200, type: Boolean })
+  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Post('reset-password')
   async resetPassword(
     @Body() resetPasswordDto: ResetPasswordDto,
@@ -77,7 +81,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: lang.get('en')?.signIn })
-  @ApiResponse({ status: 201, type: IUser })
+  @ApiResponse({ status: HttpStatus.CREATED, type: IUser })
   @UseGuards(LocalAuthGuard)
   @Post('sign-in')
   async signIn(
@@ -85,33 +89,39 @@ export class AuthController {
     @Res({ passthrough: true }) res: FastifyReply,
     @Body() signInDto: SignInDto,
   ): Promise<IUser> {
+    const oldSessionId = req.cookies[`${PROJECT_TAG}_sessionId`];
     const rememberMe = signInDto.rememberMe;
-    const { accessToken, refreshToken } = await this.authService.signIn(
-      req.user,
-      rememberMe,
-    );
+    const { accessToken, refreshToken, sessionId } =
+      await this.authService.signIn(req.user, rememberMe, oldSessionId);
 
-    res.cookie('accessToken', accessToken, {
+    res.cookie(`${PROJECT_TAG}_accessToken`, accessToken, {
       httpOnly: true,
       sameSite: 'strict',
       path: '/',
       maxAge: ACCESS_TOKEN_LIFETIME,
     });
-    res.cookie('refreshToken', refreshToken, {
+    res.cookie(`${PROJECT_TAG}_refreshToken`, refreshToken, {
       httpOnly: true,
       sameSite: 'strict',
       path: '/',
       maxAge: rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2,
     });
+    res.cookie(`${PROJECT_TAG}_sessionId`, String(sessionId), {
+      httpOnly: true,
+      sameSite: 'strict',
+      path: '/',
+      maxAge: REFRESH_TOKEN_LIFETIME * 12,
+    });
 
     if (rememberMe) {
-      res.cookie('rememberMe', '', {
+      res.cookie(`${PROJECT_TAG}_rememberMe`, '', {
         httpOnly: true,
         sameSite: 'strict',
         path: '/',
+        maxAge: REFRESH_TOKEN_LIFETIME,
       });
     } else {
-      res.clearCookie('rememberMe');
+      res.clearCookie(`${PROJECT_TAG}_rememberMe`);
     }
 
     res.status(HttpStatus.CREATED);
@@ -119,37 +129,53 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: lang.get('en')?.refreshToken })
-  @ApiResponse({ status: 200, type: ITokensResponse })
+  @ApiResponse({ status: HttpStatus.OK, type: ITokensResponse })
   @UseGuards(JwtRefreshGuard)
   @Get('refresh')
   async refresh(
     @Req() req: FastifyRequestWithAuth,
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<ITokensResponse> {
-    const rememberMe = 'rememberMe' in getCookies(req.headers.cookie);
+    const rememberMe =
+      `${PROJECT_TAG}_rememberMe` in getCookies(req.headers.cookie);
     const { accessToken, refreshToken } = await this.authService.refresh(
       req.user,
       rememberMe,
     );
 
-    res.cookie('accessToken', accessToken, {
+    res.cookie(`${PROJECT_TAG}_accessToken`, accessToken, {
       httpOnly: true,
       sameSite: 'strict',
       path: '/',
       maxAge: ACCESS_TOKEN_LIFETIME,
     });
-    res.cookie('refreshToken', refreshToken, {
+    res.cookie(`${PROJECT_TAG}_refreshToken`, refreshToken, {
       httpOnly: true,
       sameSite: 'strict',
       path: '/',
       maxAge: rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2,
     });
+    res.cookie(`${PROJECT_TAG}_sessionId`, String(req.user.sessionId), {
+      httpOnly: true,
+      sameSite: 'strict',
+      path: '/',
+      maxAge: REFRESH_TOKEN_LIFETIME * 12,
+    });
+
+    if (rememberMe) {
+      res.cookie(`${PROJECT_TAG}_rememberMe`, '', {
+        httpOnly: true,
+        sameSite: 'strict',
+        path: '/',
+        maxAge: REFRESH_TOKEN_LIFETIME,
+      });
+    }
 
     return { accessToken, refreshToken };
   }
 
   @ApiOperation({ summary: lang.get('en')?.profile })
-  @ApiResponse({ status: 200, type: Boolean })
+  @ApiResponse({ status: HttpStatus.OK, type: IUser })
   @Roles({ path: route, action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get('profile')
@@ -158,7 +184,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: lang.get('en')?.refreshToken })
-  @ApiResponse({ status: 200, type: IUser })
+  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Roles({ path: route, action: Rights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('profile')
@@ -170,7 +196,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: lang.get('en')?.signOut })
-  @ApiResponse({ status: 200, type: Boolean })
+  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @UseGuards(JwtGuard)
   @Delete('log-out')
   async signOut(
@@ -178,9 +204,10 @@ export class AuthController {
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<boolean> {
     const result = await this.authService.signOut(req.user);
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
-    res.clearCookie('rememberMe');
+    res.clearCookie(`${PROJECT_TAG}_accessToken`);
+    res.clearCookie(`${PROJECT_TAG}_refreshToken`);
+    res.clearCookie(`${PROJECT_TAG}_rememberMe`);
+    res.clearCookie(`${PROJECT_TAG}_sessionId`);
     return result;
   }
 }

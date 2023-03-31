@@ -11,6 +11,7 @@ const initialState = {
   rememberMe: false,
   accessToken: null as (string | null),
   refreshToken: null as (string | null),
+  userAgent: null as (string | null),
   isSideBarOpened: true,
   isModalSideBarOpened: false,
   profile: null as (IUser | null),
@@ -27,6 +28,10 @@ export const appSlice = createSlice({
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
       state.rememberMe = action.payload.rememberMe;
+    },
+
+    setUserAgent: (state, action: PayloadAction<string | null>) => {
+      state.userAgent = action.payload;
     },
 
     toggleSideBar: (state, action: PayloadAction<boolean>) => {
@@ -68,6 +73,7 @@ export const appSlice = createSlice({
 
 export const {
   setAuthTokens,
+  setUserAgent,
   toggleSideBar,
   toggleModalSideBar,
   setProfile,

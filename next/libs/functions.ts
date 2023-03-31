@@ -3,10 +3,10 @@ import { ParsedUrlQuery } from 'querystring';
 
 import { IPage, IPagination, IRole, ISideBarItem } from './types';
 import { AppStore, wrapper } from '../store/store';
-import { setAuthTokens, setProfile } from '../store/slices/appSlice';
+import { setAuthTokens, setProfile, setUserAgent } from '../store/slices/appSlice';
 import authApi from '../store/api/authApi';
 import lang, { LangList } from './lang';
-import { ACCESS_TOKEN_LIFETIME, REFRESH_TOKEN_LIFETIME, ROUTES } from './config';
+import { ACCESS_TOKEN_LIFETIME, PROJECT_TAG, REFRESH_TOKEN_LIFETIME, ROUTES } from './config';
 import { Rights } from './constants';
 import { SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
@@ -165,10 +165,15 @@ export const getServerSidePropsCustom = <T = void>(
   }) => Promise<GetServerSidePropsResult<IPage<T>>>,
 ) => {
   return wrapper.getServerSideProps<IPage<T>>(store => async (ctx) => {
-    let accessToken = ctx.req.cookies.accessToken || null;
-    let refreshToken = ctx.req.cookies.refreshToken || null;
-    const rememberMe = ctx.req.cookies.rememberMe !== undefined;
+    let accessToken = ctx.req.cookies[`${PROJECT_TAG}_accessToken`] || null;
+    let refreshToken = ctx.req.cookies[`${PROJECT_TAG}_refreshToken`] || null;
+    const rememberMe = ctx.req.cookies[`${PROJECT_TAG}_rememberMe`] !== undefined;
     const isAuthPageRequest = routeSection(ctx.resolvedUrl.split('?')[0]) == 'auth';
+    const userAgent = ctx.req.headers['user-agent'];
+
+    if (userAgent) {
+      store.dispatch(setUserAgent(userAgent));
+    }
 
     if (refreshToken && !accessToken) {
       store.dispatch(setAuthTokens({ accessToken, refreshToken, rememberMe }));
@@ -179,10 +184,10 @@ export const getServerSidePropsCustom = <T = void>(
         ctx.res.setHeader(
           'Set-Cookie',
           [
-            `accessToken=${accessToken};`
+            `${PROJECT_TAG}_accessToken=${accessToken};`
               .concat('HttpOnly;SameSite=Strict;Path=/;')
               .concat(`Max-Age=${ACCESS_TOKEN_LIFETIME}`),
-            `refreshToken=${refreshToken};`
+            `${PROJECT_TAG}_refreshToken=${refreshToken};`
               .concat('HttpOnly;SameSite=Strict;Path=/;')
               .concat(`Max-Age=${rememberMe
                 ? REFRESH_TOKEN_LIFETIME
@@ -201,6 +206,7 @@ export const getServerSidePropsCustom = <T = void>(
         store.dispatch(setProfile(data));
         const props = await func({ store, context: ctx });
         store.dispatch(setAuthTokens({ accessToken: null, refreshToken: null, rememberMe: false }));
+        store.dispatch(setUserAgent(null));
         return props;
       }
     }

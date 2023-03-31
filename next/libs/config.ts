@@ -1,6 +1,8 @@
+export const PROJECT_TAG = process.env.PROJECT_TAG || 'adminpanel';
+
 export const API_HOST = process?.env?.NEST_HOST && process?.env?.NEST_PORT
   ? `http://${process?.env?.NEST_HOST}:${process?.env?.NEST_PORT}`
-  : '/service';
+  : '/services/api';
 
 /** Time in seconds */
 export const ACCESS_TOKEN_LIFETIME =

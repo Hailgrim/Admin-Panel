@@ -107,10 +107,7 @@ const Authorization: React.FC = () => {
       >
         <VerifyUser
           email={originalArgs?.username || ''}
-          callback={() => {
-            setModalState(false);
-            signInHandler();
-          }}
+          callback={() => setModalState(false)}
         />
       </CustomModal>
     </React.Fragment>

@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { IncomingHttpHeaders } from 'http';
 
-import { REFRESH_TOKEN_SECRET_KEY } from 'libs/config';
+import { PROJECT_TAG, REFRESH_TOKEN_SECRET_KEY } from 'libs/config';
 import { getCookies } from 'libs/functions';
 
 @Injectable()
@@ -24,8 +24,11 @@ export class JwtRefreshStrategy extends PassportStrategy(
   private static extractRefreshJWT(
     headers: IncomingHttpHeaders,
   ): string | null {
-    const cookies = headers.cookie ? getCookies(headers.cookie) : undefined;
-    return cookies?.refreshToken?.length > 0 ? cookies.refreshToken : null;
+    const cookies = getCookies(headers.cookie);
+    if (cookies?.[`${PROJECT_TAG}_refreshToken`]?.length > 0) {
+      return cookies[`${PROJECT_TAG}_refreshToken`];
+    }
+    return null;
   }
 
   async validate(payload: any) {

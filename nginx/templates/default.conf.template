@@ -10,8 +10,8 @@ client_max_body_size 128m;
 
 server {
     # HTTP
-	listen ${NGINX_PORT};
-	listen [::]:${NGINX_PORT};
+    listen ${NGINX_PORT};
+    listen [::]:${NGINX_PORT};
 
     # HTTPS
     # listen ${NGINX_SSL_PORT} ssl default_server;
@@ -36,8 +36,8 @@ server {
         proxy_set_header Connection "upgrade";
     }
 
-    location /service {
-        rewrite /service/(.*) /$1 break;
+    location /services/api {
+        rewrite /services/api/(.*) /$1 break;
         proxy_pass http://${NEST_HOST}:${NEST_PORT};
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;

@@ -3,15 +3,14 @@ version: "3.8"
 services:
 
   adminer:
-    image: adminer:standalone
-    container_name: ${PROJECT_TAG}_adminer
-    restart: always
-    env_file:
-      - .env
     ports:
       - ${ADMINER_PORT}:${ADMINER_PORT}
-    depends_on:
-      - postgres
+
+  redis:
+    build:
+      target: development
+    ports:
+      - ${REDIS_INSIGHT_PORT}:8001
 
   nest:
     build:

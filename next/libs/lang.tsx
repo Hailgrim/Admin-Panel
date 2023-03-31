@@ -68,6 +68,7 @@ const en = {
   userDeleted: 'User deleted',
   nothingToUpdate: 'Nothing to update',
   tooManyRequests: 'Too many requests',
+  close: 'Close',
 };
 
 export type LangDictionary = typeof en;

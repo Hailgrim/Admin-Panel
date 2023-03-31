@@ -5,7 +5,7 @@ import WidgetsIcon from '@mui/icons-material/Widgets';
 import GroupIcon from '@mui/icons-material/Group';
 import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 import ApiIcon from '@mui/icons-material/Api';
-import PermMediaIcon from '@mui/icons-material/PermMedia';
+// import PermMediaIcon from '@mui/icons-material/PermMedia';
 
 import lang from '../../libs/lang';
 import { useAppSelector } from '../../store/hooks';

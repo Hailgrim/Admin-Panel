@@ -34,7 +34,7 @@ export class RolesController {
   constructor(private roleService: RolesService) {}
 
   @ApiOperation({ summary: lang.get('en')?.entityCreation })
-  @ApiResponse({ status: 201, type: IRole })
+  @ApiResponse({ status: HttpStatus.CREATED, type: IRole })
   @Roles({ path: route, action: Rights.Creating })
   @UseGuards(JwtGuard, RolesGuard)
   @Post()
@@ -47,7 +47,7 @@ export class RolesController {
   }
 
   @ApiOperation({ summary: lang.get('en')?.getEntities })
-  @ApiResponse({ status: 200, type: [IRole] })
+  @ApiResponse({ status: HttpStatus.OK, type: [IRole] })
   @Roles({ path: route, action: Rights.Listing })
   @UseGuards(JwtGuard, RolesGuard)
   @Get()
@@ -62,7 +62,7 @@ export class RolesController {
   }
 
   @ApiOperation({ summary: lang.get('en')?.getEntity })
-  @ApiResponse({ status: 200, type: IRole })
+  @ApiResponse({ status: HttpStatus.OK, type: IRole })
   @Roles({ path: route, action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get('/:id')
@@ -71,7 +71,7 @@ export class RolesController {
   }
 
   @ApiOperation({ summary: lang.get('en')?.updateEntity })
-  @ApiResponse({ status: 200, type: Boolean })
+  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Roles({ path: route, action: Rights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('/:id')
@@ -91,7 +91,7 @@ export class RolesController {
   }
 
   @ApiOperation({ summary: lang.get('en')?.updateEntity })
-  @ApiResponse({ status: 200, type: Boolean })
+  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Roles({ path: route, action: Rights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('/:id/resources')
@@ -111,7 +111,7 @@ export class RolesController {
   }
 
   @ApiOperation({ summary: lang.get('en')?.deleteEntity })
-  @ApiResponse({ status: 200, type: Boolean })
+  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Roles({ path: route, action: Rights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
   @Delete('/:id')

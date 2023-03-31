@@ -13,7 +13,7 @@ import * as crypto from 'crypto';
 import { UsersService } from '../users/users.service';
 import { RolesService } from 'src/roles/roles.service';
 import { ResourcesService } from 'src/resources/resources.service';
-import { IRequestUser, ITokensResponse, IUser } from 'libs/types';
+import { IRequestUser, ISession, ITokensResponse, IUser } from 'libs/types';
 import { User } from 'src/users/user.entity';
 import { SignInDto } from './dto/sign-in-auth.dto';
 import { SESSION_REPOSITORY } from 'libs/constants';
@@ -27,22 +27,24 @@ import { Session } from './session.entity';
 import { Role } from 'src/roles/role.entity';
 import { CreateResourceDto } from 'src/resources/dto/create-resource.dto';
 import lang from 'libs/lang';
-import { MailService } from 'src/mail.service';
+import { MailService } from 'src/mail/mail.service';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
 import { SignUpDto } from './dto/sign-up.dts';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private jwtService: JwtService,
     @Inject(SESSION_REPOSITORY)
     private sessionsRepository: typeof Session,
+    private jwtService: JwtService,
     private usersService: UsersService,
     private rolesService: RolesService,
     private resourcesService: ResourcesService,
     private mailService: MailService,
+    private redisService: RedisService,
   ) {}
 
   async validateUser(signInDto: SignInDto) {
@@ -142,7 +144,11 @@ export class AuthService {
     }
   }
 
-  async signIn(user: IUser, remember?: boolean): Promise<ITokensResponse> {
+  async signIn(
+    user: IUser,
+    remember?: boolean,
+    oldSessionId?: string,
+  ): Promise<ITokensResponse & { sessionId: number }> {
     if (!user.enabled) {
       throw new GoneException();
     }
@@ -159,27 +165,45 @@ export class AuthService {
 
     try {
       sessionHash = await argon2.hash(crypto.randomBytes(10));
-      const refreshTokenExpiration = new Date();
-      refreshTokenExpiration.setTime(
+      const expirationTime = new Date();
+      expirationTime.setTime(
         remember
-          ? refreshTokenExpiration.getTime() + REFRESH_TOKEN_LIFETIME * 1000
-          : refreshTokenExpiration.getTime() + ACCESS_TOKEN_LIFETIME * 2000,
+          ? expirationTime.getTime() + REFRESH_TOKEN_LIFETIME * 1000
+          : expirationTime.getTime() + ACCESS_TOKEN_LIFETIME * 2000,
       );
 
-      const session = await this.sessionsRepository.create({
+      const sessionData: ISession = {
         userId: user.id,
         hash: sessionHash,
-        expires: refreshTokenExpiration,
-      });
-      sessionId = session.id;
+        expires: expirationTime,
+      };
+
+      let updatedRows = 0;
+      if (oldSessionId) {
+        [updatedRows] = await this.sessionsRepository.update(
+          { hash: sessionHash, expires: expirationTime },
+          { where: { id: oldSessionId, userId: user.id } },
+        );
+      }
+
+      if (updatedRows > 0) {
+        sessionId = Number(oldSessionId);
+      } else {
+        const session = await this.sessionsRepository.create(sessionData);
+        sessionId = session.id;
+      }
+
+      await this.redisService.set(`sessions:${sessionId}`, sessionData);
     } catch (error) {
       throw new InternalServerErrorException();
     }
 
-    return this.createTokens(
+    const tokens = await this.createTokens(
       { id: user.id, email: user.email, sessionId, sessionHash },
       remember,
     );
+
+    return { ...tokens, sessionId };
   }
 
   async verifyUser(verifyUserDto: VerifyUserDto): Promise<boolean> {
@@ -209,27 +233,56 @@ export class AuthService {
     reqUser: IRequestUser,
     remember?: boolean,
   ): Promise<ITokensResponse> {
-    const sessionId = reqUser.sessionId;
-    let sessionHash: string;
-    let updatedRows = 0;
-
+    let newHash: string;
     try {
-      sessionHash = await argon2.hash(crypto.randomBytes(10));
-      const refreshTokenExpiration = new Date();
-      refreshTokenExpiration.setTime(
-        remember
-          ? refreshTokenExpiration.getTime() + REFRESH_TOKEN_LIFETIME * 1000
-          : refreshTokenExpiration.getTime() + ACCESS_TOKEN_LIFETIME * 2000,
-      );
-
-      if (sessionId !== undefined && reqUser.sessionHash !== undefined) {
-        [updatedRows] = await this.sessionsRepository.update(
-          { hash: sessionHash, expires: refreshTokenExpiration },
-          { where: { userId: reqUser.id, hash: reqUser.sessionHash } },
-        );
-      }
+      newHash = await argon2.hash(crypto.randomBytes(10));
     } catch (error) {
       throw new InternalServerErrorException();
+    }
+
+    let updatedRows = 0;
+    if (reqUser.sessionId && reqUser.sessionHash) {
+      const expirationTime = new Date();
+      expirationTime.setTime(
+        remember
+          ? expirationTime.getTime() + REFRESH_TOKEN_LIFETIME * 1000
+          : expirationTime.getTime() + ACCESS_TOKEN_LIFETIME * 2000,
+      );
+
+      try {
+        const session = await this.redisService.get<ISession>(
+          `sessions:${reqUser.sessionId}`,
+          true,
+        );
+
+        if (
+          session &&
+          session.userId == reqUser.id &&
+          session.hash == reqUser.sessionHash
+        ) {
+          await this.redisService.set(`sessions:${reqUser.sessionId}`, {
+            userId: reqUser.id,
+            hash: newHash,
+            expires: expirationTime,
+          });
+          updatedRows = 1;
+        }
+      } catch (error) {
+        try {
+          [updatedRows] = await this.sessionsRepository.update(
+            { hash: newHash, expires: expirationTime },
+            {
+              where: {
+                id: reqUser.sessionId,
+                userId: reqUser.id,
+                hash: reqUser.sessionHash,
+              },
+            },
+          );
+        } catch (error) {
+          throw new InternalServerErrorException();
+        }
+      }
     }
 
     if (updatedRows === 0) {
@@ -237,48 +290,40 @@ export class AuthService {
     }
 
     return this.createTokens(
-      { id: reqUser.id, email: reqUser.email, sessionId, sessionHash },
+      {
+        id: reqUser.id,
+        email: reqUser.email,
+        sessionId: reqUser.sessionId,
+        sessionHash: newHash,
+      },
       remember,
     );
   }
 
   async getProfile(reqUser: IRequestUser): Promise<User> {
-    if (reqUser?.id) {
-      const user = await this.usersService.findOnePublic(reqUser.id);
-      if (user) {
-        return user;
-      }
-    }
-    throw new UnauthorizedException();
+    return await this.usersService.findOnePublic(reqUser.id);
   }
 
   async updateProfile(
     reqUser: IRequestUser,
     updateProfileDto: UpdateProfileDto,
   ): Promise<boolean> {
-    if (reqUser?.id) {
-      return this.usersService.updateFields(reqUser.id, updateProfileDto);
-    }
-    throw new UnauthorizedException();
+    return this.usersService.updateFields(reqUser.id, updateProfileDto);
   }
 
   async signOut(reqUser: IRequestUser): Promise<boolean> {
     const sessionId = reqUser.sessionId;
     const sessionHash = reqUser.sessionHash;
-    let destroyedRows = 0;
 
     try {
       if (sessionId && sessionHash) {
-        destroyedRows = await this.sessionsRepository.destroy({
+        await this.sessionsRepository.destroy({
           where: { id: sessionId, hash: sessionHash },
         });
+        await this.redisService.del(`sessions:${sessionId}`);
       }
     } catch (error) {
       throw new InternalServerErrorException();
-    }
-
-    if (destroyedRows === 0) {
-      throw new UnauthorizedException();
     }
 
     return true;

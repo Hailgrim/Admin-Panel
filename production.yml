@@ -2,6 +2,10 @@ version: "3.8"
 
 services:
 
+  redis:
+    build:
+      target: production
+
   nest:
     build:
       target: production
