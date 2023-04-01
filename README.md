@@ -1,6 +1,6 @@
 # Admin Panel
 
-This is an example of a project with an administrative panel for data management and API server (both using TypeScript), PostgreSQL database and its monitoring tool (Adminer), Redis cache storage and Nginx for proxying. The project is launched using Docker.
+This is an example of a project with an administrative panel for data management and API server (both using **TypeScript**), **PostgreSQL** database and its monitoring tool (**Adminer**), **Redis** cache storage and **Nginx** for proxying. The project is launched using **Docker**.
 
 The ```./docker-compose.yml``` contains the main services and volumes for the work of the project. In the files ```./development.yml``` and ```./production.yml``` contains additional settings for different project launch modes. You can build and run a project being in the project folder and using the ```docker compose -f docker-compose.yml -f development.yml up -d``` command. Use the ```docker compose down``` command to stop the project. In the file ```.env``` you can configure some project parameters.
 
