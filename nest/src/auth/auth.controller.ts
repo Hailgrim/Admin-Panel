@@ -183,7 +183,7 @@ export class AuthController {
     return this.authService.getProfile(req.user);
   }
 
-  @ApiOperation({ summary: lang.get('en')?.refreshToken })
+  @ApiOperation({ summary: lang.get('en')?.updateProfile })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Roles({ path: route, action: Rights.Updating })
   @UseGuards(JwtGuard, RolesGuard)

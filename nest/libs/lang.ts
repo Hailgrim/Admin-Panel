@@ -4,7 +4,7 @@ const en = {
   adminPanel: 'Admin Panel',
   adminPanelAPIDescription: 'The Admin Panel API description',
   entityCreation: 'Creating an entity',
-  getEntity: 'Get user',
+  getEntity: 'Get entity',
   getEntities: 'Get entities',
   updateEntity: 'Update entity',
   deleteEntity: 'Delete entity',
@@ -60,6 +60,7 @@ const en = {
   subjectForgotPassword: 'Forgot password',
   resetPassword: 'Reset password',
   profile: 'Profile',
+  updateProfile: 'Update profile',
 };
 
 export type LangDictionary = typeof en;
