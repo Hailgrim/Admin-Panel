@@ -38,7 +38,7 @@ server {
 
     location /services/api {
         rewrite /services/api/(.*) /$1 break;
-        proxy_pass http://${NEST_HOST}:${NEST_PORT};
+        proxy_pass http://${NEST_CORE_HOST}:${NEST_CORE_PORT};
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -46,9 +46,9 @@ server {
         proxy_set_header X-Content-Type-Options nosniff;
     }
 
-    location /files {
-        autoindex off;
-    }
+    # location /files {
+    #     autoindex off;
+    # }
 
     error_page   500 502 503 504  /50x.html;
     location = /50x.html {

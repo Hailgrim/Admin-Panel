@@ -1,7 +1,7 @@
 export const PROJECT_TAG = process.env.PROJECT_TAG || 'adminpanel';
 
-export const API_HOST = process?.env?.NEST_HOST && process?.env?.NEST_PORT
-  ? `http://${process?.env?.NEST_HOST}:${process?.env?.NEST_PORT}`
+export const API_HOST = process?.env?.NEST_CORE_HOST && process?.env?.NEST_CORE_PORT
+  ? `http://${process?.env?.NEST_CORE_HOST}:${process?.env?.NEST_CORE_PORT}`
   : '/services/api';
 
 /** Time in seconds */

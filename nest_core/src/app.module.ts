@@ -12,7 +12,7 @@ import { ThrottlerBehindProxyGuard } from './auth/throttler-behind-proxy.guard';
   imports: [
     ThrottlerModule.forRoot({
       ttl: 60,
-      limit: 10,
+      limit: 30,
     }),
 
     AuthModule,

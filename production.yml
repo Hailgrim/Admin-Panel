@@ -6,7 +6,11 @@ services:
     build:
       target: production
 
-  nest:
+  nest_core:
+    build:
+      target: production
+
+  rabbitmq:
     build:
       target: production
 

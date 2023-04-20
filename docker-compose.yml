@@ -5,8 +5,8 @@ volumes:
     name: ${PROJECT_TAG}_postgres_data
   redis_data:
     name: ${PROJECT_TAG}_redis_data
-  nest_node_modules:
-    name: ${PROJECT_TAG}_nest_node_modules
+  nest_core_node_modules:
+    name: ${PROJECT_TAG}_nest_core_node_modules
   next_node_modules:
     name: ${PROJECT_TAG}_next_node_modules
 
@@ -56,24 +56,35 @@ services:
     volumes:
       - "redis_data:/data"
 
-  nest:
+  nest_core:
     build:
-      context: ./nest
+      context: ./nest_core
       args:
         - PROJECT_TAG=${PROJECT_TAG}
-    container_name: ${PROJECT_TAG}_nest
+    container_name: ${PROJECT_TAG}_nest_core
     restart: always
     env_file:
       - .env
     networks:
       - main
     expose:
-      - ${NEST_PORT}
+      - ${NEST_CORE_PORT}
     depends_on:
       - postgres
-      - redis
     volumes:
-      - "nest_node_modules:/home/${PROJECT_TAG}/nest/node_modules"
+      - "nest_core_node_modules:/home/${PROJECT_TAG}/nest_core/node_modules"
+
+  rabbitmq:
+    build:
+      context: ./rabbitmq
+    container_name: ${PROJECT_TAG}_rabbitmq
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - main
+    expose:
+      - ${RABBITMQ_PORT}
 
   next:
     build:

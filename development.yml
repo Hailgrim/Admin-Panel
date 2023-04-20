@@ -12,11 +12,17 @@ services:
     ports:
       - ${REDIS_INSIGHT_PORT}:8001
 
-  nest:
+  nest_core:
     build:
       target: development
     volumes:
-      - "./nest:/home/${PROJECT_TAG}/nest"
+      - "./nest_core:/home/${PROJECT_TAG}/nest_core"
+
+  rabbitmq:
+    build:
+      target: development
+    ports:
+      - ${RABBITMQ_MANAGEMENT_PORT}:15672
 
   next:
     build:

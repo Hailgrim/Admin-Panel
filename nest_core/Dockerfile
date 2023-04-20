@@ -1,6 +1,6 @@
 FROM node:alpine as base
 ARG PROJECT_TAG
-WORKDIR /home/${PROJECT_TAG}/nest
+WORKDIR /home/${PROJECT_TAG}/nest_core
 
 FROM base as development
 ENV NODE_ENV=development
