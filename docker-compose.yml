@@ -7,6 +7,8 @@ volumes:
     name: ${PROJECT_TAG}_redis_data
   nest_core_node_modules:
     name: ${PROJECT_TAG}_nest_core_node_modules
+  rabbitmq_data:
+    name: ${PROJECT_TAG}_rabbitmq_data
   next_node_modules:
     name: ${PROJECT_TAG}_next_node_modules
 
@@ -85,6 +87,8 @@ services:
       - main
     expose:
       - ${RABBITMQ_PORT}
+    volumes:
+      - "rabbitmq_data:/var/lib/rabbitmq"
 
   next:
     build:
