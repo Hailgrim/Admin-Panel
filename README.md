@@ -1,6 +1,6 @@
 # Admin Panel
 
-This is an example of a project with an administrative panel for data management and API server (both using **TypeScript**), **PostgreSQL** database and its monitoring tool (**Adminer**), **Redis** cache storage and **Nginx** for proxying. The project is launched using **Docker**.
+This is an example of a project with an administrative panel for data management and API server (both using **TypeScript**), **PostgreSQL** database and its monitoring tool (**Adminer**), **Redis** cache storage, **RabbitMQ** message-broker and **Nginx** for proxying. The project is launched using **Docker**.
 
 The ```./docker-compose.yml``` contains the main services and volumes for the work of the project. In the files ```./development.yml``` and ```./production.yml``` contains additional settings for different project launch modes. You can build and run a project being in the project folder and using the ```docker compose -f docker-compose.yml -f development.yml up -d``` command. Use the ```docker compose down``` command to stop the project. In the file ```.env``` you can configure some project parameters.
 
@@ -14,13 +14,17 @@ The Redux Toolkit is used as the application state manager. RTK Query is used fo
 
 The Material UI is used as the UI kit.
 
-## ./nest
+## ./nest_core
 
 This part of the application acts as an API server with which you can create users, roles and set access rights to various resources.
 
-The first user registered in the application will receive the administrator role with unlimited rights. Some other entities will also be created for the operation of the application. After registration or an attempt to reset the password, an email with a confirmation code will be sent to the user's email address. If the application is running in development mode, the emails will be sent to the test mail server. A link to access the contents of such an email can be obtained from the logs of the Docker container.
+The first user registered in the application will receive the administrator role with unlimited rights. Some other entities will also be created for the operation of the application. All created entities will be saved in PostgreSQL. Only user sessions will also be stored in Redis.
 
-All created entities will be saved in PostgreSQL. Only user sessions will be stored in Redis.
+In the file ```./nest/libs/config.ts```, you can configure various parameters for server operation.
+
+## ./nest_mailer
+
+This part of the application acts as an mail server. After registration or an attempt to reset the password, an email with a confirmation code will be sent to the user's email address. If the application is running in development mode, the emails will be sent to the test mail server. A link to access the contents of such an email can be obtained from the logs of the Docker container.
 
 In the file ```./nest/libs/config.ts```, you can configure various parameters for server operation.
 
