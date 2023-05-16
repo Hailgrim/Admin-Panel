@@ -16,14 +16,12 @@ import { rolesProviders } from 'src/roles/roles.providers';
 import { ResourcesService } from 'src/resources/resources.service';
 import { resourcesProviders } from 'src/resources/resources.providers';
 import { rolesResourcesProviders } from 'src/database/roles-resources.providers';
-import { MailModule } from 'src/mail/mail.module';
-import { MailService } from 'src/mail/mail.service';
 import { RedisModule } from 'src/redis/redis.module';
 import { RedisService } from 'src/redis/redis.service';
+import { rmqProviders } from 'src/rmq.providers';
 
 @Module({
   imports: [
-    MailModule,
     RedisModule,
     UsersModule,
     PassportModule.register({
@@ -45,8 +43,8 @@ import { RedisService } from 'src/redis/redis.service';
     ResourcesService,
     ...resourcesProviders,
     ...rolesResourcesProviders,
-    MailService,
     RedisService,
+    ...rmqProviders,
   ],
   exports: [AuthService],
 })

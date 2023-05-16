@@ -9,15 +9,17 @@ import * as nodemailer from 'nodemailer';
 import { HOST, MAIL_FROM, MAIL_TEST } from 'libs/config';
 import { MailTemplates } from 'libs/constants';
 import lang from 'libs/lang';
+import { RegistrationDto } from './dto/registration.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
 
 @Injectable()
-export class MailService {
+export class AppService {
   constructor(private readonly mailerService: MailerService) {}
 
-  async registration(email: string, code: string): Promise<void> {
+  async registration(registrationDto: RegistrationDto): Promise<void> {
     try {
       const info = await this.mailerService.sendMail({
-        to: email,
+        to: registrationDto.email,
         from: MAIL_FROM,
         subject: lang.get('en')?.subjectRegistration,
         template: MailTemplates.ForgotPassword,
@@ -25,7 +27,7 @@ export class MailService {
           host: HOST,
           title: lang.get('en')?.subjectRegistration,
           action: lang.get('en')?.verificationCode,
-          code,
+          code: registrationDto.code,
         },
       });
       if (MAIL_TEST) {
@@ -37,10 +39,10 @@ export class MailService {
     }
   }
 
-  async forgotPassword(email: string, code: string): Promise<void> {
+  async forgotPassword(forgotPasswordDto: ForgotPasswordDto): Promise<void> {
     try {
       const info = await this.mailerService.sendMail({
-        to: email,
+        to: forgotPasswordDto.email,
         from: MAIL_FROM,
         subject: lang.get('en')?.subjectForgotPassword,
         template: MailTemplates.ForgotPassword,
@@ -48,7 +50,7 @@ export class MailService {
           host: HOST,
           title: lang.get('en')?.subjectForgotPassword,
           action: lang.get('en')?.resetPasswordCode,
-          code,
+          code: forgotPasswordDto.code,
         },
       });
       if (MAIL_TEST) {

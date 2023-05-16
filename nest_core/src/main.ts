@@ -25,7 +25,7 @@ async function bootstrap() {
     .setTitle(String(lang.get('en')?.adminPanel))
     .setDescription(String(lang.get('en')?.adminPanelAPIDescription))
     .setVersion(version)
-    .addTag('AdminPanel')
+    .addTag('AdminPanel [Core]')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

@@ -1,14 +1,16 @@
 version: "3.8"
 
 volumes:
+  rabbitmq_data:
+    name: ${PROJECT_TAG}_rabbitmq_data
   postgres_data:
     name: ${PROJECT_TAG}_postgres_data
   redis_data:
     name: ${PROJECT_TAG}_redis_data
   nest_core_node_modules:
     name: ${PROJECT_TAG}_nest_core_node_modules
-  rabbitmq_data:
-    name: ${PROJECT_TAG}_rabbitmq_data
+  nest_mailer_node_modules:
+    name: ${PROJECT_TAG}_nest_mailer_node_modules
   next_node_modules:
     name: ${PROJECT_TAG}_next_node_modules
 
@@ -17,6 +19,38 @@ networks:
     name: ${PROJECT_TAG}_main
 
 services:
+
+  nginx:
+    build:
+      context: ./nginx
+      args:
+        - PROJECT_TAG=${PROJECT_TAG}
+    container_name: ${PROJECT_TAG}_nginx
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - main
+    expose:
+      - ${NGINX_PORT}
+      - ${NGINX_SSL_PORT}
+    ports:
+      - ${NGINX_PORT}:${NGINX_PORT}
+      - ${NGINX_SSL_PORT}:${NGINX_SSL_PORT}
+
+  rabbitmq:
+    build:
+      context: ./rabbitmq
+    container_name: ${PROJECT_TAG}_rabbitmq
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - main
+    expose:
+      - ${RABBITMQ_PORT}
+    volumes:
+      - "rabbitmq_data:/var/lib/rabbitmq"
 
   postgres:
     build:
@@ -72,23 +106,28 @@ services:
     expose:
       - ${NEST_CORE_PORT}
     depends_on:
+      - rabbitmq
       - postgres
     volumes:
       - "nest_core_node_modules:/home/${PROJECT_TAG}/nest_core/node_modules"
 
-  rabbitmq:
+  nest_mailer:
     build:
-      context: ./rabbitmq
-    container_name: ${PROJECT_TAG}_rabbitmq
+      context: ./nest_mailer
+      args:
+        - PROJECT_TAG=${PROJECT_TAG}
+    container_name: ${PROJECT_TAG}_nest_mailer
     restart: always
     env_file:
       - .env
     networks:
       - main
     expose:
-      - ${RABBITMQ_PORT}
+      - ${NEST_MAILER_PORT}
+    depends_on:
+      - rabbitmq
     volumes:
-      - "rabbitmq_data:/var/lib/rabbitmq"
+      - "nest_mailer_node_modules:/home/${PROJECT_TAG}/nest_mailer/node_modules"
 
   next:
     build:
@@ -105,21 +144,3 @@ services:
       - ${NEXT_PORT}
     volumes:
       - "next_node_modules:/home/${PROJECT_TAG}/next/node_modules"
-
-  nginx:
-    build:
-      context: ./nginx
-      args:
-        - PROJECT_TAG=${PROJECT_TAG}
-    container_name: ${PROJECT_TAG}_nginx
-    restart: always
-    env_file:
-      - .env
-    networks:
-      - main
-    expose:
-      - ${NGINX_PORT}
-      - ${NGINX_SSL_PORT}
-    ports:
-      - ${NGINX_PORT}:${NGINX_PORT}
-      - ${NGINX_SSL_PORT}:${NGINX_SSL_PORT}

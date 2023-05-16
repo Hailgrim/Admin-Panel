@@ -2,6 +2,14 @@ version: "3.8"
 
 services:
 
+  nginx:
+    build:
+      target: production
+
+  rabbitmq:
+    build:
+      target: production
+
   redis:
     build:
       target: production
@@ -10,14 +18,10 @@ services:
     build:
       target: production
 
-  rabbitmq:
+  nest_mailer:
     build:
       target: production
 
   next:
-    build:
-      target: production
-
-  nginx:
     build:
       target: production

@@ -3,6 +3,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import * as nodemailer from 'nodemailer';
 
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import {
   MAIL_FROM,
   MAIL_HOST,
@@ -11,7 +13,6 @@ import {
   MAIL_TEST,
   MAIL_USER,
 } from 'libs/config';
-import { MailService } from './mail.service';
 
 @Module({
   imports: [
@@ -47,7 +48,7 @@ import { MailService } from './mail.service';
         },
         preview: MAIL_TEST,
         template: {
-          dir: `${process.cwd()}/src/mail/templates`,
+          dir: `${process.cwd()}/templates`,
           adapter: new PugAdapter(),
           options: {
             strict: true,
@@ -56,7 +57,7 @@ import { MailService } from './mail.service';
       });
     })(),
   ],
-  providers: [MailService],
-  exports: [MailService],
+  controllers: [AppController],
+  providers: [AppService],
 })
-export class MailModule {}
+export class AppModule {}

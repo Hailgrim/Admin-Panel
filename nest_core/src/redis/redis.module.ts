@@ -1,4 +1,5 @@
-import { CacheModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 import type { RedisClientOptions } from 'redis';
 import { redisStore } from 'cache-manager-redis-yet';
 
@@ -7,7 +8,7 @@ import {
   REDIS_HOST,
   REDIS_PASSWORD,
   REDIS_PORT,
-  REDIS_USERNAME,
+  // REDIS_USERNAME,
 } from 'libs/config';
 import { RedisService } from './redis.service';
 
@@ -17,7 +18,8 @@ import { RedisService } from './redis.service';
       isGlobal: true,
       store: redisStore,
       url: `redis://${REDIS_HOST}:${REDIS_PORT}`,
-      username: REDIS_USERNAME,
+      // username: REDIS_USERNAME,
+      username: '',
       password: REDIS_PASSWORD,
       database: REDIS_DB,
       name: 'next',

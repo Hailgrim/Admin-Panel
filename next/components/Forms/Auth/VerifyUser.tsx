@@ -58,22 +58,13 @@ const VerifyUser: React.FC<{
       {errorText && <AuthAlert severity="error" text={errorText} />}
       <TextFieldStyled
         required
-        name="email"
-        type="email"
-        label={lang.get(userLang)?.email}
-        value={email}
-        disabled={true}
-        autoFocus
-      />
-      <TextFieldStyled
-        required
         autoComplete="off"
         type="text"
         name="code"
         label={lang.get(userLang)?.code}
         value={code}
         onChange={event => setCode(event.currentTarget.value)}
-        helperText={lang.get(userLang)?.codeFromEmail}
+        helperText={`${lang.get(userLang)?.codeFromEmail} (${email})`}
       />
       <AuthButtonStyled
         disabled={isLoading || data || code.length == 0}

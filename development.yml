@@ -2,6 +2,18 @@ version: "3.8"
 
 services:
 
+  nginx:
+    build:
+      target: development
+    volumes:
+      - "./nginx:/home/${PROJECT_TAG}/nginx"
+
+  rabbitmq:
+    build:
+      target: development
+    ports:
+      - ${RABBITMQ_MANAGEMENT_PORT}:15672
+
   adminer:
     ports:
       - ${ADMINER_PORT}:${ADMINER_PORT}
@@ -18,20 +30,14 @@ services:
     volumes:
       - "./nest_core:/home/${PROJECT_TAG}/nest_core"
 
-  rabbitmq:
+  nest_mailer:
     build:
       target: development
-    ports:
-      - ${RABBITMQ_MANAGEMENT_PORT}:15672
+    volumes:
+      - "./nest_mailer:/home/${PROJECT_TAG}/nest_mailer"
 
   next:
     build:
       target: development
     volumes:
       - "./next:/home/${PROJECT_TAG}/next"
-
-  nginx:
-    build:
-      target: development
-    volumes:
-      - "./nginx:/home/${PROJECT_TAG}/nginx"

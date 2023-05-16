@@ -7,6 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ClientProxy } from '@nestjs/microservices';
 import * as argon2 from 'argon2';
 import * as crypto from 'crypto';
 
@@ -16,7 +17,7 @@ import { ResourcesService } from 'src/resources/resources.service';
 import { IRequestUser, ISession, ITokensResponse, IUser } from 'libs/types';
 import { User } from 'src/users/user.entity';
 import { SignInDto } from './dto/sign-in-auth.dto';
-import { SESSION_REPOSITORY } from 'libs/constants';
+import { MAIL_SERVER, SESSION_REPOSITORY } from 'libs/constants';
 import {
   ACCESS_TOKEN_LIFETIME,
   ACCESS_TOKEN_SECRET_KEY,
@@ -27,7 +28,6 @@ import { Session } from './session.entity';
 import { Role } from 'src/roles/role.entity';
 import { CreateResourceDto } from 'src/resources/dto/create-resource.dto';
 import lang from 'libs/lang';
-import { MailService } from 'src/mail/mail.service';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
 import { SignUpDto } from './dto/sign-up.dts';
@@ -37,13 +37,14 @@ import { RedisService } from 'src/redis/redis.service';
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(MAIL_SERVER)
+    private mailClient: ClientProxy,
     @Inject(SESSION_REPOSITORY)
     private sessionsRepository: typeof Session,
     private jwtService: JwtService,
     private usersService: UsersService,
     private rolesService: RolesService,
     private resourcesService: ResourcesService,
-    private mailService: MailService,
     private redisService: RedisService,
   ) {}
 
@@ -156,7 +157,9 @@ export class AuthService {
     if (!user.verified) {
       const code = crypto.randomBytes(10).toString('hex');
       await this.usersService.updateVerification(user.email, code);
-      await this.mailService.registration(user.email, code);
+      this.mailClient
+        .send({ method: 'registration' }, { email: user.email, code })
+        .subscribe();
       throw new ForbiddenException();
     }
 
@@ -216,8 +219,9 @@ export class AuthService {
 
   async forgotPassword(email: string): Promise<boolean> {
     const code = crypto.randomBytes(10).toString('hex');
-    await this.usersService.updatePassword(email, code);
-    await this.mailService.forgotPassword(email, code);
+    this.mailClient
+      .send({ method: 'forgotPassword' }, { email, code })
+      .subscribe();
     return true;
   }
 
