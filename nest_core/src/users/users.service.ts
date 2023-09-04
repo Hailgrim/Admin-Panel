@@ -173,7 +173,7 @@ export class UsersService {
     return this.update(updateUserDto, { where: { id } });
   }
 
-  async updateVerification(
+  async updateVerificationCode(
     email: string,
     verificationCode: string,
     check?: boolean,
@@ -186,6 +186,13 @@ export class UsersService {
     } else {
       return this.update({ verificationCode }, { where: { email } });
     }
+  }
+
+  async updateResetPasswordCode(
+    email: string,
+    resetPasswordCode: string,
+  ): Promise<boolean> {
+    return this.update({ resetPasswordCode }, { where: { email } });
   }
 
   async updatePassword(

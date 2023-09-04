@@ -1,4 +1,5 @@
 import { FindOptions } from 'sequelize';
+
 import { PaginationDto } from 'src/database/dto/pagination.dto';
 
 /**

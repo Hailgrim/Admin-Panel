@@ -36,7 +36,7 @@ const ForgotPassword: React.FC = () => {
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 404:
-          setErrorText(String(lang.get(userLang)?.wrongEmail));
+          setErrorText(String(lang.get(userLang)?.wrongEmailOrCode));
           break;
         default:
           setErrorText(makeErrorText(error, userLang));

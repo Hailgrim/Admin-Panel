@@ -28,6 +28,7 @@ const en = {
   code: 'Code',
   codeFromEmail: 'Code from email',
   wrongCode: 'Wrong code',
+  wrongEmailOrCode: 'Wrong email or code',
   name: 'Name',
   description: 'Description',
   admin: 'Admin',

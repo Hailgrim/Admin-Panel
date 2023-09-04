@@ -156,7 +156,7 @@ export class AuthService {
 
     if (!user.verified) {
       const code = crypto.randomBytes(10).toString('hex');
-      await this.usersService.updateVerification(user.email, code);
+      await this.usersService.updateVerificationCode(user.email, code);
       this.mailClient
         .send({ method: 'registration' }, { email: user.email, code })
         .subscribe();
@@ -210,7 +210,7 @@ export class AuthService {
   }
 
   async verifyUser(verifyUserDto: VerifyUserDto): Promise<boolean> {
-    return await this.usersService.updateVerification(
+    return await this.usersService.updateVerificationCode(
       verifyUserDto.email,
       verifyUserDto.code,
       true,
@@ -219,9 +219,11 @@ export class AuthService {
 
   async forgotPassword(email: string): Promise<boolean> {
     const code = crypto.randomBytes(10).toString('hex');
-    this.mailClient
-      .send({ method: 'forgotPassword' }, { email, code })
-      .subscribe();
+    if (await this.usersService.updateResetPasswordCode(email, code)) {
+      this.mailClient
+        .send({ method: 'forgotPassword' }, { email, code })
+        .subscribe();
+    }
     return true;
   }
 
