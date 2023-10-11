@@ -28,7 +28,6 @@ const authApi = createApi({
       query: payload => ({
         url: `${route}/sign-up`,
         method: 'POST',
-        credentials: 'include',
         body: payload,
       }),
     }),
@@ -37,7 +36,6 @@ const authApi = createApi({
       query: payload => ({
         url: `${route}/verify-user`,
         method: 'POST',
-        credentials: 'include',
         body: payload,
       }),
     }),
@@ -55,7 +53,6 @@ const authApi = createApi({
       query: payload => ({
         url: `${route}/forgot-password`,
         method: 'POST',
-        credentials: 'include',
         body: payload,
       }),
     }),
@@ -64,7 +61,6 @@ const authApi = createApi({
       query: payload => ({
         url: `${route}/reset-password`,
         method: 'POST',
-        credentials: 'include',
         body: payload,
       }),
     }),

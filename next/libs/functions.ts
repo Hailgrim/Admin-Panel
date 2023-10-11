@@ -6,7 +6,7 @@ import { AppStore, wrapper } from '../store/store';
 import { setAuthTokens, setProfile, setUserAgent } from '../store/slices/appSlice';
 import authApi from '../store/api/authApi';
 import lang, { LangList } from './lang';
-import { ACCESS_TOKEN_LIFETIME, PROJECT_TAG, REFRESH_TOKEN_LIFETIME, ROUTES } from './config';
+import { ACCESS_TOKEN_LIFETIME, HOST, PROJECT_TAG, REFRESH_TOKEN_LIFETIME, ROUTES } from './config';
 import { Rights } from './constants';
 import { SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
@@ -156,6 +156,15 @@ export const isAllowed = (
 };
 
 /**
+ * @param {string} token Token (e. g. tokenName=tokenValue)
+ * @param {number} maxAge Token lifetime in seconds
+ * @returns {string} Final cookie string
+ */
+export const createCookie = (token: string, maxAge = ACCESS_TOKEN_LIFETIME): string => {
+  return `${token};HttpOnly;SameSite=None;Secure;Path=/;Domain=.${HOST};MaxAge=${maxAge}`;
+};
+
+/**
  * HOC for wrapper.getServerSideProps with authorization request
  */
 export const getServerSidePropsCustom = <T = void>(
@@ -184,15 +193,8 @@ export const getServerSidePropsCustom = <T = void>(
         ctx.res.setHeader(
           'Set-Cookie',
           [
-            `${PROJECT_TAG}_accessToken=${accessToken};`
-              .concat('HttpOnly;SameSite=Strict;Path=/;')
-              .concat(`Max-Age=${ACCESS_TOKEN_LIFETIME}`),
-            `${PROJECT_TAG}_refreshToken=${refreshToken};`
-              .concat('HttpOnly;SameSite=Strict;Path=/;')
-              .concat(`Max-Age=${rememberMe
-                ? REFRESH_TOKEN_LIFETIME
-                : ACCESS_TOKEN_LIFETIME * 2
-                }`),
+            createCookie(`${PROJECT_TAG}_accessToken=${accessToken}`),
+            createCookie(`${PROJECT_TAG}_refreshToken=${refreshToken}`, rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2),
           ],
         );
       }

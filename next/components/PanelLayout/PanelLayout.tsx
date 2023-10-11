@@ -11,8 +11,8 @@ const PanelLayout: React.FC<{
 }> = ({ children }) => {
   return (
     <React.Fragment>
-      <SideBar />
       <CustomHead />
+      <SideBar />
       <Header />
       <Content>
         {children}

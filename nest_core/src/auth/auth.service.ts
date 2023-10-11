@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import * as argon2 from 'argon2';
 import * as crypto from 'crypto';
+import { CookieSerializeOptions } from '@fastify/cookie';
 
 import { UsersService } from '../users/users.service';
 import { RolesService } from 'src/roles/roles.service';
@@ -23,6 +24,7 @@ import {
   ACCESS_TOKEN_SECRET_KEY,
   REFRESH_TOKEN_LIFETIME,
   REFRESH_TOKEN_SECRET_KEY,
+  NGINX_HOST,
 } from 'libs/config';
 import { Session } from './session.entity';
 import { Role } from 'src/roles/role.entity';
@@ -121,6 +123,17 @@ export class AuthService {
       [defaultRole],
     );
     return user;
+  }
+
+  prepareCookie(maxAge = ACCESS_TOKEN_LIFETIME): CookieSerializeOptions {
+    return {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+      path: '/',
+      maxAge,
+      domain: `.${NGINX_HOST}`,
+    };
   }
 
   async createTokens(

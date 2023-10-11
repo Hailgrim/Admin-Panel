@@ -1,8 +1,9 @@
-export const PROJECT_TAG = process.env.PROJECT_TAG || 'adminpanel';
+export const PROJECT_TAG = process.env.PROJECT_TAG || 'AP';
+export const HOST = process.env.NGINX_HOST || document.location.host;
 
-export const API_HOST = process?.env?.NEST_CORE_HOST && process?.env?.NEST_CORE_PORT
-  ? `http://${process?.env?.NEST_CORE_HOST}:${process?.env?.NEST_CORE_PORT}`
-  : '/services/api';
+export const API_HOST = process.env.NEST_CORE_HOST && process.env.NEST_CORE_PORT
+  ? `http://${process.env.NEST_CORE_HOST}:${process.env.NEST_CORE_PORT}`
+  : `https://api.${document.location.host}`;
 
 /** Time in seconds */
 export const ACCESS_TOKEN_LIFETIME =

@@ -11,7 +11,7 @@ import fastifyHelmet from '@fastify/helmet';
 import { AppModule } from './app.module';
 import lang from '../libs/lang';
 import { version } from '../package.json';
-import { HOST, PORT } from 'libs/config';
+import { HOST, NGINX_HOST, PORT } from 'libs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -30,7 +30,15 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  app.enableCors({ credentials: true });
+  app.enableCors({
+    origin: [
+      `https://${NGINX_HOST}`,
+      `https://www.${NGINX_HOST}`,
+      `https://api.${NGINX_HOST}`,
+      `https://nuxt.${NGINX_HOST}`,
+    ],
+    credentials: true,
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

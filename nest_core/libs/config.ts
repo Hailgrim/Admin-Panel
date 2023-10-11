@@ -1,10 +1,12 @@
 import { DEV } from './constants';
 
 export const MODE = process.env.NODE_ENV || DEV;
-export const PROJECT_TAG = process.env.PROJECT_TAG || 'adminpanel';
+export const PROJECT_TAG = process.env.PROJECT_TAG || 'AP';
 
-export const HOST = process.env.NEST_CORE_PORT ? '0.0.0.0' : 'localhost';
+export const HOST = process.env.NEST_CORE_HOST || '0.0.0.0';
 export const PORT = Number(process.env.NEST_CORE_PORT || 3000);
+
+export const NGINX_HOST = process.env.NGINX_HOST || 'localhost';
 
 export const RMQ_HOST = process.env.RABBITMQ_HOST || 'localhost';
 export const RMQ_PORT = Number(process.env.RABBITMQ_PORT) || 5672;

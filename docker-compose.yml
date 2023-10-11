@@ -13,6 +13,8 @@ volumes:
     name: ${PROJECT_TAG}_nest_mailer_node_modules
   next_node_modules:
     name: ${PROJECT_TAG}_next_node_modules
+  nuxt_node_modules:
+    name: ${PROJECT_TAG}_nuxt_node_modules
 
 networks:
   main:
@@ -92,6 +94,24 @@ services:
     volumes:
       - "redis_data:/data"
 
+  nest_mailer:
+    build:
+      context: ./nest_mailer
+      args:
+        - PROJECT_TAG=${PROJECT_TAG}
+    container_name: ${PROJECT_TAG}_nest_mailer
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - main
+    expose:
+      - ${NEST_MAILER_PORT}
+    depends_on:
+      - rabbitmq
+    volumes:
+      - "nest_mailer_node_modules:/home/${PROJECT_TAG}/nest_mailer/node_modules"
+
   nest_core:
     build:
       context: ./nest_core
@@ -111,24 +131,6 @@ services:
     volumes:
       - "nest_core_node_modules:/home/${PROJECT_TAG}/nest_core/node_modules"
 
-  nest_mailer:
-    build:
-      context: ./nest_mailer
-      args:
-        - PROJECT_TAG=${PROJECT_TAG}
-    container_name: ${PROJECT_TAG}_nest_mailer
-    restart: always
-    env_file:
-      - .env
-    networks:
-      - main
-    expose:
-      - ${NEST_MAILER_PORT}
-    depends_on:
-      - rabbitmq
-    volumes:
-      - "nest_mailer_node_modules:/home/${PROJECT_TAG}/nest_mailer/node_modules"
-
   next:
     build:
       context: ./next
@@ -144,3 +146,19 @@ services:
       - ${NEXT_PORT}
     volumes:
       - "next_node_modules:/home/${PROJECT_TAG}/next/node_modules"
+
+  nuxt:
+    build:
+      context: ./nuxt
+      args:
+        - PROJECT_TAG=${PROJECT_TAG}
+    container_name: ${PROJECT_TAG}_nuxt
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - main
+    expose:
+      - ${NUXT_PORT}
+    volumes:
+      - "nuxt_node_modules:/home/${PROJECT_TAG}/nuxt/node_modules"

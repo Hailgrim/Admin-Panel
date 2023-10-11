@@ -94,34 +94,30 @@ export class AuthController {
     const { accessToken, refreshToken, sessionId } =
       await this.authService.signIn(req.user, rememberMe, oldSessionId);
 
-    res.cookie(`${PROJECT_TAG}_accessToken`, accessToken, {
-      httpOnly: true,
-      sameSite: 'strict',
-      path: '/',
-      maxAge: ACCESS_TOKEN_LIFETIME,
-    });
-    res.cookie(`${PROJECT_TAG}_refreshToken`, refreshToken, {
-      httpOnly: true,
-      sameSite: 'strict',
-      path: '/',
-      maxAge: rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2,
-    });
-    res.cookie(`${PROJECT_TAG}_sessionId`, String(sessionId), {
-      httpOnly: true,
-      sameSite: 'strict',
-      path: '/',
-      maxAge: REFRESH_TOKEN_LIFETIME * 12,
-    });
+    res.cookie(
+      `${PROJECT_TAG}_accessToken`,
+      accessToken,
+      this.authService.prepareCookie(),
+    );
+    res.cookie(
+      `${PROJECT_TAG}_refreshToken`,
+      refreshToken,
+      this.authService.prepareCookie(
+        rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2,
+      ),
+    );
+    res.cookie(
+      `${PROJECT_TAG}_sessionId`,
+      String(sessionId),
+      this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME * 12),
+    );
 
     if (rememberMe) {
-      res.cookie(`${PROJECT_TAG}_rememberMe`, '', {
-        httpOnly: true,
-        sameSite: 'strict',
-        path: '/',
-        maxAge: REFRESH_TOKEN_LIFETIME,
-      });
-    } else {
-      res.clearCookie(`${PROJECT_TAG}_rememberMe`);
+      res.cookie(
+        `${PROJECT_TAG}_rememberMe`,
+        '',
+        this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME),
+      );
     }
 
     res.status(HttpStatus.CREATED);
@@ -143,32 +139,30 @@ export class AuthController {
       rememberMe,
     );
 
-    res.cookie(`${PROJECT_TAG}_accessToken`, accessToken, {
-      httpOnly: true,
-      sameSite: 'strict',
-      path: '/',
-      maxAge: ACCESS_TOKEN_LIFETIME,
-    });
-    res.cookie(`${PROJECT_TAG}_refreshToken`, refreshToken, {
-      httpOnly: true,
-      sameSite: 'strict',
-      path: '/',
-      maxAge: rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2,
-    });
-    res.cookie(`${PROJECT_TAG}_sessionId`, String(req.user.sessionId), {
-      httpOnly: true,
-      sameSite: 'strict',
-      path: '/',
-      maxAge: REFRESH_TOKEN_LIFETIME * 12,
-    });
+    res.cookie(
+      `${PROJECT_TAG}_accessToken`,
+      accessToken,
+      this.authService.prepareCookie(),
+    );
+    res.cookie(
+      `${PROJECT_TAG}_refreshToken`,
+      refreshToken,
+      this.authService.prepareCookie(
+        rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2,
+      ),
+    );
+    res.cookie(
+      `${PROJECT_TAG}_sessionId`,
+      String(req.user.sessionId),
+      this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME * 12),
+    );
 
     if (rememberMe) {
-      res.cookie(`${PROJECT_TAG}_rememberMe`, '', {
-        httpOnly: true,
-        sameSite: 'strict',
-        path: '/',
-        maxAge: REFRESH_TOKEN_LIFETIME,
-      });
+      res.cookie(
+        `${PROJECT_TAG}_rememberMe`,
+        '',
+        this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME),
+      );
     }
 
     return { accessToken, refreshToken };
@@ -204,10 +198,22 @@ export class AuthController {
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<boolean> {
     const result = await this.authService.signOut(req.user);
-    res.clearCookie(`${PROJECT_TAG}_accessToken`);
-    res.clearCookie(`${PROJECT_TAG}_refreshToken`);
-    res.clearCookie(`${PROJECT_TAG}_rememberMe`);
-    res.clearCookie(`${PROJECT_TAG}_sessionId`);
+    res.clearCookie(
+      `${PROJECT_TAG}_accessToken`,
+      this.authService.prepareCookie(),
+    );
+    res.clearCookie(
+      `${PROJECT_TAG}_refreshToken`,
+      this.authService.prepareCookie(),
+    );
+    res.clearCookie(
+      `${PROJECT_TAG}_rememberMe`,
+      this.authService.prepareCookie(),
+    );
+    res.clearCookie(
+      `${PROJECT_TAG}_sessionId`,
+      this.authService.prepareCookie(),
+    );
     return result;
   }
 }

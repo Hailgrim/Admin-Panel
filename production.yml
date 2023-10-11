@@ -25,3 +25,7 @@ services:
   next:
     build:
       target: production
+
+  nuxt:
+    build:
+      target: production

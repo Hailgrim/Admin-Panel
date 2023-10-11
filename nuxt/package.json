@@ -1,0 +1,30 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "cleanup": "nuxi cleanup"
+  },
+  "dependencies": {
+    "@pinia/nuxt": "^0.4.11",
+    "pinia": "^2.1.6",
+    "vuetify": "^3.3.15"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.41.0",
+    "@mdi/font": "^7.2.96",
+    "@nuxt/devtools": "latest",
+    "@nuxtjs/i18n": "^8.0.0-rc.4",
+    "eslint": "^8.49.0",
+    "nuxt": "^3.7.0"
+  },
+  "overrides": {
+    "vue": "latest"
+  }
+}

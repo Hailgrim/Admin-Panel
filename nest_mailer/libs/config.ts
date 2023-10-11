@@ -1,7 +1,7 @@
 import { DEV } from './constants';
 
 export const MODE = process.env.NODE_ENV || DEV;
-export const PROJECT_TAG = process.env.PROJECT_TAG || 'adminpanel';
+export const PROJECT_TAG = process.env.PROJECT_TAG || 'AP';
 
 export const HOST = process.env.NEST_MAILER_HOST ? '0.0.0.0' : 'localhost';
 export const PORT = Number(process.env.NEST_MAILER_PORT || 3001);

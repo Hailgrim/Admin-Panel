@@ -1,61 +1,106 @@
 client_max_body_size 128m;
 
-# Redirect to HTTPS
-# server {
-#     listen ${NGINX_PORT};
-#     listen [::]:${NGINX_PORT};
-#     server_name ${NGINX_HOST};
-#     return 301 https://${NGINX_HOST}$request_uri;
-# }
+# SSL
+ssl_certificate /home/${PROJECT_TAG}/nginx/ssl/localhost.com.crt;
+ssl_certificate_key /home/${PROJECT_TAG}/nginx/ssl/localhost.com.key;
 
+# HTTP request proxy
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_set_header X-Content-Type-Options nosniff;
+
+# WS request proxy
+proxy_http_version 1.1;
+proxy_set_header Upgrade $http_upgrade;
+proxy_set_header Connection "upgrade";
+
+# Next: redirect to HTTPS
+server {
+    listen ${NGINX_PORT};
+    listen [::]:${NGINX_PORT};
+    server_name ${NGINX_HOST};
+    return 301 https://$host$request_uri;
+}
+
+# Next: main
+server {
+    # HTTPS
+    listen ${NGINX_SSL_PORT} ssl default_server;
+    listen [::]:${NGINX_SSL_PORT} ssl default_server;
+
+    server_name ${NGINX_HOST};
+
+    location / {
+        proxy_pass http://${NEXT_HOST}:${NEXT_PORT};
+    }
+
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /home/${PROJECT_TAG}/nginx/html;
+    }
+}
+
+# Nuxt: redirect to HTTPS
+server {
+    listen ${NGINX_PORT};
+    listen [::]:${NGINX_PORT};
+    server_name nuxt.${NGINX_HOST};
+    return 301 https://$host$request_uri;
+}
+
+# Nuxt: main
 server {
     # HTTP
     listen ${NGINX_PORT};
     listen [::]:${NGINX_PORT};
 
     # HTTPS
-    # listen ${NGINX_SSL_PORT} ssl default_server;
-    # listen [::]:${NGINX_SSL_PORT} ssl default_server;
+    listen ${NGINX_SSL_PORT} ssl;
+    listen [::]:${NGINX_SSL_PORT} ssl;
 
-    # SSL
-    # ssl_certificate /home/${PROJECT_TAG}/nginx/ssl/chained.crt;
-    # ssl_certificate_key /home/${PROJECT_TAG}/nginx/ssl/${NGINX_HOST}.key;
-
-    server_name ${NGINX_HOST};
+    server_name nuxt.${NGINX_HOST};
 
     location / {
-        proxy_pass http://${NEXT_HOST}:${NEXT_PORT};
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header X-Content-Type-Options nosniff;
-        # Websockets
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
+        proxy_pass http://${NUXT_HOST}:${NUXT_PORT};
     }
 
-    location /services/api {
-        rewrite /services/api/(.*) /$1 break;
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /home/${PROJECT_TAG}/nginx/html;
+    }
+}
+
+# Nest: redirect to HTTPS
+server {
+    listen ${NGINX_PORT};
+    listen [::]:${NGINX_PORT};
+    server_name api.${NGINX_HOST};
+    return 301 https://$host$request_uri;
+}
+
+# Nest: main
+server {
+    # HTTP
+    listen ${NGINX_PORT};
+    listen [::]:${NGINX_PORT};
+
+    # HTTPS
+    listen ${NGINX_SSL_PORT} ssl;
+    listen [::]:${NGINX_SSL_PORT} ssl;
+
+    server_name api.${NGINX_HOST};
+
+    location / {
         proxy_pass http://${NEST_CORE_HOST}:${NEST_CORE_PORT};
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header X-Content-Type-Options nosniff;
     }
 
     # location /files {
     #     autoindex off;
     # }
 
-    error_page   500 502 503 504  /50x.html;
-    location = /50x.html {
-        root /home/${PROJECT_TAG}/nginx/html;
-    }
-
-    location ~ /\. {
-        deny all;
-    }
+    # location ~ /\. {
+    #     deny all;
+    # }
 }

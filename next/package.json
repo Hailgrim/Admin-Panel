@@ -7,32 +7,32 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "lint-custom": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
+    "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^4.5.8",
-    "@mui/icons-material": "^5.14.7",
-    "@mui/material": "^5.14.7",
-    "@mui/system": "^5.14.7",
+    "@mui/icons-material": "^5.14.13",
+    "@mui/material": "^5.14.13",
+    "@mui/system": "^5.14.13",
     "@mui/x-data-grid": "^5.17.26",
-    "@reduxjs/toolkit": "^1.9.5",
+    "@reduxjs/toolkit": "^1.9.7",
     "async-mutex": "^0.4.0",
-    "next": "^13.4.19",
+    "next": "^13.5.4",
     "next-redux-wrapper": "^8.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-redux": "^8.1.2"
+    "react-redux": "^8.1.3"
   },
   "devDependencies": {
-    "@types/node": "^18.17.14",
-    "@types/react": "^18.2.21",
-    "@types/react-dom": "^18.2.7",
+    "@types/node": "^18.18.4",
+    "@types/react": "^18.2.28",
+    "@types/react-dom": "^18.2.13",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
-    "eslint": "^8.48.0",
-    "eslint-config-next": "^13.4.19",
+    "eslint": "^8.51.0",
+    "eslint-config-next": "^13.5.4",
     "eslint-config-prettier": "^8.10.0",
     "typescript": "^4.9.5"
   }
