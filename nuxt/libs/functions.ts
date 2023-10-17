@@ -25,8 +25,8 @@ export function testString(regex: RegExp, payload: string): boolean {
  * @returns {string} Formatted error text
  */
 export function makeErrorText(error: any): string {
-  const { t } = useI18n()
-  let result = t('unknownError')
+  const { $i18n } = useNuxtApp()
+  let result = $i18n.t('unknownError')
 
   if (
     error === undefined
@@ -36,7 +36,7 @@ export function makeErrorText(error: any): string {
     return result
 
   if ('status' in error && error.status === 429)
-    return t('tooManyRequests')
+    return $i18n.t('tooManyRequests')
 
   const errorObj = Object(error)
   if (errorObj?.data?.message) {

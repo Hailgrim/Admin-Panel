@@ -3,9 +3,9 @@ import SideBar from '~/components/Layout/SideBar.vue'
 
 const { t } = useI18n()
 const route = useRoute()
-const title = computed(() => t(String(route.meta.title || '?')))
-const description = computed(() => t(String(route.meta.description || '')))
-const name = computed(() => t(String(route.meta.name || '?')))
+const title = computed(() => route.meta.title ? t(String(route.meta.title)) : '?')
+const description = computed(() => route.meta.description ? t(String(route.meta.description)) : '')
+const name = computed(() => route.meta.name ? t(String(route.meta.name)) : '?')
 </script>
 
 <template>
@@ -14,14 +14,14 @@ const name = computed(() => t(String(route.meta.name || '?')))
     <Meta :content="description" name="description" />
   </Head>
   <v-card>
-    <v-layout>
+    <v-layout class="content">
       <SideBar />
-      <v-main class="content">
-        <v-app-bar density="comfortable" :flat="true">
-          <v-app-bar-title tag="h1">
-            {{ name }}
-          </v-app-bar-title>
-        </v-app-bar>
+      <v-app-bar density="comfortable" :flat="true">
+        <v-app-bar-title tag="h1">
+          {{ name }}
+        </v-app-bar-title>
+      </v-app-bar>
+      <v-main>
         <v-divider />
         <v-card :flat="true" class="pa-4">
           <slot />

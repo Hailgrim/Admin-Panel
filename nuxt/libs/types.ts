@@ -3,6 +3,11 @@ import type en from '~/locales/en'
 export type LangList = 'en' | 'ru'
 export type LangDictionary = typeof en
 
+export interface IRequestError {
+  status?: number
+  message?: string
+}
+
 export interface IAlert {
   id: number
   text?: string

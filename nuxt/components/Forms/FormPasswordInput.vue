@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const definedProps = defineProps<{
+const props = defineProps<{
   name: string
   label?: string
   required?: boolean
@@ -15,8 +15,8 @@ const visible = ref(false)
 
 <template>
   <v-text-field
-    v-bind="definedProps" persistent-hint density="compact" variant="outlined"
-    :class="hint ? 'pb-3' : ''" :value="modelValue" :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'" :type="visible ? 'text' : 'password'"
+    v-bind="props" persistent-hint density="compact" variant="outlined"
+    :class="hint ? 'pb-5' : ''" :value="modelValue" :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'" :type="visible ? 'text' : 'password'"
     @input="$emit('update:modelValue', $event.target.value)" @click:append-inner="visible = !visible"
   />
 </template>

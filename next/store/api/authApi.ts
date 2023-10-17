@@ -32,19 +32,19 @@ const authApi = createApi({
       }),
     }),
 
-    verifyUser: builder.query<boolean, IVerifyUser>({
-      query: payload => ({
-        url: `${route}/verify-user`,
-        method: 'POST',
-        body: payload,
-      }),
-    }),
-
     signIn: builder.query<IUser, IUserSignIn>({
       query: payload => ({
         url: `${route}/sign-in`,
         method: 'POST',
         credentials: 'include',
+        body: payload,
+      }),
+    }),
+
+    verifyUser: builder.query<boolean, IVerifyUser>({
+      query: payload => ({
+        url: `${route}/verify-user`,
+        method: 'POST',
         body: payload,
       }),
     }),

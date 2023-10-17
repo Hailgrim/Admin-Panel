@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const definedProps = defineProps<{
+const props = defineProps<{
   name: string
   label?: string
   required?: boolean
@@ -12,5 +12,5 @@ defineEmits(['update:modelValue'])
 </script>
 
 <template>
-  <v-checkbox v-bind="definedProps" persistent-hint density="compact" @change="$emit('update:modelValue', $event.target.checked)" />
+  <v-checkbox v-bind="props" persistent-hint density="compact" @change="$emit('update:modelValue', $event.target.checked)" />
 </template>

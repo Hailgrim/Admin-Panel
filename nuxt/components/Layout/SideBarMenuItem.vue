@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import type { ISideBarMenuItem } from '~/libs/types'
 
-const definedProps = defineProps<ISideBarMenuItem>()
+const props = defineProps<ISideBarMenuItem>()
 const route = useRoute()
 const router = useRouter()
 const selected = ref(false)
 
 watch(
-  [() => route.path, () => definedProps.href],
+  [() => route.path, () => props.href],
   () => {
-    let result = Boolean(definedProps.href)
+    let result = Boolean(props.href)
     const pathArr = route.path.split('/')
-    const linkArr = definedProps.href ? definedProps.href.split('/') : []
+    const linkArr = props.href ? props.href.split('/') : []
     linkArr.forEach((value, index) => {
       if (value !== pathArr[index])
         result = false
@@ -24,8 +24,8 @@ watch(
 
 <template>
   <v-list-group v-if="childs" :value="`${title}: ${href}`">
-    <template #activator="{ props }">
-      <v-list-item v-bind="props" :prepend-icon="icon" :title="title" />
+    <template #activator="{ props: itemProps }">
+      <v-list-item v-bind="itemProps" :prepend-icon="icon" :title="title" />
     </template>
     <SideBarMenuItem v-for="child in childs" :key="child.title" v-bind="child" />
   </v-list-group>

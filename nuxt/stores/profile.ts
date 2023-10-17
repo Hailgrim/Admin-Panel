@@ -1,49 +1,52 @@
 import { defineStore } from 'pinia'
 
-import type { IUser } from '~/libs/types'
-import { makeErrorText } from '~/libs/functions'
+import type { IUser, IUserSignIn, IUserSignUp, IVerifyUser } from '~/libs/types'
 
-export const useProfileStore = defineStore('main', () => {
+export const useProfileStore = defineStore('profile', () => {
   const profile = ref<IUser | null>(null)
   function setProfile(value: IUser | null) {
     profile.value = value
   }
 
-  const authPending = ref<boolean>(false)
-  const authErrorText = ref<string | null>(null)
-  const authErrorCode = ref<number | null>(null)
-  async function authorization() {
-    authPending.value = true
-    authErrorCode.value = null
-    const { data, error } = await useFetch<IUser>('https://jsonplaceholder.typicode.com/todos/1')
-    authPending.value = false
-    if (data)
+  const {
+    data: signUpResult,
+    error: signUpError,
+    pending: signUpLoading,
+    execute: signUp,
+  } = useCustomFetch<IUser, IUserSignUp>('/auth/sign-up', { method: 'post' })
+
+  const {
+    data,
+    error: signInError,
+    pending: signInLoading,
+    execute,
+  } = useCustomFetch<IUser, IUserSignIn>('/auth/sign-in', { method: 'post', credentials: 'include' })
+  async function signIn(payload: IUserSignIn) {
+    await execute(payload)
+    if (data.value)
       profile.value = data.value
-    if (error) {
-      authErrorCode.value = error.value?.status ?? null
-      const { t } = useI18n()
-      switch (error.value?.status) {
-        case 410:
-          authErrorText.value = t('userDeleted')
-          break
-        case 403:
-          authErrorText.value = null
-          break
-        case 401:
-          authErrorText.value = t('wrongEmailOrPassword')
-          break
-        default:
-          authErrorText.value = makeErrorText(error.value)
-          break
-      }
-    }
   }
+
+  const {
+    data: verifyResult,
+    error: verifyError,
+    pending: verifyLoading,
+    execute: verify,
+  } = useCustomFetch<boolean, IVerifyUser>('/auth/verify-user', { method: 'post' })
 
   return {
     profile,
     setProfile,
-    authErrorText,
-    authErrorCode,
-    authorization,
+    signUpLoading,
+    signUpError,
+    signUpResult,
+    signUp,
+    signInLoading,
+    signInError,
+    signIn,
+    verifyLoading,
+    verifyError,
+    verifyResult,
+    verify,
   }
 })

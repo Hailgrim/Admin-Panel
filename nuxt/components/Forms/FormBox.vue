@@ -1,7 +1,5 @@
 <script setup lang="ts">
-defineEmits<{
-  (event: 'submit'): void
-}>()
+defineEmits(['submit'])
 </script>
 
 <template>

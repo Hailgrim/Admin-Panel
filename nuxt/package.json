@@ -9,7 +9,8 @@
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "cleanup": "nuxi cleanup"
+    "cleanup": "nuxi cleanup",
+    "prepare": "nuxi prepare"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.4.11",
