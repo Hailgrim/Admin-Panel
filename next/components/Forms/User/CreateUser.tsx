@@ -10,8 +10,7 @@ import TextFieldStyled from '../../Other/TextFieldStyled';
 import FormBoxStyled from '../FormBoxStyled';
 import FormCheckbox from '../FormCheckbox';
 import { isAllowed, makeErrorText } from '../../../libs/functions';
-import { ROUTES } from '../../../libs/config';
-import { Rights } from '../../../libs/constants';
+import { Rights, ROUTES } from '../../../libs/constants';
 
 const CreateUser: React.FC = () => {
   const dispatch = useAppDispatch();

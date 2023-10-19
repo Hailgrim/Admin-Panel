@@ -11,8 +11,7 @@ import FormActions from '../FormActions';
 import TextFieldStyled from '../../Other/TextFieldStyled';
 import FormBoxStyled from '../FormBoxStyled';
 import FormCheckbox from '../FormCheckbox';
-import { ROUTES } from '../../../libs/config';
-import { Rights } from '../../../libs/constants';
+import { Rights, ROUTES } from '../../../libs/constants';
 
 const UpdateUser: React.FC<{
   data: IUser;

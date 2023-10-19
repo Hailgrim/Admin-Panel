@@ -6,7 +6,7 @@ import { useAppSelector } from '../../../store/hooks';
 import AuthAlert from '../../AuthLayout/AuthAlert';
 import AuthButtonStyled from '../../AuthLayout/AuthButtonStyled';
 import FormBoxStyled from '../FormBoxStyled';
-import { ROUTES } from '../../../libs/config';
+import { ROUTES } from '../../../libs/constants';
 
 const RegistrationSuccess: React.FC<{
   callback?: () => void;

@@ -11,7 +11,7 @@ import TextFieldStyled from '../../Other/TextFieldStyled';
 import AuthAlert from '../../AuthLayout/AuthAlert';
 import AuthButtonStyled from '../../AuthLayout/AuthButtonStyled';
 import FormBoxStyled from '../FormBoxStyled';
-import { ROUTES } from '../../../libs/config';
+import { ROUTES } from '../../../libs/constants';
 import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX } from '../../../libs/constants';
 import CustomModal from '../../Other/CustomModal';
 import RegistrationSuccess from './RegistrationSuccess';

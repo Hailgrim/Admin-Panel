@@ -9,8 +9,7 @@ import FormActions from '../FormActions';
 import TextFieldStyled from '../../Other/TextFieldStyled';
 import FormBoxStyled from '../FormBoxStyled';
 import { isAllowed, makeErrorText } from '../../../libs/functions';
-import { ROUTES } from '../../../libs/config';
-import { Rights } from '../../../libs/constants';
+import { Rights, ROUTES } from '../../../libs/constants';
 
 const CreateRole: React.FC = () => {
   const dispatch = useAppDispatch();

@@ -1,15 +1,15 @@
 import { GetServerSidePropsContext, GetServerSidePropsResult, PreviewData } from 'next';
 import { ParsedUrlQuery } from 'querystring';
+import { SerializedError } from '@reduxjs/toolkit';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 
-import { IPage, IPagination, IRole, ISideBarItem } from './types';
+import { ICreateCookieOptions, IPage, IPagination, IRole, ISideBarItem } from './types';
 import { AppStore, wrapper } from '../store/store';
 import { setAuthTokens, setProfile, setUserAgent } from '../store/slices/appSlice';
 import authApi from '../store/api/authApi';
 import lang, { LangList } from './lang';
-import { ACCESS_TOKEN_LIFETIME, HOST, PROJECT_TAG, REFRESH_TOKEN_LIFETIME, ROUTES } from './config';
-import { Rights } from './constants';
-import { SerializedError } from '@reduxjs/toolkit';
-import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
+import { ACCESS_TOKEN_LIFETIME, HOST, PROJECT_TAG, REFRESH_TOKEN_LIFETIME } from './config';
+import { ROUTES, Rights } from './constants';
 
 /**
  * @param {string} link Checked link
@@ -33,6 +33,7 @@ export const testString = (regex: RegExp, payload: string): boolean => {
 
 /**
  * Recognize a section by url
+ * @param {string} url - URL string
  */
 export const routeSection = (url: string): keyof typeof ROUTES | undefined => {
   if (
@@ -156,13 +157,23 @@ export const isAllowed = (
 };
 
 /**
- * @param {string} token Token (e. g. tokenName=tokenValue)
- * @param {number} maxAge Token lifetime in seconds
+ * @param {string} name Cookie name
+ * @param {string} value Cookie value
+ * @param {ICreateCookieOptions} options Cookie options
  * @returns {string} Final cookie string
  */
-export const createCookie = (token: string, maxAge = ACCESS_TOKEN_LIFETIME): string => {
-  return `${token};HttpOnly;SameSite=None;Secure;Path=/;Domain=.${HOST};MaxAge=${maxAge}`;
-};
+export function createCookie(name: string, value: string | null, options?: ICreateCookieOptions): string {
+  let result = `${name}${value ? `=${value}` : ''}`;
+  if (options) {
+    if (options.httpOnly) result = result.concat(';HttpOnly');
+    if (options.sameSite) result = result.concat(`;SameSite=${options.sameSite}`);
+    if (options.secure) result = result.concat(';Secure');
+    if (options.path) result = result.concat(`;Path=${options.path}`);
+    if (options.domain) result = result.concat(`;Domain=${options.domain}`);
+    if (options.maxAge) result = result.concat(`;MaxAge=${options.maxAge}`);
+  }
+  return result;
+}
 
 /**
  * HOC for wrapper.getServerSideProps with authorization request
@@ -190,11 +201,22 @@ export const getServerSidePropsCustom = <T = void>(
       if (data) {
         accessToken = data.accessToken;
         refreshToken = data.refreshToken;
+        const cookieOptions: ICreateCookieOptions = {
+          domain: `.${HOST}`,
+          httpOnly: true,
+          path: '/',
+          sameSite: 'None',
+          secure: true
+        };
         ctx.res.setHeader(
           'Set-Cookie',
           [
-            createCookie(`${PROJECT_TAG}_accessToken=${accessToken}`),
-            createCookie(`${PROJECT_TAG}_refreshToken=${refreshToken}`, rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2),
+            createCookie(`${PROJECT_TAG}_accessToken`, accessToken, { ...cookieOptions, maxAge: ACCESS_TOKEN_LIFETIME }),
+            createCookie(
+              `${PROJECT_TAG}_refreshToken`,
+              refreshToken,
+              { ...cookieOptions, maxAge: rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2 },
+            ),
           ],
         );
       }

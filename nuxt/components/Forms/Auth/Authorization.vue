@@ -10,6 +10,7 @@ import CustomModal from '~/components/Other/CustomModal.vue'
 import VerifyUser from '~/components/Forms/Auth/VerifyUser.vue'
 import { useProfileStore } from '~/stores/profile'
 import { makeErrorText } from '~/libs/functions'
+import { ROUTES } from '~/libs/constants'
 
 const { t } = useI18n()
 const email = ref('')
@@ -65,8 +66,8 @@ watch(
     <FormButton block type="submit" color="info" :loading="profileStore.signInLoading">
       {{ $t('signIn') }}
     </FormButton>
-    <FormAuthLink :href="$config.public.ROUTES.auth.signUp" :text="$t('signUpText')" />
-    <FormAuthLink :href="$config.public.ROUTES.auth.forget" :text="$t('forgotPasswordText')" />
+    <FormAuthLink :href="ROUTES.auth.signUp" :text="$t('signUpText')" />
+    <FormAuthLink :href="ROUTES.auth.forget" :text="$t('forgotPasswordText')" />
   </FormBox>
   <CustomModal v-model="verifyModal" :title="$t('verification')">
     <VerifyUser :email="email" @close="verifyModal = false" />

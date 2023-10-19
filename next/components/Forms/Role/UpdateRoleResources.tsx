@@ -10,8 +10,7 @@ import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import FormBoxStyled from '../FormBoxStyled';
 import ResourceRow from '../Resource/ResourceRow';
-import { ROUTES } from '../../../libs/config';
-import { Rights } from '../../../libs/constants';
+import { Rights, ROUTES } from '../../../libs/constants';
 
 const UpdateRoleResources: React.FC<{
   role: IRole;

@@ -17,8 +17,7 @@ import lang from '../../libs/lang';
 import authApi from '../../store/api/authApi';
 import { toggleModalSideBar, toggleSideBar } from '../../store/slices/appSlice';
 import theme from '../../libs/theme';
-import { SIDE_MENU_WIDTH, SIDE_MENU_WIDTH_OPENED } from '../../libs/constants';
-import { ROUTES } from '../../libs/config';
+import { SIDE_MENU_WIDTH, SIDE_MENU_WIDTH_OPENED, ROUTES } from '../../libs/constants';
 
 const AppBarStyled = styled(
   AppBar,

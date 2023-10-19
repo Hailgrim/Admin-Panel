@@ -10,8 +10,7 @@ import TableActions from './TableActions';
 import { addAlert } from '../../store/slices/appSlice';
 import EditButton from './EditButton';
 import { isAllowed, makeErrorText } from '../../libs/functions';
-import { ROUTES } from '../../libs/config';
-import { Rights } from '../../libs/constants';
+import { Rights, ROUTES } from '../../libs/constants';
 
 const RoleTable: React.FC<{
   data?: IFindAndCountRes<IRole> | null;

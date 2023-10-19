@@ -10,8 +10,7 @@ import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import FormBoxStyled from '../FormBoxStyled';
 import TextFieldStyled from '../../Other/TextFieldStyled';
-import { ROUTES } from '../../../libs/config';
-import { Rights } from '../../../libs/constants';
+import { Rights, ROUTES } from '../../../libs/constants';
 
 const UpdateRole: React.FC<{
   data: IRole;

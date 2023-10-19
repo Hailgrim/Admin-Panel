@@ -13,9 +13,9 @@ import AuthAlert from '../../../components/AuthLayout/AuthAlert';
 import FormCheckbox from '../../../components/Forms/FormCheckbox';
 import FormBoxStyled from '../../../components/Forms/FormBoxStyled';
 import AuthButtonStyled from '../../../components/AuthLayout/AuthButtonStyled';
-import { ROUTES } from '../../../libs/config';
 import CustomModal from '../../Other/CustomModal';
 import VerifyUser from './VerifyUser';
+import { ROUTES } from '../../../libs/constants';
 
 const Authorization: React.FC = () => {
   const dispatch = useAppDispatch();

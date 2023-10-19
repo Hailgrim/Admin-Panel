@@ -10,7 +10,7 @@ import TextFieldStyled from '../../../components/Other/TextFieldStyled';
 import AuthAlert from '../../../components/AuthLayout/AuthAlert';
 import FormBoxStyled from '../../../components/Forms/FormBoxStyled';
 import AuthButtonStyled from '../../../components/AuthLayout/AuthButtonStyled';
-import { ROUTES } from '../../../libs/config';
+import { ROUTES } from '../../../libs/constants';
 import CustomModal from '../../Other/CustomModal';
 import ResetPassword from './ResetPassword';
 

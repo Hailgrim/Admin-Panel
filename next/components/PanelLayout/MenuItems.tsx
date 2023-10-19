@@ -10,8 +10,7 @@ import ApiIcon from '@mui/icons-material/Api';
 import lang from '../../libs/lang';
 import { useAppSelector } from '../../store/hooks';
 import SideBarItem from './SideBarItem';
-import { Rights } from '../../libs/constants';
-import { ROUTES } from '../../libs/config';
+import { Rights, ROUTES } from '../../libs/constants';
 import { isAllowed } from '../../libs/functions';
 
 const MenuItems: React.FC = () => {

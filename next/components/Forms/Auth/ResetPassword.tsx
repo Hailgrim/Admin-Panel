@@ -11,7 +11,7 @@ import AuthAlert from '../../../components/AuthLayout/AuthAlert';
 import FormBoxStyled from '../../../components/Forms/FormBoxStyled';
 import AuthButtonStyled from '../../../components/AuthLayout/AuthButtonStyled';
 import { PASSWORD_REGEX } from '../../../libs/constants';
-import { ROUTES } from '../../../libs/config';
+import { ROUTES } from '../../../libs/constants';
 
 const ResetPassword: React.FC<{
   email: string;

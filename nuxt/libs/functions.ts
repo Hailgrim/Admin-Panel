@@ -1,4 +1,4 @@
-import type { ISideBarMenuItem } from './types'
+import type { ICreateCookieOptions, ISideBarMenuItem } from './types'
 
 /**
  * @param {string} href Checked link
@@ -48,3 +48,28 @@ export function makeErrorText(error: any): string {
 
   return result
 }
+
+/**
+ * @param {string} name Cookie name
+ * @param {string} value Cookie value
+ * @param {ICreateCookieOptions} options Cookie options
+ * @returns {string} Final cookie string
+ */
+export function createCookie(name: string, value: string | null, options?: ICreateCookieOptions): string {
+  let result = `${name}${value ? `=${value}` : ''}`
+  if (options) {
+    if (options.httpOnly)
+      result = result.concat(';HttpOnly')
+    if (options.sameSite)
+      result = result.concat(`;SameSite=${options.sameSite}`)
+    if (options.secure)
+      result = result.concat(';Secure')
+    if (options.path)
+      result = result.concat(`;Path=${options.path}`)
+    if (options.domain)
+      result = result.concat(`;Domain=${options.domain}`)
+    if (options.maxAge)
+      result = result.concat(`;MaxAge=${options.maxAge}`)
+  }
+  return result
+};

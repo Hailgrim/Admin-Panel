@@ -8,10 +8,9 @@ import FormAuthLink from '../FormAuthLink.vue'
 import CustomModal from '~/components/Other/CustomModal.vue'
 import RegistrationSuccess from '~/components/Forms/Auth/RegistrationSuccess.vue'
 import { makeErrorText, testString } from '~/libs/functions'
-import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX } from '~/libs/constants'
+import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX, ROUTES } from '~/libs/constants'
 import { useProfileStore } from '~/stores/profile'
 
-const config = useRuntimeConfig()
 const { t } = useI18n()
 const name = ref('')
 const nameIsValid = (value: string) => testString(NAME_REGEX, value) || t('nameValidation')
@@ -35,7 +34,7 @@ function submitHandler() {
 
 function successHandler() {
   successModal.value = false
-  router.push(config.public.ROUTES.auth.signIn)
+  router.push(ROUTES.auth.signIn)
 }
 
 watch(
@@ -81,8 +80,8 @@ watch(
     <FormButton block type="submit" color="success" :loading="profileStore.signUpLoading">
       {{ $t('signUp') }}
     </FormButton>
-    <FormAuthLink :href="$config.public.ROUTES.auth.signIn" :text="$t('signInText')" />
-    <FormAuthLink :href="$config.public.ROUTES.auth.forget" :text="$t('forgotPasswordText')" />
+    <FormAuthLink :href="ROUTES.auth.signIn" :text="$t('signInText')" />
+    <FormAuthLink :href="ROUTES.auth.forget" :text="$t('forgotPasswordText')" />
     <CustomModal v-model="successModal" :title="$t('registration')">
       <RegistrationSuccess :email="email" @close="successHandler" />
     </CustomModal>

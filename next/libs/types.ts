@@ -40,6 +40,15 @@ export interface ICookies {
   rememberMe: boolean;
 }
 
+export interface ICreateCookieOptions {
+  httpOnly?: boolean;
+  sameSite?: 'Lax' | 'Strict' | 'None';
+  secure?: boolean;
+  path?: string;
+  domain?: string;
+  maxAge?: number;
+}
+
 export interface ISideBarItem {
   link?: string;
   name?: string;

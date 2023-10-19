@@ -23,31 +23,6 @@ export default defineNuxtConfig({
       ACCESS_TOKEN_LIFETIME: process.env.ACCESS_TOKEN_LIFETIME || String(60 * 60),
       /** Time in seconds */
       REFRESH_TOKEN_LIFETIME: process.env.REFRESH_TOKEN_LIFETIME || String(60 * 60 * 24 * 7),
-      /** Supported application routes */
-      ROUTES: {
-        /** Authorization routes */
-        auth: {
-          signIn: '/authorization',
-          signUp: '/registration',
-          forget: '/forgot-password',
-        },
-        /** Panel routes */
-        panel: {
-          home: '/',
-          profile: '/profile',
-          users: '/users',
-          newUser: '/users/new',
-          user: '/users/#ID#',
-          roles: '/roles',
-          newRole: '/roles/new',
-          role: '/roles/#ID#',
-          resources: '/resources',
-          newResource: '/resources/new',
-          resource: '/resources/#ID#',
-          files: '/files',
-          newFile: '/files/new',
-        },
-      },
     },
   },
 })

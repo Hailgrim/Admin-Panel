@@ -12,3 +12,29 @@ export enum Rights {
   Updating = 'updating',
   Deleting = 'deleting',
 }
+
+/** Supported application routes */
+export const ROUTES = {
+  /** Authorization routes */
+  auth: {
+    signIn: '/authorization',
+    signUp: '/registration',
+    forget: '/forgot-password',
+  },
+  /** Panel routes */
+  panel: {
+    home: '/',
+    profile: '/profile',
+    users: '/users',
+    newUser: '/users/new',
+    user: '/users/#ID#',
+    roles: '/roles',
+    newRole: '/roles/new',
+    role: '/roles/#ID#',
+    resources: '/resources',
+    newResource: '/resources/new',
+    resource: '/resources/#ID#',
+    files: '/files',
+    newFile: '/files/new',
+  },
+}
