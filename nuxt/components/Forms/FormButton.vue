@@ -5,12 +5,16 @@ const props = defineProps<{
   loading?: boolean
   disabled?: boolean
   block?: boolean
+  prepandIcon?: string
 }>()
 defineEmits(['click'])
 </script>
 
 <template>
   <v-btn v-bind="props" class="custom mb-5" size="large" variant="flat" @click="$emit('click')">
+    <template v-if="props.prepandIcon" #prepend>
+      <v-icon :icon="props.prepandIcon" />
+    </template>
     <slot />
   </v-btn>
 </template>

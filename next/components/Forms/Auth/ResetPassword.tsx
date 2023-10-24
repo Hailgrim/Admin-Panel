@@ -26,7 +26,7 @@ const ResetPassword: React.FC<{
   const [password, setPassword] = React.useState('');
   const passwordError = React.useMemo(() => testString(PASSWORD_REGEX, password), [password]);
 
-  const resetPasswordHandler = (event?: React.FormEvent<HTMLFormElement>) => {
+  const resetPasswordHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
     resetPassword({ email, code, password });
   };
@@ -40,7 +40,7 @@ const ResetPassword: React.FC<{
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 404:
-          setErrorText(String(lang.get(userLang)?.wrongEmail));
+          setErrorText(String(lang.get(userLang)?.wrongEmailOrCode));
           break;
         default:
           setErrorText(makeErrorText(error, userLang));
@@ -67,22 +67,13 @@ const ResetPassword: React.FC<{
       {errorText && <AuthAlert severity="error" text={errorText} />}
       <TextFieldStyled
         required
-        name="email"
-        type="email"
-        label={lang.get(userLang)?.email}
-        value={email}
-        disabled={true}
-        autoFocus
-      />
-      <TextFieldStyled
-        required
         autoComplete="off"
         type="text"
         name="code"
         label={lang.get(userLang)?.code}
         value={code}
         onChange={event => setCode(event.currentTarget.value)}
-        helperText={lang.get(userLang)?.codeFromEmail}
+        helperText={`${lang.get(userLang)?.codeFromEmail} (${email})`}
       />
       <TextFieldStyled
         required

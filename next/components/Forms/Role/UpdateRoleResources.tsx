@@ -24,8 +24,8 @@ const UpdateRoleResources: React.FC<{
     role.resources?.map(value => value.RolesResources) || []
   );
 
-  const updateHandler = (event?: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
+  const updateHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     update({
       id: role.id,
       fields: updatedRights,

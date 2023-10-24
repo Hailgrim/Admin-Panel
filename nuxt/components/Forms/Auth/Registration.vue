@@ -54,9 +54,9 @@ watch(
 )
 
 watch(
-  () => profileStore.signUpResult,
+  () => profileStore.signUpData,
   () => {
-    if (profileStore.signUpResult)
+    if (profileStore.signUpData)
       successModal.value = true
   },
 )
@@ -77,7 +77,7 @@ watch(
       v-model:model-value="password" required name="password"
       :label="$t('password')" :rules="[passwordIsValid]" :hint="$t('passwordValidation')"
     />
-    <FormButton block type="submit" color="success" :loading="profileStore.signUpLoading">
+    <FormButton block type="submit" color="success" :loading="profileStore.signUpPending">
       {{ $t('signUp') }}
     </FormButton>
     <FormAuthLink :href="ROUTES.auth.signIn" :text="$t('signInText')" />

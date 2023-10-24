@@ -2,6 +2,7 @@
 import Registration from '~/components/Forms/Auth/Registration.vue'
 
 definePageMeta({
+  middleware: ['auth'],
   layout: 'authorization',
   name: 'signUp',
   title: 'signUp',

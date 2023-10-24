@@ -29,8 +29,8 @@ const Registration: React.FC = () => {
   const passwordError = React.useMemo(() => testString(PASSWORD_REGEX, password), [password]);
   const [modalState, setModalState] = React.useState(false);
 
-  const signUpHandler = (event?: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
+  const signUpHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     signUp({
       name: name.trim(),
       email: email.trim(),

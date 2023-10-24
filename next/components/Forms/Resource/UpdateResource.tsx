@@ -25,8 +25,8 @@ const UpdateResource: React.FC<{
   const [path, setPath] = React.useState(data.path);
   const [description, setDescription] = React.useState(data.description || '');
 
-  const updateHandler = (event?: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
+  const updateHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const updatedValues = getUpdatedValues<IResource>(
       data,
       { name, path, description: description || null },

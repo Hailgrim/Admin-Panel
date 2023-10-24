@@ -28,8 +28,8 @@ const Authorization: React.FC = () => {
   const [rememberMe, setRememberMe] = React.useState(false);
   const [modalState, setModalState] = React.useState(false);
 
-  const signInHandler = (event?: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
+  const signInHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     signIn({ username: email, password, rememberMe });
   };
 

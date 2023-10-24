@@ -20,8 +20,8 @@ const VerifyUser: React.FC<{
   const [errorText, setErrorText] = React.useState<string>();
   const [code, setCode] = React.useState('');
 
-  const verifyUserHandler = (event?: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
+  const verifyUserHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     verifyUser({ email, code });
   };
 

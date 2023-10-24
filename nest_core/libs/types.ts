@@ -17,6 +17,10 @@ export abstract class ITokensResponse {
   refreshToken: string;
 }
 
+export abstract class ICookiesResponse extends ITokensResponse {
+  sessionId: number;
+}
+
 export interface IRequestUser {
   id: number;
   email: string;

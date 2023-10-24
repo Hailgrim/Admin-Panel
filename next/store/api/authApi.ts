@@ -81,12 +81,12 @@ const authApi = createApi({
       }),
     }),
 
-    updateProfile: builder.mutation<boolean, IUpdateReq<IUser>>({
+    updateProfile: builder.mutation<boolean, Partial<IUser>>({
       query: payload => ({
         url: `${route}/profile`,
         method: 'PATCH',
         credentials: 'include',
-        body: payload.fields,
+        body: payload,
       }),
     }),
 

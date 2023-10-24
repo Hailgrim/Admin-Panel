@@ -7,7 +7,7 @@ const router = useRouter()
 const selected = ref(false)
 
 watch(
-  [() => route.path, () => props.href],
+  () => route.path,
   () => {
     let result = Boolean(props.href)
     const pathArr = route.path.split('/')
@@ -23,11 +23,12 @@ watch(
 </script>
 
 <template>
-  <v-list-group v-if="childs" :value="`${title}: ${href}`">
+  <v-list-group v-if="childs" :value="`${title}: ${href}`" :fluid="true">
     <template #activator="{ props: itemProps }">
       <v-list-item v-bind="itemProps" :prepend-icon="icon" :title="title" />
     </template>
     <SideBarMenuItem v-for="child in childs" :key="child.title" v-bind="child" />
+    <v-divider />
   </v-list-group>
   <v-list-item
     v-else :prepend-icon="icon" :title="title" link :href="href" :active="selected"

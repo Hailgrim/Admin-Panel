@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
+import { useDisplay } from 'vuetify'
 
 import SideBarMenu from './SideBarMenu.vue'
 import { useMainStore } from '~/stores/main'
 import type { ISideBarMenuItem } from '~/libs/types'
 
 const mainStore = useMainStore()
-const { toggleSideBar } = mainStore
-const { isSideBarOpened } = storeToRefs(mainStore)
+const { width } = useDisplay()
 const { t } = useI18n()
 const menu: ISideBarMenuItem[] = [
   {
@@ -17,7 +16,7 @@ const menu: ISideBarMenuItem[] = [
   },
   {
     title: t('profile'),
-    icon: 'mdi-account',
+    icon: 'mdi-account-box',
     href: '/profile',
   },
   {
@@ -45,11 +44,15 @@ const menu: ISideBarMenuItem[] = [
 </script>
 
 <template>
-  <v-navigation-drawer permanent :rail="!isSideBarOpened">
+  <v-navigation-drawer
+    :model-value="width < 1000 ? !mainStore.isSideBarOpened : true" :temporary="width < 1000"
+    :rail="width > 1000 ? !mainStore.isSideBarOpened : null"
+    :permanent="width > 1000" @update:model-value="mainStore.toggleSideBar(!mainStore.isSideBarOpened)"
+  >
     <v-list density="compact" nav>
       <v-list-item
-        prepend-icon="mdi-menu" :title="$t('adminPanel')" :active="false"
-        @click="toggleSideBar(!isSideBarOpened)"
+        prepend-icon="mdi-shield-account-variant" :title="$t('adminPanel')" :active="false"
+        @click="mainStore.toggleSideBar(!mainStore.isSideBarOpened)"
       />
     </v-list>
     <v-divider />

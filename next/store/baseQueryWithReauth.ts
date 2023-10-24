@@ -21,12 +21,12 @@ const baseQuery = fetchBaseQuery({
       userAgent,
     } = (getState() as RootState).app;
 
-    if (accessToken || refreshToken) {
+    if (refreshToken) {
       headers.set(
         'Cookie',
-        `${PROJECT_TAG}_accessToken=${accessToken}`
-          .concat(`;${PROJECT_TAG}_refreshToken=${refreshToken}`)
-          .concat(rememberMe ? `;${PROJECT_TAG}_rememberMe` : ''),
+        `${PROJECT_TAG}_refreshToken=${refreshToken}`
+          .concat(accessToken ? `;${PROJECT_TAG}_accessToken=${accessToken}` : '')
+          .concat(rememberMe ? `;${PROJECT_TAG}_rememberMe=true` : ''),
       );
     }
 

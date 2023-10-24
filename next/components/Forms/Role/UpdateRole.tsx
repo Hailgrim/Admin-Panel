@@ -24,8 +24,8 @@ const UpdateRole: React.FC<{
   const [name, setName] = React.useState(data.name);
   const [description, setDescription] = React.useState(data.description || '');
 
-  const updateHandler = (event?: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
+  const updateHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const updatedValues = getUpdatedValues<IRole>(
       data,
       { name, description },

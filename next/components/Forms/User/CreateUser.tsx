@@ -23,8 +23,8 @@ const CreateUser: React.FC = () => {
   const [enabled, setEnabled] = React.useState(false);
   const [password, setPassword] = React.useState('');
 
-  const createHandler = (event?: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
+  const createHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     create({ email, name, password, enabled });
   };
 

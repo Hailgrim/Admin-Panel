@@ -24,8 +24,8 @@ const UpdateUserRoles: React.FC<{
     user.roles?.map(value => value.UsersRoles) || []
   );
 
-  const updateHandler = (event?: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
+  const updateHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     update({
       id: user.id,
       fields: updatedRoles,

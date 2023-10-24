@@ -20,8 +20,8 @@ const CreateRole: React.FC = () => {
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
 
-  const createHandler = (event?: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
+  const createHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     create({ name, description: description || null });
   };
 

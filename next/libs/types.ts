@@ -37,6 +37,7 @@ export interface IUpdateReq<T> {
 export interface ICookies {
   accessToken: string | null;
   refreshToken: string | null;
+  sessionId?: string | number;
   rememberMe: boolean;
 }
 

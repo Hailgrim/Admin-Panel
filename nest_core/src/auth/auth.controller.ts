@@ -19,6 +19,7 @@ import { LocalAuthGuard } from './local-auth.guard';
 import {
   FastifyRequestWithAuth,
   FastifyRequestWithUser,
+  ICookiesResponse,
   ITokensResponse,
   IUser,
 } from 'libs/types';
@@ -55,13 +56,6 @@ export class AuthController {
   ): Promise<IUser> {
     res.status(HttpStatus.CREATED);
     return this.authService.signUp(signUpDto);
-  }
-
-  @ApiOperation({ summary: lang.get('en')?.confirmRegistration })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Post('verify-user')
-  async verifyUser(@Body() verifyUserDto: VerifyUserDto): Promise<boolean> {
-    return this.authService.verifyUser(verifyUserDto);
   }
 
   @ApiOperation({ summary: lang.get('en')?.forgotPassword })
@@ -115,13 +109,20 @@ export class AuthController {
     if (rememberMe) {
       res.cookie(
         `${PROJECT_TAG}_rememberMe`,
-        '',
+        'true',
         this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME),
       );
     }
 
     res.status(HttpStatus.CREATED);
     return req.user;
+  }
+
+  @ApiOperation({ summary: lang.get('en')?.confirmRegistration })
+  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @Post('verify-user')
+  async verifyUser(@Body() verifyUserDto: VerifyUserDto): Promise<boolean> {
+    return this.authService.verifyUser(verifyUserDto);
   }
 
   @ApiOperation({ summary: lang.get('en')?.refreshToken })
@@ -131,7 +132,7 @@ export class AuthController {
   async refresh(
     @Req() req: FastifyRequestWithAuth,
     @Res({ passthrough: true }) res: FastifyReply,
-  ): Promise<ITokensResponse> {
+  ): Promise<ICookiesResponse> {
     const rememberMe =
       `${PROJECT_TAG}_rememberMe` in getCookies(req.headers.cookie);
     const { accessToken, refreshToken } = await this.authService.refresh(
@@ -160,12 +161,12 @@ export class AuthController {
     if (rememberMe) {
       res.cookie(
         `${PROJECT_TAG}_rememberMe`,
-        '',
+        'true',
         this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME),
       );
     }
 
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, sessionId: req.user.sessionId };
   }
 
   @ApiOperation({ summary: lang.get('en')?.profile })
@@ -207,11 +208,11 @@ export class AuthController {
       this.authService.prepareCookie(),
     );
     res.clearCookie(
-      `${PROJECT_TAG}_rememberMe`,
+      `${PROJECT_TAG}_sessionId`,
       this.authService.prepareCookie(),
     );
     res.clearCookie(
-      `${PROJECT_TAG}_sessionId`,
+      `${PROJECT_TAG}_rememberMe`,
       this.authService.prepareCookie(),
     );
     return result;

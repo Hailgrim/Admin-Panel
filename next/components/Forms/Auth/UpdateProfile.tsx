@@ -4,32 +4,34 @@ import lang from '../../../libs/lang';
 import { getUpdatedValues, isAllowed, makeErrorText } from '../../../libs/functions';
 import { IUser } from '../../../libs/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { addAlert } from '../../../store/slices/appSlice';
+import { addAlert, setProfile } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import TextFieldStyled from '../../Other/TextFieldStyled';
 import FormBoxStyled from '../FormBoxStyled';
 import { Rights, ROUTES } from '../../../libs/constants';
 import authApi from '../../../store/api/authApi';
 
-const UpdateProfile: React.FC<{
-  data: IUser;
-}> = ({ data }) => {
+const UpdateProfile: React.FC = () => {
   const dispatch = useAppDispatch();
   const userLang = useAppSelector(store => store.app.userLang);
   const profile = useAppSelector(store => store.app.profile);
   const [update, updateReq] = authApi.useUpdateProfileMutation();
-  const [name, setName] = React.useState(data.name);
+  const [name, setName] = React.useState(profile?.name || '');
 
-  const updateHandler = (event?: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
-    const updatedValues = getUpdatedValues<IUser>(
-      data,
-      { name },
-    );
-    if (Object.keys(updatedValues).length == 0) {
-      dispatch(addAlert({ type: 'warning', text: lang.get(userLang)?.nothingToUpdate }));
+  const updateHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (profile) {
+      const updatedValues = getUpdatedValues<IUser>(
+        profile,
+        { name },
+      );
+      if (Object.keys(updatedValues).length == 0) {
+        dispatch(addAlert({ type: 'warning', text: lang.get(userLang)?.nothingToUpdate }));
+      } else {
+        update(updatedValues);
+      }
     } else {
-      update({ id: data.id, fields: updatedValues });
+      dispatch(addAlert({ type: 'warning', text: lang.get(userLang)?.unknownError }));
     }
   };
 
@@ -41,6 +43,7 @@ const UpdateProfile: React.FC<{
       dispatch(addAlert({ type: 'error', text: makeErrorText(updateReq.error, userLang) }));
     }
     if (updateReq.data) {
+      if (profile) dispatch(setProfile({ ...profile, name }));
       dispatch(addAlert({ type: 'success', text: lang.get(userLang)?.success }));
     }
   }, [
@@ -58,14 +61,12 @@ const UpdateProfile: React.FC<{
         value={name}
         onChange={event => setName(event.currentTarget.value)}
       />
-      {data && (
-        <FormActions
-          update={{
-            loading: updateReq.isLoading,
-            disabled: !isAllowed(ROUTES.panel.resources, Rights.Updating, profile?.roles),
-          }}
-        />
-      )}
+      <FormActions
+        update={{
+          loading: updateReq.isLoading,
+          disabled: !isAllowed(ROUTES.panel.resources, Rights.Updating, profile?.roles),
+        }}
+      />
     </FormBoxStyled>
   );
 };

@@ -12,6 +12,7 @@ export interface IAlert {
   id: number
   text?: string
   type?: 'error' | 'warning' | 'success'
+  deleted?: boolean
 }
 
 export interface IMeta {
@@ -48,15 +49,6 @@ export interface ICookies {
   accessToken: string | null
   refreshToken: string | null
   rememberMe: boolean
-}
-
-export interface ICreateCookieOptions {
-  httpOnly?: boolean
-  sameSite?: 'Lax' | 'Strict' | 'None'
-  secure?: boolean
-  path?: string
-  domain?: string
-  maxAge?: number
 }
 
 export interface ISideBarMenuItem {

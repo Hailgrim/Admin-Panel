@@ -26,8 +26,8 @@ const UpdateUser: React.FC<{
   const [name, setName] = React.useState(data.name);
   const [enabled, setEnabled] = React.useState(data.enabled);
 
-  const updateHandler = (event?: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
+  const updateHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const updatedValues = getUpdatedValues<IUser>(
       data,
       { email, name, enabled },

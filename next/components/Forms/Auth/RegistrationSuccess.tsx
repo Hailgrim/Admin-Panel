@@ -14,8 +14,8 @@ const RegistrationSuccess: React.FC<{
   const router = useRouter();
   const userLang = useAppSelector(store => store.app.userLang);
 
-  const formHandler = (event?: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
+  const formHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (callback) {
       callback();
     }

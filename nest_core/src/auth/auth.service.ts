@@ -15,7 +15,13 @@ import { CookieSerializeOptions } from '@fastify/cookie';
 import { UsersService } from '../users/users.service';
 import { RolesService } from 'src/roles/roles.service';
 import { ResourcesService } from 'src/resources/resources.service';
-import { IRequestUser, ISession, ITokensResponse, IUser } from 'libs/types';
+import {
+  ICookiesResponse,
+  IRequestUser,
+  ISession,
+  ITokensResponse,
+  IUser,
+} from 'libs/types';
 import { User } from 'src/users/user.entity';
 import { SignInDto } from './dto/sign-in-auth.dto';
 import { MAIL_SERVER, SESSION_REPOSITORY } from 'libs/constants';
@@ -162,7 +168,7 @@ export class AuthService {
     user: IUser,
     remember?: boolean,
     oldSessionId?: string,
-  ): Promise<ITokensResponse & { sessionId: number }> {
+  ): Promise<ICookiesResponse> {
     if (!user.enabled) {
       throw new GoneException();
     }

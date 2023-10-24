@@ -1,52 +1,129 @@
 import { defineStore } from 'pinia'
 
-import type { IUser, IUserSignIn, IUserSignUp, IVerifyUser } from '~/libs/types'
+import type { ICookies, IResetPassword, IUpdateReq, IUser, IUserSignIn, IUserSignUp, IVerifyUser } from '~/libs/types'
+import { ROUTES } from '~/libs/constants'
 
 export const useProfileStore = defineStore('profile', () => {
   const profile = ref<IUser | null>(null)
-  function setProfile(value: IUser | null) {
-    profile.value = value
-  }
 
   const {
-    data: signUpResult,
+    pending: signUpPending,
     error: signUpError,
-    pending: signUpLoading,
+    data: signUpData,
     execute: signUp,
-  } = useCustomFetch<IUser, IUserSignUp>('/auth/sign-up', { method: 'post' })
+  } = useCustomFetch<IUser, IUserSignUp>(ROUTES.api.auth.sighUp, { method: 'POST' })
 
   const {
-    data,
+    pending: forgotPasswordPending,
+    error: forgotPasswordError,
+    data: forgotPasswordData,
+    refresh: forgotPassword,
+  } = useCustomFetch<boolean, string>(ROUTES.api.auth.forgotPassword, { method: 'POST' })
+
+  const {
+    pending: resetPasswordPending,
+    error: resetPasswordError,
+    data: resetPasswordData,
+    execute: resetPassword,
+  } = useCustomFetch<boolean, IResetPassword>(ROUTES.api.auth.resetPassword, { method: 'POST' })
+
+  const {
+    pending: signInPending,
     error: signInError,
-    pending: signInLoading,
-    execute,
-  } = useCustomFetch<IUser, IUserSignIn>('/auth/sign-in', { method: 'post', credentials: 'include' })
+    data: signInData,
+    execute: signInExecute,
+  } = useCustomFetch<IUser, IUserSignIn>(ROUTES.api.auth.signIn, { method: 'POST', credentials: 'include' })
   async function signIn(payload: IUserSignIn) {
-    await execute(payload)
-    if (data.value)
-      profile.value = data.value
+    await signInExecute(payload)
+    if (signInData.value)
+      profile.value = signInData.value
   }
 
   const {
-    data: verifyResult,
+    pending: verifyPending,
     error: verifyError,
-    pending: verifyLoading,
+    data: verifyData,
     execute: verify,
-  } = useCustomFetch<boolean, IVerifyUser>('/auth/verify-user', { method: 'post' })
+  } = useCustomFetch<boolean, IVerifyUser>(ROUTES.api.auth.verify, { method: 'POST' })
+
+  const {
+    pending: refreshPending,
+    error: refreshError,
+    data: refreshData,
+    execute: refresh,
+  } = useCustomFetch<ICookies, void>(ROUTES.api.auth.refresh, { method: 'GET', credentials: 'include' })
+
+  const {
+    pending: getProfilePending,
+    error: getProfileError,
+    data: getProfileData,
+    execute: getProfileExecute,
+  } = useCustomFetch<IUser, void>(ROUTES.api.auth.getProfile, { method: 'GET', credentials: 'include' })
+  async function getProfile() {
+    await getProfileExecute()
+    if (getProfileData.value)
+      profile.value = getProfileData.value
+  }
+
+  const {
+    pending: updateProfilePending,
+    error: updateProfileError,
+    data: updateProfileData,
+    execute: updateProfileExecute,
+  } = useCustomFetch<boolean, Partial<IUser>>(ROUTES.api.auth.updateProfile, { method: 'PATCH', credentials: 'include' })
+  async function updateProfile(arg: Partial<IUser>) {
+    await updateProfileExecute(arg)
+    if (updateProfileData.value && profile.value)
+      profile.value = { ...profile.value, ...arg }
+  }
+
+  const {
+    pending: signOutPending,
+    error: signOutError,
+    data: signOutData,
+    execute: signOutExecute,
+  } = useCustomFetch<boolean, void>(ROUTES.api.auth.signOut, { method: 'DELETE', credentials: 'include' })
+  async function signOut() {
+    await signOutExecute()
+    if (signOutData.value)
+      profile.value = null
+  }
 
   return {
     profile,
-    setProfile,
-    signUpLoading,
+    signUpPending,
     signUpError,
-    signUpResult,
+    signUpData,
     signUp,
-    signInLoading,
+    forgotPasswordData,
+    forgotPasswordError,
+    forgotPasswordPending,
+    forgotPassword,
+    resetPasswordPending,
+    resetPasswordError,
+    resetPasswordData,
+    resetPassword,
+    signInPending,
     signInError,
     signIn,
-    verifyLoading,
+    verifyPending,
     verifyError,
-    verifyResult,
+    verifyData,
     verify,
+    refreshPending,
+    refreshError,
+    refreshData,
+    refresh,
+    getProfilePending,
+    getProfileError,
+    getProfile,
+    updateProfilePending,
+    updateProfileError,
+    updateProfileData,
+    updateProfile,
+    signOutPending,
+    signOutError,
+    signOutData,
+    signOut,
   }
 })

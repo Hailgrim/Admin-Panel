@@ -1,6 +1,8 @@
-import { type UnwrapRef } from 'nuxt/dist/app/compat/capi'
+import type { UnwrapRef } from 'nuxt/dist/app/compat/capi'
+import { setCookie } from 'h3'
 
 import type { ICookies, IRequestError } from '~/libs/types'
+import { ROUTES } from '~/libs/constants'
 
 /**
  * @param {string} url Request URL
@@ -8,51 +10,78 @@ import type { ICookies, IRequestError } from '~/libs/types'
  * @param {'get' | 'post' | 'put' | 'delete' | 'patch'} options.method Request method
  * @param {'include' | 'omit' | 'same-origin'} options.credentials Request credentials
  */
-export function useCustomFetch<ReturnT extends NonNullable<unknown>, PayloadT extends Record<string, any> | void>(
+export function useCustomFetch<ResT extends NonNullable<unknown>, ReqT extends NonNullable<unknown> | void>(
   url: string,
   options: {
-    method?: 'get' | 'post' | 'put' | 'delete' | 'patch'
+    method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
     credentials?: 'include' | 'omit' | 'same-origin'
-  } = { method: 'get', credentials: 'omit' },
+  } = { method: 'GET', credentials: 'omit' },
 ) {
   const { isHydrating } = useNuxtApp()
+  const event = useRequestEvent()
   const config = useRuntimeConfig()
-  const payload = ref<PayloadT | null>(null)
-  const pending = ref<boolean>(false)
-  const error = ref<IRequestError | null>(null)
-  const data = ref<ReturnT | null>(null)
-  const refreshed = ref<boolean>(false)
+  const accessTokenName = `${config.public.PROJECT_TAG}_accessToken`
+  const accessToken = useCookie(accessTokenName)
+  const refreshTokenName = `${config.public.PROJECT_TAG}_refreshToken`
+  const refreshToken = useCookie(refreshTokenName)
+  const sessionIdName = `${config.public.PROJECT_TAG}_sessionId`
+  const sessionId = useCookie(sessionIdName)
+  const rememberMeName = `${config.public.PROJECT_TAG}_rememberMe`
+  const rememberMe = useCookie(rememberMeName)
 
-  // Refresh tokens request
+  const payload = ref<ReqT | null>(null)
+  const pending = ref(false)
+  const error = ref<IRequestError | null>(null)
+  const data = ref<ResT | null>(null)
+  const refreshed = ref(false)
+
+  const queryOptions: any = {
+    baseURL: isHydrating
+      ? `https://api.${config.public.NGINX_HOST}`
+      : `http://${config.public.NEST_CORE_HOST}:${config.public.NEST_CORE_PORT}`,
+    mode: 'cors',
+    timeout: 5000,
+    headers: {
+      Cookie: !isHydrating && refreshToken.value
+        ? `${refreshTokenName}=${refreshToken.value}`
+          .concat(accessToken.value ? `;${accessTokenName}=${accessToken.value}` : '')
+          .concat(rememberMe.value ? `;${config.public.PROJECT_TAG}_rememberMe=true` : '')
+        : undefined,
+    },
+  }
+
+  const cookieOptions: object = {
+    domain: `.${config.public.NGINX_HOST}`,
+    httpOnly: true,
+    path: '/',
+    sameSite: 'none',
+    secure: true,
+  }
+
   async function refreshTokens() {
     return $fetch<UnwrapRef<ICookies | undefined>>(
-      'auth/refresh',
+      ROUTES.api.auth.refresh,
       {
-        baseURL: isHydrating
-          ? `https://api.${config.public.NGINX_HOST}`
-          : `http://${config.public.NEST_CORE_HOST}:${config.public.NEST_CORE_PORT}`,
-        method: 'get',
+        ...queryOptions,
+        method: 'GET',
         credentials: 'include',
-        mode: 'cors',
       },
     )
   }
 
-  async function customFetch(arg: UnwrapRef<PayloadT>) {
+  async function customFetch(arg: UnwrapRef<ReqT>) {
     pending.value = true
     error.value = null
     data.value = null
-    return $fetch<UnwrapRef<ReturnT>>(
+    queryOptions.headers['Content-Type'] = typeof arg === 'object' ? 'application/json' : 'text/plain;charset=UTF-8'
+    return $fetch<UnwrapRef<ResT>>(
       url,
       {
-        baseURL: isHydrating
-          ? `https://api.${config.public.NGINX_HOST}`
-          : `http://${config.public.NEST_CORE_HOST}:${config.public.NEST_CORE_PORT}`,
+        ...queryOptions,
         method: options.method,
         credentials: options.credentials,
-        body: options.method !== 'get' && arg ? arg : undefined,
-        params: options.method === 'get' && arg ? arg : undefined,
-        mode: 'cors',
+        body: options.method !== 'GET' && arg ? arg : undefined,
+        params: options.method === 'GET' && arg ? arg : undefined,
       },
     )
       .then((resolve) => {
@@ -61,37 +90,79 @@ export function useCustomFetch<ReturnT extends NonNullable<unknown>, PayloadT ex
       })
       .catch(async (reject) => {
         const fetchError: IRequestError = { status: Number(reject.status) || 400, message: reject.message }
+
         // Trying to refresh tokens and refetch query
-        if (fetchError.status === 401 && !refreshed.value) {
+        if (fetchError.status === 401 && refreshed.value === false && url !== ROUTES.api.auth.refresh) {
           refreshed.value = true
           try {
             const cookies = await refreshTokens()
             if (cookies) {
+              if (cookies.accessToken) {
+                setCookie(
+                  event,
+                  accessTokenName,
+                  cookies.accessToken,
+                  { ...cookieOptions, maxAge: Number(config.public.ACCESS_TOKEN_LIFETIME) },
+                )
+              }
+
+              if (cookies.refreshToken) {
+                setCookie(
+                  event,
+                  refreshTokenName,
+                  cookies.refreshToken,
+                  {
+                    ...cookieOptions,
+                    maxAge: rememberMe ? Number(config.public.REFRESH_TOKEN_LIFETIME) : Number(config.public.ACCESS_TOKEN_LIFETIME) * 2,
+                  },
+                )
+              }
+
+              if (sessionId.value) {
+                setCookie(
+                  event,
+                  sessionIdName,
+                  sessionId.value,
+                  {
+                    ...cookieOptions,
+                    maxAge: rememberMe ? Number(config.public.REFRESH_TOKEN_LIFETIME) : Number(config.public.ACCESS_TOKEN_LIFETIME) * 2,
+                  },
+                )
+              }
+
+              if (rememberMe.value) {
+                setCookie(
+                  event,
+                  rememberMeName,
+                  rememberMe.value,
+                  {
+                    ...cookieOptions,
+                    maxAge: rememberMe ? Number(config.public.REFRESH_TOKEN_LIFETIME) : Number(config.public.ACCESS_TOKEN_LIFETIME) * 2,
+                  },
+                )
+              }
+
               customFetch(arg)
               return
             }
           }
           catch {}
         }
+
         pending.value = false
         error.value = fetchError
       })
   }
 
-  async function execute(arg: UnwrapRef<PayloadT>) {
+  async function execute(arg: UnwrapRef<ReqT>) {
     refreshed.value = false
-    if (payload.value !== arg) {
-      payload.value = arg
-      console.log('new', arg)
-      console.log('payload2', payload.value)
-      return customFetch(arg)
-    }
-    else {
-      console.log('same', arg)
-    }
+    if (payload.value === arg && error.value === null)
+      return
+    payload.value = arg
+    return customFetch(arg)
   }
 
-  async function refresh(arg: UnwrapRef<PayloadT>) {
+  async function refresh(arg: UnwrapRef<ReqT>) {
     refreshed.value = false
     payload.value = arg
     return customFetch(arg)

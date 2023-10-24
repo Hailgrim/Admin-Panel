@@ -8,9 +8,9 @@ export const appSliceName = 'app';
 let alertCounter = 0;
 
 const initialState = {
-  rememberMe: false,
   accessToken: null as (string | null),
   refreshToken: null as (string | null),
+  rememberMe: false,
   userAgent: null as (string | null),
   isSideBarOpened: true,
   isModalSideBarOpened: false,

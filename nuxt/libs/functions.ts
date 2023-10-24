@@ -1,4 +1,4 @@
-import type { ICreateCookieOptions, ISideBarMenuItem } from './types'
+import type { ISideBarMenuItem } from './types'
 
 /**
  * @param {string} href Checked link
@@ -50,26 +50,15 @@ export function makeErrorText(error: any): string {
 }
 
 /**
- * @param {string} name Cookie name
- * @param {string} value Cookie value
- * @param {ICreateCookieOptions} options Cookie options
- * @returns {string} Final cookie string
+ * @param {Partial<T>} oldObject Original object
+ * @param {Partial<T>} newObject Updated object
+ * @returns {Partial<T>} An object with changed fields only
  */
-export function createCookie(name: string, value: string | null, options?: ICreateCookieOptions): string {
-  let result = `${name}${value ? `=${value}` : ''}`
-  if (options) {
-    if (options.httpOnly)
-      result = result.concat(';HttpOnly')
-    if (options.sameSite)
-      result = result.concat(`;SameSite=${options.sameSite}`)
-    if (options.secure)
-      result = result.concat(';Secure')
-    if (options.path)
-      result = result.concat(`;Path=${options.path}`)
-    if (options.domain)
-      result = result.concat(`;Domain=${options.domain}`)
-    if (options.maxAge)
-      result = result.concat(`;MaxAge=${options.maxAge}`)
+export function getUpdatedValues<T>(oldObject: Partial<T>, newObject: Partial<T>): Partial<T> {
+  const result: Partial<T> = {}
+  for (const value in newObject) {
+    if (newObject[value] !== oldObject[value])
+      result[value] = newObject[value]
   }
   return result
-};
+}

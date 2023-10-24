@@ -22,8 +22,8 @@ const ForgotPassword: React.FC = () => {
   const [email, setEmail] = React.useState('');
   const [modalState, setModalState] = React.useState(false);
 
-  const forgotPasswordHandler = (event?: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
+  const forgotPasswordHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     forgotPassword(email);
   };
 
@@ -36,7 +36,7 @@ const ForgotPassword: React.FC = () => {
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 404:
-          setErrorText(String(lang.get(userLang)?.wrongEmailOrCode));
+          setErrorText(String(lang.get(userLang)?.wrongEmail));
           break;
         default:
           setErrorText(makeErrorText(error, userLang));

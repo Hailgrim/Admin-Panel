@@ -21,8 +21,8 @@ const CreateResource: React.FC = () => {
   const [path, setPath] = React.useState('');
   const [description, setDescription] = React.useState('');
 
-  const createHandler = (event?: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
+  const createHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     create({ name, path, description: description || null });
   };
 

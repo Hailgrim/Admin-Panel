@@ -6,6 +6,7 @@ const TextFieldStyled = styled(
   (props: TextFieldProps) => (
     <TextField
       fullWidth
+      size="medium"
       margin="dense"
       {...props}
     />

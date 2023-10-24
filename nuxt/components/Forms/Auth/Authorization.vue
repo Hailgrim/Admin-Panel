@@ -13,6 +13,7 @@ import { makeErrorText } from '~/libs/functions'
 import { ROUTES } from '~/libs/constants'
 
 const { t } = useI18n()
+const router = useRouter()
 const email = ref('')
 const emailIsValid = (value: string) => value.length > 0
 const password = ref('')
@@ -49,6 +50,14 @@ watch(
     }
   },
 )
+
+watch(
+  () => profileStore.profile,
+  () => {
+    if (profileStore.profile)
+      router.push(ROUTES.panel.home)
+  },
+)
 </script>
 
 <template>
@@ -63,7 +72,7 @@ watch(
       :rules="[passwordIsValid]"
     />
     <FormCheckbox v-model:model-value="rememberMe" name="rememberMe" :label="$t('rememberMe')" />
-    <FormButton block type="submit" color="info" :loading="profileStore.signInLoading">
+    <FormButton block type="submit" color="info" :loading="profileStore.signInPending">
       {{ $t('signIn') }}
     </FormButton>
     <FormAuthLink :href="ROUTES.auth.signUp" :text="$t('signUpText')" />

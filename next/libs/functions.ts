@@ -217,6 +217,12 @@ export const getServerSidePropsCustom = <T = void>(
               refreshToken,
               { ...cookieOptions, maxAge: rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2 },
             ),
+            createCookie(`${PROJECT_TAG}_sessionId`, String(data.sessionId), { ...cookieOptions, maxAge: REFRESH_TOKEN_LIFETIME * 12 }),
+            createCookie(
+              `${PROJECT_TAG}_rememberMe`,
+              String(rememberMe),
+              { ...cookieOptions, maxAge: rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2 },
+            ),
           ],
         );
       }
