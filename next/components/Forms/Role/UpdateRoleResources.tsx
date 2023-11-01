@@ -45,7 +45,6 @@ const UpdateRoleResources: React.FC<{
     });
     if (!(
       newRights.creating == false &&
-      newRights.listing == false &&
       newRights.reading == false &&
       newRights.updating == false &&
       newRights.deleting == false

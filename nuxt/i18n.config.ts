@@ -1,4 +1,4 @@
-import type { LangDictionary, LangList } from './libs/types'
+import type { LangDictionary, LangList } from '.'
 import en from './locales/en'
 import ru from './locales/ru'
 

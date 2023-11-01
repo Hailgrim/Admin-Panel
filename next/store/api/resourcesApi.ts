@@ -9,11 +9,10 @@ import {
   IResourceCreate,
 } from '../../libs/types';
 import baseQueryWithReauth from '../baseQueryWithReauth';
-
-const route = 'resources';
+import { ROUTES } from '../../libs/constants';
 
 const resourcesApi = createApi({
-  reducerPath: `${route}Api`,
+  reducerPath: 'resources',
   baseQuery: baseQueryWithReauth,
   extractRehydrationInfo(action, { reducerPath }) {
     if (action.type === HYDRATE) {
@@ -25,7 +24,7 @@ const resourcesApi = createApi({
 
     create: builder.mutation<IResource, IResourceCreate>({
       query: payload => ({
-        url: `${route}`,
+        url: ROUTES.api.resources,
         method: 'POST',
         credentials: 'include',
         body: payload,
@@ -35,7 +34,7 @@ const resourcesApi = createApi({
 
     findAll: builder.query<IResource[], IListReq<IResource> | void>({
       query: payload => ({
-        url: `${route}`,
+        url: ROUTES.api.resources,
         method: 'GET',
         credentials: 'include',
         params: payload || undefined,
@@ -45,7 +44,7 @@ const resourcesApi = createApi({
 
     findAndCountAll: builder.query<IFindAndCountRes<IResource>, IListReq<IResource> | void>({
       query: payload => ({
-        url: `${route}`,
+        url: ROUTES.api.resources,
         method: 'GET',
         credentials: 'include',
         params: { ...payload, count: true },
@@ -54,7 +53,7 @@ const resourcesApi = createApi({
 
     findOne: builder.query<IResource, number>({
       query: payload => ({
-        url: `${route}/${payload}`,
+        url: ROUTES.api.resource(payload),
         method: 'GET',
         credentials: 'include',
       }),
@@ -62,7 +61,7 @@ const resourcesApi = createApi({
 
     update: builder.mutation<boolean, IUpdateReq<IResource>>({
       query: payload => ({
-        url: `${route}/${payload.id}`,
+        url: ROUTES.api.resource(payload.id),
         method: 'PATCH',
         credentials: 'include',
         body: payload.fields,
@@ -72,9 +71,10 @@ const resourcesApi = createApi({
 
     delete: builder.mutation<boolean, number | number[]>({
       query: payload => ({
-        url: `${route}/${payload}`,
+        url: ROUTES.api.resources,
         method: 'DELETE',
         credentials: 'include',
+        body: payload,
       }),
       invalidatesTags: ['Entities'],
     }),

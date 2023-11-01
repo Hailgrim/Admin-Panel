@@ -47,6 +47,10 @@ export class Resource
   @Column({ type: DataType.STRING, allowNull: true })
   description: string | null;
 
+  @ApiProperty({ example: true, description: lang.get('en')?.status })
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
+  enabled: boolean;
+
   @ApiProperty({ example: true, description: lang.get('en')?.default })
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
   default: boolean;

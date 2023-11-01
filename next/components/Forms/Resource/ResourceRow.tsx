@@ -12,14 +12,6 @@ import lang from '../../../libs/lang';
 import { useAppSelector } from '../../../store/hooks';
 import { IResource, IRolesResources } from '../../../libs/types';
 
-const defaultRights = {
-  creating: false,
-  listing: false,
-  reading: false,
-  updating: false,
-  deleting: false,
-};
-
 const ResourceRow: React.FC<{
   roleId: number;
   resource: IResource;
@@ -27,7 +19,14 @@ const ResourceRow: React.FC<{
   setRights: (newRights: IRolesResources) => void;
 }> = ({ roleId, resource, rights, setRights }) => {
   const userLang = useAppSelector(store => store.app.userLang);
-  const newRights = rights || { roleId, resourceId: resource.id, ...defaultRights };
+  const newRights = rights || {
+    roleId,
+    resourceId: resource.id,
+    creating: false,
+    reading: false,
+    updating: false,
+    deleting: false,
+  };
 
   return (
     <FormControl sx={{ my: 1.5, mr: 3 }} component="fieldset" variant="standard">
@@ -43,17 +42,6 @@ const ResourceRow: React.FC<{
             />
           }
           label={lang.get(userLang)?.create}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              name="list[]"
-              value="list"
-              checked={rights?.listing || false}
-              onChange={() => setRights({ ...newRights, listing: !newRights.listing })}
-            />
-          }
-          label={lang.get(userLang)?.list}
         />
         <FormControlLabel
           control={

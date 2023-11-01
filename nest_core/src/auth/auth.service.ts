@@ -78,12 +78,11 @@ export class AuthService {
         undefined,
         true,
       );
-      const checkedКesources: CreateResourceDto[] = [
+      const checkedResources: CreateResourceDto[] = [
         'profile',
         'users',
         'roles',
         'resources',
-        'files',
       ]
         .filter(
           (value) =>
@@ -94,10 +93,11 @@ export class AuthService {
             path: value,
             name: value.replace(value[0], value[0].toUpperCase()),
             description: lang.get('en')?.defaultResource(value) || null,
+            enabled: true,
           };
         });
-      if (checkedКesources.length > 0) {
-        await this.resourcesService.createMany(checkedКesources);
+      if (checkedResources.length > 0) {
+        await this.resourcesService.createMany(checkedResources);
       }
 
       // Verify the existence of the administrator role

@@ -7,9 +7,7 @@ import FormButton from '../FormButton.vue'
 import FormAuthLink from '../FormAuthLink.vue'
 import CustomModal from '~/components/Other/CustomModal.vue'
 import RegistrationSuccess from '~/components/Forms/Auth/RegistrationSuccess.vue'
-import { makeErrorText, testString } from '~/libs/functions'
-import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX, ROUTES } from '~/libs/constants'
-import { useProfileStore } from '~/stores/profile'
+import { useAuthStore } from '~/stores/auth'
 
 const { t } = useI18n()
 const name = ref('')
@@ -18,7 +16,7 @@ const email = ref('')
 const emailIsValid = (value: string) => testString(EMAIL_REGEX, value) || t('emailValidation')
 const password = ref('')
 const passwordIsValid = (value: string) => testString(PASSWORD_REGEX, value) || t('passwordValidation')
-const profileStore = useProfileStore()
+const authStore = useAuthStore()
 const errorMsg = ref<string | null>(null)
 const successModal = ref(false)
 const router = useRouter()
@@ -29,7 +27,7 @@ function submitHandler() {
     && emailIsValid(email.value) === true
     && passwordIsValid(password.value) === true
   )
-    profileStore.signUp({ name: name.value, email: email.value, password: password.value })
+    authStore.signUp({ name: name.value, email: email.value, password: password.value })
 }
 
 function successHandler() {
@@ -38,9 +36,9 @@ function successHandler() {
 }
 
 watch(
-  () => profileStore.signUpError,
+  () => authStore.signUpError,
   () => {
-    switch (profileStore.signUpError?.status) {
+    switch (authStore.signUpError?.status) {
       case 409:
         errorMsg.value = t('userAlreadyExist')
         break
@@ -48,15 +46,15 @@ watch(
         errorMsg.value = null
         break
       default:
-        errorMsg.value = makeErrorText(profileStore.signUpError?.message)
+        errorMsg.value = makeErrorText(authStore.signUpError?.message)
     }
   },
 )
 
 watch(
-  () => profileStore.signUpData,
+  () => authStore.signUpData,
   () => {
-    if (profileStore.signUpData)
+    if (authStore.signUpData)
       successModal.value = true
   },
 )
@@ -77,7 +75,7 @@ watch(
       v-model:model-value="password" required name="password"
       :label="$t('password')" :rules="[passwordIsValid]" :hint="$t('passwordValidation')"
     />
-    <FormButton block type="submit" color="success" :loading="profileStore.signUpPending">
+    <FormButton block type="submit" color="success" :loading="authStore.signUpPending">
       {{ $t('signUp') }}
     </FormButton>
     <FormAuthLink :href="ROUTES.auth.signIn" :text="$t('signInText')" />

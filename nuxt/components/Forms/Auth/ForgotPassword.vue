@@ -6,27 +6,25 @@ import FormButton from '../FormButton.vue'
 import FormAuthLink from '../FormAuthLink.vue'
 import CustomModal from '~/components/Other/CustomModal.vue'
 import ResetPassword from '~/components/Forms/Auth/ResetPassword.vue'
-import { makeErrorText } from '~/libs/functions'
-import { ROUTES } from '~/libs/constants'
-import { useProfileStore } from '~/stores/profile'
+import { useAuthStore } from '~/stores/auth'
 
 const { t } = useI18n()
 const email = ref('')
 const emailIsValid = (value: string) => value.length > 0
-const profileStore = useProfileStore()
+const authStore = useAuthStore()
 const errorMsg = ref<string | null>(null)
 const resetModal = ref(false)
 const router = useRouter()
 
 function submitHandler() {
   if (emailIsValid(email.value) === true)
-    profileStore.forgotPassword(email.value)
+    authStore.forgotPassword(email.value)
 }
 
 watch(
-  () => profileStore.forgotPasswordError,
+  () => authStore.forgotPasswordError,
   () => {
-    switch (profileStore.forgotPasswordError?.status) {
+    switch (authStore.forgotPasswordError?.status) {
       case 404:
         errorMsg.value = t('wrongEmail')
         break
@@ -34,23 +32,23 @@ watch(
         errorMsg.value = null
         break
       default:
-        errorMsg.value = makeErrorText(profileStore.forgotPasswordError?.message)
+        errorMsg.value = makeErrorText(authStore.forgotPasswordError?.message)
     }
   },
 )
 
 watch(
-  () => profileStore.forgotPasswordData,
+  () => authStore.forgotPasswordData,
   () => {
-    if (profileStore.forgotPasswordData)
+    if (authStore.forgotPasswordData)
       resetModal.value = true
   },
 )
 
 watch(
-  () => profileStore.resetPasswordData,
+  () => authStore.resetPasswordData,
   () => {
-    if (profileStore.resetPasswordData)
+    if (authStore.resetPasswordData)
       router.push(ROUTES.auth.signIn)
   },
 )
@@ -63,7 +61,7 @@ watch(
       v-model:model-value="email" required name="email" type="text" :label="$t('email')"
       :rules="[emailIsValid]" :hint="$t('emailValidation')"
     />
-    <FormButton block type="submit" color="success" :loading="profileStore.forgotPasswordPending">
+    <FormButton block type="submit" color="success" :loading="authStore.forgotPasswordPending">
       {{ $t('confirm') }}
     </FormButton>
     <FormAuthLink :href="ROUTES.auth.signUp" :text="$t('signUpText')" />

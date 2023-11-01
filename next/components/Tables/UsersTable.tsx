@@ -2,9 +2,9 @@ import React from 'react';
 import { GridColDef, GridSelectionModel } from '@mui/x-data-grid';
 
 import lang from '../../libs/lang';
-import rolesApi from '../../store/api/rolesApi';
-import { IFindAndCountRes, IPagination, IRole } from '../../libs/types';
-import DataGridStyled from '../../components/Other/DataGridStyled';
+import usersApi from '../../store/api/usersApi';
+import { IFindAndCountRes, IPagination, IRole, IUser } from '../../libs/types';
+import DataGridStyled from '../Other/DataGridStyled';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import TableActions from './TableActions';
 import { addAlert } from '../../store/slices/appSlice';
@@ -12,20 +12,20 @@ import EditButton from './EditButton';
 import { isAllowed, makeErrorText } from '../../libs/functions';
 import { Rights, ROUTES } from '../../libs/constants';
 
-const RoleTable: React.FC<{
-  data?: IFindAndCountRes<IRole> | null;
+const UsersTable: React.FC<{
+  data?: IFindAndCountRes<IUser> | null;
   pagination?: IPagination;
 }> = ({ data, pagination }) => {
   const dispatch = useAppDispatch();
   const userLang = useAppSelector(store => store.app.userLang);
   const profile = useAppSelector(store => store.app.profile);
   const [page, setPage] = React.useState(pagination?.page || 1);
-  const [quantity, setQuantity] = React.useState(pagination?.quantity || 100);
+  const [quantity, setQuantity] = React.useState(pagination?.quantity || 25);
   const [destroyStatus, setDestroyStatus] = React.useState(false);
-  const [rows, setRows] = React.useState<IRole[]>(data?.rows || []);
+  const [rows, setRows] = React.useState<IUser[]>(data?.rows || []);
   const counter = data?.count || 0;
-  const [findAll, findAllReq] = rolesApi.useLazyFindAllQuery();
-  const [destroy, destroyReq] = rolesApi.useDeleteMutation();
+  const [findAll, findAllReq] = usersApi.useLazyFindAllQuery();
+  const [destroy, destroyReq] = usersApi.useDeleteMutation();
   const [selectedRows, setSelectedRows] = React.useState<number[]>([]);
 
   const сolumns: GridColDef[] = React.useMemo(() => ([
@@ -38,16 +38,24 @@ const RoleTable: React.FC<{
       disableColumnMenu: true,
       renderCell: params => (
         <EditButton
-          route={ROUTES.panel.roles}
-          link={ROUTES.panel.getRoleRoute(params.row.id)}
-          selectable={params.row.admin !== true}
+          route={ROUTES.panel.users}
+          link={ROUTES.panel.user(params.row.id)}
         />
       ),
     },
     { field: 'id', headerName: lang.get(userLang)?.id, minWidth: 150, type: 'number' },
+    { field: 'email', headerName: lang.get(userLang)?.email, minWidth: 250, type: 'string', flex: 1 },
     { field: 'name', headerName: lang.get(userLang)?.name, minWidth: 250, type: 'string', flex: 1 },
-    { field: 'description', headerName: lang.get(userLang)?.description, minWidth: 250, type: 'string', flex: 1 },
-    { field: 'admin', headerName: lang.get(userLang)?.admin, width: 150, type: 'boolean' },
+    {
+      field: 'roles',
+      headerName: lang.get(userLang)?.roles,
+      minWidth: 250,
+      type: 'string',
+      flex: 1,
+      valueFormatter: params => params.value.map((role: IRole) => role.name).join(', '),
+    },
+    { field: 'verified', headerName: lang.get(userLang)?.verified, width: 150, type: 'boolean' },
+    { field: 'enabled', headerName: lang.get(userLang)?.enabled, width: 150, type: 'boolean' },
   ]), [userLang]);
 
   const setPageHandler = (newPage: number) => {
@@ -105,14 +113,14 @@ const RoleTable: React.FC<{
     <React.Fragment>
       <TableActions
         create={{
-          link: ROUTES.panel.newRole,
-          disabled: !isAllowed(ROUTES.panel.roles, Rights.Creating, profile?.roles),
+          link: ROUTES.panel.newUser,
+          disabled: !isAllowed(ROUTES.panel.users, Rights.Creating, profile?.roles),
         }}
         destroy={{
           action: () => destroy(selectedRows),
           disabled:
             selectedRows.length == 0 ||
-            !isAllowed(ROUTES.panel.roles, Rights.Deleting, profile?.roles),
+            !isAllowed(ROUTES.panel.users, Rights.Deleting, profile?.roles),
           loading: destroyReq.isLoading,
         }}
       />
@@ -127,9 +135,8 @@ const RoleTable: React.FC<{
         checkboxSelection
         onSelectionModelChange={setSelectedRowsHandler}
         selectionModel={selectedRows}
-        isRowSelectable={params => params.row.default !== true}
       />
     </React.Fragment>
   );
 };
-export default RoleTable;
+export default UsersTable;

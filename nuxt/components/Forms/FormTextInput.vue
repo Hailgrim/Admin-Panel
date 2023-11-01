@@ -6,14 +6,15 @@ const props = defineProps<{
   color?: string
   rules?: ((value: string) => boolean | string)[]
   hint?: string
-  modelValue?: string
+  modelValue?: string | null
+  type?: string
 }>()
 defineEmits(['update:modelValue'])
 </script>
 
 <template>
   <v-text-field
-    v-bind="props" persistent-hint type="text" density="compact" variant="outlined"
-    :class="hint ? 'pb-5' : ''" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)"
+    v-bind="props" persistent-hint density="compact" variant="outlined" :class="hint ? 'mb-6' : ''"
+    :value="modelValue" @input="$emit('update:modelValue', $event.target.value)"
   />
 </template>

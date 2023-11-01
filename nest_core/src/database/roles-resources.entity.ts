@@ -27,9 +27,6 @@ export class RolesResources
   creating: boolean;
 
   @Column({ type: DataType.BOOLEAN })
-  listing: boolean;
-
-  @Column({ type: DataType.BOOLEAN })
   reading: boolean;
 
   @Column({ type: DataType.BOOLEAN })

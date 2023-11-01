@@ -4,9 +4,7 @@ import FormAlert from '../FormAlert.vue'
 import FormTextInput from '../FormTextInput.vue'
 import FormPasswordInput from '../FormPasswordInput.vue'
 import FormButton from '../FormButton.vue'
-import { useProfileStore } from '~/stores/profile'
-import { makeErrorText, testString } from '~/libs/functions'
-import { PASSWORD_REGEX } from '~/libs/constants'
+import { useAuthStore } from '~/stores/auth'
 
 const props = defineProps<{
   email: string
@@ -18,18 +16,18 @@ const code = ref('')
 const codeIsValid = (value: string) => value.length > 0 || `${t('codeFromEmail')} (${props.email})`
 const password = ref('')
 const passwordIsValid = (value: string) => testString(PASSWORD_REGEX, value) || t('passwordValidation')
-const profileStore = useProfileStore()
+const authStore = useAuthStore()
 const errorMsg = ref<string | null>(null)
 
 function submitHandler() {
   if (codeIsValid(code.value) && passwordIsValid(password.value))
-    profileStore.resetPassword({ email: props.email, password: password.value, code: code.value })
+    authStore.resetPassword({ email: props.email, password: password.value, code: code.value })
 }
 
 watch(
-  () => profileStore.resetPasswordError,
+  () => authStore.resetPasswordError,
   () => {
-    switch (profileStore.resetPasswordError?.status) {
+    switch (authStore.resetPasswordError?.status) {
       case 404:
         errorMsg.value = t('wrongEmailOrCode')
         break
@@ -37,15 +35,15 @@ watch(
         errorMsg.value = null
         break
       default:
-        errorMsg.value = makeErrorText(profileStore.resetPasswordError?.message)
+        errorMsg.value = makeErrorText(authStore.resetPasswordError?.message)
     }
   },
 )
 
 watch(
-  () => profileStore.resetPasswordData,
+  () => authStore.resetPasswordData,
   () => {
-    if (profileStore.resetPasswordData)
+    if (authStore.resetPasswordData)
       emits('close')
   },
 )
@@ -62,7 +60,7 @@ watch(
       v-model:model-value="password" required name="password"
       :label="$t('password')" :rules="[passwordIsValid]" :hint="$t('passwordValidation')"
     />
-    <FormButton block type="submit" color="success" :loading="profileStore.resetPasswordPending">
+    <FormButton block type="submit" color="success" :loading="authStore.resetPasswordPending">
       {{ $t('confirm') }}
     </FormButton>
     <FormButton block type="button" color="error" @click="$emit('close')">

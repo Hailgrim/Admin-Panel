@@ -12,7 +12,7 @@ import EditButton from './EditButton';
 import { isAllowed, makeErrorText } from '../../libs/functions';
 import { Rights, ROUTES } from '../../libs/constants';
 
-const ResourceTable: React.FC<{
+const ResourcesTable: React.FC<{
   data?: IFindAndCountRes<IResource> | null;
   pagination?: IPagination;
 }> = ({ data, pagination }) => {
@@ -20,7 +20,7 @@ const ResourceTable: React.FC<{
   const userLang = useAppSelector(store => store.app.userLang);
   const profile = useAppSelector(store => store.app.profile);
   const [page, setPage] = React.useState(pagination?.page || 1);
-  const [quantity, setQuantity] = React.useState(pagination?.quantity || 100);
+  const [quantity, setQuantity] = React.useState(pagination?.quantity || 25);
   const [destroyStatus, setDestroyStatus] = React.useState(false);
   const [rows, setRows] = React.useState<IResource[]>(data?.rows || []);
   const counter = data?.count || 0;
@@ -39,7 +39,7 @@ const ResourceTable: React.FC<{
       renderCell: params => (
         <EditButton
           route={ROUTES.panel.resources}
-          link={ROUTES.panel.getResourceRoute(params.row.id)}
+          link={ROUTES.panel.resource(params.row.id)}
           selectable={params.row.default !== true}
         />
       ),
@@ -133,4 +133,4 @@ const ResourceTable: React.FC<{
     </React.Fragment>
   );
 };
-export default ResourceTable;
+export default ResourcesTable;

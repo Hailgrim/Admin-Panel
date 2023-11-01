@@ -4,18 +4,16 @@ import { HYDRATE } from 'next-redux-wrapper';
 import {
   ICookies,
   IResetPassword,
-  IUpdateReq,
   IUser,
   IUserSignIn,
   IUserSignUp,
   IVerifyUser,
 } from '../../libs/types';
 import baseQueryWithReauth from '../baseQueryWithReauth';
-
-const route = 'auth';
+import { ROUTES } from '../../libs/constants';
 
 const authApi = createApi({
-  reducerPath: 'authApi',
+  reducerPath: 'auth',
   baseQuery: baseQueryWithReauth,
   extractRehydrationInfo(action, { reducerPath }) {
     if (action.type === HYDRATE) {
@@ -26,7 +24,7 @@ const authApi = createApi({
 
     signUp: builder.query<IUser, IUserSignUp>({
       query: payload => ({
-        url: `${route}/sign-up`,
+        url: ROUTES.api.auth.sighUp,
         method: 'POST',
         body: payload,
       }),
@@ -34,7 +32,7 @@ const authApi = createApi({
 
     signIn: builder.query<IUser, IUserSignIn>({
       query: payload => ({
-        url: `${route}/sign-in`,
+        url: ROUTES.api.auth.signIn,
         method: 'POST',
         credentials: 'include',
         body: payload,
@@ -43,7 +41,7 @@ const authApi = createApi({
 
     verifyUser: builder.query<boolean, IVerifyUser>({
       query: payload => ({
-        url: `${route}/verify-user`,
+        url: ROUTES.api.auth.verify,
         method: 'POST',
         body: payload,
       }),
@@ -51,7 +49,7 @@ const authApi = createApi({
 
     forgotPassword: builder.query<boolean, string>({
       query: payload => ({
-        url: `${route}/forgot-password`,
+        url: ROUTES.api.auth.forgotPassword,
         method: 'POST',
         body: payload,
       }),
@@ -59,7 +57,7 @@ const authApi = createApi({
 
     resetPassword: builder.query<boolean, IResetPassword>({
       query: payload => ({
-        url: `${route}/reset-password`,
+        url: ROUTES.api.auth.resetPassword,
         method: 'POST',
         body: payload,
       }),
@@ -67,7 +65,7 @@ const authApi = createApi({
 
     refresh: builder.query<ICookies, void>({
       query: () => ({
-        url: `${route}/refresh`,
+        url: ROUTES.api.auth.refresh,
         method: 'GET',
         credentials: 'include',
       }),
@@ -75,7 +73,7 @@ const authApi = createApi({
 
     getProfile: builder.query<IUser, void>({
       query: () => ({
-        url: `${route}/profile`,
+        url: ROUTES.api.auth.getProfile,
         method: 'GET',
         credentials: 'include',
       }),
@@ -83,7 +81,7 @@ const authApi = createApi({
 
     updateProfile: builder.mutation<boolean, Partial<IUser>>({
       query: payload => ({
-        url: `${route}/profile`,
+        url: ROUTES.api.auth.updateProfile,
         method: 'PATCH',
         credentials: 'include',
         body: payload,
@@ -92,7 +90,7 @@ const authApi = createApi({
 
     signOut: builder.mutation<boolean, void>({
       query: () => ({
-        url: `${route}/log-out`,
+        url: ROUTES.api.auth.signOut,
         method: 'DELETE',
         credentials: 'include',
       }),

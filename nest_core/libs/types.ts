@@ -55,7 +55,7 @@ export type CreateUserFields = Pick<
 export type GetUsersFields = Partial<
   Omit<IUser, 'password' | 'verificationCode' | 'resetPasswordCode'>
 >;
-export type UpdateUserFields = Partial<Omit<IUser, 'roles'>>;
+export type UpdateUserFields = Partial<Omit<IUser, 'roles' | 'id'>>;
 
 export abstract class IUsersRoles {
   userId: number;
@@ -65,22 +65,22 @@ export abstract class IRole {
   id?: any;
   name: string;
   description?: string | null;
+  enabled: boolean;
   admin: boolean;
   default: boolean;
   users?: IUser[];
   resources?: IResource[];
   UsersRoles?: IUsersRoles;
 }
-export type CreateRoleFields = Pick<IRole, 'name' | 'description'> &
+export type CreateRoleFields = Pick<IRole, 'name' | 'description' | 'enabled'> &
   Partial<Pick<IRole, 'admin' | 'default'>>;
-export type GetRolesFields = Partial<Pick<IRole, 'name' | 'description'>>;
-export type UpdateRoleFields = Partial<Pick<IRole, 'name' | 'description'>>;
+export type GetRolesFields = Partial<Pick<IRole, 'name' | 'description' | 'enabled'>>;
+export type UpdateRoleFields = Partial<Pick<IRole, 'name' | 'description' | 'enabled'>>;
 
 export type IRolesResources = {
   roleId: number;
   resourceId: number;
   creating: boolean;
-  listing: boolean;
   reading: boolean;
   updating: boolean;
   deleting: boolean;
@@ -90,18 +90,19 @@ export abstract class IResource {
   name: string;
   path: string;
   description?: string | null;
+  enabled: boolean;
   default: boolean;
   roles?: IRole[];
   RolesResources?: IRolesResources;
 }
 export type CreateResourceFields = Pick<
   IResource,
-  'name' | 'path' | 'description'
+  'name' | 'path' | 'description' | 'enabled'
 > &
   Partial<Pick<IResource, 'default'>>;
 export type GetResourcesFields = Partial<
-  Pick<IResource, 'name' | 'path' | 'description'>
+  Pick<IResource, 'name' | 'path' | 'description' | 'enabled'>
 >;
 export type UpdateResourceFields = Partial<
-  Pick<IResource, 'name' | 'path' | 'description'>
+  Pick<IResource, 'name' | 'path' | 'description' | 'enabled'>
 >;

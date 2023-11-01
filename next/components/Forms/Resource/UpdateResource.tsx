@@ -11,6 +11,7 @@ import FormActions from '../FormActions';
 import TextFieldStyled from '../../Other/TextFieldStyled';
 import FormBoxStyled from '../FormBoxStyled';
 import { Rights, ROUTES } from '../../../libs/constants';
+import { Checkbox, FormControlLabel } from '@mui/material';
 
 const UpdateResource: React.FC<{
   data: IResource;
@@ -24,6 +25,7 @@ const UpdateResource: React.FC<{
   const [name, setName] = React.useState(data.name);
   const [path, setPath] = React.useState(data.path);
   const [description, setDescription] = React.useState(data.description || '');
+  const [enabled, setEnabled] = React.useState(Boolean(data.enabled));
 
   const updateHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -96,6 +98,17 @@ const UpdateResource: React.FC<{
         value={description}
         onChange={event => setDescription(event.currentTarget.value)}
         disabled={data?.default}
+      />
+      <FormControlLabel
+        control={
+          <Checkbox
+            name="enabled"
+            value="enabled"
+            checked={enabled}
+            onChange={() => setEnabled(!enabled)}
+          />
+        }
+        label={lang.get(userLang)?.enabled}
       />
       {data && !data.default && (
         <FormActions

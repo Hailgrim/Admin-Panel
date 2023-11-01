@@ -30,15 +30,6 @@ export class RolesResourcesDto implements IRolesResources {
 
   @ApiProperty({
     example: false,
-    description: lang.get('en')?.listing,
-  })
-  @IsBoolean({
-    message: lang.get('en')?.mustBeABoolean(lang.get('en')?.listing),
-  })
-  listing: boolean;
-
-  @ApiProperty({
-    example: false,
     description: lang.get('en')?.reading,
   })
   @IsBoolean({

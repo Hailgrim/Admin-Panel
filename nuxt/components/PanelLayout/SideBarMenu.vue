@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import SideBarMenuItem from './SideBarMenuItem.vue'
-import type { ISideBarMenuItem } from '~/libs/types'
-import { checkActiveLink } from '~/libs/functions'
+import type { ISideBarMenuItem } from '~/utils/types'
 
 const props = defineProps<{ data: ISideBarMenuItem[] }>()
 const route = useRoute()

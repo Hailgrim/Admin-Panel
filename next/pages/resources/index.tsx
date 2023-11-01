@@ -6,13 +6,13 @@ import resourcesApi from '../../store/api/resourcesApi';
 import { getServerSidePropsCustom, makePagination } from '../../libs/functions';
 import { IFindAndCountRes, IPage, IResource } from '../../libs/types';
 import PageMeta from '../../components/Other/PageMeta';
-import ResourceTable from '../../components/Tables/ResourceTable';
+import ResourcesTable from '../../components/Tables/ResourcesTable';
 
 const ResourcesPage: React.FC<IPage<IFindAndCountRes<IResource>>> = ({ meta, pagination, content }) => {
   return (
     <React.Fragment>
       <PageMeta {...meta} />
-      <ResourceTable data={content} pagination={pagination} />
+      <ResourcesTable data={content} pagination={pagination} />
     </React.Fragment>
   );
 };

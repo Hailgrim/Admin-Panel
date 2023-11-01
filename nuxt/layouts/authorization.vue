@@ -13,7 +13,7 @@ const name = computed(() => route.meta.name ? t(String(route.meta.name)) : '?')
   </Head>
   <v-card>
     <v-layout class="content flex-column align-stretch justify-center mx-auto v-col-xl-3 v-col-lg-4 v-col-md-6 v-col-12">
-      <v-card-title tag="h1" class="flex-grow-0 text-center pb-5">
+      <v-card-title tag="h1" class="flex-grow-0 text-center pb-6">
         {{ name }}
       </v-card-title>
       <v-main class="flex-grow-0">

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ISideBarMenuItem } from '~/libs/types'
+import type { ISideBarMenuItem } from '~/utils/types'
 
 const props = defineProps<ISideBarMenuItem>()
 const route = useRoute()
@@ -23,7 +23,7 @@ watch(
 </script>
 
 <template>
-  <v-list-group v-if="childs" :value="`${title}: ${href}`" :fluid="true">
+  <v-list-group v-if="childs?.length" :value="`${title}: ${href}`" :fluid="true">
     <template #activator="{ props: itemProps }">
       <v-list-item v-bind="itemProps" :prepend-icon="icon" :title="title" />
     </template>

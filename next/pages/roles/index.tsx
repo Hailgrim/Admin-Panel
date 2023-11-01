@@ -6,7 +6,7 @@ import rolesApi from '../../store/api/rolesApi';
 import { getServerSidePropsCustom, makePagination } from '../../libs/functions';
 import { IFindAndCountRes, IPage, IRole } from '../../libs/types';
 import PageMeta from '../../components/Other/PageMeta';
-import RoleTable from '../../components/Tables/RoleTable';
+import RoleTable from '../../components/Tables/RolesTable';
 
 const RolesPage: React.FC<IPage<IFindAndCountRes<IRole>>> = ({ meta, pagination, content }) => {
   return (

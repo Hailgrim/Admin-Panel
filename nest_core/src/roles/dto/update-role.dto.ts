@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, Length } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
 
 import lang from 'libs/lang';
 import { UpdateRoleFields } from 'libs/types';
@@ -30,4 +30,11 @@ export class UpdateRoleDto implements UpdateRoleFields {
     message: lang.get('en')?.fieldLength(lang.get('en')?.description, 1, 1000),
   })
   description?: string;
+
+  @ApiProperty({ example: true, description: lang.get('en')?.status })
+  @IsOptional()
+  @IsBoolean({
+    message: lang.get('en')?.mustBeABoolean(lang.get('en')?.status),
+  })
+  enabled?: boolean;
 }

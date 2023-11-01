@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-import type { IAlert } from '~/libs/types'
+import type { IAlert } from '~/utils/types'
 
 export const useMainStore = defineStore('main', () => {
   const isSideBarOpened = ref<boolean>(true)

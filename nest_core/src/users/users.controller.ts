@@ -8,7 +8,6 @@ import {
   Patch,
   Post,
   Query,
-  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -49,11 +48,10 @@ export class UsersController {
 
   @ApiOperation({ summary: lang.get('en')?.getEntities })
   @ApiResponse({ status: HttpStatus.OK, type: [IUser] })
-  @Roles({ path: route, action: Rights.Listing })
+  @Roles({ path: route, action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get()
   async findAll(
-    @Req() req: any,
     @Query() getUsersDto: GetUsersDto,
   ): Promise<IUser[] | IFindAndCount<IUser>> {
     if (getUsersDto.count) {
@@ -116,8 +114,8 @@ export class UsersController {
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Roles({ path: route, action: Rights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
-  @Delete('/:id')
-  async delete(@Param('id') id: string): Promise<boolean> {
-    return this.usersService.delete(Number(id));
+  @Delete()
+  async delete(@Body() id: number | number[]): Promise<boolean> {
+    return this.usersService.delete(id);
   }
 }

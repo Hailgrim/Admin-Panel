@@ -3,38 +3,37 @@ import FormBox from '../FormBox.vue'
 import FormTextInput from '../FormTextInput.vue'
 import FormButton from '../FormButton.vue'
 import { useMainStore } from '~/stores/main'
-import { useProfileStore } from '~/stores/profile'
-import { getUpdatedValues, makeErrorText, testString } from '~/libs/functions'
-import { NAME_REGEX } from '~/libs/constants'
-import type { IUser } from '~/libs/types'
+import { useAuthStore } from '~/stores/auth'
+import type { IUser } from '~/utils/types'
 
 const { t } = useI18n()
 const mainStore = useMainStore()
-const profileStore = useProfileStore()
-const name = ref(profileStore.profile?.name || '')
+const authStore = useAuthStore()
+const name = ref(authStore.profile?.name || '')
 const nameIsValid = (value: string) => testString(NAME_REGEX, value) || t('nameValidation')
+const rights = useRights(ROUTES.api.users)
 
 function submitHandler() {
-  if (nameIsValid(name.value) && profileStore.profile) {
+  if (nameIsValid(name.value) && authStore.profile) {
     const updatedValues = getUpdatedValues<IUser>(
-      profileStore.profile,
+      authStore.profile,
       { name: name.value },
     )
     if (Object.keys(updatedValues).length > 0)
-      profileStore.updateProfile(updatedValues)
+      authStore.updateProfile(updatedValues)
     else
       mainStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
   }
 }
 
 watch(
-  () => profileStore.updateProfilePending,
+  () => authStore.updateProfilePending,
   () => {
-    if (profileStore.updateProfilePending === true)
+    if (authStore.updateProfilePending === true)
       return
-    if (profileStore.updateProfileError || profileStore.updateProfileData !== true)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(profileStore.updateProfileError) })
-    if (profileStore.updateProfileData)
+    if (authStore.updateProfileError || authStore.updateProfileData !== true)
+      mainStore.addAlert({ type: 'error', text: makeErrorText(authStore.updateProfileError) })
+    if (authStore.updateProfileData)
       mainStore.addAlert({ type: 'success', text: t('success') })
   },
 )
@@ -46,7 +45,7 @@ watch(
       v-model:model-value="name" required name="name" :label="$t('email')"
       :rules="[nameIsValid]"
     />
-    <FormButton type="submit" color="success" prepand-icon="mdi-content-save" :loading="profileStore.updateProfilePending">
+    <FormButton type="submit" color="success" prepand-icon="mdi-content-save" :loading="authStore.updateProfilePending" :disabled="!rights.updating">
       {{ $t('update') }}
     </FormButton>
   </FormBox>

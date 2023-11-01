@@ -30,8 +30,8 @@ export function makeErrorText(error: any): string {
 
   if (
     error === undefined
-    || typeof error == 'string'
-    || typeof error == 'number'
+    || typeof error === 'string'
+    || typeof error === 'number'
   )
     return result
 
@@ -39,8 +39,8 @@ export function makeErrorText(error: any): string {
     return $i18n.t('tooManyRequests')
 
   const errorObj = Object(error)
-  if (errorObj?.data?.message) {
-    if (Array.isArray(errorObj.data.message))
+  if (errorObj?.message) {
+    if (Array.isArray(errorObj.message))
       result = (errorObj.message as Array<string>).join('; ').concat('.')
     else
       result = String(errorObj.message)

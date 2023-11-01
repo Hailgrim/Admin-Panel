@@ -6,13 +6,13 @@ defineProps<{
 </script>
 
 <template>
-  <NuxtLink class="link d-block mt-5 text-center text-decoration-none" :href="href">
+  <NuxtLink class="link d-block mb-6 text-center text-decoration-none" :href="href">
     {{ text }}
   </NuxtLink>
 </template>
 
 <style scoped>
 .link + .link {
-  margin-top: 8px !important;
+  margin-top: -12px !important;
 }
 </style>

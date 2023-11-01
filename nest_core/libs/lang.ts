@@ -27,7 +27,6 @@ const en = {
   roleId: 'Role ID',
   resourceId: 'Resource ID',
   creating: 'Creating',
-  listing: 'Listing',
   reading: 'Reading',
   updating: 'Updating',
   deleting: 'Deleting',

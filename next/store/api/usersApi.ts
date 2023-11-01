@@ -10,11 +10,10 @@ import {
   IUsersRoles,
 } from '../../libs/types';
 import baseQueryWithReauth from '../baseQueryWithReauth';
-
-const route = 'users';
+import { ROUTES } from '../../libs/constants';
 
 const usersApi = createApi({
-  reducerPath: `${route}Api`,
+  reducerPath: 'users',
   baseQuery: baseQueryWithReauth,
   extractRehydrationInfo(action, { reducerPath }) {
     if (action.type === HYDRATE) {
@@ -26,7 +25,7 @@ const usersApi = createApi({
 
     create: builder.mutation<IUser, IUserCreate>({
       query: payload => ({
-        url: `${route}`,
+        url: ROUTES.api.users,
         method: 'POST',
         credentials: 'include',
         body: payload,
@@ -36,7 +35,7 @@ const usersApi = createApi({
 
     findAll: builder.query<IUser[], IListReq<IUser> | void>({
       query: payload => ({
-        url: `${route}`,
+        url: ROUTES.api.users,
         method: 'GET',
         credentials: 'include',
         params: payload || undefined,
@@ -46,7 +45,7 @@ const usersApi = createApi({
 
     findAndCountAll: builder.query<IFindAndCountRes<IUser>, IListReq<IUser> | void>({
       query: payload => ({
-        url: `${route}`,
+        url: ROUTES.api.users,
         method: 'GET',
         credentials: 'include',
         params: { ...payload, count: true },
@@ -55,7 +54,7 @@ const usersApi = createApi({
 
     findOne: builder.query<IUser, number>({
       query: payload => ({
-        url: `${route}/${payload}`,
+        url: ROUTES.api.user(payload),
         method: 'GET',
         credentials: 'include',
       }),
@@ -63,7 +62,7 @@ const usersApi = createApi({
 
     update: builder.mutation<boolean, IUpdateReq<IUser>>({
       query: payload => ({
-        url: `${route}/${payload.id}`,
+        url: ROUTES.api.user(payload.id),
         method: 'PATCH',
         credentials: 'include',
         body: payload.fields,
@@ -73,7 +72,7 @@ const usersApi = createApi({
 
     updateRoles: builder.mutation<boolean, IUpdateReq<IUsersRoles[]>>({
       query: payload => ({
-        url: `${route}/${payload.id}/roles`,
+        url: ROUTES.api.userRoles(payload.id),
         method: 'PATCH',
         credentials: 'include',
         body: payload.fields,
@@ -83,9 +82,10 @@ const usersApi = createApi({
 
     delete: builder.mutation<boolean, number | number[]>({
       query: payload => ({
-        url: `${route}/${payload}`,
+        url: ROUTES.api.users,
         method: 'DELETE',
         credentials: 'include',
+        body: payload,
       }),
       invalidatesTags: ['Entities'],
     }),

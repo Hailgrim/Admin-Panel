@@ -1,6 +1,3 @@
-export const SIDE_MENU_WIDTH = '64px';
-export const SIDE_MENU_WIDTH_OPENED = '256px';
-
 /** Name validation regex */
 export const NAME_REGEX = /^([A-Za-z0-9\s]){1,100}$/;
 /** Email validation regex */
@@ -10,7 +7,6 @@ export const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[A-Za-z\d\
 
 export enum Rights {
   Creating = 'creating',
-  Listing = 'listing',
   Reading = 'reading',
   Updating = 'updating',
   Deleting = 'deleting',
@@ -30,17 +26,37 @@ export const ROUTES = {
     profile: '/profile',
     users: '/users',
     newUser: '/users/new',
-    user: '/users/[id]',
-    getUserRoute: (id: number | string) => `/users/${id}`,
+    user: (id: string | number) => `/users/${id}`,
     roles: '/roles',
     newRole: '/roles/new',
-    role: '/roles/[id]',
-    getRoleRoute: (id: number | string) => `/roles/${id}`,
+    role: (id: string | number) => `/roles/${id}`,
     resources: '/resources',
     newResource: '/resources/new',
-    resource: '/resources/[id]',
-    getResourceRoute: (id: number | string) => `/resources/${id}`,
-    files: '/files',
-    newFile: '/files/new',
+    resource: (id: string | number) => `/resources/${id}`,
+  },
+  /** API routes */
+  api: {
+    auth: {
+      sighUp: 'auth/sign-up',
+      signIn: '/auth/sign-in',
+      verify: '/auth/verify-user',
+      forgotPassword: '/auth/forgot-password',
+      resetPassword: '/auth/reset-password',
+      refresh: '/auth/refresh',
+      getProfile: '/auth/profile',
+      updateProfile: '/auth/profile',
+      signOut: '/auth/log-out',
+    },
+    users: '/users',
+    user: (id: string | number) => `/users/${id}`,
+    userRoles: (id: string | number) => `/users/${id}/roles`,
+    roles: '/roles',
+    role: (id: string | number) => `/roles/${id}`,
+    roleResources: (id: string | number) => `/roles/${id}/resources`,
+    resources: '/resources',
+    resource: (id: string | number) => `/resources/${id}`,
   },
 };
+
+export const SIDE_MENU_WIDTH = '64px';
+export const SIDE_MENU_WIDTH_OPENED = '256px';

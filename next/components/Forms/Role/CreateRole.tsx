@@ -34,7 +34,7 @@ const CreateRole: React.FC = () => {
     }
     if (createReq.data) {
       dispatch(addAlert({ type: 'success', text: lang.get(userLang)?.success }));
-      router.push(ROUTES.panel.getRoleRoute(createReq.data.id));
+      router.push(ROUTES.panel.role(createReq.data.id));
     }
   }, [
     createReq.data, createReq.error, createReq.isLoading,

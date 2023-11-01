@@ -47,7 +47,7 @@ export class ResourcesController {
 
   @ApiOperation({ summary: lang.get('en')?.getEntities })
   @ApiResponse({ status: HttpStatus.OK, type: [IResource] })
-  @Roles({ path: route, action: Rights.Listing })
+  @Roles({ path: route, action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get()
   async findAll(
@@ -93,8 +93,8 @@ export class ResourcesController {
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Roles({ path: route, action: Rights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
-  @Delete('/:id')
-  async delete(@Param('id') id: string): Promise<boolean> {
-    return this.resourceService.delete(Number(id));
+  @Delete()
+  async delete(@Body() id: number | number[]): Promise<boolean> {
+    return this.resourceService.delete(id);
   }
 }

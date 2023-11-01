@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import SideBar from '~/components/Layout/SideBar.vue'
+import '~/assets/styles.scss'
+import SideBar from '~/components/PanelLayout/SideBar.vue'
 import Alerts from '~/components/Other/Alerts.vue'
-import { ROUTES } from '~/libs/constants'
 import { useMainStore } from '~/stores/main'
-import { useProfileStore } from '~/stores/profile'
+import { useAuthStore } from '~/stores/auth'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -12,12 +12,12 @@ const title = computed(() => route.meta.title ? t(String(route.meta.title)) : '?
 const description = computed(() => route.meta.description ? t(String(route.meta.description)) : '')
 const name = computed(() => route.meta.name ? t(String(route.meta.name)) : '?')
 const mainStore = useMainStore()
-const profileStore = useProfileStore()
+const authStore = useAuthStore()
 
 watch(
-  () => profileStore.profile,
+  () => authStore.profile,
   () => {
-    if (profileStore.profile === null)
+    if (authStore.profile === null)
       router.push(ROUTES.auth.signIn)
   },
 )
@@ -38,16 +38,16 @@ watch(
         <template #append>
           <v-app-bar-nav-icon
             icon="mdi-logout" color="error" :title="$t('signOut')"
-            :loading="profileStore.signOutPending" @click="profileStore.signOut()"
+            :loading="authStore.signOutPending" @click="authStore.signOut()"
           />
         </template>
       </v-app-bar>
-      <v-main>
+      <v-main class="d-flex flex-column">
         <v-divider />
-        <v-card-title tag="h1" class="px-6 py-3">
+        <v-card-title tag="h1" class="px-6 pt-3 pb-6">
           {{ name }}
         </v-card-title>
-        <v-card-text class="px-6 pt-0 pb-3">
+        <v-card-text class="px-6 pt-0 pb-3 d-flex flex-column">
           <slot />
         </v-card-text>
       </v-main>

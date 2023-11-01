@@ -12,9 +12,8 @@ export const WITH_RESOURCES = 'withResources';
 export const MAIL_SERVER = 'MAIL_SERVER';
 
 export enum Rights {
-  Listing = 'listing',
-  Reading = 'reading',
   Creating = 'creating',
+  Reading = 'reading',
   Updating = 'updating',
   Deleting = 'deleting',
 }

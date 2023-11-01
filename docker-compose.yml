@@ -77,8 +77,6 @@ services:
       - .env
     networks:
       - main
-    depends_on:
-      - postgres
 
   redis:
     build:

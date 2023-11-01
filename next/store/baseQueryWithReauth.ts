@@ -8,11 +8,12 @@ import { Mutex } from 'async-mutex';
 
 import { API_HOST, PROJECT_TAG } from '../libs/config';
 import { RootState } from './store';
+import { ROUTES } from '../libs/constants';
 
 const mutex = new Mutex();
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: `${API_HOST}/`,
+  baseUrl: API_HOST,
   prepareHeaders: (headers, { getState }) => {
     const {
       accessToken,
@@ -51,7 +52,7 @@ const baseQueryWithReauth: BaseQueryFn<
     if (!mutex.isLocked()) {
       const release = await mutex.acquire();
       try {
-        const refreshResult = await baseQuery('/auth/refresh', api, extraOptions);
+        const refreshResult = await baseQuery(ROUTES.api.auth.refresh, api, extraOptions);
         if (refreshResult.data) {
           // retry the initial query
           result = await baseQuery(args, api, extraOptions);

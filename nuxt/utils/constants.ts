@@ -7,7 +7,6 @@ export const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[A-Za-z\d\
 
 export enum Rights {
   Creating = 'creating',
-  Listing = 'listing',
   Reading = 'reading',
   Updating = 'updating',
   Deleting = 'deleting',
@@ -27,15 +26,13 @@ export const ROUTES = {
     profile: '/profile',
     users: '/users',
     newUser: '/users/new',
-    user: '/users/#ID#',
+    user: (id: string | number) => `/users/${id}`,
     roles: '/roles',
     newRole: '/roles/new',
-    role: '/roles/#ID#',
+    role: (id: string | number) => `/roles/${id}`,
     resources: '/resources',
     newResource: '/resources/new',
-    resource: '/resources/#ID#',
-    files: '/files',
-    newFile: '/files/new',
+    resource: (id: string | number) => `/resources/${id}`,
   },
   /** API routes */
   api: {
@@ -50,5 +47,13 @@ export const ROUTES = {
       updateProfile: '/auth/profile',
       signOut: '/auth/log-out',
     },
+    users: '/users',
+    user: (id: string | number) => `/users/${id}`,
+    userRoles: (id: string | number) => `/users/${id}/roles`,
+    roles: '/roles',
+    role: (id: string | number) => `/roles/${id}`,
+    roleResources: (id: string | number) => `/roles/${id}/resources`,
+    resources: '/resources',
+    resource: (id: string | number) => `/resources/${id}`,
   },
 }

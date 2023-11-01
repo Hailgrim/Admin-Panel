@@ -10,6 +10,7 @@ import TextFieldStyled from '../../Other/TextFieldStyled';
 import FormBoxStyled from '../FormBoxStyled';
 import { isAllowed, makeErrorText } from '../../../libs/functions';
 import { Rights, ROUTES } from '../../../libs/constants';
+import { Checkbox, FormControlLabel } from '@mui/material';
 
 const CreateResource: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -20,10 +21,11 @@ const CreateResource: React.FC = () => {
   const [name, setName] = React.useState('');
   const [path, setPath] = React.useState('');
   const [description, setDescription] = React.useState('');
+  const [enabled, setEnabled] = React.useState(true);
 
   const createHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    create({ name, path, description: description || null });
+    create({ name, path, description: description || null, enabled });
   };
 
   React.useEffect(() => {
@@ -35,7 +37,7 @@ const CreateResource: React.FC = () => {
     }
     if (createReq.data) {
       dispatch(addAlert({ type: 'success', text: lang.get(userLang)?.success }));
-      router.push(ROUTES.panel.getResourceRoute(createReq.data.id));
+      router.push(ROUTES.panel.resource(createReq.data.id));
     }
   }, [
     createReq.data, createReq.error, createReq.isLoading,
@@ -66,6 +68,17 @@ const CreateResource: React.FC = () => {
         label={lang.get(userLang)?.description}
         value={description}
         onChange={event => setDescription(event.currentTarget.value)}
+      />
+      <FormControlLabel
+        control={
+          <Checkbox
+            name="enabled"
+            value="enabled"
+            checked={enabled}
+            onChange={() => setEnabled(!enabled)}
+          />
+        }
+        label={lang.get(userLang)?.enabled}
       />
       <FormActions
         create={{

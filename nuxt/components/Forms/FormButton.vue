@@ -11,7 +11,7 @@ defineEmits(['click'])
 </script>
 
 <template>
-  <v-btn v-bind="props" class="custom mb-5" size="large" variant="flat" @click="$emit('click')">
+  <v-btn v-bind="props" class="btn mb-6 mr-3" variant="flat" @click="$emit('click')">
     <template v-if="props.prepandIcon" #prepend>
       <v-icon :icon="props.prepandIcon" />
     </template>
@@ -19,11 +19,14 @@ defineEmits(['click'])
   </v-btn>
 </template>
 
-<style scoped>
-.custom:disabled {
-  opacity: 0.5;
-}
-.custom:last-child {
-  margin-bottom: unset !important;
+<style scoped lang="scss">
+.btn {
+
+  vertical-align: top;
+
+  &:disabled {
+    opacity: 0.5;
+  }
+
 }
 </style>

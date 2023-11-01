@@ -62,7 +62,7 @@ export const makePagination = (query: ParsedUrlQuery): IPagination => {
   const page = Math.abs(Number(query.page)) || 1;
   let quantity = Number(query.quantity);
   if (![25, 50, 100].includes(quantity)) {
-    quantity = 100;
+    quantity = 25;
   }
   return { page, quantity };
 };
@@ -123,11 +123,7 @@ export const makeErrorText = (
  * @param {IRole | IRole[]} roles User roles
  * @returns {boolean} true if the user has the necessary rights
  */
-export const isAllowed = (
-  route: string,
-  rights: Rights,
-  roles?: IRole | IRole[],
-): boolean => {
+export const isAllowed = (route: string, rights: Rights, roles?: IRole | IRole[]): boolean => {
   if (route.startsWith('/')) {
     route = route.slice(1);
   }

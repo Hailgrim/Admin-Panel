@@ -94,18 +94,18 @@ export interface IRole {
   id: number;
   name: string;
   description: string | null;
+  enabled: boolean;
   admin: boolean;
   default: boolean;
   resources?: IResource[];
   UsersRoles?: IUsersRoles;
 }
-export type IRoleCreate = Pick<IRole, 'name' | 'description'>;
+export type IRoleCreate = Pick<IRole, 'name' | 'description' | 'enabled'>;
 
 export interface IRolesResources {
   roleId: number;
   resourceId: number;
   creating: boolean;
-  listing: boolean;
   reading: boolean;
   updating: boolean;
   deleting: boolean;
@@ -115,10 +115,11 @@ export interface IResource {
   name: string;
   path: string;
   description: string | null;
+  enabled: boolean;
   default: boolean;
   RolesResources?: IRolesResources;
 }
-export type IResourceCreate = Pick<IResource, 'name' | 'path' | 'description'>;
+export type IResourceCreate = Pick<IResource, 'name' | 'path' | 'description' | 'enabled'>;
 
 export interface IRoleAndResources {
   role: IRole;

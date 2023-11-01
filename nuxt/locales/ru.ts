@@ -1,5 +1,5 @@
 import en from './en'
-import type { LangDictionary } from '~/libs/types'
+import type { LangDictionary } from '~/utils/types'
 
 export default <LangDictionary>{
   ...en,

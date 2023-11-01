@@ -40,10 +40,8 @@ import { Roles } from 'src/roles/roles.decorator';
 import { Rights } from 'libs/constants';
 import { RolesGuard } from 'src/roles/roles.guard';
 
-const route = 'auth';
-
 @ApiTags(String(lang.get('en')?.authorization))
-@Controller(route)
+@Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -171,7 +169,7 @@ export class AuthController {
 
   @ApiOperation({ summary: lang.get('en')?.profile })
   @ApiResponse({ status: HttpStatus.OK, type: IUser })
-  @Roles({ path: route, action: Rights.Reading })
+  @Roles({ path: 'profile', action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get('profile')
   async getProfile(@Req() req: FastifyRequestWithAuth): Promise<IUser> {
@@ -180,7 +178,7 @@ export class AuthController {
 
   @ApiOperation({ summary: lang.get('en')?.updateProfile })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Roles({ path: route, action: Rights.Updating })
+  @Roles({ path: 'profile', action: Rights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('profile')
   async updateProfile(

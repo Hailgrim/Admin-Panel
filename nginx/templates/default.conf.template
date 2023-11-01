@@ -93,13 +93,4 @@ server {
     location / {
         proxy_pass http://${NEST_CORE_HOST}:${NEST_CORE_PORT};
     }
-
-    # location /files {
-    #     autoindex off;
-    #     client_max_body_size 64m;
-    # }
-
-    # location ~ /\. {
-    #     deny all;
-    # }
 }

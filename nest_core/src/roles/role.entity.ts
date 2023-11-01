@@ -49,6 +49,10 @@ export class Role extends Model<Role, CreateRoleFields> implements IRole {
   @Column({ type: DataType.STRING, allowNull: true })
   description: string | null;
 
+  @ApiProperty({ example: true, description: lang.get('en')?.status })
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
+  enabled: boolean;
+
   @ApiProperty({ example: true, description: lang.get('en')?.adminStatus })
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
   admin: boolean;

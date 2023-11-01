@@ -1,9 +1,8 @@
 import { defineStore } from 'pinia'
 
-import type { ICookies, IResetPassword, IUpdateReq, IUser, IUserSignIn, IUserSignUp, IVerifyUser } from '~/libs/types'
-import { ROUTES } from '~/libs/constants'
+import type { IResetPassword, IUser, IUserSignIn, IUserSignUp, IVerifyUser } from '~/utils/types'
 
-export const useProfileStore = defineStore('profile', () => {
+export const useAuthStore = defineStore('auth', () => {
   const profile = ref<IUser | null>(null)
 
   const {
@@ -11,28 +10,40 @@ export const useProfileStore = defineStore('profile', () => {
     error: signUpError,
     data: signUpData,
     execute: signUp,
-  } = useCustomFetch<IUser, IUserSignUp>(ROUTES.api.auth.sighUp, { method: 'POST' })
+  } = useCustomFetch<IUser, IUserSignUp>(payload => ({
+    url: ROUTES.api.auth.sighUp,
+    options: { method: 'POST', body: payload },
+  }))
 
   const {
     pending: forgotPasswordPending,
     error: forgotPasswordError,
     data: forgotPasswordData,
     refresh: forgotPassword,
-  } = useCustomFetch<boolean, string>(ROUTES.api.auth.forgotPassword, { method: 'POST' })
+  } = useCustomFetch<boolean, string>(payload => ({
+    url: ROUTES.api.auth.forgotPassword,
+    options: { method: 'POST', body: payload },
+  }))
 
   const {
     pending: resetPasswordPending,
     error: resetPasswordError,
     data: resetPasswordData,
     execute: resetPassword,
-  } = useCustomFetch<boolean, IResetPassword>(ROUTES.api.auth.resetPassword, { method: 'POST' })
+  } = useCustomFetch<boolean, IResetPassword>(payload => ({
+    url: ROUTES.api.auth.resetPassword,
+    options: { method: 'POST', body: payload },
+  }))
 
   const {
     pending: signInPending,
     error: signInError,
     data: signInData,
     execute: signInExecute,
-  } = useCustomFetch<IUser, IUserSignIn>(ROUTES.api.auth.signIn, { method: 'POST', credentials: 'include' })
+  } = useCustomFetch<IUser, IUserSignIn>(payload => ({
+    url: ROUTES.api.auth.signIn,
+    options: { method: 'POST', credentials: 'include', body: payload },
+  }))
   async function signIn(payload: IUserSignIn) {
     await signInExecute(payload)
     if (signInData.value)
@@ -44,21 +55,20 @@ export const useProfileStore = defineStore('profile', () => {
     error: verifyError,
     data: verifyData,
     execute: verify,
-  } = useCustomFetch<boolean, IVerifyUser>(ROUTES.api.auth.verify, { method: 'POST' })
-
-  const {
-    pending: refreshPending,
-    error: refreshError,
-    data: refreshData,
-    execute: refresh,
-  } = useCustomFetch<ICookies, void>(ROUTES.api.auth.refresh, { method: 'GET', credentials: 'include' })
+  } = useCustomFetch<boolean, IVerifyUser>(payload => ({
+    url: ROUTES.api.auth.verify,
+    options: { method: 'POST', body: payload },
+  }))
 
   const {
     pending: getProfilePending,
     error: getProfileError,
     data: getProfileData,
     execute: getProfileExecute,
-  } = useCustomFetch<IUser, void>(ROUTES.api.auth.getProfile, { method: 'GET', credentials: 'include' })
+  } = useCustomFetch<IUser, void>(() => ({
+    url: ROUTES.api.auth.getProfile,
+    options: { method: 'GET', credentials: 'include' },
+  }))
   async function getProfile() {
     await getProfileExecute()
     if (getProfileData.value)
@@ -70,7 +80,10 @@ export const useProfileStore = defineStore('profile', () => {
     error: updateProfileError,
     data: updateProfileData,
     execute: updateProfileExecute,
-  } = useCustomFetch<boolean, Partial<IUser>>(ROUTES.api.auth.updateProfile, { method: 'PATCH', credentials: 'include' })
+  } = useCustomFetch<boolean, Partial<IUser>>(payload => ({
+    url: ROUTES.api.auth.updateProfile,
+    options: { method: 'PATCH', credentials: 'include', body: payload },
+  }))
   async function updateProfile(arg: Partial<IUser>) {
     await updateProfileExecute(arg)
     if (updateProfileData.value && profile.value)
@@ -82,7 +95,10 @@ export const useProfileStore = defineStore('profile', () => {
     error: signOutError,
     data: signOutData,
     execute: signOutExecute,
-  } = useCustomFetch<boolean, void>(ROUTES.api.auth.signOut, { method: 'DELETE', credentials: 'include' })
+  } = useCustomFetch<boolean, void>(() => ({
+    url: ROUTES.api.auth.signOut,
+    options: { method: 'DELETE', credentials: 'include' },
+  }))
   async function signOut() {
     await signOutExecute()
     if (signOutData.value)
@@ -110,10 +126,6 @@ export const useProfileStore = defineStore('profile', () => {
     verifyError,
     verifyData,
     verify,
-    refreshPending,
-    refreshError,
-    refreshData,
-    refresh,
     getProfilePending,
     getProfileError,
     getProfile,

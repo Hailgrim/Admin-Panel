@@ -8,30 +8,29 @@ import FormButton from '../FormButton.vue'
 import FormAuthLink from '../FormAuthLink.vue'
 import CustomModal from '~/components/Other/CustomModal.vue'
 import VerifyUser from '~/components/Forms/Auth/VerifyUser.vue'
-import { useProfileStore } from '~/stores/profile'
-import { makeErrorText } from '~/libs/functions'
-import { ROUTES } from '~/libs/constants'
+import { useAuthStore } from '~/stores/auth'
 
 const { t } = useI18n()
+const route = useRoute()
 const router = useRouter()
 const email = ref('')
 const emailIsValid = (value: string) => value.length > 0
 const password = ref('')
 const passwordIsValid = (value: string) => value.length > 0
 const rememberMe = ref(false)
-const profileStore = useProfileStore()
+const authStore = useAuthStore()
 const errorMsg = ref<string | null>(null)
 const verifyModal = ref(false)
 
 function submitHandler() {
   if (emailIsValid(email.value) && passwordIsValid(password.value))
-    profileStore.signIn({ username: email.value, password: password.value, rememberMe: rememberMe.value })
+    authStore.signIn({ username: email.value, password: password.value, rememberMe: rememberMe.value })
 }
 
 watch(
-  () => profileStore.signInError,
+  () => authStore.signInError,
   () => {
-    switch (profileStore.signInError?.status) {
+    switch (authStore.signInError?.status) {
       case 410:
         errorMsg.value = t('userDeleted')
         break
@@ -46,16 +45,16 @@ watch(
         errorMsg.value = null
         break
       default:
-        errorMsg.value = makeErrorText(profileStore.signInError?.message)
+        errorMsg.value = makeErrorText(authStore.signInError?.message)
     }
   },
 )
 
 watch(
-  () => profileStore.profile,
+  () => authStore.profile,
   () => {
-    if (profileStore.profile)
-      router.push(ROUTES.panel.home)
+    if (authStore.profile)
+      router.push(route.query.return ? decodeURIComponent(String(route.query.return)) : ROUTES.panel.home)
   },
 )
 </script>
@@ -72,7 +71,7 @@ watch(
       :rules="[passwordIsValid]"
     />
     <FormCheckbox v-model:model-value="rememberMe" name="rememberMe" :label="$t('rememberMe')" />
-    <FormButton block type="submit" color="info" :loading="profileStore.signInPending">
+    <FormButton block type="submit" color="info" :loading="authStore.signInPending">
       {{ $t('signIn') }}
     </FormButton>
     <FormAuthLink :href="ROUTES.auth.signUp" :text="$t('signUpText')" />

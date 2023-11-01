@@ -6,13 +6,13 @@ import usersApi from '../../store/api/usersApi';
 import { getServerSidePropsCustom, makePagination } from '../../libs/functions';
 import { IFindAndCountRes, IPage, IUser } from '../../libs/types';
 import PageMeta from '../../components/Other/PageMeta';
-import UserTable from '../../components/Tables/UserTable';
+import UsersTable from '../../components/Tables/UsersTable';
 
 const UsersPage: React.FC<IPage<IFindAndCountRes<IUser>>> = ({ meta, pagination, content }) => {
   return (
     <React.Fragment>
       <PageMeta {...meta} />
-      <UserTable data={content} pagination={pagination} />
+      <UsersTable data={content} pagination={pagination} />
     </React.Fragment>
   );
 };
