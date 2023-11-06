@@ -21,7 +21,7 @@ export const getCookies = (payload?: string): any => {
 export const preparePaginationOptions = (
   paginationDto?: PaginationDto,
 ): FindOptions => {
-  const options: FindOptions = { offset: 0, limit: 100 };
+  const options: FindOptions = { offset: 0, limit: 25 };
   if (
     paginationDto?.quantity &&
     paginationDto.quantity > 0 &&

@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { useRolesStore } from '~/stores/roles'
 import { useMainStore } from '~/stores/main'
+import type { IRole } from '~/utils/types'
+
+const { roles, count, page, quantity } = defineProps<{
+  roles: IRole[]
+  count: number
+  page: number
+  quantity: number
+}>()
+defineEmits(['update:page', 'update:quantity'])
 
 const { t } = useI18n()
 const headers = [
@@ -11,27 +20,13 @@ const headers = [
   { title: t('enabled'), key: 'enabled', width: 150 },
 ]
 const selected = ref<number[]>([])
-const route = useRoute()
-const page = ref(Number(route.query.page) || 1)
-const quantity = ref(Number(route.query.quantity) || 25)
-const router = useRouter()
 const rolesStore = useRolesStore()
-await rolesStore.listCountedRefresh({ page: page.value, quantity: quantity.value })
 const items = computed(() => {
-  return (rolesStore.listData || rolesStore.listCountedData?.rows || [])
-    .map(item => ({ ...item, selectable: !(item.default || item.admin) }))
+  return roles
+    .map(value => ({ ...value, selectable: !(value.default || value.admin) }))
 })
-const count = ref(rolesStore.listCountedData?.count || 0)
 const mainStore = useMainStore()
 const rolesRights = useRights(ROUTES.api.roles)
-
-watch(
-  [page, quantity],
-  () => {
-    router.push({ query: { page: page.value, quantity: quantity.value } })
-    rolesStore.list({ page: page.value, quantity: quantity.value })
-  },
-)
 
 watch(
   () => rolesStore.deletePending,
@@ -40,14 +35,14 @@ watch(
       mainStore.addAlert({ type: 'error', text: makeErrorText(rolesStore.deleteError) })
     if (rolesStore.deleteData) {
       mainStore.addAlert({ type: 'success', text: t('success') })
-      rolesStore.list({ page: page.value, quantity: quantity.value })
+      rolesStore.listRefresh({ page, quantity })
     }
   },
 )
 </script>
 
 <template>
-  <v-card-actions class="px-0">
+  <div class="mb-3">
     <NuxtLink :href="rolesRights.creating ? ROUTES.panel.newRole : undefined">
       <v-btn
         class="me-2"
@@ -68,20 +63,22 @@ watch(
     >
       {{ $t('delete') }}
     </v-btn>
-  </v-card-actions>
+  </div>
   <v-data-table-server
     v-model="selected"
-    v-model:page="page"
-    v-model:items-per-page="quantity"
     :headers="headers"
     :items="items"
     :items-length="count"
+    :page="page"
+    :items-per-page="quantity"
     :items-per-page-options="[25, 50, 100]"
     :loading="rolesStore.listPending"
     item-selectable="selectable"
     class="full-page-table"
     show-select
     hover
+    @update:page="value => $emit('update:page', value)"
+    @update:items-per-page="value => $emit('update:quantity', value)"
   >
     <template #item.edit="{ item }">
       <NuxtLink :href="item.admin ? undefined : ROUTES.panel.role(item.id)">

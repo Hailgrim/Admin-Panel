@@ -7,10 +7,10 @@ const mainStore = useMainStore()
 <template>
   <div class="alerts">
     <v-snackbar
-      v-for="item in mainStore.alerts"
-      :key="`alert:${item.id}`"
-      :model-value="item.deleted !== true"
-      :color="item.type"
+      v-for="alert of mainStore.alerts"
+      :key="`alert:${alert.id}`"
+      :model-value="alert.deleted !== true"
+      :color="alert.type"
       location="bottom right"
       class="alerts__item"
       content-class="alerts__content"
@@ -20,12 +20,12 @@ const mainStore = useMainStore()
       <template #actions>
         <v-btn
           variant="text"
-          @click="mainStore.deleteAlert(item.id, 1000)"
+          @click="mainStore.deleteAlert(alert.id, 1000)"
         >
           {{ $t('close') }}
         </v-btn>
       </template>
-      {{ item.text }}
+      {{ alert.text }}
     </v-snackbar>
   </div>
 </template>

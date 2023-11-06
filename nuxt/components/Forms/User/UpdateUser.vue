@@ -20,11 +20,12 @@ const mainStore = useMainStore()
 const rights = useRights(ROUTES.api.users)
 
 function submitHandler() {
-  if (emailIsValid(email.value) && nameIsValid(name.value))
+  if (emailIsValid(email.value) && nameIsValid(name.value)) {
     usersStore.update({
       id: user.id,
       fields: { email: email.value, name: name.value, enabled: enabled.value },
     })
+  }
 }
 
 watch(
@@ -34,9 +35,8 @@ watch(
       return
     if (usersStore.updateError)
       mainStore.addAlert({ type: 'error', text: makeErrorText(usersStore.updateError) })
-    if (usersStore.updateData) {
+    if (usersStore.updateData)
       mainStore.addAlert({ type: 'success', text: t('success') })
-    }
   },
 )
 </script>

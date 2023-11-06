@@ -13,6 +13,10 @@ const description = computed(() => route.meta.description ? t(String(route.meta.
 const name = computed(() => route.meta.name ? t(String(route.meta.name)) : '?')
 const mainStore = useMainStore()
 const authStore = useAuthStore()
+const loading = ref(false)
+
+router.beforeEach(() => loading.value = true)
+router.afterEach(() => loading.value = false)
 
 watch(
   () => authStore.profile,
@@ -28,7 +32,7 @@ watch(
     <Title>{{ title }} - {{ $t('adminPanel') }}</Title>
     <Meta :content="description" name="description" />
   </Head>
-  <v-card>
+  <v-card :loading="loading">
     <v-layout class="content">
       <SideBar />
       <v-app-bar density="comfortable" :flat="true">
@@ -47,7 +51,7 @@ watch(
         <v-card-title tag="h1" class="px-6 pt-3 pb-6">
           {{ name }}
         </v-card-title>
-        <v-card-text class="px-6 pt-0 pb-3 d-flex flex-column">
+        <v-card-text class="px-6 py-0 d-flex flex-column">
           <slot />
         </v-card-text>
       </v-main>

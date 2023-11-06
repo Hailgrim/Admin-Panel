@@ -34,8 +34,8 @@ async function bootstrap() {
     origin: [
       `https://${NGINX_HOST}`,
       `https://www.${NGINX_HOST}`,
-      `https://api.${NGINX_HOST}`,
       `https://nuxt.${NGINX_HOST}`,
+      `https://api.${NGINX_HOST}`,
     ],
     credentials: true,
   });

@@ -14,15 +14,13 @@ services:
     ports:
       - ${RABBITMQ_MANAGEMENT_PORT}:15672
 
-  adminer:
-    ports:
-      - ${ADMINER_PORT}:${ADMINER_PORT}
-
   redis:
     build:
       target: development
     ports:
       - ${REDIS_INSIGHT_PORT}:8001
+    volumes:
+      - "./redis:/home/${PROJECT_TAG}/redis"
 
   nest_core:
     build:
@@ -47,3 +45,15 @@ services:
       target: development
     volumes:
       - "./nuxt:/home/${PROJECT_TAG}/nuxt"
+
+  adminer:
+    build:
+      context: ./adminer
+    container_name: ${PROJECT_TAG}_adminer
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - main
+    ports:
+      - ${ADMINER_PORT}:${ADMINER_PORT}

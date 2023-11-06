@@ -68,16 +68,6 @@ services:
     volumes:
       - "postgres_data:/var/lib/postgresql/data"
 
-  adminer:
-    build:
-      context: ./adminer
-    container_name: ${PROJECT_TAG}_adminer
-    restart: always
-    env_file:
-      - .env
-    networks:
-      - main
-
   redis:
     build:
       context: ./redis

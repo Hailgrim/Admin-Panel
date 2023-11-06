@@ -1,8 +1,15 @@
 <script setup lang="ts">
 import { useUsersStore } from '~/stores/users'
 import { useMainStore } from '~/stores/main'
-import { useRights } from '~/composables/useRights'
-import type { IRole } from '~/utils/types';
+import type { IRole, IUser } from '~/utils/types'
+
+const { users, count, page, quantity } = defineProps<{
+  users: IUser[]
+  count: number
+  page: number
+  quantity: number
+}>()
+defineEmits(['update:page', 'update:quantity'])
 
 const { t } = useI18n()
 const headers = [
@@ -15,27 +22,13 @@ const headers = [
   { title: t('enabled'), key: 'enabled', width: 150 },
 ]
 const selected = ref<number[]>([])
-const route = useRoute()
-const page = ref(Number(route.query.page) || 1)
-const quantity = ref(Number(route.query.quantity) || 25)
-const router = useRouter()
 const usersStore = useUsersStore()
-await usersStore.listCountedRefresh({ page: page.value, quantity: quantity.value })
 const items = computed(() => {
-  return (usersStore.listData || usersStore.listCountedData?.rows || [])
-    .map(item => ({ ...item, selectable: !item.roles?.some(role => role.admin) }))
+  return users
+    .map(value => ({ ...value, selectable: !value.roles?.some(role => role.admin) }))
 })
-const count = ref(usersStore.listCountedData?.count || 0)
 const mainStore = useMainStore()
 const rights = useRights(ROUTES.api.users)
-
-watch(
-  [page, quantity],
-  () => {
-    router.push({ query: { page: page.value, quantity: quantity.value } })
-    usersStore.list({ page: page.value, quantity: quantity.value })
-  },
-)
 
 watch(
   () => usersStore.deletePending,
@@ -44,14 +37,14 @@ watch(
       mainStore.addAlert({ type: 'error', text: makeErrorText(usersStore.deleteError) })
     if (usersStore.deleteData) {
       mainStore.addAlert({ type: 'success', text: t('success') })
-      usersStore.list({ page: page.value, quantity: quantity.value })
+      usersStore.listRefresh({ page, quantity })
     }
   },
 )
 </script>
 
 <template>
-  <v-card-actions class="px-0">
+  <div class="mb-3">
     <NuxtLink :href="rights.creating ? ROUTES.panel.newUser : undefined">
       <v-btn
         class="me-2"
@@ -72,20 +65,22 @@ watch(
     >
       {{ $t('delete') }}
     </v-btn>
-  </v-card-actions>
+  </div>
   <v-data-table-server
     v-model="selected"
-    v-model:page="page"
-    v-model:items-per-page="quantity"
     :headers="headers"
     :items="items"
     :items-length="count"
+    :page="page"
+    :items-per-page="quantity"
     :items-per-page-options="[25, 50, 100]"
     :loading="usersStore.listPending"
     item-selectable="selectable"
     class="full-page-table"
     show-select
     hover
+    @update:page="value => $emit('update:page', value)"
+    @update:items-per-page="value => $emit('update:quantity', value)"
   >
     <template #item.edit="{ item }">
       <NuxtLink :href="ROUTES.panel.user(item.id)">

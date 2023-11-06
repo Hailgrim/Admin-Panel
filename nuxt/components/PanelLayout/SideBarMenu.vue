@@ -9,6 +9,6 @@ const opened = props.data.findLast(value => checkActiveLink(route.path, { href: 
 
 <template>
   <v-list density="compact" nav :aria-label="$t('mainMenu')" :opened="[opened ? `${opened.title}: ${opened.href}` : '']">
-    <SideBarMenuItem v-for="item in data" :key="item.title" v-bind="item" />
+    <SideBarMenuItem v-for="item of data" :key="item.title" v-bind="item" />
   </v-list>
 </template>

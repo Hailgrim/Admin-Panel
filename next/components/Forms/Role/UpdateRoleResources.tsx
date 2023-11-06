@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import FormBoxStyled from '../FormBoxStyled';
-import ResourceRow from '../Resource/ResourceRow';
+import ResourceRights from '../Resource/ResourceRights';
 import { Rights, ROUTES } from '../../../libs/constants';
 
 const UpdateRoleResources: React.FC<{
@@ -79,8 +79,8 @@ const UpdateRoleResources: React.FC<{
         {lang.get(userLang)?.resources}
       </Typography>
       {resources.map(resource => (
-        <ResourceRow
-          key={`resourceRow.${resource.id}`}
+        <ResourceRights
+          key={`ResourceRights.${resource.id}`}
           roleId={role.id}
           resource={resource}
           rights={updatedRights.filter(value => value?.resourceId == resource.id)[0]}

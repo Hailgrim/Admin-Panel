@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { useResourcesStore } from '~/stores/resources'
 import { useMainStore } from '~/stores/main'
+import type { IResource } from '~/utils/types'
+
+const { resources, count, page, quantity } = defineProps<{
+  resources: IResource[]
+  count: number
+  page: number
+  quantity: number
+}>()
+defineEmits(['update:page', 'update:quantity'])
 
 const { t } = useI18n()
 const headers = [
@@ -12,27 +21,13 @@ const headers = [
   { title: t('enabled'), key: 'enabled', width: 150 },
 ]
 const selected = ref<number[]>([])
-const route = useRoute()
-const page = ref(Number(route.query.page) || 1)
-const quantity = ref(Number(route.query.quantity) || 25)
-const router = useRouter()
 const resourcesStore = useResourcesStore()
-await resourcesStore.listCountedRefresh({ page: page.value, quantity: quantity.value })
 const items = computed(() => {
-  return (resourcesStore.listData || resourcesStore.listCountedData?.rows || [])
-    .map(item => ({ ...item, selectable: !item.default }))
+  return resources
+    .map(value => ({ ...value, selectable: !value.default }))
 })
-const count = ref(resourcesStore.listCountedData?.count || 0)
 const mainStore = useMainStore()
 const resourcesRights = useRights(ROUTES.api.resources)
-
-watch(
-  [page, quantity],
-  () => {
-    router.push({ query: { page: page.value, quantity: quantity.value } })
-    resourcesStore.list({ page: page.value, quantity: quantity.value })
-  },
-)
 
 watch(
   () => resourcesStore.deletePending,
@@ -41,14 +36,14 @@ watch(
       mainStore.addAlert({ type: 'error', text: makeErrorText(resourcesStore.deleteError) })
     if (resourcesStore.deleteData) {
       mainStore.addAlert({ type: 'success', text: t('success') })
-      resourcesStore.list({ page: page.value, quantity: quantity.value })
+      resourcesStore.list({ page, quantity })
     }
   },
 )
 </script>
 
 <template>
-  <v-card-actions class="px-0">
+  <div class="mb-3">
     <NuxtLink :href="resourcesRights.creating ? ROUTES.panel.newResource : undefined">
       <v-btn
         class="me-2"
@@ -69,20 +64,22 @@ watch(
     >
       {{ $t('delete') }}
     </v-btn>
-  </v-card-actions>
+  </div>
   <v-data-table-server
     v-model="selected"
-    v-model:page="page"
-    v-model:items-per-page="quantity"
     :headers="headers"
     :items="items"
     :items-length="count"
+    :page="page"
+    :items-per-page="quantity"
     :items-per-page-options="[25, 50, 100]"
     :loading="resourcesStore.listPending"
     item-selectable="selectable"
     class="full-page-table"
     show-select
     hover
+    @update:page="value => $emit('update:page', value)"
+    @update:items-per-page="value => $emit('update:quantity', value)"
   >
     <template #item.edit="{ item }">
       <NuxtLink :href="item.default ? undefined : ROUTES.panel.resource(item.id)">

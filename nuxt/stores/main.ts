@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import type { IAlert } from '~/utils/types'
 
 export const useMainStore = defineStore('main', () => {
-  const isSideBarOpened = ref<boolean>(true)
+  const isSideBarOpened = ref(true)
   function toggleSideBar(value: boolean) {
     isSideBarOpened.value = value
   }

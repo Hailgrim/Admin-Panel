@@ -14,6 +14,7 @@ export function useCustomFetch<ResT extends NonNullable<unknown>, ReqT extends N
     }
   },
 ) {
+  const event = useRequestEvent()
   const config = useRuntimeConfig()
   const accessTokenName = `${config.public.PROJECT_TAG}_accessToken`
   const accessToken = useCookie(accessTokenName)
@@ -21,7 +22,6 @@ export function useCustomFetch<ResT extends NonNullable<unknown>, ReqT extends N
   const refreshToken = useCookie(refreshTokenName)
   const rememberMeName = `${config.public.PROJECT_TAG}_rememberMe`
   const rememberMe = useCookie(rememberMeName)
-  const event = useRequestEvent()
   const payload = ref<ReqT | null>(null)
   const pending = ref(false)
   const error = ref<IRequestError | null>(null)
@@ -38,7 +38,7 @@ export function useCustomFetch<ResT extends NonNullable<unknown>, ReqT extends N
 
   async function refreshTokens() {
     if (process.server && !refreshToken.value)
-      return undefined
+      return null
 
     const refreshOptions: any = {
       method: 'GET',
@@ -61,60 +61,59 @@ export function useCustomFetch<ResT extends NonNullable<unknown>, ReqT extends N
         for (const cookie of cookies)
           appendResponseHeader(event, 'set-cookie', cookie)
       }
-      return await res.json().then(data => data.accessToken)
+      return res._data?.accessToken || null
     }
     catch {
-      return undefined
+      return null
     }
   }
 
-  async function customFetch(arg: UnwrapRef<ReqT>) {
+  async function customFetch(arg: UnwrapRef<ReqT>): Promise<UnwrapRef<ResT> | null> {
     const query = init(arg)
     pending.value = true
 
-    return $fetch<UnwrapRef<ResT>>(
-      query.url,
-      {
-        ...defaultOptions,
-        ...query.options,
-        headers: {
-          'Content-Type': typeof arg === 'object'
-            ? 'application/json'
-            : 'text/plain;charset=UTF-8',
-          ...process.server && accessToken.value
-            ? { Cookie: `${accessTokenName}=${accessToken.value}` }
-            : undefined,
+    try {
+      const resolve = await $fetch<UnwrapRef<ResT>>(
+        query.url,
+        {
+          ...defaultOptions,
+          ...query.options,
+          headers: {
+            'Content-Type': typeof arg === 'object'
+              ? 'application/json'
+              : 'text/plain;charset=UTF-8',
+            ...process.server && accessToken.value
+              ? { Cookie: `${accessTokenName}=${accessToken.value}` }
+              : undefined,
+          },
         },
-      },
-    )
-      .then((resolve) => {
-        error.value = null
-        data.value = resolve
-        pending.value = false
-      })
-      .catch(async (reject) => {
-        const fetchError: IRequestError = { status: Number(reject.status) || 400, message: reject.message }
+      )
 
-        // Trying to refresh tokens and refetch query
-        if (fetchError.status === 401 && refreshed.value === false) {
-          refreshed.value = true
-          const newAccessToken = await refreshTokens()
-          if (newAccessToken) {
-            if (process.server)
-              accessToken.value = newAccessToken
-            customFetch(arg)
-            return
-          }
-        }
+      error.value = null
+      data.value = resolve
+      pending.value = false
+      return resolve
+    }
+    catch (fail) {
+      const fetchError: IRequestError = { status: Number((fail as any).status) || 400, message: (fail as any).message }
 
-        error.value = fetchError
-        pending.value = false
-      })
+      // Trying to refresh tokens and refetch query
+      if (fetchError.status === 401 && refreshed.value === false) {
+        refreshed.value = true
+        const newAccessToken = await refreshTokens()
+        if (newAccessToken)
+          return customFetch(arg)
+      }
+
+      error.value = fetchError
+      pending.value = false
+      return null
+    }
   }
 
   async function execute(arg: UnwrapRef<ReqT>) {
     if (payload.value === arg && error.value === null)
-      return
+      return data.value
     return refresh(arg)
   }
 

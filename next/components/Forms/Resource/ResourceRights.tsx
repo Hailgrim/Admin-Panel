@@ -12,7 +12,7 @@ import lang from '../../../libs/lang';
 import { useAppSelector } from '../../../store/hooks';
 import { IResource, IRolesResources } from '../../../libs/types';
 
-const ResourceRow: React.FC<{
+const ResourceRights: React.FC<{
   roleId: number;
   resource: IResource;
   rights?: IRolesResources;
@@ -81,4 +81,4 @@ const ResourceRow: React.FC<{
     </FormControl>
   );
 };
-export default ResourceRow;
+export default ResourceRights;

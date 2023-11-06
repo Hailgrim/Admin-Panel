@@ -173,7 +173,7 @@ export class RolesService {
     }
 
     const deleteAllows: number[] = [];
-    role?.resources?.forEach((resource) => {
+    role.resources?.forEach((resource) => {
       if (!rolesResourcesDtoArr.some((value) => value.roleId == resource.id)) {
         deleteAllows.push(resource.id);
       }

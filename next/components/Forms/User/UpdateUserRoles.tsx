@@ -32,7 +32,7 @@ const UpdateUserRoles: React.FC<{
     });
   };
 
-  const updateRights = (newRole: IUsersRoles) => {
+  const updateRoles = (newRole: IUsersRoles) => {
     let find = false;
 
     const filtered = updatedRoles.filter(value => {
@@ -85,7 +85,7 @@ const UpdateUserRoles: React.FC<{
           name="role[]"
           value="allowed"
           checked={updatedRoles.some(value => value?.roleId == role.id)}
-          onChange={() => updateRights({ roleId: role.id, userId: user.id })}
+          onChange={() => updateRoles({ roleId: role.id, userId: user.id })}
         />
       ))}
       {roles && (

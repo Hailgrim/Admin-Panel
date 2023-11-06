@@ -73,6 +73,7 @@ export const useAuthStore = defineStore('auth', () => {
     await getProfileExecute()
     if (getProfileData.value)
       profile.value = getProfileData.value
+    return profile.value
   }
 
   const {

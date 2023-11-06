@@ -58,7 +58,7 @@ watch(
     />
     <FormPasswordInput
       v-model:model-value="password" required name="password"
-      :label="$t('password')" :rules="[passwordIsValid]" :hint="$t('passwordValidation')"
+      :label="$t('newPassword')" :rules="[passwordIsValid]" :hint="$t('passwordValidation')"
     />
     <FormButton block type="submit" color="success" :loading="authStore.resetPasswordPending">
       {{ $t('confirm') }}

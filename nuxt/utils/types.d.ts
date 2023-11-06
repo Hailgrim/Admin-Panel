@@ -15,25 +15,13 @@ export interface IAlert {
   deleted?: boolean
 }
 
-export interface IMeta {
-  title?: string
-  description?: string
-  h1?: string
-}
-
-export interface IPagination {
+export type IListReq<T> = {
+  count?: boolean
   page?: number
   quantity?: number
   search?: string
+  model?: Partial<T>
 }
-
-export interface IPage<T = void> {
-  meta?: IMeta
-  pagination?: IPagination
-  content?: T | null
-}
-
-export type IListReq<T> = IPagination & Partial<T> & { count?: boolean }
 
 export interface IFindAndCountRes<T> {
   rows: T[]

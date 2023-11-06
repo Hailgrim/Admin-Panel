@@ -12,5 +12,21 @@ defineEmits(['update:modelValue'])
 </script>
 
 <template>
-  <v-checkbox v-bind="props" persistent-hint density="compact" @change="$emit('update:modelValue', $event.target.checked)" />
+  <v-checkbox
+    v-bind="props"
+    persistent-hint
+    density="compact"
+    class="checkbox"
+    @change="$emit('update:modelValue', $event.target.checked)"
+  />
 </template>
+
+<style scoped lang="scss">
+.checkbox {
+
+  & + & {
+    margin-top: -16px !important;
+  }
+
+}
+</style>
