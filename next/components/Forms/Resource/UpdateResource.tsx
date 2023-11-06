@@ -1,17 +1,17 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 
-import lang from '../../../libs/lang';
+import lang from '../../../lib/lang';
 import resourcesApi from '../../../store/api/resourcesApi';
-import { getUpdatedValues, isAllowed, makeErrorText } from '../../../libs/functions';
-import { IResource } from '../../../libs/types';
+import { getUpdatedValues, isAllowed, makeErrorText } from '../../../lib/functions';
+import { IResource } from '../../../lib/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import TextFieldStyled from '../../Other/TextFieldStyled';
 import FormBoxStyled from '../FormBoxStyled';
-import { Rights, ROUTES } from '../../../libs/constants';
-import { Checkbox, FormControlLabel } from '@mui/material';
+import { Rights, ROUTES } from '../../../lib/constants';
+import FormCheckbox from '../FormCheckbox';
 
 const UpdateResource: React.FC<{
   data: IResource;
@@ -99,16 +99,12 @@ const UpdateResource: React.FC<{
         onChange={event => setDescription(event.currentTarget.value)}
         disabled={data?.default}
       />
-      <FormControlLabel
-        control={
-          <Checkbox
-            name="enabled"
-            value="enabled"
-            checked={enabled}
-            onChange={() => setEnabled(!enabled)}
-          />
-        }
+      <FormCheckbox
         label={lang.get(userLang)?.enabled}
+        name="enabled"
+        value="enabled"
+        checked={enabled}
+        onChange={() => setEnabled(!enabled)}
       />
       {data && !data.default && (
         <FormActions

@@ -13,11 +13,11 @@ import {
 import React from 'react';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
-import lang from '../../libs/lang';
+import lang from '../../lib/lang';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { toggleModalSideBar, toggleSideBar } from '../../store/slices/appSlice';
-import theme from '../../libs/theme';
-import { SIDE_MENU_WIDTH, SIDE_MENU_WIDTH_OPENED } from '../../libs/constants';
+import theme from '../../lib/theme';
+import { SIDE_MENU_WIDTH, SIDE_MENU_WIDTH_OPENED } from '../../lib/constants';
 import MenuItems from './MenuItems';
 
 const DrawerStyled = styled(

@@ -1,4 +1,6 @@
-export default {
+export type LangList = 'en' | 'ru';
+
+const en = {
   langCode: 'en',
   langCodeFull: 'en-US',
   langName: 'English',
@@ -31,15 +33,18 @@ export default {
   wrongEmailOrCode: 'Wrong email or code',
   name: 'Name',
   description: 'Description',
+  admin: 'Admin',
   path: 'Path',
+  default: 'Default',
   unknownError: 'Unknown error',
   userAlreadyExist: 'User already exist',
   error: 'Error',
   nameValidation: 'Latin characters only, length from 1 to 100',
-  emailValidation: 'example{\'@\'}mail.com',
+  emailValidation: 'example@mail.com',
   passwordValidation: 'Latin uppercase and lowercase characters, special symbols, numbers, length from 10 to 100',
   wrongEmail: 'Wrong email',
   wrongEmailOrPassword: 'Wrong email or password',
+  loading: 'Loading',
   confirm: 'Confirm',
   create: 'Create',
   read: 'Read',
@@ -50,6 +55,8 @@ export default {
   verified: 'Verified',
   edit: 'Edit',
   success: 'Success',
+  result: 'Result',
+  failure: 'Failure',
   newUser: 'New user',
   newRole: 'New role',
   newResource: 'New resource',
@@ -62,4 +69,18 @@ export default {
   nothingToUpdate: 'Nothing to update',
   tooManyRequests: 'Too many requests',
   close: 'Close',
-}
+};
+
+export type LangDictionary = typeof en;
+const lang = new Map<LangList, LangDictionary>();
+lang.set('en', en);
+
+const ru: LangDictionary = {
+  ...en,
+  langCode: 'ru',
+  langCodeFull: 'ru-RU',
+  langName: 'Русский',
+};
+lang.set('ru', ru);
+
+export default lang;

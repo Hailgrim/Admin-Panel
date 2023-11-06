@@ -1,10 +1,10 @@
 import React from 'react';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 
-import lang from '../../../libs/lang';
+import lang from '../../../lib/lang';
 import authApi from '../../../store/api/authApi';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { makeErrorText } from '../../../libs/functions';
+import { makeErrorText } from '../../../lib/functions';
 import TextFieldStyled from '../../../components/Other/TextFieldStyled';
 import AuthAlert from '../../../components/AuthLayout/AuthAlert';
 import FormBoxStyled from '../../../components/Forms/FormBoxStyled';

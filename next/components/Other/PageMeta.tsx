@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import Head from 'next/head';
 
-import { IMeta } from '../../libs/types';
+import { IMeta } from '../../lib/types';
 
 const PageMeta: React.FC<IMeta> = ({ title, description, h1 }) => {
   return (

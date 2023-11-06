@@ -1,10 +1,10 @@
 import React from 'react';
 
-import lang from '../../libs/lang';
+import lang from '../../lib/lang';
 import rolesApi from '../../store/api/rolesApi';
 import resourcesApi from '../../store/api/resourcesApi';
-import { getServerSidePropsCustom } from '../../libs/functions';
-import { IPage, IRoleAndResources } from '../../libs/types';
+import { getServerSidePropsCustom } from '../../lib/functions';
+import { IPage, IRoleAndResources } from '../../lib/types';
 import PageMeta from '../../components/Other/PageMeta';
 import UpdateRole from '../../components/Forms/Role/UpdateRole';
 import UpdateRoleResources from '../../components/Forms/Role/UpdateRoleResources';

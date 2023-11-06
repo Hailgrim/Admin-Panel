@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 
-import { LangList } from '../../libs/lang';
-import { IAlert, ICookies, IUser } from '../../libs/types';
+import { LangList } from '../../lib/lang';
+import { IAlert, ICookies, IUser } from '../../lib/types';
 
 export const appSliceName = 'app';
 let alertCounter = 0;

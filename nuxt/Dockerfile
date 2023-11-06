@@ -8,7 +8,7 @@ ENV PORT=${NUXT_PORT}
 ENV CHOKIDAR_USEPOLLING=true
 COPY ./package*.json .
 RUN bun install
-CMD bun run dev
+CMD bun --bun run dev
 
 FROM base as production
 ENV NODE_ENV=production

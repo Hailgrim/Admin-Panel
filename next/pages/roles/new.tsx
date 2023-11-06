@@ -1,10 +1,10 @@
 import React from 'react';
 
-import lang from '../../../libs/lang';
-import { getServerSidePropsCustom } from '../../../libs/functions';
-import { IPage } from '../../../libs/types';
-import PageMeta from '../../../components/Other/PageMeta';
-import CreateRole from '../../../components/Forms/Role/CreateRole';
+import lang from '../../lib/lang';
+import { getServerSidePropsCustom } from '../../lib/functions';
+import { IPage } from '../../lib/types';
+import PageMeta from '../../components/Other/PageMeta';
+import CreateRole from '../../components/Forms/Role/CreateRole';
 
 const NewRolePage: React.FC<IPage> = ({ meta }) => {
   return (

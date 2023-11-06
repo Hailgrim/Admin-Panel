@@ -1,16 +1,16 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 
-import lang from '../../../libs/lang';
+import lang from '../../../lib/lang';
 import resourcesApi from '../../../store/api/resourcesApi';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import TextFieldStyled from '../../Other/TextFieldStyled';
 import FormBoxStyled from '../FormBoxStyled';
-import { isAllowed, makeErrorText } from '../../../libs/functions';
-import { Rights, ROUTES } from '../../../libs/constants';
-import { Checkbox, FormControlLabel } from '@mui/material';
+import { isAllowed, makeErrorText } from '../../../lib/functions';
+import { Rights, ROUTES } from '../../../lib/constants';
+import FormCheckbox from '../FormCheckbox';
 
 const CreateResource: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -69,16 +69,12 @@ const CreateResource: React.FC = () => {
         value={description}
         onChange={event => setDescription(event.currentTarget.value)}
       />
-      <FormControlLabel
-        control={
-          <Checkbox
-            name="enabled"
-            value="enabled"
-            checked={enabled}
-            onChange={() => setEnabled(!enabled)}
-          />
-        }
+      <FormCheckbox
         label={lang.get(userLang)?.enabled}
+        name="enabled"
+        value="enabled"
+        checked={enabled}
+        onChange={() => setEnabled(!enabled)}
       />
       <FormActions
         create={{

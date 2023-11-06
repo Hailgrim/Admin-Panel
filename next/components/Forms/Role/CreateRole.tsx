@@ -1,15 +1,16 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 
-import lang from '../../../libs/lang';
+import lang from '../../../lib/lang';
 import rolesApi from '../../../store/api/rolesApi';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import TextFieldStyled from '../../Other/TextFieldStyled';
 import FormBoxStyled from '../FormBoxStyled';
-import { isAllowed, makeErrorText } from '../../../libs/functions';
-import { Rights, ROUTES } from '../../../libs/constants';
+import { isAllowed, makeErrorText } from '../../../lib/functions';
+import { Rights, ROUTES } from '../../../lib/constants';
+import FormCheckbox from '../FormCheckbox';
 
 const CreateRole: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -19,10 +20,11 @@ const CreateRole: React.FC = () => {
   const [create, createReq] = rolesApi.useCreateMutation();
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
+  const [enabled, setEnabled] = React.useState(true);
 
   const createHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    create({ name, description: description || null });
+    create({ name, description: description || null, enabled });
   };
 
   React.useEffect(() => {
@@ -57,6 +59,13 @@ const CreateRole: React.FC = () => {
         label={lang.get(userLang)?.description}
         value={description}
         onChange={event => setDescription(event.currentTarget.value)}
+      />
+      <FormCheckbox
+        label={lang.get(userLang)?.enabled}
+        name="enabled"
+        value="enabled"
+        checked={enabled}
+        onChange={() => setEnabled(!enabled)}
       />
       <FormActions
         create={{

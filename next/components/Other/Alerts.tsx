@@ -1,10 +1,10 @@
 import { Box } from '@mui/system';
 import React from 'react';
 
-import { IAlert } from '../../libs/types';
+import { IAlert } from '../../lib/types';
 import { useAppSelector } from '../../store/hooks';
 import AlertItem from './AlertItem';
-import theme from '../../libs/theme';
+import theme from '../../lib/theme';
 
 const Alerts: React.FC = () => {
   const alerts = useAppSelector(store => store.app.alerts);

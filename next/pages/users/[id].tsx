@@ -1,9 +1,9 @@
 import React from 'react';
 
-import lang from '../../libs/lang';
+import lang from '../../lib/lang';
 import usersApi from '../../store/api/usersApi';
-import { getServerSidePropsCustom } from '../../libs/functions';
-import { IPage, IUserAndRoles } from '../../libs/types';
+import { getServerSidePropsCustom } from '../../lib/functions';
+import { IPage, IUserAndRoles } from '../../lib/types';
 import PageMeta from '../../components/Other/PageMeta';
 import UpdateUser from '../../components/Forms/User/UpdateUser';
 import UpdateUserRoles from '../../components/Forms/User/UpdateUserRoles';

@@ -1,16 +1,16 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 
-import lang from '../../../libs/lang';
+import lang from '../../../lib/lang';
 import rolesApi from '../../../store/api/rolesApi';
-import { isAllowed, makeErrorText } from '../../../libs/functions';
-import { IResource, IRole, IRolesResources } from '../../../libs/types';
+import { isAllowed, makeErrorText } from '../../../lib/functions';
+import { IResource, IRole, IRolesResources } from '../../../lib/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import FormBoxStyled from '../FormBoxStyled';
 import ResourceRights from '../Resource/ResourceRights';
-import { Rights, ROUTES } from '../../../libs/constants';
+import { Rights, ROUTES } from '../../../lib/constants';
 
 const UpdateRoleResources: React.FC<{
   role: IRole;

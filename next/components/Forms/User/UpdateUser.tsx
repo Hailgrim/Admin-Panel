@@ -1,17 +1,17 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 
-import lang from '../../../libs/lang';
+import lang from '../../../lib/lang';
 import usersApi from '../../../store/api/usersApi';
-import { getUpdatedValues, isAllowed, makeErrorText } from '../../../libs/functions';
-import { IUser } from '../../../libs/types';
+import { getUpdatedValues, isAllowed, makeErrorText } from '../../../lib/functions';
+import { IUser } from '../../../lib/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import TextFieldStyled from '../../Other/TextFieldStyled';
 import FormBoxStyled from '../FormBoxStyled';
 import FormCheckbox from '../FormCheckbox';
-import { Rights, ROUTES } from '../../../libs/constants';
+import { Rights, ROUTES } from '../../../lib/constants';
 
 const UpdateUser: React.FC<{
   data: IUser;
@@ -93,7 +93,7 @@ const UpdateUser: React.FC<{
         name="enabled"
         value="enabled"
         checked={enabled}
-        onChange={event => setEnabled(event.currentTarget.checked)}
+        onChange={() => setEnabled(!enabled)}
       />
       {data && (
         <FormActions

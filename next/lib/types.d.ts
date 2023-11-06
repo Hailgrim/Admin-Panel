@@ -1,3 +1,8 @@
+import type en from '~/locales/en'
+
+export type LangList = 'en' | 'ru'
+export type LangDictionary = typeof en
+
 export interface IAlert {
   id: number;
   text?: string;
@@ -22,7 +27,10 @@ export interface IPage<T = void> {
   content?: T | null;
 }
 
-export type IListReq<T> = IPagination & Partial<T>;
+export type IListReq<T> = IPagination & {
+  count?: boolean;
+  model?: Partial<T>;
+};
 
 export interface IFindAndCountRes<T> {
   rows: T[];

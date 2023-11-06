@@ -8,12 +8,12 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
-import '../styles/globals.css';
-import theme from '../libs/theme';
+import '../public/globals.css';
+import theme from '../lib/theme';
 import { wrapper } from '../store/store';
 import AuthLayout from '../components/AuthLayout/AuthLayout';
 import PanelLayout from '../components/PanelLayout/PanelLayout';
-import { routeSection } from '../libs/functions';
+import { routeSection } from '../lib/functions';
 
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();

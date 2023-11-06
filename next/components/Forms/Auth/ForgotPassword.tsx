@@ -1,16 +1,16 @@
 import React from 'react';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 
-import lang from '../../../libs/lang';
+import lang from '../../../lib/lang';
 import authApi from '../../../store/api/authApi';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { makeErrorText } from '../../../libs/functions';
+import { makeErrorText } from '../../../lib/functions';
 import AuthLinkStyled from '../../../components/AuthLayout/AuthLinkStyled';
 import TextFieldStyled from '../../../components/Other/TextFieldStyled';
 import AuthAlert from '../../../components/AuthLayout/AuthAlert';
 import FormBoxStyled from '../../../components/Forms/FormBoxStyled';
 import AuthButtonStyled from '../../../components/AuthLayout/AuthButtonStyled';
-import { ROUTES } from '../../../libs/constants';
+import { ROUTES } from '../../../lib/constants';
 import CustomModal from '../../Other/CustomModal';
 import ResetPassword from './ResetPassword';
 

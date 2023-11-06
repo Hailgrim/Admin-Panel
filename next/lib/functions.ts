@@ -36,18 +36,10 @@ export const testString = (regex: RegExp, payload: string): boolean => {
  * @param {string} url - URL string
  */
 export const routeSection = (url: string): keyof typeof ROUTES | undefined => {
-  if (
-    Object
-      .values(ROUTES.auth)
-      .some(route => route === url)
-  ) {
+  if (Object.values(ROUTES.auth).some(path => url.startsWith(path))) {
     return 'auth';
   }
-  if (
-    Object
-      .values(ROUTES.panel)
-      .some(route => route === url)
-  ) {
+  if (Object.values(ROUTES.panel).some(path => url.startsWith(String(path)))) {
     return 'panel';
   }
   return undefined;

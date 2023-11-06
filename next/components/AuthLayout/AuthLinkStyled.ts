@@ -1,7 +1,7 @@
 import { styled } from '@mui/material';
 import Link from 'next/link';
 
-import theme from '../../libs/theme';
+import theme from '../../lib/theme';
 
 const AuthLinkStyled = styled(Link)(() => ({
 

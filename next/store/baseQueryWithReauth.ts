@@ -6,9 +6,9 @@ import type {
 } from '@reduxjs/toolkit/query';
 import { Mutex } from 'async-mutex';
 
-import { API_HOST, PROJECT_TAG } from '../libs/config';
+import { API_HOST, PROJECT_TAG } from '../lib/config';
 import { RootState } from './store';
-import { ROUTES } from '../libs/constants';
+import { ROUTES } from '../lib/constants';
 
 const mutex = new Mutex();
 

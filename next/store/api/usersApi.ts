@@ -8,9 +8,9 @@ import {
   IUser,
   IUserCreate,
   IUsersRoles,
-} from '../../libs/types';
+} from '../../lib/types';
 import baseQueryWithReauth from '../baseQueryWithReauth';
-import { ROUTES } from '../../libs/constants';
+import { ROUTES } from '../../lib/constants';
 
 const usersApi = createApi({
   reducerPath: 'users',

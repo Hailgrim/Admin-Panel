@@ -1,7 +1,7 @@
 import { styled } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 
-import theme from '../../libs/theme';
+import theme from '../../lib/theme';
 
 const DataGridStyled = styled(DataGrid)(() => ({
 

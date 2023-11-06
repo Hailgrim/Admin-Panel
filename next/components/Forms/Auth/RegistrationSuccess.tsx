@@ -1,12 +1,12 @@
 import { useRouter } from 'next/router';
 import React from 'react';
 
-import lang from '../../../libs/lang';
+import lang from '../../../lib/lang';
 import { useAppSelector } from '../../../store/hooks';
 import AuthAlert from '../../AuthLayout/AuthAlert';
 import AuthButtonStyled from '../../AuthLayout/AuthButtonStyled';
 import FormBoxStyled from '../FormBoxStyled';
-import { ROUTES } from '../../../libs/constants';
+import { ROUTES } from '../../../lib/constants';
 
 const RegistrationSuccess: React.FC<{
   callback?: () => void;

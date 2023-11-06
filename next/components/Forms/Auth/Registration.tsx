@@ -2,17 +2,17 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 
-import lang from '../../../libs/lang';
+import lang from '../../../lib/lang';
 import authApi from '../../../store/api/authApi';
-import { makeErrorText, testString } from '../../../libs/functions';
+import { makeErrorText, testString } from '../../../lib/functions';
 import { useAppSelector } from '../../../store/hooks';
 import AuthLinkStyled from '../../AuthLayout/AuthLinkStyled';
 import TextFieldStyled from '../../Other/TextFieldStyled';
 import AuthAlert from '../../AuthLayout/AuthAlert';
 import AuthButtonStyled from '../../AuthLayout/AuthButtonStyled';
 import FormBoxStyled from '../FormBoxStyled';
-import { ROUTES } from '../../../libs/constants';
-import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX } from '../../../libs/constants';
+import { ROUTES } from '../../../lib/constants';
+import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX } from '../../../lib/constants';
 import CustomModal from '../../Other/CustomModal';
 import RegistrationSuccess from './RegistrationSuccess';
 

@@ -1,9 +1,9 @@
 import React from 'react';
 
-import lang from '../../libs/lang';
+import lang from '../../lib/lang';
 import resourcesApi from '../../store/api/resourcesApi';
-import { getServerSidePropsCustom } from '../../libs/functions';
-import { IPage, IResource } from '../../libs/types';
+import { getServerSidePropsCustom } from '../../lib/functions';
+import { IPage, IResource } from '../../lib/types';
 import PageMeta from '../../components/Other/PageMeta';
 import UpdateResource from '../../components/Forms/Resource/UpdateResource';
 

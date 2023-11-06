@@ -1,16 +1,17 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 
-import lang from '../../../libs/lang';
+import lang from '../../../lib/lang';
 import rolesApi from '../../../store/api/rolesApi';
-import { getUpdatedValues, isAllowed, makeErrorText } from '../../../libs/functions';
-import { IRole } from '../../../libs/types';
+import { getUpdatedValues, isAllowed, makeErrorText } from '../../../lib/functions';
+import { IRole } from '../../../lib/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import FormBoxStyled from '../FormBoxStyled';
 import TextFieldStyled from '../../Other/TextFieldStyled';
-import { Rights, ROUTES } from '../../../libs/constants';
+import { Rights, ROUTES } from '../../../lib/constants';
+import FormCheckbox from '../FormCheckbox';
 
 const UpdateRole: React.FC<{
   data: IRole;
@@ -23,12 +24,13 @@ const UpdateRole: React.FC<{
   const [destroy, deleteReq] = rolesApi.useDeleteMutation();
   const [name, setName] = React.useState(data.name);
   const [description, setDescription] = React.useState(data.description || '');
+  const [enabled, setEnabled] = React.useState(data.enabled);
 
   const updateHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const updatedValues = getUpdatedValues<IRole>(
       data,
-      { name, description },
+      { name, description, enabled },
     );
     if (Object.keys(updatedValues).length == 0) {
       dispatch(addAlert({ type: 'warning', text: lang.get(userLang)?.nothingToUpdate }));
@@ -86,6 +88,13 @@ const UpdateRole: React.FC<{
         value={description}
         onChange={event => setDescription(event.currentTarget.value)}
         disabled={data?.default}
+      />
+      <FormCheckbox
+        label={lang.get(userLang)?.enabled}
+        name="enabled"
+        value="enabled"
+        checked={enabled}
+        onChange={() => setEnabled(!enabled)}
       />
       {data && !data.default && (
         <FormActions

@@ -1,9 +1,9 @@
 import { Alert, Fade, Snackbar } from '@mui/material';
 import React from 'react';
 
-import lang from '../../libs/lang';
-import theme from '../../libs/theme';
-import { IAlert } from '../../libs/types';
+import lang from '../../lib/lang';
+import theme from '../../lib/theme';
+import { IAlert } from '../../lib/types';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { deleteAlert } from '../../store/slices/appSlice';
 

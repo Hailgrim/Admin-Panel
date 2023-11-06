@@ -3,7 +3,7 @@ import { Button, Box } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import lang from '../../libs/lang';
+import lang from '../../lib/lang';
 import { useAppSelector } from '../../store/hooks';
 import LinkUnstyled from '../../components/Other/LinkUnstyled';
 

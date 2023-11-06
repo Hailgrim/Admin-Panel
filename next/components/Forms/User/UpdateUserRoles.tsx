@@ -1,16 +1,16 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 
-import lang from '../../../libs/lang';
+import lang from '../../../lib/lang';
 import usersApi from '../../../store/api/usersApi';
-import { isAllowed, makeErrorText } from '../../../libs/functions';
-import { IRole, IUser, IUsersRoles } from '../../../libs/types';
+import { isAllowed, makeErrorText } from '../../../lib/functions';
+import { IRole, IUser, IUsersRoles } from '../../../lib/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import FormBoxStyled from '../FormBoxStyled';
 import FormCheckbox from '../FormCheckbox';
-import { Rights, ROUTES } from '../../../libs/constants';
+import { Rights, ROUTES } from '../../../lib/constants';
 
 const UpdateUserRoles: React.FC<{
   user: IUser;

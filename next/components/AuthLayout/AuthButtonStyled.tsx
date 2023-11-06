@@ -1,6 +1,6 @@
 import { Button, ButtonProps, styled } from '@mui/material';
 
-import theme from '../../libs/theme';
+import theme from '../../lib/theme';
 
 const AuthButtonStyled = styled(
   (props: ButtonProps) => (

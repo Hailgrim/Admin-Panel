@@ -8,7 +8,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   await authStore.getProfile()
 
   if (authStore.profile) {
-    if (Object.values(ROUTES.auth).includes(to.path)) {
+    if (Object.values(ROUTES.auth).some(path => to.path.startsWith(path))) {
       return navigateTo(
         { path: to.query.return ? decodeURIComponent(String(to.query.return)) : ROUTES.panel.home },
         { redirectCode: 302 },
@@ -16,7 +16,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
     }
   }
   else {
-    if (Object.values(ROUTES.panel).includes(to.path)) {
+    if (Object.values(ROUTES.panel).some(path => to.path.startsWith(String(path)))) {
       return navigateTo(
         { path: ROUTES.auth.signIn, query: { return: encodeURIComponent(to.path) } },
         { redirectCode: 401 },

@@ -2,7 +2,7 @@ import React from 'react';
 import { Backdrop, Fade, Modal, ModalProps, Typography } from '@mui/material';
 import { Container, styled } from '@mui/system';
 
-import theme from '../../libs/theme';
+import theme from '../../lib/theme';
 
 const ModalStyled = styled(
   (props: ModalProps<'div'>) => (

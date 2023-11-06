@@ -6,11 +6,11 @@ import GroupIcon from '@mui/icons-material/Group';
 import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 import ApiIcon from '@mui/icons-material/Api';
 
-import lang from '../../libs/lang';
+import lang from '../../lib/lang';
 import { useAppSelector } from '../../store/hooks';
 import SideBarItem from './SideBarItem';
-import { Rights, ROUTES } from '../../libs/constants';
-import { isAllowed } from '../../libs/functions';
+import { Rights, ROUTES } from '../../lib/constants';
+import { isAllowed } from '../../lib/functions';
 
 const MenuItems: React.FC = () => {
   const userLang = useAppSelector(store => store.app.userLang);

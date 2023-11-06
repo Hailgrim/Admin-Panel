@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 
-import lang from '../libs/lang';
+import lang from '../lib/lang';
 import PageMeta from '../components/Other/PageMeta';
 import { useAppSelector } from '../store/hooks';
 

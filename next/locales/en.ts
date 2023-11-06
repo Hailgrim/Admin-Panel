@@ -1,6 +1,7 @@
-export type LangList = 'en' | 'ru';
-
-const en = {
+export default {
+  langCode: 'en',
+  langCodeFull: 'en-US',
+  langName: 'English',
   adminPanel: 'Admin Panel',
   main: 'Main',
   mainMenu: 'Main menu',
@@ -50,8 +51,6 @@ const en = {
   id: 'Id',
   enabled: 'Enabled',
   verified: 'Verified',
-  disabled: 'Disabled',
-  status: 'Status',
   edit: 'Edit',
   success: 'Success',
   result: 'Result',
@@ -68,15 +67,4 @@ const en = {
   nothingToUpdate: 'Nothing to update',
   tooManyRequests: 'Too many requests',
   close: 'Close',
-};
-
-export type LangDictionary = typeof en;
-const lang = new Map<LangList, LangDictionary>();
-lang.set('en', en);
-
-const ru: LangDictionary = {
-  ...en,
-};
-lang.set('ru', ru);
-
-export default lang;
+}

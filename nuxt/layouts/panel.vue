@@ -47,7 +47,7 @@ watch(
         </template>
       </v-app-bar>
       <v-main class="d-flex flex-column">
-        <v-divider />
+        <v-divider class="divider" />
         <v-card-title tag="h1" class="px-6 pt-3 pb-6">
           {{ name }}
         </v-card-title>
@@ -60,8 +60,15 @@ watch(
   </v-card>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .content {
+
   min-height: 100vh;
+
+  .divider {
+    position: fixed;
+    width: 100%;
+  }
+
 }
 </style>

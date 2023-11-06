@@ -25,6 +25,9 @@ function updateHandler(permisson: keyof Omit<IRolesResources, 'roleId' | 'resour
     <v-card-subtitle tag="legend" class="px-0 pt-0 pb-3">
       {{ resource.name }}
     </v-card-subtitle>
+    <v-card-text tag="legend" class="px-0 pt-0 pb-3">
+      {{ resource.description }}
+    </v-card-text>
     <FormCheckbox
       :model-value="newRights.creating" :name="`${resource.name}.creating`" :label="$t('create')"
       @update:model-value="updateHandler('creating', $event)"

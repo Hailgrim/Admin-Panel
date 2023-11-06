@@ -1,8 +1,8 @@
 import { Box, BoxProps, styled, Toolbar } from '@mui/material';
 
 import { useAppSelector } from '../../store/hooks';
-import theme from '../../libs/theme';
-import { SIDE_MENU_WIDTH, SIDE_MENU_WIDTH_OPENED } from '../../libs/constants';
+import theme from '../../lib/theme';
+import { SIDE_MENU_WIDTH, SIDE_MENU_WIDTH_OPENED } from '../../lib/constants';
 
 const BoxStyled = styled(
   (props: BoxProps<'main'>) => <Box component="main" {...props} />,

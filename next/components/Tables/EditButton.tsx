@@ -4,8 +4,8 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import LinkUnstyled from '../Other/LinkUnstyled';
 import { useAppSelector } from '../../store/hooks';
-import { isAllowed } from '../../libs/functions';
-import { Rights } from '../../libs/constants';
+import { isAllowed } from '../../lib/functions';
+import { Rights } from '../../lib/constants';
 
 const EditButton: React.FC<{
   route: string;

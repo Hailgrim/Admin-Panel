@@ -2,10 +2,10 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 import { useRouter } from 'next/router';
 import React from 'react';
 
-import lang from '../../../libs/lang';
+import lang from '../../../lib/lang';
 import authApi from '../../../store/api/authApi';
 import { setProfile } from '../../../store/slices/appSlice';
-import { makeErrorText } from '../../../libs/functions';
+import { makeErrorText } from '../../../lib/functions';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import AuthLinkStyled from '../../../components/AuthLayout/AuthLinkStyled';
 import TextFieldStyled from '../../../components/Other/TextFieldStyled';
@@ -15,7 +15,7 @@ import FormBoxStyled from '../../../components/Forms/FormBoxStyled';
 import AuthButtonStyled from '../../../components/AuthLayout/AuthButtonStyled';
 import CustomModal from '../../Other/CustomModal';
 import VerifyUser from './VerifyUser';
-import { ROUTES } from '../../../libs/constants';
+import { ROUTES } from '../../../lib/constants';
 
 const Authorization: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -88,7 +88,7 @@ const Authorization: React.FC = () => {
           name="remember"
           value="remember"
           checked={rememberMe}
-          onChange={event => setRememberMe(event.currentTarget.checked)}
+          onChange={() => setRememberMe(!rememberMe)}
         />
         <AuthButtonStyled disabled={isFetching || Boolean(data)}>
           {isFetching ? lang.get(userLang)?.loading : lang.get(userLang)?.signIn}

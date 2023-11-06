@@ -7,9 +7,9 @@ import {
   IUpdateReq,
   IResource,
   IResourceCreate,
-} from '../../libs/types';
+} from '../../lib/types';
 import baseQueryWithReauth from '../baseQueryWithReauth';
-import { ROUTES } from '../../libs/constants';
+import { ROUTES } from '../../lib/constants';
 
 const resourcesApi = createApi({
   reducerPath: 'resources',

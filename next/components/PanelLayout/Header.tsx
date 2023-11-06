@@ -13,11 +13,11 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import lang from '../../libs/lang';
+import lang from '../../lib/lang';
 import authApi from '../../store/api/authApi';
 import { toggleModalSideBar, toggleSideBar } from '../../store/slices/appSlice';
-import theme from '../../libs/theme';
-import { SIDE_MENU_WIDTH, SIDE_MENU_WIDTH_OPENED, ROUTES } from '../../libs/constants';
+import theme from '../../lib/theme';
+import { SIDE_MENU_WIDTH, SIDE_MENU_WIDTH_OPENED, ROUTES } from '../../lib/constants';
 
 const AppBarStyled = styled(
   AppBar,

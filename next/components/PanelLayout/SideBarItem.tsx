@@ -4,13 +4,13 @@ import React from 'react';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 
-import { ISideBarItem } from '../../libs/types';
-import { checkActiveLink } from '../../libs/functions';
+import { ISideBarItem } from '../../lib/types';
+import { checkActiveLink } from '../../lib/functions';
 import { useAppDispatch } from '../../store/hooks';
 import { toggleModalSideBar } from '../../store/slices/appSlice';
-import theme from '../../libs/theme';
+import theme from '../../lib/theme';
 import LinkUnstyled from '../Other/LinkUnstyled';
-import { SIDE_MENU_WIDTH_OPENED } from '../../libs/constants';
+import { SIDE_MENU_WIDTH_OPENED } from '../../lib/constants';
 
 const ListItemButtonStyled = styled(
   ListItemButton,

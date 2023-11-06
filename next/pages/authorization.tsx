@@ -1,8 +1,8 @@
 import React from 'react';
 
-import lang from '../libs/lang';
-import { getServerSidePropsCustom } from '../libs/functions';
-import { IPage } from '../libs/types';
+import lang from '../lib/lang';
+import { getServerSidePropsCustom } from '../lib/functions';
+import { IPage } from '../lib/types';
 import PageMeta from '../components/Other/PageMeta';
 import Authorization from '../components/Forms/Auth/Authorization';
 

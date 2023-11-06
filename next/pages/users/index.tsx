@@ -1,10 +1,10 @@
 import React from 'react';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 
-import lang from '../../libs/lang';
+import lang from '../../lib/lang';
 import usersApi from '../../store/api/usersApi';
-import { getServerSidePropsCustom, makePagination } from '../../libs/functions';
-import { IFindAndCountRes, IPage, IUser } from '../../libs/types';
+import { getServerSidePropsCustom, makePagination } from '../../lib/functions';
+import { IFindAndCountRes, IPage, IUser } from '../../lib/types';
 import PageMeta from '../../components/Other/PageMeta';
 import UsersTable from '../../components/Tables/UsersTable';
 

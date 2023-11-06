@@ -1,14 +1,14 @@
 import React from 'react';
 
-import lang from '../../../libs/lang';
-import { getUpdatedValues, isAllowed, makeErrorText } from '../../../libs/functions';
-import { IUser } from '../../../libs/types';
+import lang from '../../../lib/lang';
+import { getUpdatedValues, isAllowed, makeErrorText } from '../../../lib/functions';
+import { IUser } from '../../../lib/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addAlert, setProfile } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import TextFieldStyled from '../../Other/TextFieldStyled';
 import FormBoxStyled from '../FormBoxStyled';
-import { Rights, ROUTES } from '../../../libs/constants';
+import { Rights, ROUTES } from '../../../lib/constants';
 import authApi from '../../../store/api/authApi';
 
 const UpdateProfile: React.FC = () => {
@@ -42,8 +42,8 @@ const UpdateProfile: React.FC = () => {
     if (updateReq.data === false || updateReq.error) {
       dispatch(addAlert({ type: 'error', text: makeErrorText(updateReq.error, userLang) }));
     }
-    if (updateReq.data) {
-      if (profile) dispatch(setProfile({ ...profile, name }));
+    if (updateReq.data && profile) {
+      dispatch(setProfile({ ...profile, name }));
       dispatch(addAlert({ type: 'success', text: lang.get(userLang)?.success }));
     }
   }, [

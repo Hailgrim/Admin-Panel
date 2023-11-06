@@ -1,7 +1,7 @@
 import { Alert, AlertColor, AlertTitle } from '@mui/material';
 import React from 'react';
 
-import lang from '../../libs/lang';
+import lang from '../../lib/lang';
 import { useAppSelector } from '../../store/hooks';
 
 const AuthAlert: React.FC<{

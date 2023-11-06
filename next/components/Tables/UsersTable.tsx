@@ -1,16 +1,16 @@
 import React from 'react';
 import { GridColDef, GridSelectionModel } from '@mui/x-data-grid';
 
-import lang from '../../libs/lang';
+import lang from '../../lib/lang';
 import usersApi from '../../store/api/usersApi';
-import { IFindAndCountRes, IPagination, IRole, IUser } from '../../libs/types';
+import { IFindAndCountRes, IPagination, IRole, IUser } from '../../lib/types';
 import DataGridStyled from '../Other/DataGridStyled';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import TableActions from './TableActions';
 import { addAlert } from '../../store/slices/appSlice';
 import EditButton from './EditButton';
-import { isAllowed, makeErrorText } from '../../libs/functions';
-import { Rights, ROUTES } from '../../libs/constants';
+import { isAllowed, makeErrorText } from '../../lib/functions';
+import { Rights, ROUTES } from '../../lib/constants';
 
 const UsersTable: React.FC<{
   data?: IFindAndCountRes<IUser> | null;

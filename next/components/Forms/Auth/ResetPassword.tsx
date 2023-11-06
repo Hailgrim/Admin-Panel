@@ -2,16 +2,16 @@ import React from 'react';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 import { useRouter } from 'next/router';
 
-import lang from '../../../libs/lang';
+import lang from '../../../lib/lang';
 import authApi from '../../../store/api/authApi';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { makeErrorText, testString } from '../../../libs/functions';
+import { makeErrorText, testString } from '../../../lib/functions';
 import TextFieldStyled from '../../../components/Other/TextFieldStyled';
 import AuthAlert from '../../../components/AuthLayout/AuthAlert';
 import FormBoxStyled from '../../../components/Forms/FormBoxStyled';
 import AuthButtonStyled from '../../../components/AuthLayout/AuthButtonStyled';
-import { PASSWORD_REGEX } from '../../../libs/constants';
-import { ROUTES } from '../../../libs/constants';
+import { PASSWORD_REGEX } from '../../../lib/constants';
+import { ROUTES } from '../../../lib/constants';
 
 const ResetPassword: React.FC<{
   email: string;
