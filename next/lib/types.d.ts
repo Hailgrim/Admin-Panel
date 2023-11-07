@@ -27,9 +27,8 @@ export interface IPage<T = void> {
   content?: T | null;
 }
 
-export type IListReq<T> = IPagination & {
+export type IListReq<T> = IPagination & Partial<T> & {
   count?: boolean;
-  model?: Partial<T>;
 };
 
 export interface IFindAndCountRes<T> {

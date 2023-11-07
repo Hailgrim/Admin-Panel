@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const error = useError()
+const error: any = useError()
 </script>
 
 <template>
@@ -10,7 +10,7 @@ const error = useError()
   <v-card>
     <v-layout class="content flex-column align-center justify-center mx-auto v-col-xl-6 v-col-lg-8 v-col-md-10 v-col-12">
       <v-card-title tag="h1" class="text-center pb-6">
-        404
+        {{ $t('error') }} {{ error.statusCode }}
       </v-card-title>
       <v-main class="flex-grow-0">
         {{ error?.message }}

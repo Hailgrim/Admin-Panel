@@ -36,13 +36,11 @@ export const testString = (regex: RegExp, payload: string): boolean => {
  * @param {string} url - URL string
  */
 export const routeSection = (url: string): keyof typeof ROUTES | undefined => {
-  if (Object.values(ROUTES.auth).some(path => url.startsWith(path))) {
+  if (Object.values(ROUTES.auth).includes(url)) {
     return 'auth';
-  }
-  if (Object.values(ROUTES.panel).some(path => url.startsWith(String(path)))) {
+  } else {
     return 'panel';
   }
-  return undefined;
 };
 
 /**
@@ -228,11 +226,11 @@ export const getServerSidePropsCustom = <T = void>(
         return props;
       }
     }
-
+    
     if (isAuthPageRequest) {
       return { ...await func({ store, context: ctx }) };
     } else {
-      return { redirect: { destination: '/authorization', statusCode: 302 } };
+      return { redirect: { destination: `/authorization?return=${encodeURIComponent(String(ctx.req.url))}`, statusCode: 302 } };
     }
   });
 };

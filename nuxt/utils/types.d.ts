@@ -15,12 +15,11 @@ export interface IAlert {
   deleted?: boolean
 }
 
-export type IListReq<T> = {
+export type IListReq<T> = Partial<T> & {
   count?: boolean
   page?: number
   quantity?: number
   search?: string
-  model?: Partial<T>
 }
 
 export interface IFindAndCountRes<T> {

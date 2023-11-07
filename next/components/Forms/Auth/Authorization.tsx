@@ -57,7 +57,7 @@ const Authorization: React.FC = () => {
     } else {
       if (data) {
         dispatch(setProfile(data));
-        router.push(ROUTES.panel.home);
+        router.push(router.query.return ? decodeURIComponent(String(router.query.return)) : ROUTES.panel.home);
       }
     }
   }, [data, error, isFetching, dispatch, router, userLang]);
