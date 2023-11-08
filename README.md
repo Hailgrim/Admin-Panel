@@ -1,37 +1,124 @@
 # Admin Panel
 
-This is an example of a project with an administrative panel for data management and API server (both using **TypeScript**), **PostgreSQL** database and its monitoring tool (**Adminer**), **Redis** cache storage, **RabbitMQ** message-broker and **Nginx** for proxying. The project is launched using **Docker**.
+This is a boilerplate project that implements the functionality of the admin panel.
+The project is built using a micro service architecture.
+To run it, you will need to install [Docker](https://github.com/docker/roadmap).
 
-The ```./docker-compose.yml``` contains the main services and volumes for the work of the project. In the files ```./development.yml``` and ```./production.yml``` contains additional settings for different project launch modes. You can build and run a project being in the project folder and using the ```docker compose -f docker-compose.yml -f development.yml up -d``` command. Use the ```docker compose down``` command to stop the project. In the file ```.env``` you can configure some project parameters.
+## Project launch
 
-## ./next
+Some startup parameters can be edited in the ```./.env``` file.
 
-The basis of the administrative panel is Next.js . In the file ```./next/libs/config.ts``` you can specify the paths supported by the application and configure the project name, which will serve as a prefix for some functionality of the panel.
+### Development
 
+    docker compose -f docker-compose.yml -f dev.yml up -d
+
+This startup option allows you to link microservices folders to containers and adds utilities for viewing the contents of PostgreSQL, Redis and RabbitMQ.
+
+### Production
+
+    docker compose -f docker-compose.yml -f prod.yml up -d
+
+This startup option leaves a minimal build and does not track changes in microservices folders.
+
+## Microservices
+
+### [Next.js](https://github.com/vercel/next.js) (folder: ```./next```)
+
+This microservice provides a graphical interface for administration.
+In it, you can set a list of protected links, create roles with rights for links, manage registered users.
+Instead of [Node.js](https://github.com/nodejs), the container uses [Bun](https://github.com/oven-sh/bun).
+The project is written in [React](https://github.com/facebook/react) and [TypeScript](https://github.com/microsoft/TypeScript).
+[Material UI](https://github.com/mui/material-ui) is used as the UI kit.
+[Redux Toolkit](https://github.com/reduxjs/redux-toolkit) is used as the application state manager.
+[RTK Query](https://github.com/rtk-incubator/rtk-query) is used for API requests.
+In the ```./next/store``` folder, you can make changes to the application state management logic.
+The ```./next/libs/config.ts``` file contains the settings received from Docker during project startup.
 In the file ```./next/libs/function.ts``` using the ```getServerSidePropsCustom``` function, you can make SSR requests to verify the presence of user authorization tokens, and using the ```isAllowed``` function, you can verify user rights in different parts of the application.
 
-The Redux Toolkit is used as the application state manager. RTK Query is used for API requests. In the ./store folder, you can make changes to the application state management logic.
+### [Nuxt.js](https://github.com/nuxt/nuxt) (folder: ```./nuxt```)
 
-The Material UI is used as the UI kit.
+Implements the same functionality as Next.js, but [Vue](https://github.com/vuejs/core) is used instead of React.
+State manager ([Pinia](https://github.com/vuejs/pinia)) folder - ```./next/store```.
+UI kit - [Vuetify](https://github.com/vuetifyjs/vuetify).
 
-## ./nest_core
+### [nginx](https://github.com/nginx/agent) (folder: ```./nginx```)
 
-This part of the application acts as an API server with which you can create users, roles and set access rights to various resources.
+Nginx is used as a proxy server and provides the HTTPS protocol.
+In the ```./nginx/html``` folder, you can change the standard nginx response pages.
+The ```./nginx/ssl``` folder is used to store the SSL certificate files. Без них 
+In the ```./nginx/templates/default.conf.template``` file, you can set rules for routing.
 
-The first user registered in the application will receive the administrator role with unlimited rights. Some other entities will also be created for the operation of the application. All created entities will be saved in PostgreSQL. Only user sessions will also be stored in Redis.
+### [PostgreSQL](https://github.com/postgres/postgres) (folder: ```./postgres```)
 
-In the file ```./nest/libs/config.ts```, you can configure various parameters for server operation.
+This is the main database of the project.
 
-## ./nest_mailer
+### [Redis](https://github.com/redis/redis) (folder: ```./redis```)
 
-This part of the application acts as an mail server. After registration or an attempt to reset the password, an email with a confirmation code will be sent to the user's email address. If the application is running in development mode, the emails will be sent to the test mail server. A link to access the contents of such an email can be obtained from the logs of the Docker container.
+This database is used for secondary storage of user sessions.
+In the ```./redis/redis.conf``` file, you can set Redis parameters.
 
-In the file ```./nest/libs/config.ts```, you can configure various parameters for server operation.
+### [RabbitMQ](https://github.com/rabbitmq/rabbitmq-tutorials) (folder: ```./rabbitmq```)
 
-## ./nginx
+A queue manager that is used to send requests for sending emails.
 
-Nginx is used for proxying. In the ```./nginx/templates/default.conf.template``` file, you can set rules for routing. In the ```./nginx/html``` folder, you can change the standard nginx response pages.
+### Main server (folder: ```./nest_core```)
 
-## Conclusion
+The main server that provides the client's interaction with databases, authorization (JWT), creation of requests for sending emails.
+When registering the first user, creates standard API-endpoints, roles and assigns administrator role to the first registered user.
+Written in [Nest.js](https://github.com/nestjs/nest).
+The ```./nest_core/libs/config.ts``` file contains the settings received from Docker during project startup.
 
-First of all, the project was created in order to help other programmers familiar with the platform in finding standard solutions when working with this stack. I tried to use standard solutions from the documentation on the technologies used. As much as possible, this project will be updated in accordance with the development of the technologies used. I hope this will help someone in their work.
+### Mail server (folder: ```./nest_mailer```)
+
+This service is engaged in sending emails.
+It is built using the same technologies as the main server.
+If the project is running in development mode, then links to view the contents of sent emails are available in the container console.
+
+## SSL
+
+Without a certificate, the project will not function normally (CORS policy).
+The standard certificate is registered for addresses localhost.com (Next.js), nuxt.localhost.com (Nuxt.js) and api.localhost.com (main server).
+It has a limited duration.
+To create a new certificate, you can use the following commands:
+
+    # Launching a Docker container to create a certificate
+    docker run -it --entrypoint /bin/ash frapsoft/openssl
+
+    # Generate private key
+    openssl genrsa -des3 -out myCA.key 2048
+
+    # Generate root certificate
+    openssl req -x509 -new -nodes -key myCA.key -sha256 -days 825 -out myCA.pem
+
+    NAME=localhost.com # Use your own domain name
+
+    # Generate a private key
+    openssl genrsa -out $NAME.key 2048
+
+    # Create a certificate-signing request
+    openssl req -new -key $NAME.key -out $NAME.csr
+
+    # Create a config file for the extensions
+    touch $NAME.ext
+
+    # $NAME.ext content
+    authorityKeyIdentifier=keyid,issuer
+    basicConstraints=CA:FALSE
+    keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+    subjectAltName = @alt_names
+    [alt_names]
+    DNS.1 = localhost.com
+    DNS.2 = www.localhost.com
+    DNS.3 = nuxt.localhost.com
+    DNS.4 = api.localhost.com
+    IP.1 = 127.0.0.1
+
+    # Create the signed certificate
+    openssl x509 -req -in $NAME.csr -CA myCA.pem -CAkey myCA.key -CAcreateserial \
+    -out $NAME.crt -days 825 -sha256 -extfile $NAME.ext
+
+    # For a local proxy, add this to hosts
+    127.0.0.1 localhost.com
+    127.0.0.1 www.localhost.com
+    127.0.0.1 nuxt.localhost.com
+    127.0.0.1 api.localhost.com
