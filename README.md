@@ -12,7 +12,7 @@ Some startup parameters can be edited in the ```./.env``` file.
 
     docker compose -f docker-compose.yml -f dev.yml up -d
 
-This startup option allows you to link microservices folders to containers and adds utilities for viewing the contents of PostgreSQL, Redis and RabbitMQ.
+This startup option allows you to link microservices folders to containers and adds utilities for viewing the contents of PostgreSQL ([Adminer](https://github.com/vrana/adminer)), Redis ([RedisInsight](https://github.com/RedisInsight/RedisInsight)) and RabbitMQ ([RabbitMQ Management Plugin](https://github.com/rabbitmq/rabbitmq-management)).
 
 ### Production
 
@@ -117,7 +117,8 @@ To create a new certificate, you can use the following commands:
     openssl x509 -req -in $NAME.csr -CA myCA.pem -CAkey myCA.key -CAcreateserial \
     -out $NAME.crt -days 825 -sha256 -extfile $NAME.ext
 
-    # For a local proxy, add this to hosts
+For a local proxy, add this to hosts
+
     127.0.0.1 localhost.com
     127.0.0.1 www.localhost.com
     127.0.0.1 nuxt.localhost.com
