@@ -45,7 +45,7 @@ UI kit - [Vuetify](https://github.com/vuetifyjs/vuetify).
 
 Nginx is used as a proxy server and provides the HTTPS protocol.
 In the ```./nginx/html``` folder, you can change the standard nginx response pages.
-The ```./nginx/ssl``` folder is used to store the SSL certificate files. Без них 
+The ```./nginx/ssl``` folder is used to store the SSL certificate files.
 In the ```./nginx/templates/default.conf.template``` file, you can set rules for routing.
 
 ### [PostgreSQL](https://github.com/postgres/postgres) (folder: ```./postgres```)
