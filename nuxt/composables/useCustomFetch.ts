@@ -16,12 +16,9 @@ export function useCustomFetch<ResT extends NonNullable<unknown>, ReqT extends N
 ) {
   const event = useRequestEvent()
   const config = useRuntimeConfig()
-  const accessTokenName = `${config.public.PROJECT_TAG}_accessToken`
-  const accessToken = useCookie(accessTokenName)
-  const refreshTokenName = `${config.public.PROJECT_TAG}_refreshToken`
-  const refreshToken = useCookie(refreshTokenName)
-  const rememberMeName = `${config.public.PROJECT_TAG}_rememberMe`
-  const rememberMe = useCookie(rememberMeName)
+  const accessToken = useCookie('accessToken')
+  const refreshToken = useCookie('refreshToken')
+  const rememberMe = useCookie('rememberMe')
   const payload = ref<ReqT | null>(null)
   const pending = ref(false)
   const error = ref<IRequestError | null>(null)
@@ -45,8 +42,8 @@ export function useCustomFetch<ResT extends NonNullable<unknown>, ReqT extends N
       credentials: 'include',
       headers: process.server
         ? {
-            Cookie: `${refreshTokenName}=${refreshToken.value}`
-              .concat(rememberMe.value ? `;${rememberMeName}=true` : ''),
+            Cookie: `refreshToken=${refreshToken.value}`
+              .concat(rememberMe.value ? ';rememberMe=true' : ''),
           }
         : undefined,
     }
@@ -83,7 +80,7 @@ export function useCustomFetch<ResT extends NonNullable<unknown>, ReqT extends N
               ? 'application/json'
               : 'text/plain;charset=UTF-8',
             ...process.server && accessToken.value
-              ? { Cookie: `${accessTokenName}=${accessToken.value}` }
+              ? { Cookie: `accessToken=${accessToken.value}` }
               : undefined,
           },
         },

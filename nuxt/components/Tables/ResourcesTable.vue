@@ -27,7 +27,7 @@ const items = computed(() => {
     .map(value => ({ ...value, selectable: !value.default }))
 })
 const mainStore = useMainStore()
-const resourcesRights = useRights(ROUTES.api.resources)
+const rights = useRights(ROUTES.api.resources)
 
 watch(
   () => resourcesStore.deletePending,
@@ -44,13 +44,13 @@ watch(
 
 <template>
   <div class="mb-3">
-    <NuxtLink :href="resourcesRights.creating ? ROUTES.panel.newResource : undefined">
+    <NuxtLink :href="rights.creating ? ROUTES.panel.newResource : undefined">
       <v-btn
         class="me-2"
         variant="flat"
         color="info"
         prepend-icon="mdi-plus"
-        :disabled="!resourcesRights.creating"
+        :disabled="!rights.creating"
       >
         {{ $t('create') }}
       </v-btn>
@@ -59,7 +59,7 @@ watch(
       variant="flat"
       color="error"
       prepend-icon="mdi-delete"
-      :disabled="!resourcesRights.deleting || selected.length === 0"
+      :disabled="!rights.deleting || selected.length === 0"
       @click="resourcesStore.delete(selected)"
     >
       {{ $t('delete') }}

@@ -41,7 +41,7 @@ const ItemParent: React.FC<{
   );
 };
 
-const SideBarItem: React.FC<ISideBarItem> = ({ link, name, icon, childs, isChild, disabled }) => {
+const SideBarMenuItem: React.FC<ISideBarItem> = ({ link, name, icon, childs, isChild, disabled }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [isChildsOpened, setChildsVisibility] = React.useState<boolean>(checkActiveLink(router.pathname, { link, childs }));
@@ -87,7 +87,7 @@ const SideBarItem: React.FC<ISideBarItem> = ({ link, name, icon, childs, isChild
           <Collapse in={isChildsOpened} timeout="auto">
             <List component="div" disablePadding>
               {childs.map((child, index) => (
-                <SideBarItem
+                <SideBarMenuItem
                   key={`SideBarItem.${name}.${index}`}
                   {...child}
                   isChild
@@ -99,4 +99,4 @@ const SideBarItem: React.FC<ISideBarItem> = ({ link, name, icon, childs, isChild
       </React.Fragment>
     );
 };
-export default SideBarItem;
+export default SideBarMenuItem;

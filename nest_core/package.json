@@ -32,7 +32,7 @@
     "@nestjs/passport": "^10.0.1",
     "@nestjs/platform-fastify": "^10.2.4",
     "@nestjs/swagger": "^7.1.10",
-    "@nestjs/throttler": "^4.2.1",
+    "@nestjs/throttler": "^5.0.1",
     "amqp-connection-manager": "^4.1.14",
     "amqplib": "^0.10.3",
     "argon2": "^0.31.1",
@@ -50,7 +50,7 @@
     "sequelize-typescript": "^2.1.5"
   },
   "devDependencies": {
-    "@nestjs/cli": "^10.0.0",
+    "@nestjs/cli": "^10.2.1",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
     "@types/jest": "^29.5.2",

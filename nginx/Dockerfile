@@ -1,10 +1,5 @@
-FROM nginx:alpine as base
+FROM nginx:alpine as development
+WORKDIR /home/nginx
 
-FROM base as development
-ARG PROJECT_TAG
-WORKDIR /home/${PROJECT_TAG}/nginx
-
-FROM base as production
-ARG PROJECT_TAG
-WORKDIR /home/${PROJECT_TAG}/nginx
+FROM development as production
 COPY . .

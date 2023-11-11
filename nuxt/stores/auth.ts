@@ -66,7 +66,7 @@ export const useAuthStore = defineStore('auth', () => {
     data: getProfileData,
     execute: getProfileExecute,
   } = useCustomFetch<IUser, void>(() => ({
-    url: ROUTES.api.auth.getProfile,
+    url: ROUTES.api.auth.profile,
     options: { method: 'GET', credentials: 'include' },
   }))
   async function getProfile() {
@@ -82,7 +82,7 @@ export const useAuthStore = defineStore('auth', () => {
     data: updateProfileData,
     execute: updateProfileExecute,
   } = useCustomFetch<boolean, Partial<IUser>>(payload => ({
-    url: ROUTES.api.auth.updateProfile,
+    url: ROUTES.api.auth.profile,
     options: { method: 'PATCH', credentials: 'include', body: payload },
   }))
   async function updateProfile(arg: Partial<IUser>) {

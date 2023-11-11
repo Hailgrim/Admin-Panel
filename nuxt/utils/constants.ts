@@ -5,13 +5,6 @@ export const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
 /** Password validation regex */
 export const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[A-Za-z\d\W]{10,100}$/
 
-export enum Rights {
-  Creating = 'creating',
-  Reading = 'reading',
-  Updating = 'updating',
-  Deleting = 'deleting',
-}
-
 /** Supported application routes */
 export const ROUTES = {
   /** Authorization routes */
@@ -43,8 +36,7 @@ export const ROUTES = {
       forgotPassword: '/auth/forgot-password',
       resetPassword: '/auth/reset-password',
       refresh: '/auth/refresh',
-      getProfile: '/auth/profile',
-      updateProfile: '/auth/profile',
+      profile: '/auth/profile',
       signOut: '/auth/log-out',
     },
     users: '/users',

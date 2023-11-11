@@ -19,7 +19,7 @@ const description = ref(resource.description)
 const enabled = ref(resource.enabled)
 const mainStore = useMainStore()
 const router = useRouter()
-const rights = useRights(ROUTES.api.roles)
+const rights = useRights(ROUTES.api.resources)
 
 function submitHandler() {
   if (nameIsValid(name.value) && pathIsValid(path.value)) {

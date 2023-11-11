@@ -1,16 +1,37 @@
-FROM oven/bun:alpine as base
-ARG PROJECT_TAG
-WORKDIR /home/${PROJECT_TAG}/next
+FROM node:lts-alpine AS base
+ARG NEXT_HOST
+ENV HOSTNAME=${NEXT_HOST}
+ARG NEXT_PORT
+ENV PORT=${NEXT_PORT}
+ENV NEXT_TELEMETRY_DISABLED=1
+ARG HOME=/home/node
+WORKDIR ${HOME}
+COPY ./package*.json .
 
 FROM base as development
 ENV NODE_ENV=development
-COPY ./package*.json .
-RUN bun install
-CMD bun --bun run dev -p ${NEXT_PORT}
+RUN npm install
+CMD npx next dev
 
-FROM base as production
-ENV NODE_ENV=production
+FROM base AS builder
+ARG NGINX_HOST
+ARG NEST_CORE_HOST
+ARG NEST_CORE_PORT
+ARG ACCESS_TOKEN_LIFETIME
+ARG REFRESH_TOKEN_LIFETIME
+RUN apk add --no-cache libc6-compat
+RUN npm ci
 COPY . .
-RUN bun install
-RUN bun --bun run build
-CMD bun --bun run start -p ${NEXT_PORT}
+RUN npm run build
+
+FROM base AS production
+ENV NODE_ENV=production
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+COPY --from=builder ${HOME}/public ./public
+RUN mkdir .next
+RUN chown nextjs:nodejs .next
+COPY --from=builder --chown=nextjs:nodejs ${HOME}/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs ${HOME}/.next/static ./.next/static
+USER nextjs
+CMD node server.js

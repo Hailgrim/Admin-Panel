@@ -14,8 +14,7 @@ import { MAIL_SERVER } from 'libs/constants';
 @Module({
   imports: [
     ThrottlerModule.forRoot({
-      ttl: 60,
-      limit: 30,
+      throttlers: [{ ttl: 60, limit: 30 }],
     }),
 
     ClientsModule.register([

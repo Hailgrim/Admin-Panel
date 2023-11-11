@@ -1,7 +1,6 @@
 import { DEV } from './constants';
 
 export const MODE = process.env.NODE_ENV || DEV;
-export const PROJECT_TAG = process.env.PROJECT_TAG || 'AP';
 
 export const HOST = process.env.NEST_CORE_HOST || '0.0.0.0';
 export const PORT = Number(process.env.NEST_CORE_PORT || 3000);
@@ -21,9 +20,8 @@ export const DB_NAME = process.env.POSTGRES_DB || 'main';
 
 export const REDIS_HOST = process.env.REDIS_HOST || 'localhost';
 export const REDIS_PORT = Number(process.env.REDIS_PORT) || 6379;
-export const REDIS_DB = Number(process.env.REDIS_USERNAME) || 0;
-export const REDIS_USERNAME = process.env.REDIS_USERNAME || 'user';
 export const REDIS_PASSWORD = process.env.REDIS_PASSWORD || 'password';
+export const REDIS_DB = Number(process.env.REDIS_DB) || 0;
 
 /** Time in seconds */
 export const ACCESS_TOKEN_LIFETIME =

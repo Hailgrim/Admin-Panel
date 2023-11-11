@@ -3,14 +3,15 @@ import { Typography } from '@mui/material';
 
 import lang from '../../../lib/lang';
 import rolesApi from '../../../store/api/rolesApi';
-import { isAllowed, makeErrorText } from '../../../lib/functions';
+import { makeErrorText } from '../../../lib/functions';
 import { IResource, IRole, IRolesResources } from '../../../lib/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import FormBoxStyled from '../FormBoxStyled';
 import ResourceRights from '../Resource/ResourceRights';
-import { Rights, ROUTES } from '../../../lib/constants';
+import { ROUTES } from '../../../lib/constants';
+import useRights from '../../../hooks/useRights';
 
 const UpdateRoleResources: React.FC<{
   role: IRole;
@@ -18,11 +19,11 @@ const UpdateRoleResources: React.FC<{
 }> = ({ role, resources }) => {
   const dispatch = useAppDispatch();
   const userLang = useAppSelector(store => store.app.userLang);
-  const profile = useAppSelector(store => store.app.profile);
   const [update, updateReq] = rolesApi.useUpdateResourcesMutation();
   const [updatedRights, setUpdatedRights] = React.useState(
     role.resources?.map(value => value.RolesResources) || []
   );
+  const rights = useRights(ROUTES.api.roles);
 
   const updateHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -91,7 +92,7 @@ const UpdateRoleResources: React.FC<{
         <FormActions
           update={{
             loading: updateReq.isLoading,
-            disabled: !isAllowed(ROUTES.panel.resources, Rights.Updating, profile?.roles),
+            disabled: !rights.updating,
           }}
         />
       )}

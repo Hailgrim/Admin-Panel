@@ -8,20 +8,21 @@ import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import TextFieldStyled from '../../Other/TextFieldStyled';
 import FormBoxStyled from '../FormBoxStyled';
-import { isAllowed, makeErrorText } from '../../../lib/functions';
-import { Rights, ROUTES } from '../../../lib/constants';
+import { makeErrorText } from '../../../lib/functions';
+import { ROUTES } from '../../../lib/constants';
 import FormCheckbox from '../FormCheckbox';
+import useRights from '../../../hooks/useRights';
 
 const CreateResource: React.FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const userLang = useAppSelector(store => store.app.userLang);
-  const profile = useAppSelector(store => store.app.profile);
   const [create, createReq] = resourcesApi.useCreateMutation();
   const [name, setName] = React.useState('');
   const [path, setPath] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [enabled, setEnabled] = React.useState(true);
+  const rights = useRights(ROUTES.api.resources);
 
   const createHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -79,7 +80,7 @@ const CreateResource: React.FC = () => {
       <FormActions
         create={{
           loading: createReq.isLoading || Boolean(createReq.data),
-          disabled: !isAllowed(ROUTES.panel.users, Rights.Creating, profile?.roles),
+          disabled: !rights.creating,
         }}
       />
     </FormBoxStyled>

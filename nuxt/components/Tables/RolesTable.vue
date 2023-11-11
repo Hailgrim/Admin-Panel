@@ -26,7 +26,7 @@ const items = computed(() => {
     .map(value => ({ ...value, selectable: !(value.default || value.admin) }))
 })
 const mainStore = useMainStore()
-const rolesRights = useRights(ROUTES.api.roles)
+const rights = useRights(ROUTES.api.roles)
 
 watch(
   () => rolesStore.deletePending,
@@ -43,13 +43,13 @@ watch(
 
 <template>
   <div class="mb-3">
-    <NuxtLink :href="rolesRights.creating ? ROUTES.panel.newRole : undefined">
+    <NuxtLink :href="rights.creating ? ROUTES.panel.newRole : undefined">
       <v-btn
         class="me-2"
         variant="flat"
         color="info"
         prepend-icon="mdi-plus"
-        :disabled="!rolesRights.creating"
+        :disabled="!rights.creating"
       >
         {{ $t('create') }}
       </v-btn>
@@ -58,7 +58,7 @@ watch(
       variant="flat"
       color="error"
       prepend-icon="mdi-delete"
-      :disabled="!rolesRights.deleting || selected.length === 0"
+      :disabled="!rights.deleting || selected.length === 0"
       @click="rolesStore.delete(selected)"
     >
       {{ $t('delete') }}

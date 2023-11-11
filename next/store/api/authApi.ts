@@ -73,7 +73,7 @@ const authApi = createApi({
 
     getProfile: builder.query<IUser, void>({
       query: () => ({
-        url: ROUTES.api.auth.getProfile,
+        url: ROUTES.api.auth.profile,
         method: 'GET',
         credentials: 'include',
       }),
@@ -81,7 +81,7 @@ const authApi = createApi({
 
     updateProfile: builder.mutation<boolean, Partial<IUser>>({
       query: payload => ({
-        url: ROUTES.api.auth.updateProfile,
+        url: ROUTES.api.auth.profile,
         method: 'PATCH',
         credentials: 'include',
         body: payload,

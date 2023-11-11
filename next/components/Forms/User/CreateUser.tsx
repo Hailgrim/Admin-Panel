@@ -9,19 +9,20 @@ import FormActions from '../FormActions';
 import TextFieldStyled from '../../Other/TextFieldStyled';
 import FormBoxStyled from '../FormBoxStyled';
 import FormCheckbox from '../FormCheckbox';
-import { isAllowed, makeErrorText } from '../../../lib/functions';
-import { Rights, ROUTES } from '../../../lib/constants';
+import { makeErrorText } from '../../../lib/functions';
+import { ROUTES } from '../../../lib/constants';
+import useRights from '../../../hooks/useRights';
 
 const CreateUser: React.FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const userLang = useAppSelector(store => store.app.userLang);
-  const profile = useAppSelector(store => store.app.profile);
   const [create, createReq] = usersApi.useCreateMutation();
   const [email, setEmail] = React.useState('');
   const [name, setName] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [enabled, setEnabled] = React.useState(true);
+  const rights = useRights(ROUTES.api.users);
 
   const createHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -86,7 +87,7 @@ const CreateUser: React.FC = () => {
       <FormActions
         create={{
           loading: createReq.isLoading || Boolean(createReq.data),
-          disabled: !isAllowed(ROUTES.panel.users, Rights.Creating, profile?.roles),
+          disabled: !rights.creating,
         }}
       />
     </FormBoxStyled>

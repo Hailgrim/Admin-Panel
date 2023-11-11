@@ -3,13 +3,13 @@ import { ParsedUrlQuery } from 'querystring';
 import { SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 
-import { ICreateCookieOptions, IPage, IPagination, IRole, ISideBarItem } from './types';
+import { ICreateCookieOptions, IPage, IPagination, ISideBarItem } from './types';
 import { AppStore, wrapper } from '../store/store';
 import { setAuthTokens, setProfile, setUserAgent } from '../store/slices/appSlice';
 import authApi from '../store/api/authApi';
 import lang, { LangList } from './lang';
-import { ACCESS_TOKEN_LIFETIME, HOST, PROJECT_TAG, REFRESH_TOKEN_LIFETIME } from './config';
-import { ROUTES, Rights } from './constants';
+import { ACCESS_TOKEN_LIFETIME, HOST, REFRESH_TOKEN_LIFETIME } from './config';
+import { ROUTES } from './constants';
 
 /**
  * @param {string} link Checked link
@@ -108,41 +108,6 @@ export const makeErrorText = (
 };
 
 /**
- * @param {string} route Route name (e. g. "users" or "users/some")
- * @param {Rights} rights Route rights
- * @param {IRole | IRole[]} roles User roles
- * @returns {boolean} true if the user has the necessary rights
- */
-export const isAllowed = (route: string, rights: Rights, roles?: IRole | IRole[]): boolean => {
-  if (route.startsWith('/')) {
-    route = route.slice(1);
-  }
-  let result = false;
-  const data = Array.isArray(roles)
-    ? roles
-    : roles
-      ? [roles]
-      : undefined;
-
-  data?.forEach(role => {
-    if (role.admin) {
-      result = true;
-    } else {
-      role.resources?.forEach(resource => {
-        if (
-          resource.path == route &&
-          resource.RolesResources?.[rights] === true
-        ) {
-          result = true;
-        }
-      });
-    }
-  });
-
-  return result;
-};
-
-/**
  * @param {string} name Cookie name
  * @param {string} value Cookie value
  * @param {ICreateCookieOptions} options Cookie options
@@ -171,9 +136,9 @@ export const getServerSidePropsCustom = <T = void>(
   }) => Promise<GetServerSidePropsResult<IPage<T>>>,
 ) => {
   return wrapper.getServerSideProps<IPage<T>>(store => async (ctx) => {
-    let accessToken = ctx.req.cookies[`${PROJECT_TAG}_accessToken`] || null;
-    let refreshToken = ctx.req.cookies[`${PROJECT_TAG}_refreshToken`] || null;
-    const rememberMe = ctx.req.cookies[`${PROJECT_TAG}_rememberMe`] !== undefined;
+    let accessToken = ctx.req.cookies['accessToken'] || null;
+    let refreshToken = ctx.req.cookies['refreshToken'] || null;
+    const rememberMe = ctx.req.cookies['rememberMe'] !== undefined;
     const isAuthPageRequest = routeSection(ctx.resolvedUrl.split('?')[0]) == 'auth';
     const userAgent = ctx.req.headers['user-agent'];
 
@@ -197,15 +162,15 @@ export const getServerSidePropsCustom = <T = void>(
         ctx.res.setHeader(
           'Set-Cookie',
           [
-            createCookie(`${PROJECT_TAG}_accessToken`, accessToken, { ...cookieOptions, maxAge: ACCESS_TOKEN_LIFETIME }),
+            createCookie('accessToken', accessToken, { ...cookieOptions, maxAge: ACCESS_TOKEN_LIFETIME }),
             createCookie(
-              `${PROJECT_TAG}_refreshToken`,
+              'refreshToken',
               refreshToken,
               { ...cookieOptions, maxAge: rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2 },
             ),
-            createCookie(`${PROJECT_TAG}_sessionId`, String(data.sessionId), { ...cookieOptions, maxAge: REFRESH_TOKEN_LIFETIME * 12 }),
+            createCookie('sessionId', String(data.sessionId), { ...cookieOptions, maxAge: REFRESH_TOKEN_LIFETIME * 12 }),
             createCookie(
-              `${PROJECT_TAG}_rememberMe`,
+              'rememberMe',
               String(rememberMe),
               { ...cookieOptions, maxAge: rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2 },
             ),

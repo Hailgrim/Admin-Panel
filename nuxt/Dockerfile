@@ -1,19 +1,30 @@
 FROM oven/bun:alpine as base
-ARG PROJECT_TAG
-WORKDIR /home/${PROJECT_TAG}/nuxt
+ARG NUXT_HOST
+ENV HOST=${NUXT_HOST}
+ARG NUXT_PORT
+ENV PORT=${NUXT_PORT}
+ENV NUXT_TELEMETRY_DISABLED=1
+ARG HOME=/home/bun
+WORKDIR ${HOME}
+COPY ./package*.json .
 
 FROM base as development
 ENV NODE_ENV=development
-ENV PORT=${NUXT_PORT}
 ENV CHOKIDAR_USEPOLLING=true
-COPY ./package*.json .
 RUN bun install
 CMD bun --bun run dev
 
+FROM base AS builder
+ARG NGINX_HOST
+ARG NEST_CORE_HOST
+ARG NEST_CORE_PORT
+ARG ACCESS_TOKEN_LIFETIME
+ARG REFRESH_TOKEN_LIFETIME
+RUN bun install
+COPY . .
+RUN bun --bun run build
+
 FROM base as production
 ENV NODE_ENV=production
-ENV PORT=${NUXT_PORT}
-COPY . .
-RUN bun install
-RUN bun run build
+COPY --from=builder ${HOME}/.output ./.output
 CMD bun .output/server/index.mjs

@@ -3,18 +3,16 @@ import React from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 
 import LinkUnstyled from '../Other/LinkUnstyled';
-import { useAppSelector } from '../../store/hooks';
-import { isAllowed } from '../../lib/functions';
-import { Rights } from '../../lib/constants';
+import useRights from '../../hooks/useRights';
 
 const EditButton: React.FC<{
   route: string;
   link: string;
   selectable?: boolean;
 }> = ({ route, link, selectable = true }) => {
-  const profile = useAppSelector(store => store.app.profile);
+  const rights = useRights(route);
 
-  return selectable && isAllowed(route, Rights.Reading, profile?.roles)
+  return selectable && rights.reading
     ? (
       <LinkUnstyled
         href={link}

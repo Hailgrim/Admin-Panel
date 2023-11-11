@@ -74,8 +74,12 @@ export abstract class IRole {
 }
 export type CreateRoleFields = Pick<IRole, 'name' | 'description' | 'enabled'> &
   Partial<Pick<IRole, 'admin' | 'default'>>;
-export type GetRolesFields = Partial<Pick<IRole, 'name' | 'description' | 'enabled'>>;
-export type UpdateRoleFields = Partial<Pick<IRole, 'name' | 'description' | 'enabled'>>;
+export type GetRolesFields = Partial<
+  Pick<IRole, 'name' | 'description' | 'enabled'>
+>;
+export type UpdateRoleFields = Partial<
+  Pick<IRole, 'name' | 'description' | 'enabled'>
+>;
 
 export type IRolesResources = {
   roleId: number;

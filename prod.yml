@@ -17,15 +17,61 @@ services:
   nest_core:
     build:
       target: production
+      args:
+        - NEST_CORE_HOST
+        - NEST_CORE_PORT
+        - NGINX_HOST
+        - RABBITMQ_HOST
+        - RABBITMQ_PORT
+        - RABBITMQ_DEFAULT_USER
+        - RABBITMQ_DEFAULT_PASS
+        - POSTGRES_HOST
+        - POSTGRES_PORT
+        - POSTGRES_USER
+        - POSTGRES_PASSWORD
+        - POSTGRES_DB
+        - REDIS_HOST
+        - REDIS_PORT
+        - REDIS_PASSWORD
+        - REDIS_DB
+        - ACCESS_TOKEN_LIFETIME
+        - ACCESS_TOKEN_SECRET_KEY
+        - REFRESH_TOKEN_LIFETIME
+        - REFRESH_TOKEN_SECRET_KEY
 
   nest_mailer:
     build:
       target: production
+      args:
+        - PROJECT_TAG
+        - NGINX_HOST
+        - NEST_MAILER_HOST
+        - NEST_MAILER_PORT
+        - RABBITMQ_HOST
+        - RABBITMQ_PORT
+        - RABBITMQ_DEFAULT_USER
+        - RABBITMQ_DEFAULT_PASS
+        - NEST_MAILER_MAIL_HOST
+        - NEST_MAILER_MAIL_PORT
+        - NEST_MAILER_MAIL_USER
+        - NEST_MAILER_MAIL_PASSWORD
 
   next:
     build:
       target: production
+      args:
+        - NGINX_HOST
+        - NEST_CORE_HOST
+        - NEST_CORE_PORT
+        - ACCESS_TOKEN_LIFETIME
+        - REFRESH_TOKEN_LIFETIME
 
   nuxt:
     build:
       target: production
+      args:
+        - NGINX_HOST
+        - NEST_CORE_HOST
+        - NEST_CORE_PORT
+        - ACCESS_TOKEN_LIFETIME
+        - REFRESH_TOKEN_LIFETIME

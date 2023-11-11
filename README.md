@@ -26,18 +26,18 @@ This startup option leaves a minimal build and does not track changes in microse
 
 This microservice provides a graphical interface for administration.
 In it, you can set a list of protected links, create roles with rights for links, manage registered users.
-Instead of [Node.js](https://github.com/nodejs), the container uses [Bun](https://github.com/oven-sh/bun).
 The project is written in [React](https://github.com/facebook/react) and [TypeScript](https://github.com/microsoft/TypeScript).
 [Material UI](https://github.com/mui/material-ui) is used as the UI kit.
 [Redux Toolkit](https://github.com/reduxjs/redux-toolkit) is used as the application state manager.
 [RTK Query](https://github.com/rtk-incubator/rtk-query) is used for API requests.
 In the ```./next/store``` folder, you can make changes to the application state management logic.
 The ```./next/libs/config.ts``` file contains the settings received from Docker during project startup.
-In the file ```./next/libs/function.ts``` using the ```getServerSidePropsCustom``` function, you can make SSR requests to verify the presence of user authorization tokens, and using the ```isAllowed``` function, you can verify user rights in different parts of the application.
+In the file ```./next/libs/function.ts``` using the ```getServerSidePropsCustom``` function, you can make SSR requests to verify the presence of user authorization tokens.
 
 ### [Nuxt.js](https://github.com/nuxt/nuxt) (folder: ```./nuxt```)
 
 Implements the same functionality as Next.js, but [Vue](https://github.com/vuejs/core) is used instead of React.
+Instead of [Node.js](https://github.com/nodejs), the container uses [Bun](https://github.com/oven-sh/bun).
 State manager ([Pinia](https://github.com/vuejs/pinia)) folder - ```./next/store```.
 UI kit - [Vuetify](https://github.com/vuetifyjs/vuetify).
 
@@ -72,7 +72,8 @@ The ```./nest_core/libs/config.ts``` file contains the settings received from Do
 
 This service is engaged in sending emails.
 It is built using the same technologies as the main server.
-If the project is running in development mode, then links to view the contents of sent emails are available in the container console.
+If the mailer is running in testing mode, then links to view the contents of sent emails are available in the container console.
+This behavior is changed in the file ```./nest_core/libs/config.ts``` using the variable ```MAIL_TEST```.
 
 ## SSL
 

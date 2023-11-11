@@ -18,8 +18,8 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
   );
-  await app.register(fastifyCookie as any);
-  await app.register(fastifyHelmet as any);
+  await app.register(fastifyCookie);
+  await app.register(fastifyHelmet);
 
   const config = new DocumentBuilder()
     .setTitle(String(lang.get('en')?.adminPanel))

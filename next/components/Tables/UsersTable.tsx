@@ -9,8 +9,9 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import TableActions from './TableActions';
 import { addAlert } from '../../store/slices/appSlice';
 import EditButton from './EditButton';
-import { isAllowed, makeErrorText } from '../../lib/functions';
-import { Rights, ROUTES } from '../../lib/constants';
+import { makeErrorText } from '../../lib/functions';
+import { ROUTES } from '../../lib/constants';
+import useRights from '../../hooks/useRights';
 
 const UsersTable: React.FC<{
   data?: IFindAndCountRes<IUser> | null;
@@ -18,7 +19,6 @@ const UsersTable: React.FC<{
 }> = ({ data, pagination }) => {
   const dispatch = useAppDispatch();
   const userLang = useAppSelector(store => store.app.userLang);
-  const profile = useAppSelector(store => store.app.profile);
   const [page, setPage] = React.useState(pagination?.page || 1);
   const [quantity, setQuantity] = React.useState(pagination?.quantity || 25);
   const [destroyStatus, setDestroyStatus] = React.useState(false);
@@ -27,6 +27,7 @@ const UsersTable: React.FC<{
   const [findAll, findAllReq] = usersApi.useLazyFindAllQuery();
   const [destroy, destroyReq] = usersApi.useDeleteMutation();
   const [selectedRows, setSelectedRows] = React.useState<number[]>([]);
+  const rights = useRights(ROUTES.api.roles);
 
   const сolumns: GridColDef[] = React.useMemo(() => ([
     {
@@ -114,13 +115,13 @@ const UsersTable: React.FC<{
       <TableActions
         create={{
           link: ROUTES.panel.newUser,
-          disabled: !isAllowed(ROUTES.panel.users, Rights.Creating, profile?.roles),
+          disabled: !rights.creating,
         }}
         destroy={{
           action: () => destroy(selectedRows),
           disabled:
             selectedRows.length == 0 ||
-            !isAllowed(ROUTES.panel.users, Rights.Deleting, profile?.roles),
+            !rights.deleting,
           loading: destroyReq.isLoading,
         }}
       />

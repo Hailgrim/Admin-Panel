@@ -8,28 +8,31 @@ import ApiIcon from '@mui/icons-material/Api';
 
 import lang from '../../lib/lang';
 import { useAppSelector } from '../../store/hooks';
-import SideBarItem from './SideBarItem';
-import { Rights, ROUTES } from '../../lib/constants';
-import { isAllowed } from '../../lib/functions';
+import SideBarMenuItem from './SideBarMenuItem';
+import { ROUTES } from '../../lib/constants';
+import useRights from '../../hooks/useRights';
 
-const MenuItems: React.FC = () => {
+const SideBarMenu: React.FC = () => {
   const userLang = useAppSelector(store => store.app.userLang);
-  const profile = useAppSelector(store => store.app.profile);
+  const profileRights = useRights(ROUTES.api.auth.profile);
+  const usersRights = useRights(ROUTES.api.users);
+  const rolesRights = useRights(ROUTES.api.roles);
+  const resourcesRights = useRights(ROUTES.api.resources);
 
   return (
     <React.Fragment>
-      <SideBarItem
+      <SideBarMenuItem
         link={ROUTES.panel.home}
         name={String(lang.get(userLang)?.home)}
         icon={<HomeIcon />}
       />
-      <SideBarItem
+      <SideBarMenuItem
         link={ROUTES.panel.profile}
         name={String(lang.get(userLang)?.profile)}
         icon={<AccountBoxIcon />}
-        disabled={!isAllowed(ROUTES.panel.profile, Rights.Reading, profile?.roles)}
+        disabled={!profileRights.reading}
       />
-      <SideBarItem
+      <SideBarMenuItem
         name={String(lang.get(userLang)?.main)}
         icon={<WidgetsIcon />}
         childs={[
@@ -37,28 +40,28 @@ const MenuItems: React.FC = () => {
             link: ROUTES.panel.users,
             icon: <GroupIcon />,
             name: String(lang.get(userLang)?.users),
-            disabled: !isAllowed(ROUTES.panel.users, Rights.Reading, profile?.roles),
+            disabled: !usersRights.reading,
           },
           {
             link: ROUTES.panel.roles,
             icon: <SupervisedUserCircleIcon />,
             name: String(lang.get(userLang)?.roles),
-            disabled: !isAllowed(ROUTES.panel.roles, Rights.Reading, profile?.roles),
+            disabled: !rolesRights.reading,
           },
           {
             link: ROUTES.panel.resources,
             icon: <ApiIcon />,
             name: String(lang.get(userLang)?.resources),
-            disabled: !isAllowed(ROUTES.panel.resources, Rights.Reading, profile?.roles),
+            disabled: !resourcesRights.reading,
           },
         ]}
         disabled={
-          !isAllowed(ROUTES.panel.users, Rights.Reading, profile?.roles) &&
-          !isAllowed(ROUTES.panel.roles, Rights.Reading, profile?.roles) &&
-          !isAllowed(ROUTES.panel.resources, Rights.Reading, profile?.roles)
+          !usersRights.reading &&
+          !rolesRights.reading &&
+          !resourcesRights.reading
         }
       />
     </React.Fragment>
   );
 };
-export default MenuItems;
+export default SideBarMenu;

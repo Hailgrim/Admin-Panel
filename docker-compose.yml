@@ -25,8 +25,6 @@ services:
   nginx:
     build:
       context: ./nginx
-      args:
-        - PROJECT_TAG=${PROJECT_TAG}
     container_name: ${PROJECT_TAG}_nginx
     restart: always
     env_file:
@@ -35,7 +33,6 @@ services:
       - main
     expose:
       - ${NGINX_PORT}
-      - ${NGINX_SSL_PORT}
     ports:
       - ${NGINX_PORT}:${NGINX_PORT}
       - ${NGINX_SSL_PORT}:${NGINX_SSL_PORT}
@@ -52,7 +49,7 @@ services:
     expose:
       - ${RABBITMQ_PORT}
     volumes:
-      - "rabbitmq_data:/var/lib/rabbitmq"
+      - rabbitmq_data:/var/lib/rabbitmq
 
   postgres:
     build:
@@ -66,7 +63,7 @@ services:
     expose:
       - ${POSTGRES_PORT}
     volumes:
-      - "postgres_data:/var/lib/postgresql/data"
+      - postgres_data:/var/lib/postgresql/data
 
   redis:
     build:
@@ -80,31 +77,11 @@ services:
     expose:
       - ${REDIS_PORT}
     volumes:
-      - "redis_data:/data"
-
-  nest_mailer:
-    build:
-      context: ./nest_mailer
-      args:
-        - PROJECT_TAG=${PROJECT_TAG}
-    container_name: ${PROJECT_TAG}_nest_mailer
-    restart: always
-    env_file:
-      - .env
-    networks:
-      - main
-    expose:
-      - ${NEST_MAILER_PORT}
-    depends_on:
-      - rabbitmq
-    volumes:
-      - "nest_mailer_node_modules:/home/${PROJECT_TAG}/nest_mailer/node_modules"
+      - redis_data:/data
 
   nest_core:
     build:
       context: ./nest_core
-      args:
-        - PROJECT_TAG=${PROJECT_TAG}
     container_name: ${PROJECT_TAG}_nest_core
     restart: always
     env_file:
@@ -117,13 +94,30 @@ services:
       - rabbitmq
       - postgres
     volumes:
-      - "nest_core_node_modules:/home/${PROJECT_TAG}/nest_core/node_modules"
+      - nest_core_node_modules:/home/node/node_modules
+
+  nest_mailer:
+    build:
+      context: ./nest_mailer
+    container_name: ${PROJECT_TAG}_nest_mailer
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - main
+    expose:
+      - ${NEST_MAILER_PORT}
+    depends_on:
+      - rabbitmq
+    volumes:
+      - nest_mailer_node_modules:/home/node/node_modules
 
   next:
     build:
       context: ./next
       args:
-        - PROJECT_TAG=${PROJECT_TAG}
+        - NEXT_HOST
+        - NEXT_PORT
     container_name: ${PROJECT_TAG}_next
     restart: always
     env_file:
@@ -133,13 +127,14 @@ services:
     expose:
       - ${NEXT_PORT}
     volumes:
-      - "next_node_modules:/home/${PROJECT_TAG}/next/node_modules"
+      - next_node_modules:/home/node/node_modules
 
   nuxt:
     build:
       context: ./nuxt
       args:
-        - PROJECT_TAG=${PROJECT_TAG}
+        - NUXT_HOST
+        - NUXT_PORT
     container_name: ${PROJECT_TAG}_nuxt
     restart: always
     env_file:
@@ -149,4 +144,4 @@ services:
     expose:
       - ${NUXT_PORT}
     volumes:
-      - "nuxt_node_modules:/home/${PROJECT_TAG}/nuxt/node_modules"
+      - nuxt_node_modules:/home/bun/node_modules

@@ -1,15 +1,16 @@
 import React from 'react';
 
 import lang from '../../../lib/lang';
-import { getUpdatedValues, isAllowed, makeErrorText } from '../../../lib/functions';
+import { getUpdatedValues, makeErrorText } from '../../../lib/functions';
 import { IUser } from '../../../lib/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addAlert, setProfile } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import TextFieldStyled from '../../Other/TextFieldStyled';
 import FormBoxStyled from '../FormBoxStyled';
-import { Rights, ROUTES } from '../../../lib/constants';
+import { ROUTES } from '../../../lib/constants';
 import authApi from '../../../store/api/authApi';
+import useRights from '../../../hooks/useRights';
 
 const UpdateProfile: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -17,6 +18,7 @@ const UpdateProfile: React.FC = () => {
   const profile = useAppSelector(store => store.app.profile);
   const [update, updateReq] = authApi.useUpdateProfileMutation();
   const [name, setName] = React.useState(profile?.name || '');
+  const rights = useRights(ROUTES.api.auth.profile);
 
   const updateHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -64,7 +66,7 @@ const UpdateProfile: React.FC = () => {
       <FormActions
         update={{
           loading: updateReq.isLoading,
-          disabled: !isAllowed(ROUTES.panel.resources, Rights.Updating, profile?.roles),
+          disabled: !rights.updating,
         }}
       />
     </FormBoxStyled>

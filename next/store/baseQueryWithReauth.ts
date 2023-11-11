@@ -6,7 +6,7 @@ import type {
 } from '@reduxjs/toolkit/query';
 import { Mutex } from 'async-mutex';
 
-import { API_HOST, PROJECT_TAG } from '../lib/config';
+import { API_HOST } from '../lib/config';
 import { RootState } from './store';
 import { ROUTES } from '../lib/constants';
 
@@ -25,9 +25,9 @@ const baseQuery = fetchBaseQuery({
     if (refreshToken) {
       headers.set(
         'Cookie',
-        `${PROJECT_TAG}_refreshToken=${refreshToken}`
-          .concat(accessToken ? `;${PROJECT_TAG}_accessToken=${accessToken}` : '')
-          .concat(rememberMe ? `;${PROJECT_TAG}_rememberMe=true` : ''),
+        `refreshToken=${refreshToken}`
+          .concat(accessToken ? `;accessToken=${accessToken}` : '')
+          .concat(rememberMe ? `;rememberMe=true` : ''),
       );
     }
 

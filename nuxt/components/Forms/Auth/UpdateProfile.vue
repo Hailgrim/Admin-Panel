@@ -11,7 +11,7 @@ const mainStore = useMainStore()
 const authStore = useAuthStore()
 const name = ref(authStore.profile?.name || '')
 const nameIsValid = (value: string) => testString(NAME_REGEX, value) || t('nameValidation')
-const rights = useRights(ROUTES.api.users)
+const rights = useRights(ROUTES.api.auth.profile)
 
 function submitHandler() {
   if (nameIsValid(name.value) && authStore.profile) {

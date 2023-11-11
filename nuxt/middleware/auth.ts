@@ -4,8 +4,12 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (process.client)
     return
 
+  const accessToken = useCookie('accessToken')
   const authStore = useAuthStore()
-  await authStore.getProfile()
+  if (accessToken.value) {
+    // Attempt to authorize the user
+    await authStore.getProfile()
+  }
 
   if (authStore.profile) {
     if (Object.values(ROUTES.auth).includes(to.path)) {

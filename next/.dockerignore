@@ -1,6 +1,4 @@
 Dockerfile
 .dockerignore
 node_modules
-pnpm-lock.yaml
 .next
-out

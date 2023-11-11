@@ -27,11 +27,7 @@ import { JwtGuard } from './jwt.guard';
 import { JwtRefreshGuard } from './jwt-refresh.guard';
 import { getCookies } from 'libs/functions';
 import { SignInDto } from './dto/sign-in-auth.dto';
-import {
-  ACCESS_TOKEN_LIFETIME,
-  PROJECT_TAG,
-  REFRESH_TOKEN_LIFETIME,
-} from 'libs/config';
+import { ACCESS_TOKEN_LIFETIME, REFRESH_TOKEN_LIFETIME } from 'libs/config';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
 import { SignUpDto } from './dto/sign-up.dts';
@@ -81,32 +77,28 @@ export class AuthController {
     @Res({ passthrough: true }) res: FastifyReply,
     @Body() signInDto: SignInDto,
   ): Promise<IUser> {
-    const oldSessionId = req.cookies[`${PROJECT_TAG}_sessionId`];
+    const oldSessionId = req.cookies['sessionId'];
     const rememberMe = signInDto.rememberMe;
     const { accessToken, refreshToken, sessionId } =
       await this.authService.signIn(req.user, rememberMe, oldSessionId);
 
+    res.cookie('accessToken', accessToken, this.authService.prepareCookie());
     res.cookie(
-      `${PROJECT_TAG}_accessToken`,
-      accessToken,
-      this.authService.prepareCookie(),
-    );
-    res.cookie(
-      `${PROJECT_TAG}_refreshToken`,
+      'refreshToken',
       refreshToken,
       this.authService.prepareCookie(
         rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2,
       ),
     );
     res.cookie(
-      `${PROJECT_TAG}_sessionId`,
+      'sessionId',
       String(sessionId),
       this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME * 12),
     );
 
     if (rememberMe) {
       res.cookie(
-        `${PROJECT_TAG}_rememberMe`,
+        'rememberMe',
         'true',
         this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME),
       );
@@ -131,34 +123,29 @@ export class AuthController {
     @Req() req: FastifyRequestWithAuth,
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<ICookiesResponse> {
-    const rememberMe =
-      `${PROJECT_TAG}_rememberMe` in getCookies(req.headers.cookie);
+    const rememberMe = 'rememberMe' in getCookies(req.headers.cookie);
     const { accessToken, refreshToken } = await this.authService.refresh(
       req.user,
       rememberMe,
     );
 
+    res.cookie('accessToken', accessToken, this.authService.prepareCookie());
     res.cookie(
-      `${PROJECT_TAG}_accessToken`,
-      accessToken,
-      this.authService.prepareCookie(),
-    );
-    res.cookie(
-      `${PROJECT_TAG}_refreshToken`,
+      'refreshToken',
       refreshToken,
       this.authService.prepareCookie(
         rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2,
       ),
     );
     res.cookie(
-      `${PROJECT_TAG}_sessionId`,
+      'sessionId',
       String(req.user.sessionId),
       this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME * 12),
     );
 
     if (rememberMe) {
       res.cookie(
-        `${PROJECT_TAG}_rememberMe`,
+        'rememberMe',
         'true',
         this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME),
       );
@@ -197,22 +184,10 @@ export class AuthController {
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<boolean> {
     const result = await this.authService.signOut(req.user);
-    res.clearCookie(
-      `${PROJECT_TAG}_accessToken`,
-      this.authService.prepareCookie(),
-    );
-    res.clearCookie(
-      `${PROJECT_TAG}_refreshToken`,
-      this.authService.prepareCookie(),
-    );
-    res.clearCookie(
-      `${PROJECT_TAG}_sessionId`,
-      this.authService.prepareCookie(),
-    );
-    res.clearCookie(
-      `${PROJECT_TAG}_rememberMe`,
-      this.authService.prepareCookie(),
-    );
+    res.clearCookie('accessToken', this.authService.prepareCookie());
+    res.clearCookie('refreshToken', this.authService.prepareCookie());
+    res.clearCookie('sessionId', this.authService.prepareCookie());
+    res.clearCookie('rememberMe', this.authService.prepareCookie());
     return result;
   }
 }

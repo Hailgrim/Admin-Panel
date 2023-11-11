@@ -18,7 +18,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { toggleModalSideBar, toggleSideBar } from '../../store/slices/appSlice';
 import theme from '../../lib/theme';
 import { SIDE_MENU_WIDTH, SIDE_MENU_WIDTH_OPENED } from '../../lib/constants';
-import MenuItems from './MenuItems';
+import SideBarMenu from './SideBarMenu';
 
 const DrawerStyled = styled(
   (props: DrawerProps) => <Drawer variant="permanent" open={true} {...props} />,
@@ -99,7 +99,7 @@ const SideBar: React.FC = () => {
         aria-label={lang.get(userLang)?.mainMenu}
         sx={{ overflowX: 'hidden' }}
       >
-        <MenuItems />
+        <SideBarMenu />
       </List>
     </DrawerStyled>
   );

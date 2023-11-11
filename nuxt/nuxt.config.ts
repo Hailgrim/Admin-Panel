@@ -15,7 +15,6 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      PROJECT_TAG: process.env.PROJECT_TAG || 'AP',
       NGINX_HOST: process.env.NGINX_HOST || 'localhost',
       NEST_CORE_HOST: process.env.NEST_CORE_HOST || 'localhost',
       NEST_CORE_PORT: process.env.NEST_CORE_PORT || '3000',

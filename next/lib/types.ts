@@ -1,7 +1,7 @@
-import type en from '~/locales/en'
+import type en from '../locales/en';
 
-export type LangList = 'en' | 'ru'
-export type LangDictionary = typeof en
+export type LangList = 'en' | 'ru';
+export type LangDictionary = typeof en;
 
 export interface IAlert {
   id: number;

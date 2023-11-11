@@ -3,15 +3,16 @@ import { useRouter } from 'next/router';
 
 import lang from '../../../lib/lang';
 import rolesApi from '../../../store/api/rolesApi';
-import { getUpdatedValues, isAllowed, makeErrorText } from '../../../lib/functions';
+import { getUpdatedValues, makeErrorText } from '../../../lib/functions';
 import { IRole } from '../../../lib/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import FormBoxStyled from '../FormBoxStyled';
 import TextFieldStyled from '../../Other/TextFieldStyled';
-import { Rights, ROUTES } from '../../../lib/constants';
+import { ROUTES } from '../../../lib/constants';
 import FormCheckbox from '../FormCheckbox';
+import useRights from '../../../hooks/useRights';
 
 const UpdateRole: React.FC<{
   data: IRole;
@@ -19,12 +20,12 @@ const UpdateRole: React.FC<{
   const dispatch = useAppDispatch();
   const router = useRouter();
   const userLang = useAppSelector(store => store.app.userLang);
-  const profile = useAppSelector(store => store.app.profile);
   const [update, updateReq] = rolesApi.useUpdateMutation();
   const [destroy, deleteReq] = rolesApi.useDeleteMutation();
   const [name, setName] = React.useState(data.name);
   const [description, setDescription] = React.useState(data.description || '');
   const [enabled, setEnabled] = React.useState(data.enabled);
+  const rights = useRights(ROUTES.api.roles);
 
   const updateHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -100,12 +101,12 @@ const UpdateRole: React.FC<{
         <FormActions
           update={{
             loading: updateReq.isLoading,
-            disabled: !isAllowed(ROUTES.panel.resources, Rights.Updating, profile?.roles),
+            disabled: !rights.updating,
           }}
           destroy={{
             action: () => destroy(data.id),
             loading: deleteReq.isLoading,
-            disabled: !isAllowed(ROUTES.panel.resources, Rights.Updating, profile?.roles),
+            disabled: !rights.deleting,
           }}
         />
       )}

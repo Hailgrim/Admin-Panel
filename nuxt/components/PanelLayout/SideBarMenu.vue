@@ -2,13 +2,65 @@
 import SideBarMenuItem from './SideBarMenuItem.vue'
 import type { ISideBarMenuItem } from '~/utils/types'
 
-const props = defineProps<{ data: ISideBarMenuItem[] }>()
 const route = useRoute()
-const opened = props.data.findLast(value => checkActiveLink(route.path, { href: value.href, childs: value.childs }))
+const { t } = useI18n()
+const profileRights = useRights(ROUTES.api.auth.profile)
+const usersRights = useRights(ROUTES.api.users)
+const rolesRights = useRights(ROUTES.api.roles)
+const resourcesRights = useRights(ROUTES.api.resources)
+
+const menu: ISideBarMenuItem[] = [{
+  title: t('home'),
+  icon: 'mdi-home-city',
+  href: ROUTES.panel.home,
+}]
+
+if (profileRights.value.reading) {
+  menu.push({
+    title: t('profile'),
+    icon: 'mdi-account-box',
+    href: ROUTES.panel.profile,
+  })
+}
+
+const mainMenu: ISideBarMenuItem = {
+  title: t('main'),
+  icon: 'mdi-widgets',
+  childs: [],
+}
+
+if (usersRights.value.reading) {
+  mainMenu.childs!.push({
+    title: t('users'),
+    icon: 'mdi-account-group-outline',
+    href: ROUTES.panel.users,
+  })
+}
+
+if (rolesRights.value.reading) {
+  mainMenu.childs!.push({
+    title: t('roles'),
+    icon: 'mdi-account-supervisor',
+    href: ROUTES.panel.roles,
+  })
+}
+
+if (resourcesRights.value.reading) {
+  mainMenu.childs!.push({
+    title: t('resources'),
+    icon: 'mdi-api',
+    href: ROUTES.panel.resources,
+  })
+}
+
+if (mainMenu.childs!.length > 0)
+  menu.push(mainMenu)
+
+const opened = menu.findLast(value => checkActiveLink(route.path, { href: value.href, childs: value.childs }))
 </script>
 
 <template>
   <v-list density="compact" nav :aria-label="$t('mainMenu')" :opened="[opened ? `${opened.title}: ${opened.href}` : '']">
-    <SideBarMenuItem v-for="item of data" :key="item.title" v-bind="item" />
+    <SideBarMenuItem v-for="item of menu" :key="item.title" v-bind="item" />
   </v-list>
 </template>

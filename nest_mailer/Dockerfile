@@ -1,16 +1,34 @@
-FROM node:alpine as base
-ARG PROJECT_TAG
-WORKDIR /home/${PROJECT_TAG}/nest_mailer
+FROM node:lts-alpine as base
+ARG HOME=/home/node
+WORKDIR ${HOME}
+COPY ./package*.json .
 
 FROM base as development
 ENV NODE_ENV=development
-COPY ./package*.json .
 RUN npm install
 CMD npm run start:dev
 
+FROM base as builder
+ARG PROJECT_TAG
+ARG NEST_MAILER_HOST
+ARG NEST_MAILER_PORT
+ARG RABBITMQ_HOST
+ARG RABBITMQ_PORT
+ARG RABBITMQ_DEFAULT_USER
+ARG RABBITMQ_DEFAULT_PASS
+ARG NEST_MAILER_MAIL_HOST
+ARG NEST_MAILER_MAIL_PORT
+ARG NEST_MAILER_MAIL_USER
+ARG NEST_MAILER_MAIL_PASSWORD
+RUN apk add --no-cache libc6-compat
+RUN npm install
+COPY . .
+RUN npm run build
+RUN npm prune --production
+
 FROM base as production
 ENV NODE_ENV=production
-COPY . .
-RUN npm install --omit=dev
-RUN npm run build
-CMD npm run start:prod
+COPY --from=builder ${HOME}/node_modules ./node_modules
+COPY --from=builder ${HOME}/dist ./dist
+COPY --from=builder ${HOME}/templates ./templates
+CMD node ./dist/src/main.js
