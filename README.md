@@ -73,7 +73,7 @@ The ```./nest_core/libs/config.ts``` file contains the settings received from Do
 This service is engaged in sending emails.
 It is built using the same technologies as the main server.
 If the mailer is running in testing mode, then links to view the contents of sent emails are available in the container console.
-This behavior is changed in the file ```./nest_core/libs/config.ts``` using the variable ```MAIL_TEST```.
+This behavior is changed in the file ```./nest_mailer/libs/config.ts``` using the variable ```MAIL_TEST```.
 
 ## SSL
 
