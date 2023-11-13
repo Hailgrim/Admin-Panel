@@ -15,7 +15,7 @@ const useRights = (path: string) => {
   const profile = useAppSelector(store => store.app.profile);
 
   useEffect(() => {
-    setRights(oldRights => {
+    setRights(prev => {
       if (profile?.roles) {
         const roles = Array.isArray(profile.roles)
           ? profile.roles
@@ -44,15 +44,15 @@ const useRights = (path: string) => {
         }
 
         if (
-          oldRights.creating !== newRights.creating ||
-          oldRights.reading !== newRights.reading ||
-          oldRights.updating !== newRights.updating ||
-          oldRights.deleting !== newRights.deleting
+          prev.creating !== newRights.creating ||
+          prev.reading !== newRights.reading ||
+          prev.updating !== newRights.updating ||
+          prev.deleting !== newRights.deleting
         ) return newRights;
       } else {
         return defaultRights;
       }
-      return oldRights;
+      return prev;
     });
   }, [profile, route]);
 

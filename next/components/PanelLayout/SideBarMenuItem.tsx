@@ -44,7 +44,7 @@ const ItemParent: React.FC<{
 const SideBarMenuItem: React.FC<ISideBarItem> = ({ link, name, icon, childs, isChild, disabled }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const [isChildsOpened, setChildsVisibility] = React.useState<boolean>(checkActiveLink(router.pathname, { link, childs }));
+  const [isChildsOpened, setChildsVisibility] = React.useState<boolean>(() => checkActiveLink(router.pathname, { link, childs }));
 
   const clickHandler = () => {
     if (childs && childs.length > 0) {
