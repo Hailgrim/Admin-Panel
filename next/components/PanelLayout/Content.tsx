@@ -7,8 +7,7 @@ import { SIDE_MENU_WIDTH, SIDE_MENU_WIDTH_OPENED } from '../../lib/constants';
 const BoxStyled = styled(
   (props: BoxProps<'main'>) => <Box component="main" {...props} />,
   {
-    shouldForwardProp: prop => !([
-      'openStyled',
+    shouldForwardProp: prop => !([  'openStyled',
     ] as PropertyKey[]).includes(prop),
   },
 )<{

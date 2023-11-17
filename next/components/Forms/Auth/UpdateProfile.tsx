@@ -1,6 +1,5 @@
 import React from 'react';
 
-import lang from '../../../lib/lang';
 import { getUpdatedValues, makeErrorText } from '../../../lib/functions';
 import { IUser } from '../../../lib/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -11,11 +10,15 @@ import FormBoxStyled from '../FormBoxStyled';
 import { ROUTES } from '../../../lib/constants';
 import authApi from '../../../store/api/authApi';
 import useRights from '../../../hooks/useRights';
+import dictionary from '../../../locales/dictionary';
 
 const UpdateProfile: React.FC = () => {
   const dispatch = useAppDispatch();
-  const userLang = useAppSelector(store => store.app.userLang);
+  const language = useAppSelector(store => store.app.language);
+  const userLang = React.useRef(language);
+  const t = useAppSelector(store => store.app.t);
   const profile = useAppSelector(store => store.app.profile);
+  const newProfile = React.useRef(profile);
   const [update, updateReq] = authApi.useUpdateProfileMutation();
   const [name, setName] = React.useState(profile?.name || '');
   const rights = useRights(ROUTES.api.auth.profile);
@@ -28,30 +31,32 @@ const UpdateProfile: React.FC = () => {
         { name },
       );
       if (Object.keys(updatedValues).length == 0) {
-        dispatch(addAlert({ type: 'warning', text: lang.get(userLang)?.nothingToUpdate }));
+        dispatch(addAlert({ type: 'warning', text: t.nothingToUpdate }));
       } else {
+        if (newProfile.current) {
+          newProfile.current.name = name;
+        }
         update(updatedValues);
       }
     } else {
-      dispatch(addAlert({ type: 'warning', text: lang.get(userLang)?.unknownError }));
+      dispatch(addAlert({ type: 'warning', text: t.unknownError }));
     }
   };
+
+  React.useEffect(() => { userLang.current = language }, [language]);
 
   React.useEffect(() => {
     if (updateReq.isLoading) {
       return;
     }
     if (updateReq.data === false || updateReq.error) {
-      dispatch(addAlert({ type: 'error', text: makeErrorText(updateReq.error, userLang) }));
+      dispatch(addAlert({ type: 'error', text: makeErrorText(updateReq.error, userLang.current) }));
     }
-    if (updateReq.data && profile) {
-      dispatch(setProfile({ ...profile, name }));
-      dispatch(addAlert({ type: 'success', text: lang.get(userLang)?.success }));
+    if (updateReq.data) {
+      dispatch(setProfile(newProfile.current));
+      dispatch(addAlert({ type: 'success', text: dictionary[userLang.current].success }));
     }
-  }, [
-    updateReq.data, updateReq.error, updateReq.isLoading,
-    dispatch, userLang,
-  ]);
+  }, [updateReq.data, updateReq.error, updateReq.isLoading, dispatch]);
 
   return (
     <FormBoxStyled onSubmit={updateHandler}>
@@ -59,7 +64,7 @@ const UpdateProfile: React.FC = () => {
         required
         name="name"
         type="text"
-        label={lang.get(userLang)?.name}
+        label={t.name}
         value={name}
         onChange={event => setName(event.currentTarget.value)}
       />

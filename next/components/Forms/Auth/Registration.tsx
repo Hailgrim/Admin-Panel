@@ -2,7 +2,6 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 
-import lang from '../../../lib/lang';
 import authApi from '../../../store/api/authApi';
 import { makeErrorText, testString } from '../../../lib/functions';
 import { useAppSelector } from '../../../store/hooks';
@@ -15,10 +14,13 @@ import { ROUTES } from '../../../lib/constants';
 import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX } from '../../../lib/constants';
 import CustomModal from '../../Other/CustomModal';
 import RegistrationSuccess from './RegistrationSuccess';
+import dictionary from '../../../locales/dictionary';
 
 const Registration: React.FC = () => {
   const router = useRouter();
-  const userLang = useAppSelector(store => store.app.userLang);
+  const language = useAppSelector(store => store.app.language);
+  const userLang = React.useRef(language);
+  const t = useAppSelector(store => store.app.t);
   const [signUp, { data, error, isLoading }] = authApi.useLazySignUpQuery();
   const [errorText, setErrorText] = React.useState<string>();
   const [name, setName] = React.useState('');
@@ -38,6 +40,8 @@ const Registration: React.FC = () => {
     });
   };
 
+  React.useEffect(() => { userLang.current = language }, [language]);
+
   React.useEffect(() => {
     if (isLoading == true) {
       setErrorText(undefined);
@@ -47,10 +51,10 @@ const Registration: React.FC = () => {
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 409:
-          setErrorText(String(lang.get(userLang)?.userAlreadyExist));
+          setErrorText(String(dictionary[userLang.current].userAlreadyExist));
           break;
         default:
-          setErrorText(makeErrorText(error, userLang));
+          setErrorText(makeErrorText(error, userLang.current));
           break;
       }
     } else {
@@ -58,7 +62,7 @@ const Registration: React.FC = () => {
         setModalState(true);
       }
     }
-  }, [data, error, isLoading, router, userLang]);
+  }, [data, error, isLoading, router]);
 
   return (
     <React.Fragment>
@@ -68,11 +72,11 @@ const Registration: React.FC = () => {
           required
           name="name"
           type="text"
-          label={lang.get(userLang)?.name}
+          label={t.name}
           value={name}
           onChange={event => setName(event.currentTarget.value)}
           color={nameError ? 'success' : undefined}
-          helperText={lang.get(userLang)?.nameValidation}
+          helperText={t.nameValidation}
           focused={name.length > 0 || undefined}
           autoFocus
         />
@@ -80,40 +84,40 @@ const Registration: React.FC = () => {
           required
           name="email"
           type="email"
-          label={lang.get(userLang)?.email}
+          label={t.email}
           value={email}
           onChange={event => setEmail(event.currentTarget.value)}
           color={emailError ? 'success' : undefined}
-          helperText={lang.get(userLang)?.emailValidation}
+          helperText={t.emailValidation}
           focused={email.length > 0 || undefined}
         />
         <TextFieldStyled
           required
           type="password"
           name="password"
-          label={lang.get(userLang)?.password}
+          label={t.password}
           value={password}
           onChange={event => setPassword(event.currentTarget.value)}
           color={passwordError ? 'success' : undefined}
-          helperText={lang.get(userLang)?.passwordValidation}
+          helperText={t.passwordValidation}
           focused={password.length > 0 || undefined}
         />
         <AuthButtonStyled
           disabled={isLoading || Boolean(data) || !nameError || !emailError || !passwordError}
         >
-          {isLoading ? lang.get(userLang)?.loading : lang.get(userLang)?.signUp}
+          {isLoading ? t.loading : t.signUp}
         </AuthButtonStyled>
         <AuthLinkStyled href={ROUTES.auth.signIn}>
-          {lang.get(userLang)?.signInText}
+          {t.signInText}
         </AuthLinkStyled>
         <AuthLinkStyled href={ROUTES.auth.forget}>
-          {lang.get(userLang)?.forgotPasswordText}
+          {t.forgotPasswordText}
         </AuthLinkStyled>
       </FormBoxStyled>
       <CustomModal
         open={modalState}
         onClose={() => setModalState(false)}
-        title={lang.get(userLang)?.registration}
+        title={t.registration}
       >
         <RegistrationSuccess callback={() => setModalState(false)} />
       </CustomModal>

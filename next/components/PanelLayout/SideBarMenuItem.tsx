@@ -15,8 +15,7 @@ import { SIDE_MENU_WIDTH_OPENED } from '../../lib/constants';
 const ListItemButtonStyled = styled(
   ListItemButton,
   {
-    shouldForwardProp: prop => !([
-      'isChild',
+    shouldForwardProp: prop => !([  'isChild',
     ] as PropertyKey[]).includes(prop),
   },
 )<{

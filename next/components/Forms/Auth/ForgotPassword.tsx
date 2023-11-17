@@ -1,7 +1,6 @@
 import React from 'react';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 
-import lang from '../../../lib/lang';
 import authApi from '../../../store/api/authApi';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { makeErrorText } from '../../../lib/functions';
@@ -13,10 +12,13 @@ import AuthButtonStyled from '../../../components/AuthLayout/AuthButtonStyled';
 import { ROUTES } from '../../../lib/constants';
 import CustomModal from '../../Other/CustomModal';
 import ResetPassword from './ResetPassword';
+import dictionary from '../../../locales/dictionary';
 
 const ForgotPassword: React.FC = () => {
   const dispatch = useAppDispatch();
-  const userLang = useAppSelector(store => store.app.userLang);
+  const language = useAppSelector(store => store.app.language);
+  const userLang = React.useRef(language);
+  const t = useAppSelector(store => store.app.t);
   const [forgotPassword, { data, error, isFetching, originalArgs }] = authApi.useLazyForgotPasswordQuery();
   const [errorText, setErrorText] = React.useState<string>();
   const [email, setEmail] = React.useState('');
@@ -27,6 +29,8 @@ const ForgotPassword: React.FC = () => {
     forgotPassword(email);
   };
 
+  React.useEffect(() => { userLang.current = language }, [language]);
+
   React.useEffect(() => {
     if (isFetching == true) {
       setErrorText(undefined);
@@ -36,10 +40,10 @@ const ForgotPassword: React.FC = () => {
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 404:
-          setErrorText(String(lang.get(userLang)?.wrongEmail));
+          setErrorText(String(dictionary[userLang.current].wrongEmail));
           break;
         default:
-          setErrorText(makeErrorText(error, userLang));
+          setErrorText(makeErrorText(error, userLang.current));
           break;
       }
     } else {
@@ -47,7 +51,7 @@ const ForgotPassword: React.FC = () => {
         setModalState(true);
       }
     }
-  }, [data, error, isFetching, dispatch, userLang]);
+  }, [data, error, isFetching, dispatch]);
 
   return (
     <React.Fragment>
@@ -57,25 +61,25 @@ const ForgotPassword: React.FC = () => {
           required
           name="email"
           type="email"
-          label={lang.get(userLang)?.email}
+          label={t.email}
           value={email}
           onChange={event => setEmail(event.currentTarget.value)}
           autoFocus
         />
         <AuthButtonStyled disabled={isFetching}>
-          {isFetching ? lang.get(userLang)?.loading : lang.get(userLang)?.confirm}
+          {isFetching ? t.loading : t.confirm}
         </AuthButtonStyled>
         <AuthLinkStyled href={ROUTES.auth.signUp}>
-          {lang.get(userLang)?.signUpText}
+          {t.signUpText}
         </AuthLinkStyled>
         <AuthLinkStyled href={ROUTES.auth.signIn}>
-          {lang.get(userLang)?.signInText}
+          {t.signInText}
         </AuthLinkStyled>
       </FormBoxStyled>
       <CustomModal
         open={modalState}
         onClose={() => setModalState(false)}
-        title={lang.get(userLang)?.resetPassword}
+        title={t.resetPassword}
       >
         <ResetPassword
           email={originalArgs || ''}

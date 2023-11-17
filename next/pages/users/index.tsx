@@ -1,7 +1,6 @@
 import React from 'react';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 
-import lang from '../../lib/lang';
 import usersApi from '../../store/api/usersApi';
 import { getServerSidePropsCustom, makePagination } from '../../lib/functions';
 import { IFindAndCountRes, IPage, IUser } from '../../lib/types';
@@ -20,7 +19,7 @@ export default UsersPage;
 
 export const getServerSideProps = getServerSidePropsCustom<IFindAndCountRes<IUser>>(
   async ({ store, context }) => {
-    const userLang = store.getState().app.userLang;
+    const t = store.getState().app.t;
     const pagination = makePagination(context.query);
     const { data, error } = await store
       .dispatch(usersApi.endpoints.findAndCountAll.initiate(pagination));
@@ -32,9 +31,9 @@ export const getServerSideProps = getServerSidePropsCustom<IFindAndCountRes<IUse
     return {
       props: {
         meta: {
-          title: lang.get(userLang)?.users,
-          description: lang.get(userLang)?.users,
-          h1: lang.get(userLang)?.users,
+          title: t.users,
+          description: t.users,
+          h1: t.users,
         },
         pagination: pagination,
         content: data || null,

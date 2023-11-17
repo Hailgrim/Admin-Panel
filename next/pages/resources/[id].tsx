@@ -1,6 +1,5 @@
 import React from 'react';
 
-import lang from '../../lib/lang';
 import resourcesApi from '../../store/api/resourcesApi';
 import { getServerSidePropsCustom } from '../../lib/functions';
 import { IPage, IResource } from '../../lib/types';
@@ -19,7 +18,7 @@ export default UserPage;
 
 export const getServerSideProps = getServerSidePropsCustom<IResource>(
   async ({ store, context }) => {
-    const userLang = store.getState().app.userLang;
+    const t = store.getState().app.t;
     const id = Number(context.params?.id);
 
     if (id) {
@@ -28,8 +27,8 @@ export const getServerSideProps = getServerSidePropsCustom<IResource>(
         return {
           props: {
             meta: {
-              title: `${lang.get(userLang)?.resource}: ${data.name}`,
-              description: `${lang.get(userLang)?.resource}: ${data.name}`,
+              title: `${t.resource}: ${data.name}`,
+              description: `${t.resource}: ${data.name}`,
               h1: data.name,
             },
             content: data || null,

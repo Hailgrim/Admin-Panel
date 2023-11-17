@@ -1,7 +1,6 @@
 import React from 'react';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 
-import lang from '../../../lib/lang';
 import authApi from '../../../store/api/authApi';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { makeErrorText } from '../../../lib/functions';
@@ -9,13 +8,16 @@ import TextFieldStyled from '../../../components/Other/TextFieldStyled';
 import AuthAlert from '../../../components/AuthLayout/AuthAlert';
 import FormBoxStyled from '../../../components/Forms/FormBoxStyled';
 import AuthButtonStyled from '../../../components/AuthLayout/AuthButtonStyled';
+import dictionary from '../../../locales/dictionary';
 
 const VerifyUser: React.FC<{
   email: string;
   callback?: () => void;
 }> = ({ email, callback }) => {
   const dispatch = useAppDispatch();
-  const userLang = useAppSelector(store => store.app.userLang);
+  const language = useAppSelector(store => store.app.language);
+  const userLang = React.useRef(language);
+  const t = useAppSelector(store => store.app.t);
   const [verifyUser, { data, error, isLoading }] = authApi.useLazyVerifyUserQuery();
   const [errorText, setErrorText] = React.useState<string>();
   const [code, setCode] = React.useState('');
@@ -24,6 +26,8 @@ const VerifyUser: React.FC<{
     event.preventDefault();
     verifyUser({ email, code });
   };
+
+  React.useEffect(() => { userLang.current = language }, [language]);
 
   React.useEffect(() => {
     if (isLoading == true) {
@@ -34,10 +38,10 @@ const VerifyUser: React.FC<{
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 404:
-          setErrorText(String(lang.get(userLang)?.wrongCode));
+          setErrorText(String(dictionary[userLang.current].wrongCode));
           break;
         default:
-          setErrorText(makeErrorText(error, userLang));
+          setErrorText(makeErrorText(error, userLang.current));
           break;
       }
     } else {
@@ -45,10 +49,7 @@ const VerifyUser: React.FC<{
         callback();
       }
     }
-  }, [
-    data, error, isLoading,
-    dispatch, userLang, callback,
-  ]);
+  }, [data, error, isLoading, dispatch, callback]);
 
   return (
     <FormBoxStyled
@@ -61,18 +62,18 @@ const VerifyUser: React.FC<{
         autoComplete="off"
         type="text"
         name="code"
-        label={lang.get(userLang)?.code}
+        label={t.code}
         value={code}
         onChange={event => setCode(event.currentTarget.value)}
-        helperText={`${lang.get(userLang)?.codeFromEmail} (${email})`}
+        helperText={`${t.codeFromEmail} (${email})`}
       />
       <AuthButtonStyled
         disabled={isLoading || data || code.length == 0}
       >
-        {isLoading ? lang.get(userLang)?.loading : lang.get(userLang)?.confirm}
+        {isLoading ? t.loading : t.confirm}
       </AuthButtonStyled>
       <AuthButtonStyled color="error" type="button" onClick={callback}>
-        {lang.get(userLang)?.close}
+        {t.close}
       </AuthButtonStyled>
     </FormBoxStyled>
   );

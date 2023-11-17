@@ -6,7 +6,6 @@ import {
   FormLabel,
 } from '@mui/material';
 
-import lang from '../../../lib/lang';
 import { useAppSelector } from '../../../store/hooks';
 import { IResource, IRolesResources } from '../../../lib/types';
 import FormCheckbox from '../FormCheckbox';
@@ -17,7 +16,7 @@ const ResourceRights: React.FC<{
   rights?: IRolesResources;
   setRights: (newRights: IRolesResources) => void;
 }> = ({ roleId, resource, rights, setRights }) => {
-  const userLang = useAppSelector(store => store.app.userLang);
+  const t = useAppSelector(store => store.app.t);
   const newRights = rights || {
     roleId,
     resourceId: resource.id,
@@ -32,28 +31,28 @@ const ResourceRights: React.FC<{
       <FormLabel component="legend">{resource.name}</FormLabel>
       <FormGroup>
         <FormCheckbox
-          label={lang.get(userLang)?.create}
+          label={t.create}
           name="create[]"
           value="create"
           checked={rights?.creating || false}
           onChange={() => setRights({ ...newRights, creating: !newRights.creating })}
         />
         <FormCheckbox
-          label={lang.get(userLang)?.read}
+          label={t.read}
           name="read[]"
           value="read"
           checked={rights?.reading || false}
           onChange={() => setRights({ ...newRights, reading: !newRights.reading })}
         />
         <FormCheckbox
-          label={lang.get(userLang)?.update}
+          label={t.update}
           name="update[]"
           value="update"
           checked={rights?.updating || false}
           onChange={() => setRights({ ...newRights, updating: !newRights.updating })}
         />
         <FormCheckbox
-          label={lang.get(userLang)?.delete}
+          label={t.delete}
           name="delete[]"
           value="delete"
           checked={rights?.deleting || false}

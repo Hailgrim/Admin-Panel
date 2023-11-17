@@ -1,7 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 
-import lang from '../../../lib/lang';
 import usersApi from '../../../store/api/usersApi';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
@@ -12,11 +11,14 @@ import FormCheckbox from '../FormCheckbox';
 import { makeErrorText } from '../../../lib/functions';
 import { ROUTES } from '../../../lib/constants';
 import useRights from '../../../hooks/useRights';
+import dictionary from '../../../locales/dictionary';
 
 const CreateUser: React.FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const userLang = useAppSelector(store => store.app.userLang);
+  const language = useAppSelector(store => store.app.language);
+  const userLang = React.useRef(language);
+  const t = useAppSelector(store => store.app.t);
   const [create, createReq] = usersApi.useCreateMutation();
   const [email, setEmail] = React.useState('');
   const [name, setName] = React.useState('');
@@ -29,21 +31,20 @@ const CreateUser: React.FC = () => {
     create({ email, name, password, enabled });
   };
 
+  React.useEffect(() => { userLang.current = language }, [language]);
+
   React.useEffect(() => {
     if (createReq.isLoading) {
       return;
     }
     if (createReq.error) {
-      dispatch(addAlert({ type: 'error', text: makeErrorText(createReq.error, userLang) }));
+      dispatch(addAlert({ type: 'error', text: makeErrorText(createReq.error, userLang.current) }));
     }
     if (createReq.data) {
-      dispatch(addAlert({ type: 'success', text: lang.get(userLang)?.success }));
+      dispatch(addAlert({ type: 'success', text: dictionary[userLang.current].success }));
       router.push(ROUTES.panel.user(createReq.data.id));
     }
-  }, [
-    createReq.data, createReq.error, createReq.isLoading,
-    dispatch, userLang, router,
-  ]);
+  }, [createReq.data, createReq.error, createReq.isLoading, dispatch, router]);
 
   return (
     <FormBoxStyled
@@ -55,7 +56,7 @@ const CreateUser: React.FC = () => {
         autoComplete="off"
         name="email"
         type="email"
-        label={lang.get(userLang)?.email}
+        label={t.email}
         value={email}
         onChange={event => setEmail(event.currentTarget.value)}
       />
@@ -64,7 +65,7 @@ const CreateUser: React.FC = () => {
         autoComplete="off"
         name="name"
         type="text"
-        label={lang.get(userLang)?.name}
+        label={t.name}
         value={name}
         onChange={event => setName(event.currentTarget.value)}
       />
@@ -73,12 +74,12 @@ const CreateUser: React.FC = () => {
         autoComplete="new-password"
         name="password"
         type="password"
-        label={lang.get(userLang)?.password}
+        label={t.password}
         value={password}
         onChange={event => setPassword(event.currentTarget.value)}
       />
       <FormCheckbox
-        label={lang.get(userLang)?.enabled}
+        label={t.enabled}
         name="enabled"
         value="enabled"
         checked={enabled}

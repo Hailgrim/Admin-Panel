@@ -1,6 +1,5 @@
 import React from 'react';
 
-import lang from '../lib/lang';
 import { getServerSidePropsCustom } from '../lib/functions';
 import { IPage } from '../lib/types';
 import PageMeta from '../components/Other/PageMeta';
@@ -18,13 +17,13 @@ export default ForgotPasswordPage;
 
 export const getServerSideProps = getServerSidePropsCustom<IPage>(
   async ({ store }) => {
-    const userLang = store.getState().app.userLang;
+    const t = store.getState().app.t;
     return {
       props: {
         meta: {
-          title: lang.get(userLang)?.forgotPassword,
-          description: lang.get(userLang)?.forgotPassword,
-          h1: lang.get(userLang)?.forgotPassword,
+          title: t.forgotPassword,
+          description: t.forgotPassword,
+          h1: t.forgotPassword,
         },
       },
     };

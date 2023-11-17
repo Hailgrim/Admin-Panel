@@ -4,7 +4,6 @@ import AddIcon from '@mui/icons-material/Add';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import lang from '../../lib/lang';
 import { useAppSelector } from '../../store/hooks';
 
 const FormActions: React.FC<{
@@ -22,7 +21,7 @@ const FormActions: React.FC<{
     disabled?: boolean;
   };
 }> = ({ create, update, destroy }) => {
-  const userLang = useAppSelector(store => store.app.userLang);
+  const t = useAppSelector(store => store.app.t);
 
   return (
     <Box>
@@ -35,7 +34,7 @@ const FormActions: React.FC<{
           sx={{ my: 1.5, mr: 3 }}
           disabled={create.loading || create.disabled}
         >
-          {create.loading ? lang.get(userLang)?.loading : lang.get(userLang)?.create}
+          {create.loading ? t.loading : t.create}
         </Button>
       )}
       {update && (
@@ -47,7 +46,7 @@ const FormActions: React.FC<{
           sx={{ my: 1.5, mr: 3 }}
           disabled={update.loading || update.disabled}
         >
-          {update.loading ? lang.get(userLang)?.loading : lang.get(userLang)?.update}
+          {update.loading ? t.loading : t.update}
         </Button>
       )}
       {destroy && (
@@ -60,7 +59,7 @@ const FormActions: React.FC<{
           disabled={destroy.loading || destroy.disabled}
           onClick={destroy.action}
         >
-          {destroy.loading ? lang.get(userLang)?.loading : lang.get(userLang)?.delete}
+          {destroy.loading ? t.loading : t.delete}
         </Button>
       )}
     </Box>

@@ -1,6 +1,5 @@
 import React from 'react';
 
-import lang from '../../lib/lang';
 import rolesApi from '../../store/api/rolesApi';
 import resourcesApi from '../../store/api/resourcesApi';
 import { getServerSidePropsCustom } from '../../lib/functions';
@@ -27,7 +26,7 @@ export default RolePage;
 
 export const getServerSideProps = getServerSidePropsCustom<IRoleAndResources>(
   async ({ store, context }) => {
-    const userLang = store.getState().app.userLang;
+    const t = store.getState().app.t;
     const id = Number(context.params?.id);
 
     if (id) {
@@ -39,9 +38,9 @@ export const getServerSideProps = getServerSidePropsCustom<IRoleAndResources>(
         return {
           props: {
             meta: {
-              title: `${lang.get(userLang)?.role}: ${roleReq.data.name}`,
-              description: `${lang.get(userLang)?.role}: ${roleReq.data.name}`,
-              h1: `${lang.get(userLang)?.role}: ${roleReq.data.name}`,
+              title: `${t.role}: ${roleReq.data.name}`,
+              description: `${t.role}: ${roleReq.data.name}`,
+              h1: `${t.role}: ${roleReq.data.name}`,
             },
             content: {
               role: roleReq.data,

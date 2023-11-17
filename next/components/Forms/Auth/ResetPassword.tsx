@@ -2,7 +2,6 @@ import React from 'react';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 import { useRouter } from 'next/router';
 
-import lang from '../../../lib/lang';
 import authApi from '../../../store/api/authApi';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { makeErrorText, testString } from '../../../lib/functions';
@@ -12,6 +11,7 @@ import FormBoxStyled from '../../../components/Forms/FormBoxStyled';
 import AuthButtonStyled from '../../../components/AuthLayout/AuthButtonStyled';
 import { PASSWORD_REGEX } from '../../../lib/constants';
 import { ROUTES } from '../../../lib/constants';
+import dictionary from '../../../locales/dictionary';
 
 const ResetPassword: React.FC<{
   email: string;
@@ -19,7 +19,9 @@ const ResetPassword: React.FC<{
 }> = ({ email, callback }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const userLang = useAppSelector(store => store.app.userLang);
+  const language = useAppSelector(store => store.app.language);
+  const userLang = React.useRef(language);
+  const t = useAppSelector(store => store.app.t);
   const [resetPassword, { data, error, isLoading }] = authApi.useLazyResetPasswordQuery();
   const [errorText, setErrorText] = React.useState<string>();
   const [code, setCode] = React.useState('');
@@ -31,6 +33,8 @@ const ResetPassword: React.FC<{
     resetPassword({ email, code, password });
   };
 
+  React.useEffect(() => { userLang.current = language }, [language]);
+
   React.useEffect(() => {
     if (isLoading == true) {
       setErrorText(undefined);
@@ -40,10 +44,10 @@ const ResetPassword: React.FC<{
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 404:
-          setErrorText(String(lang.get(userLang)?.wrongEmailOrCode));
+          setErrorText(String(dictionary[userLang.current].wrongEmailOrCode));
           break;
         default:
-          setErrorText(makeErrorText(error, userLang));
+          setErrorText(makeErrorText(error, userLang.current));
           break;
       }
     } else {
@@ -54,10 +58,7 @@ const ResetPassword: React.FC<{
         router.push(ROUTES.auth.signIn);
       }
     }
-  }, [
-    data, error, isLoading,
-    dispatch, userLang, router, callback,
-  ]);
+  }, [data, error, isLoading, dispatch, router, callback]);
 
   return (
     <FormBoxStyled
@@ -70,30 +71,30 @@ const ResetPassword: React.FC<{
         autoComplete="off"
         type="text"
         name="code"
-        label={lang.get(userLang)?.code}
+        label={t.code}
         value={code}
         onChange={event => setCode(event.currentTarget.value)}
-        helperText={`${lang.get(userLang)?.codeFromEmail} (${email})`}
+        helperText={`${t.codeFromEmail} (${email})`}
       />
       <TextFieldStyled
         required
         autoComplete="new-password"
         type="password"
         name="newPassword"
-        label={lang.get(userLang)?.newPassword}
+        label={t.newPassword}
         value={password}
         onChange={event => setPassword(event.currentTarget.value)}
         color={passwordError ? 'success' : undefined}
-        helperText={lang.get(userLang)?.passwordValidation}
+        helperText={t.passwordValidation}
         focused={password.length > 0 || undefined}
       />
       <AuthButtonStyled
         disabled={isLoading || data || !passwordError || code.length == 0}
       >
-        {isLoading ? lang.get(userLang)?.loading : lang.get(userLang)?.confirm}
+        {isLoading ? t.loading : t.confirm}
       </AuthButtonStyled>
       <AuthButtonStyled color="error" type="button" onClick={callback}>
-        {lang.get(userLang)?.close}
+        {t.close}
       </AuthButtonStyled>
     </FormBoxStyled>
   );

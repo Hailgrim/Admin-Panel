@@ -1,12 +1,11 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 
-import lang from '../lib/lang';
 import PageMeta from '../components/Other/PageMeta';
 import { useAppSelector } from '../store/hooks';
 
 const Error404Page: React.FC = () => {
-  const userLang = useAppSelector(store => store.app.userLang);
+  const t = useAppSelector(store => store.app.t);
 
   return (
     <Box
@@ -20,15 +19,15 @@ const Error404Page: React.FC = () => {
       }}
     >
       <PageMeta
-        title={lang.get(userLang)?.error404}
-        description={lang.get(userLang)?.pageNotFound}
-        h1={lang.get(userLang)?.error404}
+        title={t.error404}
+        description={t.pageNotFound}
+        h1={t.error404}
       />
       <Typography
         component="h2"
         variant="body1"
       >
-        {lang.get(userLang)?.pageNotFound}
+        {t.pageNotFound}
       </Typography>
     </Box>
   );

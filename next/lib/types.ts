@@ -1,6 +1,7 @@
+import dictionary from '../locales/dictionary';
 import type en from '../locales/en';
 
-export type LangList = 'en' | 'ru';
+export type LangList = keyof typeof dictionary;
 export type LangDictionary = typeof en;
 
 export interface IAlert {

@@ -1,7 +1,6 @@
 import { Alert, Fade, Snackbar } from '@mui/material';
 import React from 'react';
 
-import lang from '../../lib/lang';
 import theme from '../../lib/theme';
 import { IAlert } from '../../lib/types';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -14,7 +13,7 @@ interface IAlertItem {
 
 const AlertItem = React.forwardRef<unknown, IAlertItem>(({ data, callback }, ref) => {
   const dispatch = useAppDispatch();
-  const userLang = useAppSelector(store => store.app.userLang);
+  const t = useAppSelector(store => store.app.t);
   const [visibility, setVisibility] = React.useState(true);
   const [callbackTimeout, setCallbackTimeout] = React.useState<NodeJS.Timeout>();
 
@@ -69,8 +68,8 @@ const AlertItem = React.forwardRef<unknown, IAlertItem>(({ data, callback }, ref
           data.text
             ? data.text
             : data.type == 'success'
-              ? lang.get(userLang)?.success
-              : lang.get(userLang)?.failure
+              ? t.success
+              : t.failure
         }
       </Alert>
     </Snackbar>

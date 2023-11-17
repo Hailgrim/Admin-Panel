@@ -13,7 +13,6 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import lang from '../../lib/lang';
 import authApi from '../../store/api/authApi';
 import { toggleModalSideBar, toggleSideBar } from '../../store/slices/appSlice';
 import theme from '../../lib/theme';
@@ -22,8 +21,7 @@ import { SIDE_MENU_WIDTH, SIDE_MENU_WIDTH_OPENED, ROUTES } from '../../lib/const
 const AppBarStyled = styled(
   AppBar,
   {
-    shouldForwardProp: prop => !([
-      'openStyled',
+    shouldForwardProp: prop => !([  'openStyled',
     ] as PropertyKey[]).includes(prop),
   },
 )<{
@@ -46,7 +44,7 @@ const AppBarStyled = styled(
 const Header: React.FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const userLang = useAppSelector(store => store.app.userLang);
+  const t = useAppSelector(store => store.app.t);
   const isSideBarOpened = useAppSelector(store => store.app.isSideBarOpened);
   const isModalSideBarOpened = useAppSelector(store => store.app.isModalSideBarOpened);
   const [signOut, { data, error, isLoading }] = authApi.useSignOutMutation();
@@ -95,7 +93,7 @@ const Header: React.FC = () => {
                 disabled={isLoading || data}
                 sx={{ ml: 'auto' }}
               >
-                {isLoading ? lang.get(userLang)?.loading : lang.get(userLang)?.signOut}
+                {isLoading ? t.loading : t.signOut}
               </Button>
             )
         }

@@ -13,7 +13,6 @@ import {
 import React from 'react';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
-import lang from '../../lib/lang';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { toggleModalSideBar, toggleSideBar } from '../../store/slices/appSlice';
 import theme from '../../lib/theme';
@@ -23,8 +22,7 @@ import SideBarMenu from './SideBarMenu';
 const DrawerStyled = styled(
   (props: DrawerProps) => <Drawer variant="permanent" open={true} {...props} />,
   {
-    shouldForwardProp: prop => !([
-      'openStyled',
+    shouldForwardProp: prop => !([  'openStyled',
       'openModalStyled',
     ] as PropertyKey[]).includes(prop),
   },
@@ -61,7 +59,7 @@ const DrawerHeaderStyled = styled(Box)(() => ({
 
 const SideBar: React.FC = () => {
   const dispatch = useAppDispatch();
-  const userLang = useAppSelector(store => store.app.userLang);
+  const t = useAppSelector(store => store.app.t);
   const isSideBarOpened = useAppSelector(store => store.app.isSideBarOpened);
   const isModalSideBarOpened = useAppSelector(store => store.app.isModalSideBarOpened);
   const theme = useTheme();
@@ -90,13 +88,13 @@ const SideBar: React.FC = () => {
           sx={{ pl: 1 }}
           noWrap
         >
-          {lang.get(userLang)?.adminPanel}
+          {t.adminPanel}
         </Typography>
       </DrawerHeaderStyled>
       <Divider />
       <List
         component="nav"
-        aria-label={lang.get(userLang)?.mainMenu}
+        aria-label={t.mainMenu}
         sx={{ overflowX: 'hidden' }}
       >
         <SideBarMenu />

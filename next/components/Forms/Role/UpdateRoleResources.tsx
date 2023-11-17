@@ -1,7 +1,6 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 
-import lang from '../../../lib/lang';
 import rolesApi from '../../../store/api/rolesApi';
 import { makeErrorText } from '../../../lib/functions';
 import { IResource, IRole, IRolesResources } from '../../../lib/types';
@@ -12,13 +11,16 @@ import FormBoxStyled from '../FormBoxStyled';
 import ResourceRights from '../Resource/ResourceRights';
 import { ROUTES } from '../../../lib/constants';
 import useRights from '../../../hooks/useRights';
+import dictionary from '../../../locales/dictionary';
 
 const UpdateRoleResources: React.FC<{
   role: IRole;
   resources: IResource[];
 }> = ({ role, resources }) => {
   const dispatch = useAppDispatch();
-  const userLang = useAppSelector(store => store.app.userLang);
+  const language = useAppSelector(store => store.app.language);
+  const userLang = React.useRef(language);
+  const t = useAppSelector(store => store.app.t);
   const [update, updateReq] = rolesApi.useUpdateResourcesMutation();
   const [updatedRights, setUpdatedRights] = React.useState(
     role.resources?.map(value => value.RolesResources) || []
@@ -55,20 +57,19 @@ const UpdateRoleResources: React.FC<{
     setUpdatedRights(filtered);
   };
 
+  React.useEffect(() => { userLang.current = language }, [language]);
+
   React.useEffect(() => {
     if (updateReq.isLoading) {
       return;
     }
     if (updateReq.data === false || updateReq.error) {
-      dispatch(addAlert({ type: 'error', text: makeErrorText(updateReq.error, userLang) }));
+      dispatch(addAlert({ type: 'error', text: makeErrorText(updateReq.error, userLang.current) }));
     }
     if (updateReq.data) {
-      dispatch(addAlert({ type: 'success', text: lang.get(userLang)?.success }));
+      dispatch(addAlert({ type: 'success', text: dictionary[userLang.current].success }));
     }
-  }, [
-    updateReq.data, updateReq.error, updateReq.isLoading,
-    dispatch, userLang,
-  ]);
+  }, [updateReq.data, updateReq.error, updateReq.isLoading, dispatch]);
 
   return (
     <FormBoxStyled onSubmit={updateHandler}>
@@ -77,7 +78,7 @@ const UpdateRoleResources: React.FC<{
         variant="h5"
         sx={{ my: 1.5, lineHeight: 1 }}
       >
-        {lang.get(userLang)?.resources}
+        {t.resources}
       </Typography>
       {resources.map(resource => (
         <ResourceRights

@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router';
 import React from 'react';
 
-import lang from '../../../lib/lang';
 import { useAppSelector } from '../../../store/hooks';
 import AuthAlert from '../../AuthLayout/AuthAlert';
 import AuthButtonStyled from '../../AuthLayout/AuthButtonStyled';
@@ -12,7 +11,7 @@ const RegistrationSuccess: React.FC<{
   callback?: () => void;
 }> = ({ callback }) => {
   const router = useRouter();
-  const userLang = useAppSelector(store => store.app.userLang);
+  const t = useAppSelector(store => store.app.t);
 
   const formHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -24,9 +23,9 @@ const RegistrationSuccess: React.FC<{
 
   return (
     <FormBoxStyled onSubmit={formHandler}>
-      <AuthAlert severity="success" text={lang.get(userLang)?.registrationSuccessText} />
+      <AuthAlert severity="success" text={t.registrationSuccessText} />
       <AuthButtonStyled>
-        {lang.get(userLang)?.signIn}
+        {t.signIn}
       </AuthButtonStyled>
     </FormBoxStyled>
   );

@@ -3,7 +3,6 @@ import { Button, Box } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import lang from '../../lib/lang';
 import { useAppSelector } from '../../store/hooks';
 import LinkUnstyled from '../../components/Other/LinkUnstyled';
 
@@ -18,7 +17,7 @@ const TableActions: React.FC<{
     loading?: boolean;
   };
 }> = ({ create, destroy }) => {
-  const userLang = useAppSelector(store => store.app.userLang);
+  const t = useAppSelector(store => store.app.t);
 
   return (
     <Box>
@@ -32,7 +31,7 @@ const TableActions: React.FC<{
               sx={{ my: 1.5, mr: 3 }}
               disabled={create.disabled}
             >
-              {lang.get(userLang)?.create}
+              {t.create}
             </Button>
           )
           : (
@@ -44,7 +43,7 @@ const TableActions: React.FC<{
                 sx={{ my: 1.5, mr: 3 }}
                 disabled={create.disabled}
               >
-                {lang.get(userLang)?.create}
+                {t.create}
               </Button>
             </LinkUnstyled>
           )
@@ -58,7 +57,7 @@ const TableActions: React.FC<{
           onClick={() => destroy.action()}
           disabled={destroy.loading || destroy.disabled}
         >
-          {destroy.loading ? lang.get(userLang)?.loading : lang.get(userLang)?.delete}
+          {destroy.loading ? t.loading : t.delete}
         </Button>
       )}
     </Box>

@@ -1,7 +1,6 @@
 import React from 'react';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 
-import lang from '../../lib/lang';
 import rolesApi from '../../store/api/rolesApi';
 import { getServerSidePropsCustom, makePagination } from '../../lib/functions';
 import { IFindAndCountRes, IPage, IRole } from '../../lib/types';
@@ -20,7 +19,7 @@ export default RolesPage;
 
 export const getServerSideProps = getServerSidePropsCustom<IFindAndCountRes<IRole>>(
   async ({ store, context }) => {
-    const userLang = store.getState().app.userLang;
+    const t = store.getState().app.t;
     const pagination = makePagination(context.query);
     const { data, error } = await store
       .dispatch(rolesApi.endpoints.findAndCountAll.initiate(pagination));
@@ -32,9 +31,9 @@ export const getServerSideProps = getServerSidePropsCustom<IFindAndCountRes<IRol
     return {
       props: {
         meta: {
-          title: lang.get(userLang)?.roles,
-          description: lang.get(userLang)?.roles,
-          h1: lang.get(userLang)?.roles,
+          title: t.roles,
+          description: t.roles,
+          h1: t.roles,
         },
         pagination: pagination,
         content: data || null,

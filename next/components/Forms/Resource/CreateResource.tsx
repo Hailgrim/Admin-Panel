@@ -1,7 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 
-import lang from '../../../lib/lang';
 import resourcesApi from '../../../store/api/resourcesApi';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
@@ -12,11 +11,14 @@ import { makeErrorText } from '../../../lib/functions';
 import { ROUTES } from '../../../lib/constants';
 import FormCheckbox from '../FormCheckbox';
 import useRights from '../../../hooks/useRights';
+import dictionary from '../../../locales/dictionary';
 
 const CreateResource: React.FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const userLang = useAppSelector(store => store.app.userLang);
+  const language = useAppSelector(store => store.app.language);
+  const userLang = React.useRef(language);
+  const t = useAppSelector(store => store.app.t);
   const [create, createReq] = resourcesApi.useCreateMutation();
   const [name, setName] = React.useState('');
   const [path, setPath] = React.useState('');
@@ -29,21 +31,20 @@ const CreateResource: React.FC = () => {
     create({ name, path, description: description || null, enabled });
   };
 
+  React.useEffect(() => { userLang.current = language }, [language]);
+
   React.useEffect(() => {
     if (createReq.isLoading) {
       return;
     }
     if (createReq.error) {
-      dispatch(addAlert({ type: 'error', text: makeErrorText(createReq.error, userLang) }));
+      dispatch(addAlert({ type: 'error', text: makeErrorText(createReq.error, userLang.current) }));
     }
     if (createReq.data) {
-      dispatch(addAlert({ type: 'success', text: lang.get(userLang)?.success }));
+      dispatch(addAlert({ type: 'success', text: dictionary[userLang.current].success }));
       router.push(ROUTES.panel.resource(createReq.data.id));
     }
-  }, [
-    createReq.data, createReq.error, createReq.isLoading,
-    dispatch, userLang, router,
-  ]);
+  }, [createReq.data, createReq.error, createReq.isLoading, dispatch, router]);
 
   return (
     <FormBoxStyled onSubmit={createHandler}>
@@ -51,7 +52,7 @@ const CreateResource: React.FC = () => {
         required
         name="name"
         type="text"
-        label={lang.get(userLang)?.name}
+        label={t.name}
         value={name}
         onChange={event => setName(event.currentTarget.value)}
       />
@@ -59,19 +60,19 @@ const CreateResource: React.FC = () => {
         required
         name="path"
         type="text"
-        label={lang.get(userLang)?.path}
+        label={t.path}
         value={path}
         onChange={event => setPath(event.currentTarget.value)}
       />
       <TextFieldStyled
         name="description"
         type="text"
-        label={lang.get(userLang)?.description}
+        label={t.description}
         value={description}
         onChange={event => setDescription(event.currentTarget.value)}
       />
       <FormCheckbox
-        label={lang.get(userLang)?.enabled}
+        label={t.enabled}
         name="enabled"
         value="enabled"
         checked={enabled}

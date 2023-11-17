@@ -6,14 +6,13 @@ import GroupIcon from '@mui/icons-material/Group';
 import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 import ApiIcon from '@mui/icons-material/Api';
 
-import lang from '../../lib/lang';
 import { useAppSelector } from '../../store/hooks';
 import SideBarMenuItem from './SideBarMenuItem';
 import { ROUTES } from '../../lib/constants';
 import useRights from '../../hooks/useRights';
 
 const SideBarMenu: React.FC = () => {
-  const userLang = useAppSelector(store => store.app.userLang);
+  const t = useAppSelector(store => store.app.t);
   const profileRights = useRights(ROUTES.api.auth.profile);
   const usersRights = useRights(ROUTES.api.users);
   const rolesRights = useRights(ROUTES.api.roles);
@@ -23,35 +22,34 @@ const SideBarMenu: React.FC = () => {
     <React.Fragment>
       <SideBarMenuItem
         link={ROUTES.panel.home}
-        name={String(lang.get(userLang)?.home)}
+        name={String(t.home)}
         icon={<HomeIcon />}
       />
       <SideBarMenuItem
         link={ROUTES.panel.profile}
-        name={String(lang.get(userLang)?.profile)}
+        name={String(t.profile)}
         icon={<AccountBoxIcon />}
         disabled={!profileRights.reading}
       />
       <SideBarMenuItem
-        name={String(lang.get(userLang)?.main)}
+        name={String(t.main)}
         icon={<WidgetsIcon />}
-        childs={[
-          {
+        childs={[      {
             link: ROUTES.panel.users,
             icon: <GroupIcon />,
-            name: String(lang.get(userLang)?.users),
+            name: String(t.users),
             disabled: !usersRights.reading,
           },
           {
             link: ROUTES.panel.roles,
             icon: <SupervisedUserCircleIcon />,
-            name: String(lang.get(userLang)?.roles),
+            name: String(t.roles),
             disabled: !rolesRights.reading,
           },
           {
             link: ROUTES.panel.resources,
             icon: <ApiIcon />,
-            name: String(lang.get(userLang)?.resources),
+            name: String(t.resources),
             disabled: !resourcesRights.reading,
           },
         ]}

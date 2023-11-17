@@ -1,6 +1,5 @@
 import React from 'react';
 
-import lang from '../lib/lang';
 import { getServerSidePropsCustom } from '../lib/functions';
 import { IPage } from '../lib/types';
 import PageMeta from '../components/Other/PageMeta';
@@ -17,13 +16,13 @@ const ProfilePage: React.FC<IPage> = ({ meta }) => {
 export default ProfilePage;
 
 export const getServerSideProps = getServerSidePropsCustom(async ({ store }) => {
-  const userLang = store.getState().app.userLang;
+  const t = store.getState().app.t;
   return {
     props: {
       meta: {
-        title: lang.get(userLang)?.profile,
-        description: lang.get(userLang)?.profile,
-        h1: lang.get(userLang)?.profile,
+        title: t.profile,
+        description: t.profile,
+        h1: t.profile,
       },
     },
   };

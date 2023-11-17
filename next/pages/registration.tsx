@@ -1,6 +1,5 @@
 import React from 'react';
 
-import lang from '../lib/lang';
 import { getServerSidePropsCustom } from '../lib/functions';
 import { IPage } from '../lib/types';
 import PageMeta from '../components/Other/PageMeta';
@@ -17,13 +16,13 @@ const RegistrationPage: React.FC<IPage> = ({ meta }) => {
 export default RegistrationPage;
 
 export const getServerSideProps = getServerSidePropsCustom<IPage>(async ({ store }) => {
-  const userLang = store.getState().app.userLang;
+  const t = store.getState().app.t;
   return {
     props: {
       meta: {
-        title: lang.get(userLang)?.signUp,
-        description: lang.get(userLang)?.signUp,
-        h1: lang.get(userLang)?.signUp,
+        title: t.signUp,
+        description: t.signUp,
+        h1: t.signUp,
       },
     }
   };

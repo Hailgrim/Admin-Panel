@@ -3,13 +3,13 @@ import { ParsedUrlQuery } from 'querystring';
 import { SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 
-import { ICreateCookieOptions, IPage, IPagination, ISideBarItem } from './types';
+import { ICreateCookieOptions, IPage, IPagination, ISideBarItem, LangList } from './types';
 import { AppStore, wrapper } from '../store/store';
 import { setAuthTokens, setProfile, setUserAgent } from '../store/slices/appSlice';
 import authApi from '../store/api/authApi';
-import lang, { LangList } from './lang';
 import { ACCESS_TOKEN_LIFETIME, HOST, REFRESH_TOKEN_LIFETIME } from './config';
 import { ROUTES } from './constants';
+import dictionary from '../locales/dictionary';
 
 /**
  * @param {string} link Checked link
@@ -81,7 +81,7 @@ export const makeErrorText = (
   error?: string | number | FetchBaseQueryError | SerializedError,
   userLang: LangList = 'en',
 ): string => {
-  let result = String(lang.get(userLang)?.unknownError);
+  let result = String(dictionary[userLang].unknownError);
 
   if (
     error === undefined ||
@@ -92,7 +92,7 @@ export const makeErrorText = (
   }
 
   if ('status' in error && error.status == 429) {
-    return String(lang.get(userLang)?.tooManyRequests);
+    return String(dictionary[userLang].tooManyRequests);
   }
 
   const errorObj = Object(error);
@@ -161,8 +161,7 @@ export const getServerSidePropsCustom = <T = void>(
         };
         ctx.res.setHeader(
           'Set-Cookie',
-          [
-            createCookie('accessToken', accessToken, { ...cookieOptions, maxAge: ACCESS_TOKEN_LIFETIME }),
+          [        createCookie('accessToken', accessToken, { ...cookieOptions, maxAge: ACCESS_TOKEN_LIFETIME }),
             createCookie(
               'refreshToken',
               refreshToken,

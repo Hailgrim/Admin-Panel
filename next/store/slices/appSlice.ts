@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 
-import { LangList } from '../../lib/lang';
-import { IAlert, ICookies, IUser } from '../../lib/types';
+import { IAlert, ICookies, IUser, LangDictionary, LangList } from '../../lib/types';
+import dictionary from '../../locales/dictionary';
 
 export const appSliceName = 'app';
 let alertCounter = 0;
@@ -15,7 +15,8 @@ const initialState = {
   isSideBarOpened: true,
   isModalSideBarOpened: false,
   profile: null as (IUser | null),
-  userLang: 'en' as LangList,
+  language: 'en' as LangList,
+  t: dictionary['en'] as LangDictionary,
   alerts: [] as IAlert[],
 };
 
@@ -47,7 +48,8 @@ export const appSlice = createSlice({
     },
 
     setUserLang: (state, action: PayloadAction<LangList>) => {
-      state.userLang = action.payload;
+      state.language = action.payload;
+      state.t = dictionary[action.payload];
     },
 
     addAlert: (state, action: PayloadAction<Omit<IAlert, 'id'>>) => {

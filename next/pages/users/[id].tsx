@@ -1,6 +1,5 @@
 import React from 'react';
 
-import lang from '../../lib/lang';
 import usersApi from '../../store/api/usersApi';
 import { getServerSidePropsCustom } from '../../lib/functions';
 import { IPage, IUserAndRoles } from '../../lib/types';
@@ -27,7 +26,7 @@ export default UserPage;
 
 export const getServerSideProps = getServerSidePropsCustom<IUserAndRoles>(
   async ({ store, context }) => {
-    const userLang = store.getState().app.userLang;
+    const t = store.getState().app.t;
     const id = Number(context.params?.id);
 
     if (id) {
@@ -39,8 +38,8 @@ export const getServerSideProps = getServerSidePropsCustom<IUserAndRoles>(
         return {
           props: {
             meta: {
-              title: `${lang.get(userLang)?.user}: ${userReq.data.name}`,
-              description: `${lang.get(userLang)?.user}: ${userReq.data.name}`,
+              title: `${t.user}: ${userReq.data.name}`,
+              description: `${t.user}: ${userReq.data.name}`,
               h1: userReq.data.name,
             },
             content: {

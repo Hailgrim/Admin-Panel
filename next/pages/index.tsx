@@ -1,6 +1,5 @@
 import React from 'react';
 
-import lang from '../lib/lang';
 import { getServerSidePropsCustom } from '../lib/functions';
 import { IPage } from '../lib/types';
 import PageMeta from '../components/Other/PageMeta';
@@ -15,13 +14,13 @@ const IndexPage: React.FC<IPage> = ({ meta }) => {
 export default IndexPage;
 
 export const getServerSideProps = getServerSidePropsCustom(async ({ store }) => {
-  const userLang = store.getState().app.userLang;
+  const t = store.getState().app.t;
   return {
     props: {
       meta: {
-        title: lang.get(userLang)?.home,
-        description: lang.get(userLang)?.home,
-        h1: lang.get(userLang)?.home,
+        title: t.home,
+        description: t.home,
+        h1: t.home,
       },
     },
   };

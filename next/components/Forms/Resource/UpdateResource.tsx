@@ -1,7 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 
-import lang from '../../../lib/lang';
 import resourcesApi from '../../../store/api/resourcesApi';
 import { getUpdatedValues, makeErrorText } from '../../../lib/functions';
 import { IResource } from '../../../lib/types';
@@ -13,13 +12,16 @@ import FormBoxStyled from '../FormBoxStyled';
 import { ROUTES } from '../../../lib/constants';
 import FormCheckbox from '../FormCheckbox';
 import useRights from '../../../hooks/useRights';
+import dictionary from '../../../locales/dictionary';
 
 const UpdateResource: React.FC<{
   data: IResource;
 }> = ({ data }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const userLang = useAppSelector(store => store.app.userLang);
+  const language = useAppSelector(store => store.app.language);
+  const userLang = React.useRef(language);
+  const t = useAppSelector(store => store.app.t);
   const [update, updateReq] = resourcesApi.useUpdateMutation();
   const [destroy, deleteReq] = resourcesApi.useDeleteMutation();
   const [name, setName] = React.useState(data.name);
@@ -35,42 +37,38 @@ const UpdateResource: React.FC<{
       { name, path, description: description || null },
     );
     if (Object.keys(updatedValues).length == 0) {
-      dispatch(addAlert({ type: 'warning', text: lang.get(userLang)?.nothingToUpdate }));
+      dispatch(addAlert({ type: 'warning', text: t.nothingToUpdate }));
     } else {
       update({ id: data.id, fields: updatedValues });
     }
   };
+
+  React.useEffect(() => { userLang.current = language }, [language]);
 
   React.useEffect(() => {
     if (updateReq.isLoading) {
       return;
     }
     if (updateReq.data === false || updateReq.error) {
-      dispatch(addAlert({ type: 'error', text: makeErrorText(updateReq.error, userLang) }));
+      dispatch(addAlert({ type: 'error', text: makeErrorText(updateReq.error, userLang.current) }));
     }
     if (updateReq.data) {
-      dispatch(addAlert({ type: 'success', text: lang.get(userLang)?.success }));
+      dispatch(addAlert({ type: 'success', text: dictionary[userLang.current].success }));
     }
-  }, [
-    updateReq.data, updateReq.error, updateReq.isLoading,
-    dispatch, userLang,
-  ]);
+  }, [updateReq.data, updateReq.error, updateReq.isLoading, dispatch]);
 
   React.useEffect(() => {
     if (deleteReq.isLoading) {
       return;
     }
     if (deleteReq.data === false || deleteReq.error) {
-      dispatch(addAlert({ type: 'error', text: makeErrorText(deleteReq.error, userLang) }));
+      dispatch(addAlert({ type: 'error', text: makeErrorText(deleteReq.error, userLang.current) }));
     }
     if (deleteReq.data) {
-      dispatch(addAlert({ type: 'success', text: lang.get(userLang)?.success }));
+      dispatch(addAlert({ type: 'success', text: dictionary[userLang.current].success }));
       router.push(ROUTES.panel.users);
     }
-  }, [
-    deleteReq.data, deleteReq.error, deleteReq.isLoading,
-    dispatch, userLang, router,
-  ]);
+  }, [deleteReq.data, deleteReq.error, deleteReq.isLoading, dispatch, router]);
 
   return (
     <FormBoxStyled onSubmit={updateHandler}>
@@ -78,7 +76,7 @@ const UpdateResource: React.FC<{
         required
         name="name"
         type="text"
-        label={lang.get(userLang)?.name}
+        label={t.name}
         value={name}
         onChange={event => setName(event.currentTarget.value)}
         disabled={data?.default}
@@ -87,7 +85,7 @@ const UpdateResource: React.FC<{
         required
         name="path"
         type="text"
-        label={lang.get(userLang)?.path}
+        label={t.path}
         value={path}
         onChange={event => setPath(event.currentTarget.value)}
         disabled={data?.default}
@@ -95,13 +93,13 @@ const UpdateResource: React.FC<{
       <TextFieldStyled
         name="description"
         type="text"
-        label={lang.get(userLang)?.description}
+        label={t.description}
         value={description}
         onChange={event => setDescription(event.currentTarget.value)}
         disabled={data?.default}
       />
       <FormCheckbox
-        label={lang.get(userLang)?.enabled}
+        label={t.enabled}
         name="enabled"
         value="enabled"
         checked={enabled}

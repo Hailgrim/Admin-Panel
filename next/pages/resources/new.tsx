@@ -1,6 +1,5 @@
 import React from 'react';
 
-import lang from '../../lib/lang';
 import { getServerSidePropsCustom } from '../../lib/functions';
 import { IPage } from '../../lib/types';
 import PageMeta from '../../components/Other/PageMeta';
@@ -18,13 +17,13 @@ export default NewResourcePage;
 
 export const getServerSideProps = getServerSidePropsCustom(
   async ({ store }) => {
-    const userLang = store.getState().app.userLang;
+    const t = store.getState().app.t;
     return {
       props: {
         meta: {
-          title: lang.get(userLang)?.newResource,
-          description: lang.get(userLang)?.newResource,
-          h1: lang.get(userLang)?.newResource,
+          title: t.newResource,
+          description: t.newResource,
+          h1: t.newResource,
         },
       },
     };
