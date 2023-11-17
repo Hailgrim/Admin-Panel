@@ -12,6 +12,7 @@ import AuthButtonStyled from '../../../components/AuthLayout/AuthButtonStyled';
 import { PASSWORD_REGEX } from '../../../lib/constants';
 import { ROUTES } from '../../../lib/constants';
 import dictionary from '../../../locales/dictionary';
+import useLang from '../../../hooks/useLang';
 
 const ResetPassword: React.FC<{
   email: string;
@@ -19,8 +20,7 @@ const ResetPassword: React.FC<{
 }> = ({ email, callback }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const language = useAppSelector(store => store.app.language);
-  const userLang = React.useRef(language);
+  const lang = useLang();
   const t = useAppSelector(store => store.app.t);
   const [resetPassword, { data, error, isLoading }] = authApi.useLazyResetPasswordQuery();
   const [errorText, setErrorText] = React.useState<string>();
@@ -33,8 +33,6 @@ const ResetPassword: React.FC<{
     resetPassword({ email, code, password });
   };
 
-  React.useEffect(() => { userLang.current = language }, [language]);
-
   React.useEffect(() => {
     if (isLoading == true) {
       setErrorText(undefined);
@@ -44,10 +42,10 @@ const ResetPassword: React.FC<{
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 404:
-          setErrorText(String(dictionary[userLang.current].wrongEmailOrCode));
+          setErrorText(String(dictionary[lang.current].wrongEmailOrCode));
           break;
         default:
-          setErrorText(makeErrorText(error, userLang.current));
+          setErrorText(makeErrorText(error, lang.current));
           break;
       }
     } else {

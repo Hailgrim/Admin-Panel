@@ -9,14 +9,14 @@ import AuthAlert from '../../../components/AuthLayout/AuthAlert';
 import FormBoxStyled from '../../../components/Forms/FormBoxStyled';
 import AuthButtonStyled from '../../../components/AuthLayout/AuthButtonStyled';
 import dictionary from '../../../locales/dictionary';
+import useLang from '../../../hooks/useLang';
 
 const VerifyUser: React.FC<{
   email: string;
   callback?: () => void;
 }> = ({ email, callback }) => {
   const dispatch = useAppDispatch();
-  const language = useAppSelector(store => store.app.language);
-  const userLang = React.useRef(language);
+  const lang = useLang();
   const t = useAppSelector(store => store.app.t);
   const [verifyUser, { data, error, isLoading }] = authApi.useLazyVerifyUserQuery();
   const [errorText, setErrorText] = React.useState<string>();
@@ -27,8 +27,6 @@ const VerifyUser: React.FC<{
     verifyUser({ email, code });
   };
 
-  React.useEffect(() => { userLang.current = language }, [language]);
-
   React.useEffect(() => {
     if (isLoading == true) {
       setErrorText(undefined);
@@ -38,10 +36,10 @@ const VerifyUser: React.FC<{
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 404:
-          setErrorText(String(dictionary[userLang.current].wrongCode));
+          setErrorText(String(dictionary[lang.current].wrongCode));
           break;
         default:
-          setErrorText(makeErrorText(error, userLang.current));
+          setErrorText(makeErrorText(error, lang.current));
           break;
       }
     } else {

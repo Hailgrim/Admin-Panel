@@ -11,14 +11,14 @@ import EditButton from './EditButton';
 import { makeErrorText } from '../../lib/functions';
 import { ROUTES } from '../../lib/constants';
 import useRights from '../../hooks/useRights';
+import useLang from '../../hooks/useLang';
 
 const UsersTable: React.FC<{
   data?: IFindAndCountRes<IUser> | null;
   pagination?: IPagination;
 }> = ({ data, pagination }) => {
   const dispatch = useAppDispatch();
-  const language = useAppSelector(store => store.app.language);
-  const userLang = React.useRef(language);
+  const lang = useLang();
   const t = useAppSelector(store => store.app.t);
   const [page, setPage] = React.useState(pagination?.page || 1);
   const [quantity, setQuantity] = React.useState(pagination?.quantity || 25);
@@ -73,8 +73,6 @@ const UsersTable: React.FC<{
     setSelectedRows(model.map(value => Number(value)));
   };
 
-  React.useEffect(() => { userLang.current = language }, [language]);
-
   React.useEffect(() => {
     if (findAllReq.isLoading) {
       return;
@@ -83,7 +81,7 @@ const UsersTable: React.FC<{
       setRows(findAllReq.data);
     }
     if (findAllReq.error) {
-      dispatch(addAlert({ type: 'error', text: makeErrorText(findAllReq.error, userLang.current) }));
+      dispatch(addAlert({ type: 'error', text: makeErrorText(findAllReq.error, lang.current) }));
     }
   }, [findAllReq.data, findAllReq.error, findAllReq.isLoading, dispatch]);
 
@@ -95,7 +93,7 @@ const UsersTable: React.FC<{
       setDestroyStatus(true);
     }
     if (destroyReq.error) {
-      dispatch(addAlert({ type: 'error', text: makeErrorText(destroyReq.error, userLang.current) }));
+      dispatch(addAlert({ type: 'error', text: makeErrorText(destroyReq.error, lang.current) }));
     }
   }, [destroyReq.data, destroyReq.error, destroyReq.isLoading, dispatch]);
 

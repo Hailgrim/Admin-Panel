@@ -12,12 +12,12 @@ import { ROUTES } from '../../../lib/constants';
 import FormCheckbox from '../FormCheckbox';
 import useRights from '../../../hooks/useRights';
 import dictionary from '../../../locales/dictionary';
+import useLang from '../../../hooks/useLang';
 
 const CreateResource: React.FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const language = useAppSelector(store => store.app.language);
-  const userLang = React.useRef(language);
+  const lang = useLang();
   const t = useAppSelector(store => store.app.t);
   const [create, createReq] = resourcesApi.useCreateMutation();
   const [name, setName] = React.useState('');
@@ -31,17 +31,15 @@ const CreateResource: React.FC = () => {
     create({ name, path, description: description || null, enabled });
   };
 
-  React.useEffect(() => { userLang.current = language }, [language]);
-
   React.useEffect(() => {
     if (createReq.isLoading) {
       return;
     }
     if (createReq.error) {
-      dispatch(addAlert({ type: 'error', text: makeErrorText(createReq.error, userLang.current) }));
+      dispatch(addAlert({ type: 'error', text: makeErrorText(createReq.error, lang.current) }));
     }
     if (createReq.data) {
-      dispatch(addAlert({ type: 'success', text: dictionary[userLang.current].success }));
+      dispatch(addAlert({ type: 'success', text: dictionary[lang.current].success }));
       router.push(ROUTES.panel.resource(createReq.data.id));
     }
   }, [createReq.data, createReq.error, createReq.isLoading, dispatch, router]);

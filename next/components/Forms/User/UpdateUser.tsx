@@ -13,14 +13,14 @@ import FormCheckbox from '../FormCheckbox';
 import { ROUTES } from '../../../lib/constants';
 import useRights from '../../../hooks/useRights';
 import dictionary from '../../../locales/dictionary';
+import useLang from '../../../hooks/useLang';
 
 const UpdateUser: React.FC<{
   data: IUser;
 }> = ({ data }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const language = useAppSelector(store => store.app.language);
-  const userLang = React.useRef(language);
+  const lang = useLang();
   const t = useAppSelector(store => store.app.t);
   const [update, updateReq] = usersApi.useUpdateMutation();
   const [destroy, deleteReq] = usersApi.useDeleteMutation();
@@ -42,17 +42,15 @@ const UpdateUser: React.FC<{
     }
   };
 
-  React.useEffect(() => { userLang.current = language }, [language]);
-
   React.useEffect(() => {
     if (updateReq.isLoading) {
       return;
     }
     if (updateReq.data === false || updateReq.error) {
-      dispatch(addAlert({ type: 'error', text: makeErrorText(updateReq.error, userLang.current) }));
+      dispatch(addAlert({ type: 'error', text: makeErrorText(updateReq.error, lang.current) }));
     }
     if (updateReq.data) {
-      dispatch(addAlert({ type: 'success', text: dictionary[userLang.current].success }));
+      dispatch(addAlert({ type: 'success', text: dictionary[lang.current].success }));
     }
   }, [updateReq.data, updateReq.error, updateReq.isLoading,
     dispatch]);
@@ -62,10 +60,10 @@ const UpdateUser: React.FC<{
       return;
     }
     if (deleteReq.data === false || deleteReq.error) {
-      dispatch(addAlert({ type: 'error', text: makeErrorText(deleteReq.error, userLang.current) }));
+      dispatch(addAlert({ type: 'error', text: makeErrorText(deleteReq.error, lang.current) }));
     }
     if (deleteReq.data) {
-      dispatch(addAlert({ type: 'success', text: dictionary[userLang.current].success }));
+      dispatch(addAlert({ type: 'success', text: dictionary[lang.current].success }));
       router.push(ROUTES.panel.users);
     }
   }, [deleteReq.data, deleteReq.error, deleteReq.isLoading, dispatch, router]);

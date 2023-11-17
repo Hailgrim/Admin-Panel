@@ -16,12 +16,12 @@ import CustomModal from '../../Other/CustomModal';
 import VerifyUser from './VerifyUser';
 import { ROUTES } from '../../../lib/constants';
 import dictionary from '../../../locales/dictionary';
+import useLang from '../../../hooks/useLang';
 
 const Authorization: React.FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const language = useAppSelector(store => store.app.language);
-  const userLang = React.useRef(language);
+  const lang = useLang();
   const t = useAppSelector(store => store.app.t);
   const [signIn, { data, error, isFetching, originalArgs }] = authApi.useLazySignInQuery();
   const [errorText, setErrorText] = React.useState<string>();
@@ -35,8 +35,6 @@ const Authorization: React.FC = () => {
     signIn({ username: email, password, rememberMe });
   };
 
-  React.useEffect(() => { userLang.current = language }, [language]);
-
   React.useEffect(() => {
     if (isFetching == true) {
       setErrorText(undefined);
@@ -46,16 +44,16 @@ const Authorization: React.FC = () => {
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 410:
-          setErrorText(String(dictionary[userLang.current].userDeleted));
+          setErrorText(String(dictionary[lang.current].userDeleted));
           break;
         case 403:
           setModalState(true);
           break;
         case 401:
-          setErrorText(String(dictionary[userLang.current].wrongEmailOrPassword));
+          setErrorText(String(dictionary[lang.current].wrongEmailOrPassword));
           break;
         default:
-          setErrorText(makeErrorText(error, userLang.current));
+          setErrorText(makeErrorText(error, lang.current));
           break;
       }
     } else {

@@ -15,11 +15,11 @@ import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX } from '../../../lib/constants'
 import CustomModal from '../../Other/CustomModal';
 import RegistrationSuccess from './RegistrationSuccess';
 import dictionary from '../../../locales/dictionary';
+import useLang from '../../../hooks/useLang';
 
 const Registration: React.FC = () => {
   const router = useRouter();
-  const language = useAppSelector(store => store.app.language);
-  const userLang = React.useRef(language);
+  const lang = useLang();
   const t = useAppSelector(store => store.app.t);
   const [signUp, { data, error, isLoading }] = authApi.useLazySignUpQuery();
   const [errorText, setErrorText] = React.useState<string>();
@@ -40,8 +40,6 @@ const Registration: React.FC = () => {
     });
   };
 
-  React.useEffect(() => { userLang.current = language }, [language]);
-
   React.useEffect(() => {
     if (isLoading == true) {
       setErrorText(undefined);
@@ -51,10 +49,10 @@ const Registration: React.FC = () => {
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 409:
-          setErrorText(String(dictionary[userLang.current].userAlreadyExist));
+          setErrorText(String(dictionary[lang.current].userAlreadyExist));
           break;
         default:
-          setErrorText(makeErrorText(error, userLang.current));
+          setErrorText(makeErrorText(error, lang.current));
           break;
       }
     } else {

@@ -13,11 +13,11 @@ import { ROUTES } from '../../../lib/constants';
 import CustomModal from '../../Other/CustomModal';
 import ResetPassword from './ResetPassword';
 import dictionary from '../../../locales/dictionary';
+import useLang from '../../../hooks/useLang';
 
 const ForgotPassword: React.FC = () => {
   const dispatch = useAppDispatch();
-  const language = useAppSelector(store => store.app.language);
-  const userLang = React.useRef(language);
+  const lang = useLang();
   const t = useAppSelector(store => store.app.t);
   const [forgotPassword, { data, error, isFetching, originalArgs }] = authApi.useLazyForgotPasswordQuery();
   const [errorText, setErrorText] = React.useState<string>();
@@ -29,8 +29,6 @@ const ForgotPassword: React.FC = () => {
     forgotPassword(email);
   };
 
-  React.useEffect(() => { userLang.current = language }, [language]);
-
   React.useEffect(() => {
     if (isFetching == true) {
       setErrorText(undefined);
@@ -40,10 +38,10 @@ const ForgotPassword: React.FC = () => {
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 404:
-          setErrorText(String(dictionary[userLang.current].wrongEmail));
+          setErrorText(String(dictionary[lang.current].wrongEmail));
           break;
         default:
-          setErrorText(makeErrorText(error, userLang.current));
+          setErrorText(makeErrorText(error, lang.current));
           break;
       }
     } else {
