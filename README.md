@@ -1,8 +1,8 @@
 # Admin Panel
 
 This is a boilerplate project that implements the functionality of the admin panel.
-The project is built using a micro service architecture.
-To run it, you will need to install [Docker](https://github.com/docker/roadmap).
+The project is built using microservices architecture.
+To run it, you will need to install [Docker](https://github.com/docker).
 
 ## Project launch
 
@@ -26,7 +26,7 @@ This startup option leaves a minimal build and does not track changes in microse
 
 This microservice provides a graphical interface for administration.
 In it, you can set a list of protected links, create roles with rights for links, manage registered users.
-The project is written in [React](https://github.com/facebook/react) and [TypeScript](https://github.com/microsoft/TypeScript).
+The service is written in [React](https://github.com/facebook/react) and [TypeScript](https://github.com/microsoft/TypeScript).
 [Material UI](https://github.com/mui/material-ui) is used as the UI kit.
 [Redux Toolkit](https://github.com/reduxjs/redux-toolkit) is used as the application state manager.
 [RTK Query](https://github.com/rtk-incubator/rtk-query) is used for API requests.
@@ -40,6 +40,20 @@ Implements the same functionality as Next.js, but [Vue](https://github.com/vuejs
 Instead of [Node.js](https://github.com/nodejs), the container uses [Bun](https://github.com/oven-sh/bun).
 State manager ([Pinia](https://github.com/vuejs/pinia)) folder - ```./next/store```.
 UI kit - [Vuetify](https://github.com/vuetifyjs/vuetify).
+
+### Main server (folder: ```./nest_core```)
+
+The main server that provides the client's interaction with databases, authorization (JWT), creation of requests for sending emails.
+When registering the first user, creates standard API-endpoints, roles and assigns administrator role to the first registered user.
+Written in [Nest.js](https://github.com/nestjs/nest).
+The ```./nest_core/libs/config.ts``` file contains the settings received from Docker during project startup.
+
+### Mail server (folder: ```./nest_mailer```)
+
+This service is engaged in sending emails.
+It is built using the same technologies as the main server.
+If the mailer is running in testing mode, then links to view the contents of sent emails are available in the container console.
+This behavior is changed in the file ```./nest_mailer/libs/config.ts``` using the variable ```MAIL_TEST```.
 
 ### [nginx](https://github.com/nginx/agent) (folder: ```./nginx```)
 
@@ -60,20 +74,6 @@ In the ```./redis/redis.conf``` file, you can set Redis parameters.
 ### [RabbitMQ](https://github.com/rabbitmq/rabbitmq-tutorials) (folder: ```./rabbitmq```)
 
 A queue manager that is used to send requests for sending emails.
-
-### Main server (folder: ```./nest_core```)
-
-The main server that provides the client's interaction with databases, authorization (JWT), creation of requests for sending emails.
-When registering the first user, creates standard API-endpoints, roles and assigns administrator role to the first registered user.
-Written in [Nest.js](https://github.com/nestjs/nest).
-The ```./nest_core/libs/config.ts``` file contains the settings received from Docker during project startup.
-
-### Mail server (folder: ```./nest_mailer```)
-
-This service is engaged in sending emails.
-It is built using the same technologies as the main server.
-If the mailer is running in testing mode, then links to view the contents of sent emails are available in the container console.
-This behavior is changed in the file ```./nest_mailer/libs/config.ts``` using the variable ```MAIL_TEST```.
 
 ## SSL
 
@@ -118,7 +118,7 @@ To create a new certificate, you can use the following commands:
     openssl x509 -req -in $NAME.csr -CA myCA.pem -CAkey myCA.key -CAcreateserial \
     -out $NAME.crt -days 825 -sha256 -extfile $NAME.ext
 
-For a local proxy, add this to hosts
+For a local proxy, add this to hosts:
 
     127.0.0.1 localhost.com
     127.0.0.1 www.localhost.com
