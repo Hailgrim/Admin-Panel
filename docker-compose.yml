@@ -118,9 +118,6 @@ services:
   nuxt:
     build:
       context: ./nuxt
-      args:
-        - NUXT_HOST
-        - NUXT_PORT
     container_name: ${PROJECT_TAG}_nuxt
     restart: always
     networks:
@@ -128,7 +125,7 @@ services:
     expose:
       - ${NUXT_PORT}
     environment:
-      - HOST=${NUXT_HOST}
+      - HOSTNAME=${NUXT_HOST}
       - PORT=${NUXT_PORT}
     volumes:
       - nuxt_node_modules:/home/bun/node_modules

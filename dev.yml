@@ -18,6 +18,22 @@ services:
     env_file:
       - .env
 
+  postgres:
+    env_file:
+      - .env
+
+  adminer:
+    build:
+      context: ./adminer
+    container_name: ${PROJECT_TAG}_adminer
+    restart: always
+    networks:
+      - main
+    ports:
+      - ${ADMINER_PORT}:${ADMINER_PORT}
+    env_file:
+      - .env
+
   redis:
     build:
       target: development
@@ -59,15 +75,3 @@ services:
       - .env
     volumes:
       - ./nuxt:/home/bun
-
-  adminer:
-    build:
-      context: ./adminer
-    container_name: ${PROJECT_TAG}_adminer
-    restart: always
-    networks:
-      - main
-    ports:
-      - ${ADMINER_PORT}:${ADMINER_PORT}
-    env_file:
-      - .env
