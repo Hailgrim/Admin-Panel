@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import FormBox from '../FormBox.vue'
 import FormAlert from '../FormAlert.vue'
-import FormTextInput from '../FormTextInput.vue'
+import FormTextField from '../FormTextField.vue'
 import FormButton from '../FormButton.vue'
 import FormAuthLink from '../FormAuthLink.vue'
 import CustomModal from '~/components/Other/CustomModal.vue'
 import ResetPassword from '~/components/Forms/Auth/ResetPassword.vue'
 import { useAuthStore } from '~/stores/auth'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const email = ref('')
 const emailIsValid = (value: string) => value.length > 0
 const authStore = useAuthStore()
@@ -32,7 +32,7 @@ watch(
         errorMsg.value = null
         break
       default:
-        errorMsg.value = makeErrorText(authStore.forgotPasswordError?.message)
+        errorMsg.value = makeErrorText(authStore.forgotPasswordError?.message, locale.value)
     }
   },
 )
@@ -57,7 +57,7 @@ watch(
 <template>
   <FormBox @submit="submitHandler">
     <FormAlert v-if="errorMsg" :title="$t('error')" :text="errorMsg" type="error" />
-    <FormTextInput
+    <FormTextField
       v-model:model-value="email" required name="email" type="text" :label="$t('email')"
       :rules="[emailIsValid]" :hint="$t('emailValidation')"
     />

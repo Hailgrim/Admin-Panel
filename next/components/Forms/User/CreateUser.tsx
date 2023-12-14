@@ -5,7 +5,7 @@ import usersApi from '../../../store/api/usersApi';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
-import TextFieldStyled from '../../Other/TextFieldStyled';
+import TextFieldStyled from '../FormTextFieldStyled';
 import FormBoxStyled from '../FormBoxStyled';
 import FormCheckbox from '../FormCheckbox';
 import { makeErrorText } from '../../../lib/functions';
@@ -42,7 +42,7 @@ const CreateUser: React.FC = () => {
       dispatch(addAlert({ type: 'success', text: dictionary[lang.current].success }));
       router.push(ROUTES.panel.user(createReq.data.id));
     }
-  }, [createReq.data, createReq.error, createReq.isLoading, dispatch, router]);
+  }, [createReq.data, createReq.error, createReq.isLoading, dispatch, router, lang]);
 
   return (
     <FormBoxStyled

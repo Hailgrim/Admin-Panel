@@ -6,10 +6,10 @@ import { useMainStore } from '~/stores/main'
 import { useUsersStore } from '~/stores/users'
 import type { IRole, IUser, IUsersRoles } from '~/utils/types'
 
-const { user, roles } = defineProps<{ user: IUser; roles: IRole[] }>()
+const { user, roles } = defineProps<{ user: IUser, roles: IRole[] }>()
 
 const updatedRoles = ref(user.roles?.map(role => role.UsersRoles) || [])
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const usersStore = useUsersStore()
 const mainStore = useMainStore()
 const rights = useRights(ROUTES.api.users)
@@ -49,7 +49,7 @@ watch(
     if (usersStore.updateRolesPending === true)
       return
     if (usersStore.updateRolesError)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(usersStore.updateRolesError) })
+      mainStore.addAlert({ type: 'error', text: makeErrorText(usersStore.updateRolesError, locale.value) })
     if (usersStore.updateRolesData)
       mainStore.addAlert({ type: 'success', text: t('success') })
   },

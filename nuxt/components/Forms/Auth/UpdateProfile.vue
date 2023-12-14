@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import FormBox from '../FormBox.vue'
-import FormTextInput from '../FormTextInput.vue'
+import FormTextField from '../FormTextField.vue'
 import FormButton from '../FormButton.vue'
 import { useMainStore } from '~/stores/main'
 import { useAuthStore } from '~/stores/auth'
 import type { IUser } from '~/utils/types'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const mainStore = useMainStore()
 const authStore = useAuthStore()
 const name = ref(authStore.profile?.name || '')
@@ -32,7 +32,7 @@ watch(
     if (authStore.updateProfilePending === true)
       return
     if (authStore.updateProfileError || authStore.updateProfileData !== true)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(authStore.updateProfileError) })
+      mainStore.addAlert({ type: 'error', text: makeErrorText(authStore.updateProfileError, locale.value) })
     if (authStore.updateProfileData)
       mainStore.addAlert({ type: 'success', text: t('success') })
   },
@@ -41,7 +41,7 @@ watch(
 
 <template>
   <FormBox @submit="submitHandler">
-    <FormTextInput
+    <FormTextField
       v-model:model-value="name" required name="name" :label="$t('email')"
       :rules="[nameIsValid]"
     />

@@ -4,9 +4,23 @@ This is a boilerplate project that implements the functionality of the admin pan
 The project is built using microservices architecture.
 To run it, you will need to install [Docker](https://github.com/docker).
 
-## Project launch
+## Before starting work
+
+For a local proxy, add this to hosts:
+
+    // C:\Windows\System32\drivers\etc\hosts on Windows
+    // or
+    // /etc/hosts on Linux
+    127.0.0.1 localhost.com
+    127.0.0.1 www.localhost.com
+    127.0.0.1 nuxt.localhost.com
+    127.0.0.1 api.localhost.com
+
+After that, you must add the self-signed certificate (```./nginx/ssl```) to your browser as a certificate authority (in this case, it is the ```myCA.pem``` file).
 
 Some startup parameters can be edited in the ```./.env``` file.
+
+## Project launch
 
 ### Development
 
@@ -19,6 +33,10 @@ This startup option allows you to link microservices folders to containers and a
     docker compose -f docker-compose.yml -f prod.yml up -d
 
 This startup option leaves a minimal build and does not track changes in microservices folders.
+
+### Shutting down
+
+    docker compose down --remove-orphans
 
 ## Microservices
 
@@ -75,7 +93,7 @@ In the ```./redis/redis.conf``` file, you can set Redis parameters.
 
 A queue manager that is used to send requests for sending emails.
 
-## SSL
+## SSL update
 
 Without a certificate, the project will not function normally (CORS policy).
 The standard certificate is registered for addresses localhost.com (Next.js), nuxt.localhost.com (Nuxt.js) and api.localhost.com (main server).
@@ -117,10 +135,3 @@ To create a new certificate, you can use the following commands:
     # Create the signed certificate
     openssl x509 -req -in $NAME.csr -CA myCA.pem -CAkey myCA.key -CAcreateserial \
     -out $NAME.crt -days 825 -sha256 -extfile $NAME.ext
-
-For a local proxy, add this to hosts:
-
-    127.0.0.1 localhost.com
-    127.0.0.1 www.localhost.com
-    127.0.0.1 nuxt.localhost.com
-    127.0.0.1 api.localhost.com

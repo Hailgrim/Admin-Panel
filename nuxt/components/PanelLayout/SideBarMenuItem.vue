@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { ISideBarMenuItem } from '~/utils/types'
+import type { IMenuItem } from '~/utils/types'
 
-const props = defineProps<ISideBarMenuItem>()
+const props = defineProps<IMenuItem>()
 const route = useRoute()
 const router = useRouter()
 const selected = ref(false)

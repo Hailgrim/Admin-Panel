@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FormBox from '../FormBox.vue'
-import FormTextInput from '../FormTextInput.vue'
+import FormTextField from '../FormTextField.vue'
 import FormCheckbox from '../FormCheckbox.vue'
 import FormButton from '../FormButton.vue'
 import { useRolesStore } from '~/stores/roles'
@@ -9,7 +9,7 @@ import type { IRole } from '~/utils/types'
 
 const { role } = defineProps<{ role: IRole }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const rolesStore = useRolesStore()
 const name = ref(role.name)
 const nameIsValid = (value: string) => value.length > 0
@@ -34,7 +34,7 @@ watch(
     if (rolesStore.updatePending === true)
       return
     if (rolesStore.updateError)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(rolesStore.updateError) })
+      mainStore.addAlert({ type: 'error', text: makeErrorText(rolesStore.updateError, locale.value) })
     if (rolesStore.updateData)
       mainStore.addAlert({ type: 'success', text: t('success') })
   },
@@ -46,7 +46,7 @@ watch(
     if (rolesStore.deletePending === true)
       return
     if (rolesStore.deleteError)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(rolesStore.deleteError) })
+      mainStore.addAlert({ type: 'error', text: makeErrorText(rolesStore.deleteError, locale.value) })
     if (rolesStore.deleteData) {
       mainStore.addAlert({ type: 'success', text: t('success') })
       router.push(ROUTES.panel.roles)
@@ -57,8 +57,8 @@ watch(
 
 <template>
   <FormBox @submit="submitHandler">
-    <FormTextInput v-model:model-value="name" required name="name" :label="$t('name')" :rules="[nameIsValid]" />
-    <FormTextInput v-model:model-value="description" name="description" :label="$t('description')" />
+    <FormTextField v-model:model-value="name" required name="name" :label="$t('name')" :rules="[nameIsValid]" />
+    <FormTextField v-model:model-value="description" name="description" :label="$t('description')" />
     <FormCheckbox v-model:model-value="enabled" name="enabled" :label="$t('enabled')" />
     <FormButton
       type="submit" color="success" prepand-icon="mdi-content-save" :loading="rolesStore.updatePending"

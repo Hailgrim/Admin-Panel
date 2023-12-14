@@ -11,7 +11,7 @@ const { resources, count, page, quantity } = defineProps<{
 }>()
 defineEmits(['update:page', 'update:quantity'])
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const headers = [
   { title: t('edit'), key: 'edit', width: 50, sortable: false },
   { title: t('id'), key: 'id', width: '10%' },
@@ -33,7 +33,7 @@ watch(
   () => resourcesStore.deletePending,
   () => {
     if (resourcesStore.deleteError)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(resourcesStore.deleteError) })
+      mainStore.addAlert({ type: 'error', text: makeErrorText(resourcesStore.deleteError, locale.value) })
     if (resourcesStore.deleteData) {
       mainStore.addAlert({ type: 'success', text: t('success') })
       resourcesStore.list({ page, quantity })

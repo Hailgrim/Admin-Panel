@@ -67,7 +67,7 @@ const UpdateUserRoles: React.FC<{
     if (updateReq.data) {
       dispatch(addAlert({ type: 'success', text: dictionary[lang.current].success }));
     }
-  }, [updateReq.data, updateReq.error, updateReq.isLoading, dispatch]);
+  }, [updateReq.data, updateReq.error, updateReq.isLoading, dispatch, lang]);
 
   return (
     <FormBoxStyled onSubmit={updateHandler}>

@@ -5,7 +5,7 @@ import { IUser } from '../../../lib/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addAlert, setProfile } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
-import TextFieldStyled from '../../Other/TextFieldStyled';
+import TextFieldStyled from '../FormTextFieldStyled';
 import FormBoxStyled from '../FormBoxStyled';
 import { ROUTES } from '../../../lib/constants';
 import authApi from '../../../store/api/authApi';
@@ -54,7 +54,7 @@ const UpdateProfile: React.FC = () => {
       dispatch(setProfile(newProfile.current));
       dispatch(addAlert({ type: 'success', text: dictionary[lang.current].success }));
     }
-  }, [updateReq.data, updateReq.error, updateReq.isLoading, dispatch]);
+  }, [updateReq.data, updateReq.error, updateReq.isLoading, dispatch, lang]);
 
   return (
     <FormBoxStyled onSubmit={updateHandler}>

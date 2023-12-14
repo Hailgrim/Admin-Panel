@@ -7,7 +7,7 @@ import { setProfile } from '../../../store/slices/appSlice';
 import { makeErrorText } from '../../../lib/functions';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import AuthLinkStyled from '../../../components/AuthLayout/AuthLinkStyled';
-import TextFieldStyled from '../../../components/Other/TextFieldStyled';
+import TextFieldStyled from '../FormTextFieldStyled';
 import AuthAlert from '../../../components/AuthLayout/AuthAlert';
 import FormCheckbox from '../../../components/Forms/FormCheckbox';
 import FormBoxStyled from '../../../components/Forms/FormBoxStyled';
@@ -62,7 +62,7 @@ const Authorization: React.FC = () => {
         router.push(router.query.return ? decodeURIComponent(String(router.query.return)) : ROUTES.panel.home);
       }
     }
-  }, [data, error, isFetching, dispatch, router]);
+  }, [data, error, isFetching, dispatch, router, lang]);
 
   return (
     <React.Fragment>

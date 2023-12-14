@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import FormBox from '../FormBox.vue'
 import FormAlert from '../FormAlert.vue'
-import FormTextInput from '../FormTextInput.vue'
-import FormPasswordInput from '../FormPasswordInput.vue'
+import FormTextField from '../FormTextField.vue'
+import FormPasswordField from '../FormPasswordField.vue'
 import FormButton from '../FormButton.vue'
 import { useAuthStore } from '~/stores/auth'
 
@@ -11,7 +11,7 @@ const props = defineProps<{
 }>()
 const emits = defineEmits(['close'])
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const code = ref('')
 const codeIsValid = (value: string) => value.length > 0 || `${t('codeFromEmail')} (${props.email})`
 const password = ref('')
@@ -35,7 +35,7 @@ watch(
         errorMsg.value = null
         break
       default:
-        errorMsg.value = makeErrorText(authStore.resetPasswordError?.message)
+        errorMsg.value = makeErrorText(authStore.resetPasswordError?.message, locale.value)
     }
   },
 )
@@ -52,11 +52,11 @@ watch(
 <template>
   <FormBox @submit="submitHandler">
     <FormAlert v-if="errorMsg" :title="$t('error')" :text="errorMsg" type="error" />
-    <FormTextInput
+    <FormTextField
       v-model:model-value="code" required name="code" :label="$t('code')"
       :hint="`${$t('codeFromEmail')} (${email})`" :rules="[codeIsValid]"
     />
-    <FormPasswordInput
+    <FormPasswordField
       v-model:model-value="password" required name="password"
       :label="$t('newPassword')" :rules="[passwordIsValid]" :hint="$t('passwordValidation')"
     />

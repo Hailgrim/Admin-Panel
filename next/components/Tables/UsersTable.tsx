@@ -83,7 +83,7 @@ const UsersTable: React.FC<{
     if (findAllReq.error) {
       dispatch(addAlert({ type: 'error', text: makeErrorText(findAllReq.error, lang.current) }));
     }
-  }, [findAllReq.data, findAllReq.error, findAllReq.isLoading, dispatch]);
+  }, [findAllReq.data, findAllReq.error, findAllReq.isLoading, dispatch, lang]);
 
   React.useEffect(() => {
     if (destroyReq.isLoading) {
@@ -95,7 +95,7 @@ const UsersTable: React.FC<{
     if (destroyReq.error) {
       dispatch(addAlert({ type: 'error', text: makeErrorText(destroyReq.error, lang.current) }));
     }
-  }, [destroyReq.data, destroyReq.error, destroyReq.isLoading, dispatch]);
+  }, [destroyReq.data, destroyReq.error, destroyReq.isLoading, dispatch, lang]);
 
   React.useEffect(() => {
     if (destroyStatus) {
@@ -113,9 +113,7 @@ const UsersTable: React.FC<{
         }}
         destroy={{
           action: () => destroy(selectedRows),
-          disabled:
-            selectedRows.length == 0 ||
-            !rights.deleting,
+          disabled: selectedRows.length == 0 || !rights.deleting,
           loading: destroyReq.isLoading,
         }}
       />

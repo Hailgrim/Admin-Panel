@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FormBox from '../FormBox.vue'
-import FormTextInput from '../FormTextInput.vue'
+import FormTextField from '../FormTextField.vue'
 import FormCheckbox from '../FormCheckbox.vue'
 import FormButton from '../FormButton.vue'
 import { useResourcesStore } from '~/stores/resources'
@@ -9,7 +9,7 @@ import type { IResource } from '~/utils/types'
 
 const { resource } = defineProps<{ resource: IResource }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const resourcesStore = useResourcesStore()
 const name = ref(resource.name)
 const nameIsValid = (value: string) => value.length > 0
@@ -36,7 +36,7 @@ watch(
     if (resourcesStore.updatePending === true)
       return
     if (resourcesStore.updateError)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(resourcesStore.updateError) })
+      mainStore.addAlert({ type: 'error', text: makeErrorText(resourcesStore.updateError, locale.value) })
     if (resourcesStore.updateData)
       mainStore.addAlert({ type: 'success', text: t('success') })
   },
@@ -48,7 +48,7 @@ watch(
     if (resourcesStore.deletePending === true)
       return
     if (resourcesStore.deleteError)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(resourcesStore.deleteError) })
+      mainStore.addAlert({ type: 'error', text: makeErrorText(resourcesStore.deleteError, locale.value) })
     if (resourcesStore.deleteData) {
       mainStore.addAlert({ type: 'success', text: t('success') })
       router.push(ROUTES.panel.resources)
@@ -59,9 +59,9 @@ watch(
 
 <template>
   <FormBox @submit="submitHandler">
-    <FormTextInput v-model:model-value="name" required name="name" :label="$t('name')" :rules="[nameIsValid]" />
-    <FormTextInput v-model:model-value="path" required name="path" :label="$t('path')" :rules="[pathIsValid]" />
-    <FormTextInput v-model:model-value="description" name="description" :label="$t('description')" />
+    <FormTextField v-model:model-value="name" required name="name" :label="$t('name')" :rules="[nameIsValid]" />
+    <FormTextField v-model:model-value="path" required name="path" :label="$t('path')" :rules="[pathIsValid]" />
+    <FormTextField v-model:model-value="description" name="description" :label="$t('description')" />
     <FormCheckbox v-model:model-value="enabled" name="enabled" :label="$t('enabled')" />
     <FormButton
       type="submit" color="success" prepand-icon="mdi-content-save" :loading="resourcesStore.updatePending"

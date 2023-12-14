@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import FormBox from '../FormBox.vue'
-import FormTextInput from '../FormTextInput.vue'
-import FormPasswordInput from '../FormPasswordInput.vue'
+import FormTextField from '../FormTextField.vue'
+import FormPasswordField from '../FormPasswordField.vue'
 import FormCheckbox from '../FormCheckbox.vue'
 import FormButton from '../FormButton.vue'
 import { useUsersStore } from '~/stores/users'
 import { useMainStore } from '~/stores/main'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const email = ref('')
 const emailIsValid = (value: string) => testString(EMAIL_REGEX, value) || t('emailValidation')
 const name = ref('')
@@ -35,7 +35,7 @@ watch(
     if (usersStore.createPending === true)
       return
     if (usersStore.createError)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(usersStore.createError) })
+      mainStore.addAlert({ type: 'error', text: makeErrorText(usersStore.createError, locale.value) })
     if (usersStore.createData) {
       mainStore.addAlert({ type: 'success', text: t('success') })
       router.push(ROUTES.panel.user(usersStore.createData.id))
@@ -46,15 +46,15 @@ watch(
 
 <template>
   <FormBox @submit="submitHandler">
-    <FormTextInput
+    <FormTextField
       v-model:model-value="email" type="email" required name="email" :label="$t('email')"
       :rules="[emailIsValid]" :hint="$t('emailValidation')"
     />
-    <FormTextInput
+    <FormTextField
       v-model:model-value="name" required name="name" :label="$t('name')"
       :rules="[nameIsValid]" :hint="$t('nameValidation')"
     />
-    <FormPasswordInput
+    <FormPasswordField
       v-model:model-value="password" required name="password" :label="$t('password')"
       :rules="[passwordIsValid]" :hint="$t('passwordValidation')"
     />

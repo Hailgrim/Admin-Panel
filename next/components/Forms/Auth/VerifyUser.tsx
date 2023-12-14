@@ -4,7 +4,7 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 import authApi from '../../../store/api/authApi';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { makeErrorText } from '../../../lib/functions';
-import TextFieldStyled from '../../../components/Other/TextFieldStyled';
+import TextFieldStyled from '../FormTextFieldStyled';
 import AuthAlert from '../../../components/AuthLayout/AuthAlert';
 import FormBoxStyled from '../../../components/Forms/FormBoxStyled';
 import AuthButtonStyled from '../../../components/AuthLayout/AuthButtonStyled';
@@ -47,7 +47,7 @@ const VerifyUser: React.FC<{
         callback();
       }
     }
-  }, [data, error, isLoading, dispatch, callback]);
+  }, [data, error, isLoading, dispatch, callback, lang]);
 
   return (
     <FormBoxStyled

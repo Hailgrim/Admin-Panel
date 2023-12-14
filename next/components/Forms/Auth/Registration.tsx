@@ -6,7 +6,7 @@ import authApi from '../../../store/api/authApi';
 import { makeErrorText, testString } from '../../../lib/functions';
 import { useAppSelector } from '../../../store/hooks';
 import AuthLinkStyled from '../../AuthLayout/AuthLinkStyled';
-import TextFieldStyled from '../../Other/TextFieldStyled';
+import TextFieldStyled from '../FormTextFieldStyled';
 import AuthAlert from '../../AuthLayout/AuthAlert';
 import AuthButtonStyled from '../../AuthLayout/AuthButtonStyled';
 import FormBoxStyled from '../FormBoxStyled';
@@ -60,7 +60,7 @@ const Registration: React.FC = () => {
         setModalState(true);
       }
     }
-  }, [data, error, isLoading, router]);
+  }, [data, error, isLoading, router, lang]);
 
   return (
     <React.Fragment>

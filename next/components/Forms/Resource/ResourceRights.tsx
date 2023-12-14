@@ -17,7 +17,7 @@ const ResourceRights: React.FC<{
   setRights: (newRights: IRolesResources) => void;
 }> = ({ roleId, resource, rights, setRights }) => {
   const t = useAppSelector(store => store.app.t);
-  const newRights = rights || {
+  const newRights: IRolesResources = rights || {
     roleId,
     resourceId: resource.id,
     creating: false,

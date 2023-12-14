@@ -27,8 +27,6 @@ services:
       context: ./nginx
     container_name: ${PROJECT_TAG}_nginx
     restart: always
-    env_file:
-      - .env
     networks:
       - main
     expose:
@@ -42,8 +40,6 @@ services:
       context: ./rabbitmq
     container_name: ${PROJECT_TAG}_rabbitmq
     restart: always
-    env_file:
-      - .env
     networks:
       - main
     expose:
@@ -56,8 +52,6 @@ services:
       context: ./postgres
     container_name: ${PROJECT_TAG}_postgres
     restart: always
-    env_file:
-      - .env
     networks:
       - main
     expose:
@@ -70,8 +64,6 @@ services:
       context: ./redis
     container_name: ${PROJECT_TAG}_redis
     restart: always
-    env_file:
-      - .env
     networks:
       - main
     expose:
@@ -84,15 +76,13 @@ services:
       context: ./nest_core
     container_name: ${PROJECT_TAG}_nest_core
     restart: always
-    env_file:
-      - .env
+    depends_on:
+      - rabbitmq
+      - postgres
     networks:
       - main
     expose:
       - ${NEST_CORE_PORT}
-    depends_on:
-      - rabbitmq
-      - postgres
     volumes:
       - nest_core_node_modules:/home/node/node_modules
 
@@ -101,31 +91,27 @@ services:
       context: ./nest_mailer
     container_name: ${PROJECT_TAG}_nest_mailer
     restart: always
-    env_file:
-      - .env
+    depends_on:
+      - rabbitmq
     networks:
       - main
     expose:
       - ${NEST_MAILER_PORT}
-    depends_on:
-      - rabbitmq
     volumes:
       - nest_mailer_node_modules:/home/node/node_modules
 
   next:
     build:
       context: ./next
-      args:
-        - NEXT_HOST
-        - NEXT_PORT
     container_name: ${PROJECT_TAG}_next
     restart: always
-    env_file:
-      - .env
     networks:
       - main
     expose:
       - ${NEXT_PORT}
+    environment:
+      - HOSTNAME=${NEXT_HOST}
+      - PORT=${NEXT_PORT}
     volumes:
       - next_node_modules:/home/node/node_modules
 
@@ -137,11 +123,12 @@ services:
         - NUXT_PORT
     container_name: ${PROJECT_TAG}_nuxt
     restart: always
-    env_file:
-      - .env
     networks:
       - main
     expose:
       - ${NUXT_PORT}
+    environment:
+      - HOST=${NUXT_HOST}
+      - PORT=${NUXT_PORT}
     volumes:
       - nuxt_node_modules:/home/bun/node_modules

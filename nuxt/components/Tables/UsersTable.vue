@@ -11,7 +11,7 @@ const { users, count, page, quantity } = defineProps<{
 }>()
 defineEmits(['update:page', 'update:quantity'])
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const headers = [
   { title: t('edit'), key: 'edit', width: 50, sortable: false },
   { title: t('id'), key: 'id', width: '10%' },
@@ -34,7 +34,7 @@ watch(
   () => usersStore.deletePending,
   () => {
     if (usersStore.deleteError)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(usersStore.deleteError) })
+      mainStore.addAlert({ type: 'error', text: makeErrorText(usersStore.deleteError, locale.value) })
     if (usersStore.deleteData) {
       mainStore.addAlert({ type: 'success', text: t('success') })
       usersStore.listRefresh({ page, quantity })
@@ -88,7 +88,7 @@ watch(
       </NuxtLink>
     </template>
     <template #item.roles="{ item }">
-      {{ item.roles.map((role: IRole) => role.name).join(', ') }}
+      {{ item.roles?.map((role: IRole) => role.name).join(', ') }}
     </template>
     <template #item.verified="{ item }">
       <v-icon :icon="item.verified ? 'mdi-check' : 'mdi-close'" />

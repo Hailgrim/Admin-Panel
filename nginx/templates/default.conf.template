@@ -14,6 +14,8 @@ proxy_http_version 1.1;
 proxy_set_header Upgrade $http_upgrade;
 proxy_set_header Connection "upgrade";
 
+
+
 # Next: redirect to HTTPS
 server {
     listen ${NGINX_PORT};
@@ -39,6 +41,8 @@ server {
         root /home/nginx/html;
     }
 }
+
+
 
 # Nuxt: redirect to HTTPS
 server {
@@ -69,6 +73,8 @@ server {
         root /home/nginx/html;
     }
 }
+
+
 
 # Nest: redirect to HTTPS
 server {

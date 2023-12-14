@@ -5,7 +5,7 @@ import rolesApi from '../../../store/api/rolesApi';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
-import TextFieldStyled from '../../Other/TextFieldStyled';
+import TextFieldStyled from '../FormTextFieldStyled';
 import FormBoxStyled from '../FormBoxStyled';
 import { makeErrorText } from '../../../lib/functions';
 import { ROUTES } from '../../../lib/constants';
@@ -41,7 +41,7 @@ const CreateRole: React.FC = () => {
       dispatch(addAlert({ type: 'success', text: dictionary[lang.current].success }));
       router.push(ROUTES.panel.role(createReq.data.id));
     }
-  }, [createReq.data, createReq.error, createReq.isLoading, dispatch, router]);
+  }, [createReq.data, createReq.error, createReq.isLoading, dispatch, router, lang]);
 
   return (
     <FormBoxStyled onSubmit={createHandler}>

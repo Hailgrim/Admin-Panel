@@ -2,7 +2,7 @@ import { IconButton } from '@mui/material';
 import React from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 
-import LinkUnstyled from '../Other/LinkUnstyled';
+import LinkStyled from '../Other/LinkStyled';
 import useRights from '../../hooks/useRights';
 
 const EditButton: React.FC<{
@@ -14,14 +14,14 @@ const EditButton: React.FC<{
 
   return selectable && rights.reading
     ? (
-      <LinkUnstyled
+      <LinkStyled
         href={link}
         onClick={event => event.stopPropagation()}
       >
         <IconButton size="medium">
           <EditIcon />
         </IconButton>
-      </LinkUnstyled>
+      </LinkStyled>
     )
     : (
       <IconButton size="medium" disabled={true}>

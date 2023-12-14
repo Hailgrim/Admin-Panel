@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import FormBox from '../FormBox.vue'
 import FormAlert from '../FormAlert.vue'
-import FormTextInput from '../FormTextInput.vue'
+import FormTextField from '../FormTextField.vue'
 import FormButton from '../FormButton.vue'
 import { useAuthStore } from '~/stores/auth'
 
@@ -10,7 +10,7 @@ const props = defineProps<{
 }>()
 const emits = defineEmits(['close'])
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const code = ref('')
 const codeIsValid = (value: string) => value.length > 0 || `${t('codeFromEmail')} (${props.email})`
 const authStore = useAuthStore()
@@ -32,7 +32,7 @@ watch(
         errorMsg.value = null
         break
       default:
-        errorMsg.value = makeErrorText(authStore.verifyError?.message)
+        errorMsg.value = makeErrorText(authStore.verifyError?.message, locale.value)
     }
   },
 )
@@ -49,7 +49,7 @@ watch(
 <template>
   <FormBox @submit="submitHandler">
     <FormAlert v-if="errorMsg" :title="$t('error')" :text="errorMsg" type="error" />
-    <FormTextInput
+    <FormTextField
       v-model:model-value="code" required name="code" :label="$t('code')"
       :hint="`${$t('codeFromEmail')} (${email})`" :rules="[codeIsValid]"
     />

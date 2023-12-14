@@ -21,12 +21,12 @@ const SideBarMenu: React.FC = () => {
   return (
     <React.Fragment>
       <SideBarMenuItem
-        link={ROUTES.panel.home}
+        href={ROUTES.panel.home}
         name={String(t.home)}
         icon={<HomeIcon />}
       />
       <SideBarMenuItem
-        link={ROUTES.panel.profile}
+        href={ROUTES.panel.profile}
         name={String(t.profile)}
         icon={<AccountBoxIcon />}
         disabled={!profileRights.reading}
@@ -35,19 +35,19 @@ const SideBarMenu: React.FC = () => {
         name={String(t.main)}
         icon={<WidgetsIcon />}
         childs={[      {
-            link: ROUTES.panel.users,
+            href: ROUTES.panel.users,
             icon: <GroupIcon />,
             name: String(t.users),
             disabled: !usersRights.reading,
           },
           {
-            link: ROUTES.panel.roles,
+            href: ROUTES.panel.roles,
             icon: <SupervisedUserCircleIcon />,
             name: String(t.roles),
             disabled: !rolesRights.reading,
           },
           {
-            link: ROUTES.panel.resources,
+            href: ROUTES.panel.resources,
             icon: <ApiIcon />,
             name: String(t.resources),
             disabled: !resourcesRights.reading,

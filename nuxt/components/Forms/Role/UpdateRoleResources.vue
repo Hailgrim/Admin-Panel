@@ -6,7 +6,7 @@ import { useRolesStore } from '~/stores/roles'
 import { useMainStore } from '~/stores/main'
 import type { IResource, IRole, IRolesResources } from '~/utils/types'
 
-const { role, resources } = defineProps<{ role: IRole; resources: IResource[] }>()
+const { role, resources } = defineProps<{ role: IRole, resources: IResource[] }>()
 
 const updatedRights = ref<IRolesResources[]>(resources.map((resource) => {
   if (role.resources) {
@@ -25,7 +25,7 @@ const updatedRights = ref<IRolesResources[]>(resources.map((resource) => {
   }
 }))
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const rolesStore = useRolesStore()
 const mainStore = useMainStore()
 const rights = useRights(ROUTES.api.roles)
@@ -51,7 +51,7 @@ watch(
     if (rolesStore.updateResourcesPending === true)
       return
     if (rolesStore.updateResourcesError)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(rolesStore.updateResourcesError) })
+      mainStore.addAlert({ type: 'error', text: makeErrorText(rolesStore.updateResourcesError, locale.value) })
     if (rolesStore.updateResourcesData)
       mainStore.addAlert({ type: 'success', text: t('success') })
   },

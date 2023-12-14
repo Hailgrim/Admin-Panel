@@ -4,7 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { useAppSelector } from '../../store/hooks';
-import LinkUnstyled from '../../components/Other/LinkUnstyled';
+import LinkStyled from '../Other/LinkStyled';
 
 const TableActions: React.FC<{
   create?: {
@@ -35,7 +35,7 @@ const TableActions: React.FC<{
             </Button>
           )
           : (
-            <LinkUnstyled href={create.link}>
+            <LinkStyled href={create.link}>
               <Button
                 variant="contained"
                 color="primary"
@@ -45,7 +45,7 @@ const TableActions: React.FC<{
               >
                 {t.create}
               </Button>
-            </LinkUnstyled>
+            </LinkStyled>
           )
       )}
       {destroy && (

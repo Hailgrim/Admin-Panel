@@ -5,7 +5,7 @@ import authApi from '../../../store/api/authApi';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { makeErrorText } from '../../../lib/functions';
 import AuthLinkStyled from '../../../components/AuthLayout/AuthLinkStyled';
-import TextFieldStyled from '../../../components/Other/TextFieldStyled';
+import TextFieldStyled from '../FormTextFieldStyled';
 import AuthAlert from '../../../components/AuthLayout/AuthAlert';
 import FormBoxStyled from '../../../components/Forms/FormBoxStyled';
 import AuthButtonStyled from '../../../components/AuthLayout/AuthButtonStyled';
@@ -49,7 +49,7 @@ const ForgotPassword: React.FC = () => {
         setModalState(true);
       }
     }
-  }, [data, error, isFetching, dispatch]);
+  }, [data, error, isFetching, dispatch, lang]);
 
   return (
     <React.Fragment>

@@ -1,8 +1,4 @@
 FROM oven/bun:alpine as base
-ARG NUXT_HOST
-ENV HOST=${NUXT_HOST}
-ARG NUXT_PORT
-ENV PORT=${NUXT_PORT}
 ENV NUXT_TELEMETRY_DISABLED=1
 ARG HOME=/home/bun
 WORKDIR ${HOME}
@@ -22,7 +18,7 @@ ARG ACCESS_TOKEN_LIFETIME
 ARG REFRESH_TOKEN_LIFETIME
 RUN bun install
 COPY . .
-RUN bun --bun run build
+RUN bun run build
 
 FROM base as production
 ENV NODE_ENV=production

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import FormBox from '../FormBox.vue'
 import FormAlert from '../FormAlert.vue'
-import FormTextInput from '../FormTextInput.vue'
-import FormPasswordInput from '../FormPasswordInput.vue'
+import FormTextField from '../FormTextField.vue'
+import FormPasswordField from '../FormPasswordField.vue'
 import FormCheckbox from '../FormCheckbox.vue'
 import FormButton from '../FormButton.vue'
 import FormAuthLink from '../FormAuthLink.vue'
@@ -10,7 +10,7 @@ import CustomModal from '~/components/Other/CustomModal.vue'
 import VerifyUser from '~/components/Forms/Auth/VerifyUser.vue'
 import { useAuthStore } from '~/stores/auth'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const email = ref('')
@@ -45,7 +45,7 @@ watch(
         errorMsg.value = null
         break
       default:
-        errorMsg.value = makeErrorText(authStore.signInError?.message)
+        errorMsg.value = makeErrorText(authStore.signInError?.message, locale.value)
     }
   },
 )
@@ -62,11 +62,11 @@ watch(
 <template>
   <FormBox @submit="submitHandler">
     <FormAlert v-if="errorMsg" :title="$t('error')" :text="errorMsg" type="error" />
-    <FormTextInput
+    <FormTextField
       v-model:model-value="email" required name="email" :label="$t('email')"
       :rules="[emailIsValid]"
     />
-    <FormPasswordInput
+    <FormPasswordField
       v-model:model-value="password" required name="password" :label="$t('password')"
       :rules="[passwordIsValid]"
     />

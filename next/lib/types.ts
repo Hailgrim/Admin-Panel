@@ -58,11 +58,11 @@ export interface ICreateCookieOptions {
   maxAge?: number;
 }
 
-export interface ISideBarItem {
-  link?: string;
+export interface IMenuItem {
+  href?: string;
   name?: string;
   icon?: React.ReactNode;
-  childs?: ISideBarItem[];
+  childs?: IMenuItem[];
   isChild?: boolean;
   disabled?: boolean;
 }

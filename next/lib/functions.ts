@@ -1,9 +1,7 @@
 import { GetServerSidePropsContext, GetServerSidePropsResult, PreviewData } from 'next';
 import { ParsedUrlQuery } from 'querystring';
-import { SerializedError } from '@reduxjs/toolkit';
-import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 
-import { ICreateCookieOptions, IPage, IPagination, ISideBarItem, LangList } from './types';
+import { ICreateCookieOptions, IPage, IPagination, IMenuItem, LangList } from './types';
 import { AppStore, wrapper } from '../store/store';
 import { setAuthTokens, setProfile, setUserAgent } from '../store/slices/appSlice';
 import authApi from '../store/api/authApi';
@@ -12,14 +10,25 @@ import { ROUTES } from './constants';
 import dictionary from '../locales/dictionary';
 
 /**
- * @param {string} link Checked link
+ * @param {string} href Checked link
  * @returns {boolean} true if link found in the navigation tree
  */
-export const checkActiveLink = (link: string, navTree: ISideBarItem): boolean => {
-  const result =
-    (navTree.link && link.startsWith(navTree.link)) ||
-    !!navTree.childs?.some(nav => checkActiveLink(link, nav));
-  return result;
+export const checkActiveLink = (href: string, navTree: IMenuItem): boolean => {
+  if (navTree.href) {
+    if (
+      navTree.href === href ||
+      navTree.href.startsWith(`${href}/`) ||
+      navTree.href.startsWith(`${href}?`)
+    ) {
+      return true;
+    }
+  }
+
+  if (navTree.childs) {
+    return navTree.childs.some(nav => checkActiveLink(href, nav));
+  }
+
+  return false;
 };
 
 /**
@@ -74,33 +83,32 @@ export const getUpdatedValues = <T>(oldObject: Partial<T>, newObject: Partial<T>
 
 /**
  * @param {any} error Some request error
- * @param {LangList} userLang Error language
+ * @param {LangList} lang Error language
  * @returns {string} Formatted error text
  */
-export const makeErrorText = (
-  error?: string | number | FetchBaseQueryError | SerializedError,
-  userLang: LangList = 'en',
-): string => {
-  let result = String(dictionary[userLang].unknownError);
+export const makeErrorText = (error?: unknown, lang: LangList | string = 'en'): string => {
+  const currLang: LangList = String(lang) in dictionary ? lang as LangList : 'en';
+  let result = String(dictionary[currLang].unknownError);
 
-  if (
-    error === undefined ||
-    typeof error == 'string' ||
-    typeof error == 'number'
-  ) {
+  if (!(error instanceof Object)) {
     return result;
   }
 
-  if ('status' in error && error.status == 429) {
-    return String(dictionary[userLang].tooManyRequests);
-  }
+  if ('status' in error) {
+    if (error.status === 429) {
+      return String(dictionary[currLang].tooManyRequests);
+    }
 
-  const errorObj = Object(error);
-  if (errorObj?.data?.message) {
-    if (Array.isArray(errorObj.data.message)) {
-      result = (errorObj.data.message as Array<string>).join('; ').concat('.');
-    } else {
-      result = String(errorObj.data.message);
+    if (
+      'data' in error &&
+      error.data instanceof Object &&
+      'message' in error.data
+    ) {
+      if (Array.isArray(error.data.message)) {
+        result = (error.data.message as Array<string>).join('; ').concat('.');
+      } else {
+        result = String(error.data.message);
+      }
     }
   }
 
@@ -161,18 +169,18 @@ export const getServerSidePropsCustom = <T = void>(
         };
         ctx.res.setHeader(
           'Set-Cookie',
-          [        createCookie('accessToken', accessToken, { ...cookieOptions, maxAge: ACCESS_TOKEN_LIFETIME }),
-            createCookie(
-              'refreshToken',
-              refreshToken,
-              { ...cookieOptions, maxAge: rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2 },
-            ),
-            createCookie('sessionId', String(data.sessionId), { ...cookieOptions, maxAge: REFRESH_TOKEN_LIFETIME * 12 }),
-            createCookie(
-              'rememberMe',
-              String(rememberMe),
-              { ...cookieOptions, maxAge: rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2 },
-            ),
+          [createCookie('accessToken', accessToken, { ...cookieOptions, maxAge: ACCESS_TOKEN_LIFETIME }),
+          createCookie(
+            'refreshToken',
+            refreshToken,
+            { ...cookieOptions, maxAge: rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2 },
+          ),
+          createCookie('sessionId', String(data.sessionId), { ...cookieOptions, maxAge: REFRESH_TOKEN_LIFETIME * 12 }),
+          createCookie(
+            'rememberMe',
+            String(rememberMe),
+            { ...cookieOptions, maxAge: rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2 },
+          ),
           ],
         );
       }
@@ -190,7 +198,7 @@ export const getServerSidePropsCustom = <T = void>(
         return props;
       }
     }
-    
+
     if (isAuthPageRequest) {
       return { ...await func({ store, context: ctx }) };
     } else {

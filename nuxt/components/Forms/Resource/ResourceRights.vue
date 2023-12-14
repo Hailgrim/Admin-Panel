@@ -2,7 +2,7 @@
 import FormCheckbox from '../FormCheckbox.vue'
 import type { IResource, IRolesResources } from '~/utils/types'
 
-const { roleId, resource, rights } = defineProps<{ roleId: number; resource: IResource; rights?: IRolesResources }>()
+const { roleId, resource, rights } = defineProps<{ roleId: number, resource: IResource, rights?: IRolesResources }>()
 const emit = defineEmits(['update'])
 
 const newRights = ref(rights || {

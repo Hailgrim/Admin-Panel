@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import authApi from '../../../store/api/authApi';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { makeErrorText, testString } from '../../../lib/functions';
-import TextFieldStyled from '../../../components/Other/TextFieldStyled';
+import TextFieldStyled from '../FormTextFieldStyled';
 import AuthAlert from '../../../components/AuthLayout/AuthAlert';
 import FormBoxStyled from '../../../components/Forms/FormBoxStyled';
 import AuthButtonStyled from '../../../components/AuthLayout/AuthButtonStyled';
@@ -56,7 +56,7 @@ const ResetPassword: React.FC<{
         router.push(ROUTES.auth.signIn);
       }
     }
-  }, [data, error, isLoading, dispatch, router, callback]);
+  }, [data, error, isLoading, dispatch, router, callback, lang]);
 
   return (
     <FormBoxStyled

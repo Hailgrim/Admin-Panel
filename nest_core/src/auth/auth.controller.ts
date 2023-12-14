@@ -102,6 +102,8 @@ export class AuthController {
         'true',
         this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME),
       );
+    } else {
+      res.clearCookie('rememberMe', this.authService.prepareCookie());
     }
 
     res.status(HttpStatus.CREATED);

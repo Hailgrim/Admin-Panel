@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import FormBox from '../FormBox.vue'
 import FormAlert from '../FormAlert.vue'
-import FormTextInput from '../FormTextInput.vue'
-import FormPasswordInput from '../FormPasswordInput.vue'
+import FormTextField from '../FormTextField.vue'
+import FormPasswordField from '../FormPasswordField.vue'
 import FormButton from '../FormButton.vue'
 import FormAuthLink from '../FormAuthLink.vue'
 import CustomModal from '~/components/Other/CustomModal.vue'
 import RegistrationSuccess from '~/components/Forms/Auth/RegistrationSuccess.vue'
 import { useAuthStore } from '~/stores/auth'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const name = ref('')
 const nameIsValid = (value: string) => testString(NAME_REGEX, value) || t('nameValidation')
 const email = ref('')
@@ -46,7 +46,7 @@ watch(
         errorMsg.value = null
         break
       default:
-        errorMsg.value = makeErrorText(authStore.signUpError?.message)
+        errorMsg.value = makeErrorText(authStore.signUpError?.message, locale.value)
     }
   },
 )
@@ -63,15 +63,15 @@ watch(
 <template>
   <FormBox @submit="submitHandler">
     <FormAlert v-if="errorMsg" :title="$t('error')" :text="errorMsg" type="error" />
-    <FormTextInput
+    <FormTextField
       v-model:model-value="name" required name="name" type="text" :label="$t('name')"
       :rules="[nameIsValid]" :hint="$t('nameValidation')"
     />
-    <FormTextInput
+    <FormTextField
       v-model:model-value="email" required name="email" type="text" :label="$t('email')"
       :rules="[emailIsValid]" :hint="$t('emailValidation')"
     />
-    <FormPasswordInput
+    <FormPasswordField
       v-model:model-value="password" required name="password"
       :label="$t('password')" :rules="[passwordIsValid]" :hint="$t('passwordValidation')"
     />

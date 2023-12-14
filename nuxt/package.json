@@ -1,5 +1,6 @@
 {
   "name": "nuxt-app",
+  "type": "module",
   "private": true,
   "scripts": {
     "build": "nuxt build",
@@ -10,21 +11,24 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "cleanup": "nuxi cleanup",
-    "prepare": "nuxi prepare"
+    "prepare": "nuxi prepare",
+    "test": "vitest run"
   },
   "dependencies": {
-    "@pinia/nuxt": "^0.4.11",
+    "@pinia/nuxt": "^0.5.1",
     "pinia": "^2.1.6",
     "sass": "^1.69.4",
     "vuetify": "^3.3.15"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^0.41.0",
+    "@antfu/eslint-config": "^2.4.5",
     "@mdi/font": "^7.2.96",
     "@nuxt/devtools": "latest",
-    "@nuxtjs/i18n": "^8.0.0-rc.4",
+    "@nuxt/test-utils": "^3.8.1",
+    "@nuxtjs/i18n": "8.0.0-rc.9",
     "eslint": "^8.49.0",
-    "nuxt": "^3.7.0"
+    "nuxt": "^3.7.0",
+    "vitest": "^0.33.0"
   },
   "overrides": {
     "vue": "latest"

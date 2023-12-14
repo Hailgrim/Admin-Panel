@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import SideBarMenuItem from './SideBarMenuItem.vue'
-import type { ISideBarMenuItem } from '~/utils/types'
+import type { IMenuItem } from '~/utils/types'
 
 const route = useRoute()
 const { t } = useI18n()
@@ -9,7 +9,7 @@ const usersRights = useRights(ROUTES.api.users)
 const rolesRights = useRights(ROUTES.api.roles)
 const resourcesRights = useRights(ROUTES.api.resources)
 
-const menu: ISideBarMenuItem[] = [{
+const menu: IMenuItem[] = [{
   title: t('home'),
   icon: 'mdi-home-city',
   href: ROUTES.panel.home,
@@ -23,7 +23,7 @@ if (profileRights.value.reading) {
   })
 }
 
-const mainMenu: ISideBarMenuItem = {
+const mainMenu: IMenuItem = {
   title: t('main'),
   icon: 'mdi-widgets',
   childs: [],
@@ -56,7 +56,7 @@ if (resourcesRights.value.reading) {
 if (mainMenu.childs!.length > 0)
   menu.push(mainMenu)
 
-const opened = menu.findLast(value => checkActiveLink(route.path, { href: value.href, childs: value.childs }))
+const opened = menu.find(value => checkActiveLink(route.path, { href: value.href, childs: value.childs }))
 </script>
 
 <template>

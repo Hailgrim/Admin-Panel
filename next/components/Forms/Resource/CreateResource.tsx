@@ -5,7 +5,7 @@ import resourcesApi from '../../../store/api/resourcesApi';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
-import TextFieldStyled from '../../Other/TextFieldStyled';
+import TextFieldStyled from '../FormTextFieldStyled';
 import FormBoxStyled from '../FormBoxStyled';
 import { makeErrorText } from '../../../lib/functions';
 import { ROUTES } from '../../../lib/constants';
@@ -42,7 +42,7 @@ const CreateResource: React.FC = () => {
       dispatch(addAlert({ type: 'success', text: dictionary[lang.current].success }));
       router.push(ROUTES.panel.resource(createReq.data.id));
     }
-  }, [createReq.data, createReq.error, createReq.isLoading, dispatch, router]);
+  }, [createReq.data, createReq.error, createReq.isLoading, dispatch, router, lang]);
 
   return (
     <FormBoxStyled onSubmit={createHandler}>

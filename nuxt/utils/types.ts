@@ -1,6 +1,7 @@
+import type dictionary from '~/locales/dictionary'
 import type en from '~/locales/en'
 
-export type LangList = 'en' | 'ru'
+export type LangList = keyof typeof dictionary
 export type LangDictionary = typeof en
 
 export interface IRequestError {
@@ -38,11 +39,11 @@ export interface ICookies {
   rememberMe: boolean
 }
 
-export interface ISideBarMenuItem {
+export interface IMenuItem {
   title: string
   href?: string
   icon?: string
-  childs?: ISideBarMenuItem[]
+  childs?: IMenuItem[]
 }
 
 export interface IUserSignIn {

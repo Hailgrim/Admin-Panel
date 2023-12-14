@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import FormBoxStyled from '../FormBoxStyled';
-import TextFieldStyled from '../../Other/TextFieldStyled';
+import TextFieldStyled from '../FormTextFieldStyled';
 import { ROUTES } from '../../../lib/constants';
 import FormCheckbox from '../FormCheckbox';
 import useRights from '../../../hooks/useRights';
@@ -52,7 +52,7 @@ const UpdateRole: React.FC<{
     if (updateReq.data) {
       dispatch(addAlert({ type: 'success', text: dictionary[lang.current].success }));
     }
-  }, [updateReq.data, updateReq.error, updateReq.isLoading, dispatch]);
+  }, [updateReq.data, updateReq.error, updateReq.isLoading, dispatch, lang]);
 
   React.useEffect(() => {
     if (deleteReq.isLoading) {
@@ -65,7 +65,7 @@ const UpdateRole: React.FC<{
       dispatch(addAlert({ type: 'success', text: dictionary[lang.current].success }));
       router.push(ROUTES.panel.roles);
     }
-  }, [deleteReq.data, deleteReq.error, deleteReq.isLoading, dispatch, router]);
+  }, [deleteReq.data, deleteReq.error, deleteReq.isLoading, dispatch, router, lang]);
 
   return (
     <FormBoxStyled onSubmit={updateHandler}>
