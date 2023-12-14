@@ -16,7 +16,7 @@ For a local proxy, add this to hosts:
     127.0.0.1 nuxt.localhost.com
     127.0.0.1 api.localhost.com
 
-After that, you must add the self-signed certificate (```./nginx/ssl```) to your browser as a certificate authority (in this case, it is the ```myCA.pem``` file).
+After that, you must add the self-signed certificate to your browser as a certificate authority (in this case, it is the ```./nginx/ssl/myCA.pem``` file).
 
 Some startup parameters can be edited in the ```./.env``` file.
 
@@ -56,7 +56,7 @@ In the file ```./next/libs/function.ts``` using the ```getServerSidePropsCustom`
 
 Implements the same functionality as Next.js, but [Vue](https://github.com/vuejs/core) is used instead of React.
 Instead of [Node.js](https://github.com/nodejs), the container uses [Bun](https://github.com/oven-sh/bun).
-State manager ([Pinia](https://github.com/vuejs/pinia)) folder - ```./next/store```.
+State manager ([Pinia](https://github.com/vuejs/pinia)) folder - ```./nuxt/store```.
 UI kit - [Vuetify](https://github.com/vuetifyjs/vuetify).
 
 ### Main server (folder: ```./nest_core```)
