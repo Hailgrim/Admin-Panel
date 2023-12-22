@@ -7,6 +7,7 @@ import { IPage, IRoleAndResources } from '../../lib/types';
 import PageMeta from '../../components/Other/PageMeta';
 import UpdateRole from '../../components/Forms/Role/UpdateRole';
 import UpdateRoleResources from '../../components/Forms/Role/UpdateRoleResources';
+import dictionary from 'locales/dictionary';
 
 const RolePage: React.FC<IPage<IRoleAndResources>> = ({ meta, content }) => {
   return (
@@ -26,14 +27,18 @@ export default RolePage;
 
 export const getServerSideProps = getServerSidePropsCustom<IRoleAndResources>(
   async ({ store, context }) => {
-    const t = store.getState().app.t;
+    const t = dictionary[store.getState().app.language];
     const id = Number(context.params?.id);
 
     if (id) {
-      const roleReq = await store.dispatch(rolesApi.endpoints.findOne.initiate(id));
+      const roleReq = await store.dispatch(
+        rolesApi.endpoints.findOne.initiate(id)
+      );
 
       if (roleReq.data) {
-        const resourcesReq = await store.dispatch(resourcesApi.endpoints.findAll.initiate());
+        const resourcesReq = await store.dispatch(
+          resourcesApi.endpoints.findAll.initiate()
+        );
 
         return {
           props: {
@@ -48,9 +53,7 @@ export const getServerSideProps = getServerSidePropsCustom<IRoleAndResources>(
             },
           },
         };
-
       }
-
     }
 
     return { notFound: true };

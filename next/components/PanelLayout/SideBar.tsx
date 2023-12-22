@@ -18,35 +18,30 @@ import { toggleModalSideBar, toggleSideBar } from '../../store/slices/appSlice';
 import theme from '../../lib/theme';
 import { SIDE_MENU_WIDTH, SIDE_MENU_WIDTH_OPENED } from '../../lib/constants';
 import SideBarMenu from './SideBarMenu';
+import useT from 'hooks/useT';
 
 const DrawerStyled = styled(
   (props: DrawerProps) => <Drawer variant="permanent" open={true} {...props} />,
   {
-    shouldForwardProp: prop => !([  'openStyled',
-      'openModalStyled',
-    ] as PropertyKey[]).includes(prop),
-  },
+    shouldForwardProp: (prop) =>
+      !(['openStyled', 'openModalStyled'] as PropertyKey[]).includes(prop),
+  }
 )<{
   openStyled?: boolean;
   openModalStyled?: boolean;
 }>(({ openStyled, openModalStyled }) => ({
-
   '& > .MuiDrawer-paper': {
-
     maxWidth: '100%',
     width: openStyled ? SIDE_MENU_WIDTH_OPENED : SIDE_MENU_WIDTH,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.short,
     }),
-
     [theme.breakpoints.down('md')]: {
       width: openModalStyled ? SIDE_MENU_WIDTH_OPENED : 0,
       overflow: 'hidden',
     },
-
   },
-
 }));
 
 const DrawerHeaderStyled = styled(Box)(() => ({
@@ -59,9 +54,11 @@ const DrawerHeaderStyled = styled(Box)(() => ({
 
 const SideBar: React.FC = () => {
   const dispatch = useAppDispatch();
-  const t = useAppSelector(store => store.app.t);
-  const isSideBarOpened = useAppSelector(store => store.app.isSideBarOpened);
-  const isModalSideBarOpened = useAppSelector(store => store.app.isModalSideBarOpened);
+  const t = useT();
+  const isSideBarOpened = useAppSelector((store) => store.app.isSideBarOpened);
+  const isModalSideBarOpened = useAppSelector(
+    (store) => store.app.isModalSideBarOpened
+  );
   const theme = useTheme();
   const downMD = useMediaQuery(theme.breakpoints.down('md'));
   const downSM = useMediaQuery(theme.breakpoints.down('sm'));
@@ -75,19 +72,15 @@ const SideBar: React.FC = () => {
         <IconButton
           size="large"
           sx={{ mx: 1, my: downSM ? 0 : 1 }}
-          onClick={() => downMD
-            ? dispatch(toggleModalSideBar(!isModalSideBarOpened))
-            : dispatch(toggleSideBar(!isSideBarOpened))
+          onClick={() =>
+            downMD
+              ? dispatch(toggleModalSideBar(!isModalSideBarOpened))
+              : dispatch(toggleSideBar(!isSideBarOpened))
           }
         >
           <AdminPanelSettingsIcon />
         </IconButton>
-        <Typography
-          component="span"
-          variant="h6"
-          sx={{ pl: 1 }}
-          noWrap
-        >
+        <Typography component="span" variant="h6" sx={{ pl: 1 }} noWrap>
           {t.adminPanel}
         </Typography>
       </DrawerHeaderStyled>

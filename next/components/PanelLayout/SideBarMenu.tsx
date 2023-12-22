@@ -6,13 +6,13 @@ import GroupIcon from '@mui/icons-material/Group';
 import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 import ApiIcon from '@mui/icons-material/Api';
 
-import { useAppSelector } from '../../store/hooks';
 import SideBarMenuItem from './SideBarMenuItem';
 import { ROUTES } from '../../lib/constants';
 import useRights from '../../hooks/useRights';
+import useT from 'hooks/useT';
 
 const SideBarMenu: React.FC = () => {
-  const t = useAppSelector(store => store.app.t);
+  const t = useT();
   const profileRights = useRights(ROUTES.api.auth.profile);
   const usersRights = useRights(ROUTES.api.users);
   const rolesRights = useRights(ROUTES.api.roles);
@@ -34,7 +34,8 @@ const SideBarMenu: React.FC = () => {
       <SideBarMenuItem
         name={String(t.main)}
         icon={<WidgetsIcon />}
-        childs={[      {
+        childs={[
+          {
             href: ROUTES.panel.users,
             icon: <GroupIcon />,
             name: String(t.users),

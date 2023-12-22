@@ -2,7 +2,7 @@ import React from 'react';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 
 import authApi from '../../../store/api/authApi';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useAppDispatch } from '../../../store/hooks';
 import { makeErrorText } from '../../../lib/functions';
 import AuthLinkStyled from '../../../components/AuthLayout/AuthLinkStyled';
 import TextFieldStyled from '../FormTextFieldStyled';
@@ -14,12 +14,14 @@ import CustomModal from '../../Other/CustomModal';
 import ResetPassword from './ResetPassword';
 import dictionary from '../../../locales/dictionary';
 import useLang from '../../../hooks/useLang';
+import useT from 'hooks/useT';
 
 const ForgotPassword: React.FC = () => {
   const dispatch = useAppDispatch();
   const lang = useLang();
-  const t = useAppSelector(store => store.app.t);
-  const [forgotPassword, { data, error, isFetching, originalArgs }] = authApi.useLazyForgotPasswordQuery();
+  const t = useT();
+  const [forgotPassword, { data, error, isFetching, originalArgs }] =
+    authApi.useLazyForgotPasswordQuery();
   const [errorText, setErrorText] = React.useState<string>();
   const [email, setEmail] = React.useState('');
   const [modalState, setModalState] = React.useState(false);
@@ -61,7 +63,7 @@ const ForgotPassword: React.FC = () => {
           type="email"
           label={t.email}
           value={email}
-          onChange={event => setEmail(event.currentTarget.value)}
+          onChange={(event) => setEmail(event.currentTarget.value)}
           autoFocus
         />
         <AuthButtonStyled disabled={isFetching}>

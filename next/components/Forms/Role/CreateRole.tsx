@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouter } from 'next/router';
 
 import rolesApi from '../../../store/api/rolesApi';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useAppDispatch } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import TextFieldStyled from '../FormTextFieldStyled';
@@ -13,12 +13,13 @@ import FormCheckbox from '../FormCheckbox';
 import useRights from '../../../hooks/useRights';
 import dictionary from '../../../locales/dictionary';
 import useLang from '../../../hooks/useLang';
+import useT from 'hooks/useT';
 
 const CreateRole: React.FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const lang = useLang();
-  const t = useAppSelector(store => store.app.t);
+  const t = useT();
   const [create, createReq] = rolesApi.useCreateMutation();
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
@@ -35,13 +36,27 @@ const CreateRole: React.FC = () => {
       return;
     }
     if (createReq.error) {
-      dispatch(addAlert({ type: 'error', text: makeErrorText(createReq.error, lang.current) }));
+      dispatch(
+        addAlert({
+          type: 'error',
+          text: makeErrorText(createReq.error, lang.current),
+        })
+      );
     }
     if (createReq.data) {
-      dispatch(addAlert({ type: 'success', text: dictionary[lang.current].success }));
+      dispatch(
+        addAlert({ type: 'success', text: dictionary[lang.current].success })
+      );
       router.push(ROUTES.panel.role(createReq.data.id));
     }
-  }, [createReq.data, createReq.error, createReq.isLoading, dispatch, router, lang]);
+  }, [
+    createReq.data,
+    createReq.error,
+    createReq.isLoading,
+    dispatch,
+    router,
+    lang,
+  ]);
 
   return (
     <FormBoxStyled onSubmit={createHandler}>
@@ -51,14 +66,14 @@ const CreateRole: React.FC = () => {
         type="text"
         label={t.name}
         value={name}
-        onChange={event => setName(event.currentTarget.value)}
+        onChange={(event) => setName(event.currentTarget.value)}
       />
       <TextFieldStyled
         name="description"
         type="text"
         label={t.description}
         value={description}
-        onChange={event => setDescription(event.currentTarget.value)}
+        onChange={(event) => setDescription(event.currentTarget.value)}
       />
       <FormCheckbox
         label={t.enabled}

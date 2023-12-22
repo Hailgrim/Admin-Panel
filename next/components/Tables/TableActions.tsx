@@ -3,8 +3,8 @@ import { Button, Box } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { useAppSelector } from '../../store/hooks';
 import LinkStyled from '../Other/LinkStyled';
+import useT from 'hooks/useT';
 
 const TableActions: React.FC<{
   create?: {
@@ -17,13 +17,23 @@ const TableActions: React.FC<{
     loading?: boolean;
   };
 }> = ({ create, destroy }) => {
-  const t = useAppSelector(store => store.app.t);
+  const t = useT();
 
   return (
     <Box>
-      {create && (
-        create.disabled
-          ? (
+      {create &&
+        (create.disabled ? (
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            sx={{ my: 1.5, mr: 3 }}
+            disabled={create.disabled}
+          >
+            {t.create}
+          </Button>
+        ) : (
+          <LinkStyled href={create.link}>
             <Button
               variant="contained"
               color="primary"
@@ -33,21 +43,8 @@ const TableActions: React.FC<{
             >
               {t.create}
             </Button>
-          )
-          : (
-            <LinkStyled href={create.link}>
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<AddIcon />}
-                sx={{ my: 1.5, mr: 3 }}
-                disabled={create.disabled}
-              >
-                {t.create}
-              </Button>
-            </LinkStyled>
-          )
-      )}
+          </LinkStyled>
+        ))}
       {destroy && (
         <Button
           variant="contained"

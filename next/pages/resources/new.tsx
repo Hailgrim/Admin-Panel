@@ -4,6 +4,7 @@ import { getServerSidePropsCustom } from '../../lib/functions';
 import { IPage } from '../../lib/types';
 import PageMeta from '../../components/Other/PageMeta';
 import CreateResource from '../../components/Forms/Resource/CreateResource';
+import dictionary from 'locales/dictionary';
 
 const NewResourcePage: React.FC<IPage> = ({ meta }) => {
   return (
@@ -17,7 +18,7 @@ export default NewResourcePage;
 
 export const getServerSideProps = getServerSidePropsCustom(
   async ({ store }) => {
-    const t = store.getState().app.t;
+    const t = dictionary[store.getState().app.language];
     return {
       props: {
         meta: {

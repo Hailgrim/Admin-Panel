@@ -6,8 +6,13 @@ import { getServerSidePropsCustom, makePagination } from '../../lib/functions';
 import { IFindAndCountRes, IPage, IResource } from '../../lib/types';
 import PageMeta from '../../components/Other/PageMeta';
 import ResourcesTable from '../../components/Tables/ResourcesTable';
+import dictionary from 'locales/dictionary';
 
-const ResourcesPage: React.FC<IPage<IFindAndCountRes<IResource>>> = ({ meta, pagination, content }) => {
+const ResourcesPage: React.FC<IPage<IFindAndCountRes<IResource>>> = ({
+  meta,
+  pagination,
+  content,
+}) => {
   return (
     <React.Fragment>
       <PageMeta {...meta} />
@@ -17,27 +22,28 @@ const ResourcesPage: React.FC<IPage<IFindAndCountRes<IResource>>> = ({ meta, pag
 };
 export default ResourcesPage;
 
-export const getServerSideProps = getServerSidePropsCustom<IFindAndCountRes<IResource>>(
-  async ({ store, context }) => {
-    const t = store.getState().app.t;
-    const pagination = makePagination(context.query);
-    const { data, error } = await store
-      .dispatch(resourcesApi.endpoints.findAndCountAll.initiate(pagination));
+export const getServerSideProps = getServerSidePropsCustom<
+  IFindAndCountRes<IResource>
+>(async ({ store, context }) => {
+  const t = dictionary[store.getState().app.language];
+  const pagination = makePagination(context.query);
+  const { data, error } = await store.dispatch(
+    resourcesApi.endpoints.findAndCountAll.initiate(pagination)
+  );
 
-    if (error && (error as FetchBaseQueryError).status == 403) {
-      return { notFound: true };
-    }
-
-    return {
-      props: {
-        meta: {
-          title: t.resources,
-          description: t.resources,
-          h1: t.resources,
-        },
-        pagination: pagination,
-        content: data || null,
-      },
-    };
+  if (error && (error as FetchBaseQueryError).status == 403) {
+    return { notFound: true };
   }
-);
+
+  return {
+    props: {
+      meta: {
+        title: t.resources,
+        description: t.resources,
+        h1: t.resources,
+      },
+      pagination: pagination,
+      content: data || null,
+    },
+  };
+});

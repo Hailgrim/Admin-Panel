@@ -1,17 +1,17 @@
 import { useRouter } from 'next/router';
 import React from 'react';
 
-import { useAppSelector } from '../../../store/hooks';
 import AuthAlert from '../../AuthLayout/AuthAlert';
 import AuthButtonStyled from '../../AuthLayout/AuthButtonStyled';
 import FormBoxStyled from '../FormBoxStyled';
 import { ROUTES } from '../../../lib/constants';
+import useT from 'hooks/useT';
 
 const RegistrationSuccess: React.FC<{
   callback?: () => void;
 }> = ({ callback }) => {
   const router = useRouter();
-  const t = useAppSelector(store => store.app.t);
+  const t = useT();
 
   const formHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -24,9 +24,7 @@ const RegistrationSuccess: React.FC<{
   return (
     <FormBoxStyled onSubmit={formHandler}>
       <AuthAlert severity="success" text={t.registrationSuccessText} />
-      <AuthButtonStyled>
-        {t.signIn}
-      </AuthButtonStyled>
+      <AuthButtonStyled>{t.signIn}</AuthButtonStyled>
     </FormBoxStyled>
   );
 };

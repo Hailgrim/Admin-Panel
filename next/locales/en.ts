@@ -1,4 +1,4 @@
-export default {
+const en = {
   langCode: 'en',
   langCodeFull: 'en-US',
   langName: 'English',
@@ -14,7 +14,7 @@ export default {
   resources: 'Resources',
   resource: 'Resource',
   signUp: 'Sign Up',
-  signUpText: 'Don\'t have an account? Sign Up!',
+  signUpText: "Don't have an account? Sign Up!",
   signIn: 'Sign In',
   signInText: 'Already have an account? Sign in!',
   signOut: 'Sign out',
@@ -39,7 +39,8 @@ export default {
   error: 'Error',
   nameValidation: 'Latin characters only, length from 1 to 100',
   emailValidation: 'example@mail.com',
-  passwordValidation: 'Latin uppercase and lowercase characters, special symbols, numbers, length from 10 to 100',
+  passwordValidation:
+    'Latin uppercase and lowercase characters, special symbols, numbers, length from 10 to 100',
   wrongEmail: 'Wrong email',
   wrongEmailOrPassword: 'Wrong email or password',
   loading: 'Loading',
@@ -67,4 +68,5 @@ export default {
   nothingToUpdate: 'Nothing to update',
   tooManyRequests: 'Too many requests',
   close: 'Close',
-}
+};
+export default en;

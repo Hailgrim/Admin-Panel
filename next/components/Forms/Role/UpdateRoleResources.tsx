@@ -4,7 +4,7 @@ import { Typography } from '@mui/material';
 import rolesApi from '../../../store/api/rolesApi';
 import { makeErrorText } from '../../../lib/functions';
 import { IResource, IRole, IRolesResources } from '../../../lib/types';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useAppDispatch } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import FormBoxStyled from '../FormBoxStyled';
@@ -13,6 +13,7 @@ import { ROUTES } from '../../../lib/constants';
 import useRights from '../../../hooks/useRights';
 import dictionary from '../../../locales/dictionary';
 import useLang from '../../../hooks/useLang';
+import useT from 'hooks/useT';
 
 const UpdateRoleResources: React.FC<{
   role: IRole;
@@ -20,10 +21,10 @@ const UpdateRoleResources: React.FC<{
 }> = ({ role, resources }) => {
   const dispatch = useAppDispatch();
   const lang = useLang();
-  const t = useAppSelector(store => store.app.t);
+  const t = useT();
   const [update, updateReq] = rolesApi.useUpdateResourcesMutation();
   const [updatedRights, setUpdatedRights] = React.useState(
-    role.resources?.map(value => value.RolesResources) || []
+    role.resources?.map((value) => value.RolesResources) || []
   );
   const rights = useRights(ROUTES.api.roles);
 
@@ -36,7 +37,7 @@ const UpdateRoleResources: React.FC<{
   };
 
   const updateRights = (newRights: IRolesResources) => {
-    const filtered = updatedRights.filter(value => {
+    const filtered = updatedRights.filter((value) => {
       if (
         newRights.roleId == value?.roleId &&
         newRights.resourceId == value?.resourceId
@@ -46,12 +47,14 @@ const UpdateRoleResources: React.FC<{
         return true;
       }
     });
-    if (!(
-      newRights.creating == false &&
-      newRights.reading == false &&
-      newRights.updating == false &&
-      newRights.deleting == false
-    )) {
+    if (
+      !(
+        newRights.creating == false &&
+        newRights.reading == false &&
+        newRights.updating == false &&
+        newRights.deleting == false
+      )
+    ) {
       filtered.push(newRights);
     }
     setUpdatedRights(filtered);
@@ -62,28 +65,33 @@ const UpdateRoleResources: React.FC<{
       return;
     }
     if (updateReq.data === false || updateReq.error) {
-      dispatch(addAlert({ type: 'error', text: makeErrorText(updateReq.error, lang.current) }));
+      dispatch(
+        addAlert({
+          type: 'error',
+          text: makeErrorText(updateReq.error, lang.current),
+        })
+      );
     }
     if (updateReq.data) {
-      dispatch(addAlert({ type: 'success', text: dictionary[lang.current].success }));
+      dispatch(
+        addAlert({ type: 'success', text: dictionary[lang.current].success })
+      );
     }
   }, [updateReq.data, updateReq.error, updateReq.isLoading, dispatch, lang]);
 
   return (
     <FormBoxStyled onSubmit={updateHandler}>
-      <Typography
-        component="h2"
-        variant="h5"
-        sx={{ my: 1.5, lineHeight: 1 }}
-      >
+      <Typography component="h2" variant="h5" sx={{ my: 1.5, lineHeight: 1 }}>
         {t.resources}
       </Typography>
-      {resources.map(resource => (
+      {resources.map((resource) => (
         <ResourceRights
           key={`ResourceRights.${resource.id}`}
           roleId={role.id}
           resource={resource}
-          rights={updatedRights.filter(value => value?.resourceId == resource.id)[0]}
+          rights={
+            updatedRights.filter((value) => value?.resourceId == resource.id)[0]
+          }
           setRights={updateRights}
         />
       ))}

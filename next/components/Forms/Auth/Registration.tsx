@@ -4,31 +4,41 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 
 import authApi from '../../../store/api/authApi';
 import { makeErrorText, testString } from '../../../lib/functions';
-import { useAppSelector } from '../../../store/hooks';
 import AuthLinkStyled from '../../AuthLayout/AuthLinkStyled';
 import TextFieldStyled from '../FormTextFieldStyled';
 import AuthAlert from '../../AuthLayout/AuthAlert';
 import AuthButtonStyled from '../../AuthLayout/AuthButtonStyled';
 import FormBoxStyled from '../FormBoxStyled';
 import { ROUTES } from '../../../lib/constants';
-import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX } from '../../../lib/constants';
+import {
+  EMAIL_REGEX,
+  NAME_REGEX,
+  PASSWORD_REGEX,
+} from '../../../lib/constants';
 import CustomModal from '../../Other/CustomModal';
 import RegistrationSuccess from './RegistrationSuccess';
 import dictionary from '../../../locales/dictionary';
 import useLang from '../../../hooks/useLang';
+import useT from 'hooks/useT';
 
 const Registration: React.FC = () => {
   const router = useRouter();
   const lang = useLang();
-  const t = useAppSelector(store => store.app.t);
+  const t = useT();
   const [signUp, { data, error, isLoading }] = authApi.useLazySignUpQuery();
   const [errorText, setErrorText] = React.useState<string>();
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const nameError = React.useMemo(() => testString(NAME_REGEX, name), [name]);
-  const emailError = React.useMemo(() => testString(EMAIL_REGEX, email), [email]);
-  const passwordError = React.useMemo(() => testString(PASSWORD_REGEX, password), [password]);
+  const emailError = React.useMemo(
+    () => testString(EMAIL_REGEX, email),
+    [email]
+  );
+  const passwordError = React.useMemo(
+    () => testString(PASSWORD_REGEX, password),
+    [password]
+  );
   const [modalState, setModalState] = React.useState(false);
 
   const signUpHandler = (event: React.FormEvent<HTMLFormElement>) => {
@@ -72,7 +82,7 @@ const Registration: React.FC = () => {
           type="text"
           label={t.name}
           value={name}
-          onChange={event => setName(event.currentTarget.value)}
+          onChange={(event) => setName(event.currentTarget.value)}
           color={nameError ? 'success' : undefined}
           helperText={t.nameValidation}
           focused={name.length > 0 || undefined}
@@ -84,7 +94,7 @@ const Registration: React.FC = () => {
           type="email"
           label={t.email}
           value={email}
-          onChange={event => setEmail(event.currentTarget.value)}
+          onChange={(event) => setEmail(event.currentTarget.value)}
           color={emailError ? 'success' : undefined}
           helperText={t.emailValidation}
           focused={email.length > 0 || undefined}
@@ -95,13 +105,19 @@ const Registration: React.FC = () => {
           name="password"
           label={t.password}
           value={password}
-          onChange={event => setPassword(event.currentTarget.value)}
+          onChange={(event) => setPassword(event.currentTarget.value)}
           color={passwordError ? 'success' : undefined}
           helperText={t.passwordValidation}
           focused={password.length > 0 || undefined}
         />
         <AuthButtonStyled
-          disabled={isLoading || Boolean(data) || !nameError || !emailError || !passwordError}
+          disabled={
+            isLoading ||
+            Boolean(data) ||
+            !nameError ||
+            !emailError ||
+            !passwordError
+          }
         >
           {isLoading ? t.loading : t.signUp}
         </AuthButtonStyled>

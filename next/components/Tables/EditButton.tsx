@@ -12,21 +12,16 @@ const EditButton: React.FC<{
 }> = ({ route, link, selectable = true }) => {
   const rights = useRights(route);
 
-  return selectable && rights.reading
-    ? (
-      <LinkStyled
-        href={link}
-        onClick={event => event.stopPropagation()}
-      >
-        <IconButton size="medium">
-          <EditIcon />
-        </IconButton>
-      </LinkStyled>
-    )
-    : (
-      <IconButton size="medium" disabled={true}>
+  return selectable && rights.reading ? (
+    <LinkStyled href={link} onClick={(event) => event.stopPropagation()}>
+      <IconButton size="medium">
         <EditIcon />
       </IconButton>
-    );
+    </LinkStyled>
+  ) : (
+    <IconButton size="medium" disabled={true}>
+      <EditIcon />
+    </IconButton>
+  );
 };
 export default EditButton;

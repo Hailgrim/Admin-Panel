@@ -7,13 +7,12 @@ import { SIDE_MENU_WIDTH, SIDE_MENU_WIDTH_OPENED } from '../../lib/constants';
 const BoxStyled = styled(
   (props: BoxProps<'main'>) => <Box component="main" {...props} />,
   {
-    shouldForwardProp: prop => !([  'openStyled',
-    ] as PropertyKey[]).includes(prop),
-  },
+    shouldForwardProp: (prop) =>
+      !(['openStyled'] as PropertyKey[]).includes(prop),
+  }
 )<{
   openStyled?: boolean;
 }>(({ openStyled }) => ({
-
   display: 'flex',
   flexDirection: 'column',
   minHeight: '100vh',
@@ -23,15 +22,12 @@ const BoxStyled = styled(
     easing: theme.transitions.easing.easeOut,
     duration: theme.transitions.duration.short,
   }),
-
   [theme.breakpoints.down('md')]: {
     paddingLeft: 'unset',
   },
-
 }));
 
 const BoxBodyStyled = styled(Box)(() => ({
-
   display: 'flex',
   flexDirection: 'column',
   flexGrow: 1,
@@ -40,20 +36,17 @@ const BoxBodyStyled = styled(Box)(() => ({
   marginRight: theme.spacing(3),
   marginTop: theme.spacing(1.5),
   marginBottom: theme.spacing(1.5),
-
 }));
 
 const Content: React.FC<{
   children?: React.ReactNode;
 }> = ({ children }) => {
-  const isSideBarOpened = useAppSelector(store => store.app.isSideBarOpened);
+  const isSideBarOpened = useAppSelector((store) => store.app.isSideBarOpened);
 
   return (
     <BoxStyled openStyled={isSideBarOpened}>
       <Toolbar />
-      <BoxBodyStyled>
-        {children}
-      </BoxBodyStyled>
+      <BoxBodyStyled>{children}</BoxBodyStyled>
     </BoxStyled>
   );
 };

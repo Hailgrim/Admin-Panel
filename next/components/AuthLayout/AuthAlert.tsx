@@ -1,14 +1,14 @@
 import { Alert, AlertColor, AlertTitle } from '@mui/material';
 import React from 'react';
 
-import { useAppSelector } from '../../store/hooks';
+import useT from 'hooks/useT';
 
 const AuthAlert: React.FC<{
   title?: string;
   text?: string;
   severity?: AlertColor;
 }> = ({ title, text, severity }) => {
-  const t = useAppSelector(store => store.app.t);
+  const t = useT();
   const actualTitle = React.useMemo(() => {
     if (title) {
       return title;
@@ -24,11 +24,7 @@ const AuthAlert: React.FC<{
   }, [title, severity, t]);
 
   return (
-    <Alert
-      variant="filled"
-      severity={severity}
-      sx={{ my: 1.5 }}
-    >
+    <Alert variant="filled" severity={severity} sx={{ my: 1.5 }}>
       {actualTitle && <AlertTitle>{actualTitle}</AlertTitle>}
       {text}
     </Alert>

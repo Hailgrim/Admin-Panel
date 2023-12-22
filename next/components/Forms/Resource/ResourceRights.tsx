@@ -6,9 +6,9 @@ import {
   FormLabel,
 } from '@mui/material';
 
-import { useAppSelector } from '../../../store/hooks';
 import { IResource, IRolesResources } from '../../../lib/types';
 import FormCheckbox from '../FormCheckbox';
+import useT from 'hooks/useT';
 
 const ResourceRights: React.FC<{
   roleId: number;
@@ -16,7 +16,7 @@ const ResourceRights: React.FC<{
   rights?: IRolesResources;
   setRights: (newRights: IRolesResources) => void;
 }> = ({ roleId, resource, rights, setRights }) => {
-  const t = useAppSelector(store => store.app.t);
+  const t = useT();
   const newRights: IRolesResources = rights || {
     roleId,
     resourceId: resource.id,
@@ -27,7 +27,11 @@ const ResourceRights: React.FC<{
   };
 
   return (
-    <FormControl sx={{ my: 1.5, mr: 3 }} component="fieldset" variant="standard">
+    <FormControl
+      sx={{ my: 1.5, mr: 3 }}
+      component="fieldset"
+      variant="standard"
+    >
       <FormLabel component="legend">{resource.name}</FormLabel>
       <FormGroup>
         <FormCheckbox
@@ -35,31 +39,41 @@ const ResourceRights: React.FC<{
           name="create[]"
           value="create"
           checked={rights?.creating || false}
-          onChange={() => setRights({ ...newRights, creating: !newRights.creating })}
+          onChange={() =>
+            setRights({ ...newRights, creating: !newRights.creating })
+          }
         />
         <FormCheckbox
           label={t.read}
           name="read[]"
           value="read"
           checked={rights?.reading || false}
-          onChange={() => setRights({ ...newRights, reading: !newRights.reading })}
+          onChange={() =>
+            setRights({ ...newRights, reading: !newRights.reading })
+          }
         />
         <FormCheckbox
           label={t.update}
           name="update[]"
           value="update"
           checked={rights?.updating || false}
-          onChange={() => setRights({ ...newRights, updating: !newRights.updating })}
+          onChange={() =>
+            setRights({ ...newRights, updating: !newRights.updating })
+          }
         />
         <FormCheckbox
           label={t.delete}
           name="delete[]"
           value="delete"
           checked={rights?.deleting || false}
-          onChange={() => setRights({ ...newRights, deleting: !newRights.deleting })}
+          onChange={() =>
+            setRights({ ...newRights, deleting: !newRights.deleting })
+          }
         />
       </FormGroup>
-      <FormHelperText sx={{ maxWidth: 300 }}>{resource.description}</FormHelperText>
+      <FormHelperText sx={{ maxWidth: 300 }}>
+        {resource.description}
+      </FormHelperText>
     </FormControl>
   );
 };

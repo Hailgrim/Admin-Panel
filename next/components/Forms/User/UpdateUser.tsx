@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import usersApi from '../../../store/api/usersApi';
 import { getUpdatedValues, makeErrorText } from '../../../lib/functions';
 import { IUser } from '../../../lib/types';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useAppDispatch } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import TextFieldStyled from '../FormTextFieldStyled';
@@ -14,6 +14,7 @@ import { ROUTES } from '../../../lib/constants';
 import useRights from '../../../hooks/useRights';
 import dictionary from '../../../locales/dictionary';
 import useLang from '../../../hooks/useLang';
+import useT from 'hooks/useT';
 
 const UpdateUser: React.FC<{
   data: IUser;
@@ -21,7 +22,7 @@ const UpdateUser: React.FC<{
   const dispatch = useAppDispatch();
   const router = useRouter();
   const lang = useLang();
-  const t = useAppSelector(store => store.app.t);
+  const t = useT();
   const [update, updateReq] = usersApi.useUpdateMutation();
   const [destroy, deleteReq] = usersApi.useDeleteMutation();
   const [email, setEmail] = React.useState(data.email);
@@ -31,10 +32,11 @@ const UpdateUser: React.FC<{
 
   const updateHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const updatedValues = getUpdatedValues<IUser>(
-      data,
-      { email, name, enabled },
-    );
+    const updatedValues = getUpdatedValues<IUser>(data, {
+      email,
+      name,
+      enabled,
+    });
     if (Object.keys(updatedValues).length == 0) {
       dispatch(addAlert({ type: 'warning', text: t.nothingToUpdate }));
     } else {
@@ -47,10 +49,17 @@ const UpdateUser: React.FC<{
       return;
     }
     if (updateReq.data === false || updateReq.error) {
-      dispatch(addAlert({ type: 'error', text: makeErrorText(updateReq.error, lang.current) }));
+      dispatch(
+        addAlert({
+          type: 'error',
+          text: makeErrorText(updateReq.error, lang.current),
+        })
+      );
     }
     if (updateReq.data) {
-      dispatch(addAlert({ type: 'success', text: dictionary[lang.current].success }));
+      dispatch(
+        addAlert({ type: 'success', text: dictionary[lang.current].success })
+      );
     }
   }, [updateReq.data, updateReq.error, updateReq.isLoading, dispatch, lang]);
 
@@ -59,13 +68,27 @@ const UpdateUser: React.FC<{
       return;
     }
     if (deleteReq.data === false || deleteReq.error) {
-      dispatch(addAlert({ type: 'error', text: makeErrorText(deleteReq.error, lang.current) }));
+      dispatch(
+        addAlert({
+          type: 'error',
+          text: makeErrorText(deleteReq.error, lang.current),
+        })
+      );
     }
     if (deleteReq.data) {
-      dispatch(addAlert({ type: 'success', text: dictionary[lang.current].success }));
+      dispatch(
+        addAlert({ type: 'success', text: dictionary[lang.current].success })
+      );
       router.push(ROUTES.panel.users);
     }
-  }, [deleteReq.data, deleteReq.error, deleteReq.isLoading, dispatch, router, lang]);
+  }, [
+    deleteReq.data,
+    deleteReq.error,
+    deleteReq.isLoading,
+    dispatch,
+    router,
+    lang,
+  ]);
 
   return (
     <FormBoxStyled onSubmit={updateHandler}>
@@ -75,7 +98,7 @@ const UpdateUser: React.FC<{
         type="email"
         label={t.email}
         value={email}
-        onChange={event => setEmail(event.currentTarget.value)}
+        onChange={(event) => setEmail(event.currentTarget.value)}
       />
       <TextFieldStyled
         required
@@ -83,7 +106,7 @@ const UpdateUser: React.FC<{
         type="text"
         label={t.name}
         value={name}
-        onChange={event => setName(event.currentTarget.value)}
+        onChange={(event) => setName(event.currentTarget.value)}
       />
       <FormCheckbox
         label={t.enabled}

@@ -4,7 +4,7 @@ import { Typography } from '@mui/material';
 import usersApi from '../../../store/api/usersApi';
 import { makeErrorText } from '../../../lib/functions';
 import { IRole, IUser, IUsersRoles } from '../../../lib/types';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useAppDispatch } from '../../../store/hooks';
 import { addAlert } from '../../../store/slices/appSlice';
 import FormActions from '../FormActions';
 import FormBoxStyled from '../FormBoxStyled';
@@ -13,6 +13,7 @@ import { ROUTES } from '../../../lib/constants';
 import useRights from '../../../hooks/useRights';
 import dictionary from '../../../locales/dictionary';
 import useLang from '../../../hooks/useLang';
+import useT from 'hooks/useT';
 
 const UpdateUserRoles: React.FC<{
   user: IUser;
@@ -20,10 +21,10 @@ const UpdateUserRoles: React.FC<{
 }> = ({ user, roles }) => {
   const dispatch = useAppDispatch();
   const lang = useLang();
-  const t = useAppSelector(store => store.app.t);
+  const t = useT();
   const [update, updateReq] = usersApi.useUpdateRolesMutation();
   const [updatedRoles, setUpdatedRoles] = React.useState(
-    user.roles?.map(value => value.UsersRoles) || []
+    user.roles?.map((value) => value.UsersRoles) || []
   );
   const rights = useRights(ROUTES.api.users);
 
@@ -38,11 +39,8 @@ const UpdateUserRoles: React.FC<{
   const updateRoles = (newRole: IUsersRoles) => {
     let find = false;
 
-    const filtered = updatedRoles.filter(value => {
-      if (
-        newRole.userId == value?.userId &&
-        newRole.roleId == value?.roleId
-      ) {
+    const filtered = updatedRoles.filter((value) => {
+      if (newRole.userId == value?.userId && newRole.roleId == value?.roleId) {
         find = true;
         return false;
       } else {
@@ -62,29 +60,32 @@ const UpdateUserRoles: React.FC<{
       return;
     }
     if (updateReq.data === false || updateReq.error) {
-      dispatch(addAlert({ type: 'error', text: makeErrorText(updateReq.error, lang.current) }));
+      dispatch(
+        addAlert({
+          type: 'error',
+          text: makeErrorText(updateReq.error, lang.current),
+        })
+      );
     }
     if (updateReq.data) {
-      dispatch(addAlert({ type: 'success', text: dictionary[lang.current].success }));
+      dispatch(
+        addAlert({ type: 'success', text: dictionary[lang.current].success })
+      );
     }
   }, [updateReq.data, updateReq.error, updateReq.isLoading, dispatch, lang]);
 
   return (
     <FormBoxStyled onSubmit={updateHandler}>
-      <Typography
-        component="h2"
-        variant="h5"
-        sx={{ my: 1.5, lineHeight: 1 }}
-      >
+      <Typography component="h2" variant="h5" sx={{ my: 1.5, lineHeight: 1 }}>
         {t.roles}
       </Typography>
-      {roles.map(role => (
+      {roles.map((role) => (
         <FormCheckbox
           key={`roleRow.${role.id}`}
           label={role.name}
           name="role[]"
           value="allowed"
-          checked={updatedRoles.some(value => value?.roleId == role.id)}
+          checked={updatedRoles.some((value) => value?.roleId == role.id)}
           onChange={() => updateRoles({ roleId: role.id, userId: user.id })}
         />
       ))}

@@ -1,4 +1,4 @@
 import en from './en';
-import ru from './ru';
 
-export default { en, ru };
+const dictionary = { en };
+export default dictionary;

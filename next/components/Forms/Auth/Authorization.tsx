@@ -5,7 +5,7 @@ import React from 'react';
 import authApi from '../../../store/api/authApi';
 import { setProfile } from '../../../store/slices/appSlice';
 import { makeErrorText } from '../../../lib/functions';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useAppDispatch } from '../../../store/hooks';
 import AuthLinkStyled from '../../../components/AuthLayout/AuthLinkStyled';
 import TextFieldStyled from '../FormTextFieldStyled';
 import AuthAlert from '../../../components/AuthLayout/AuthAlert';
@@ -17,13 +17,15 @@ import VerifyUser from './VerifyUser';
 import { ROUTES } from '../../../lib/constants';
 import dictionary from '../../../locales/dictionary';
 import useLang from '../../../hooks/useLang';
+import useT from 'hooks/useT';
 
 const Authorization: React.FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const lang = useLang();
-  const t = useAppSelector(store => store.app.t);
-  const [signIn, { data, error, isFetching, originalArgs }] = authApi.useLazySignInQuery();
+  const t = useT();
+  const [signIn, { data, error, isFetching, originalArgs }] =
+    authApi.useLazySignInQuery();
   const [errorText, setErrorText] = React.useState<string>();
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -59,7 +61,11 @@ const Authorization: React.FC = () => {
     } else {
       if (data) {
         dispatch(setProfile(data));
-        router.push(router.query.return ? decodeURIComponent(String(router.query.return)) : ROUTES.panel.home);
+        router.push(
+          router.query.return
+            ? decodeURIComponent(String(router.query.return))
+            : ROUTES.panel.home
+        );
       }
     }
   }, [data, error, isFetching, dispatch, router, lang]);
@@ -74,7 +80,7 @@ const Authorization: React.FC = () => {
           type="email"
           label={t.email}
           value={email}
-          onChange={event => setEmail(event.currentTarget.value)}
+          onChange={(event) => setEmail(event.currentTarget.value)}
           autoFocus
         />
         <TextFieldStyled
@@ -83,7 +89,7 @@ const Authorization: React.FC = () => {
           name="password"
           label={t.password}
           value={password}
-          onChange={event => setPassword(event.currentTarget.value)}
+          onChange={(event) => setPassword(event.currentTarget.value)}
         />
         <FormCheckbox
           label={t.rememberMe}

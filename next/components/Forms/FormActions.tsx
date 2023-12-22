@@ -4,7 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { useAppSelector } from '../../store/hooks';
+import useT from 'hooks/useT';
 
 const FormActions: React.FC<{
   create?: {
@@ -21,7 +21,7 @@ const FormActions: React.FC<{
     disabled?: boolean;
   };
 }> = ({ create, update, destroy }) => {
-  const t = useAppSelector(store => store.app.t);
+  const t = useT();
 
   return (
     <Box>
