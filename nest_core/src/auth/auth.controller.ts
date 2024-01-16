@@ -19,8 +19,6 @@ import { LocalAuthGuard } from './local-auth.guard';
 import {
   FastifyRequestWithAuth,
   FastifyRequestWithUser,
-  ICookiesResponse,
-  ITokensResponse,
   IUser,
 } from 'libs/types';
 import { JwtGuard } from './jwt.guard';
@@ -100,7 +98,7 @@ export class AuthController {
       res.cookie(
         'rememberMe',
         'true',
-        this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME),
+        this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME * 12),
       );
     } else {
       res.clearCookie('rememberMe', this.authService.prepareCookie());
@@ -118,13 +116,13 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: lang.get('en')?.refreshToken })
-  @ApiResponse({ status: HttpStatus.OK, type: ITokensResponse })
+  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @UseGuards(JwtRefreshGuard)
   @Get('refresh')
   async refresh(
     @Req() req: FastifyRequestWithAuth,
     @Res({ passthrough: true }) res: FastifyReply,
-  ): Promise<ICookiesResponse> {
+  ): Promise<boolean> {
     const rememberMe = 'rememberMe' in getCookies(req.headers.cookie);
     const { accessToken, refreshToken } = await this.authService.refresh(
       req.user,
@@ -149,11 +147,11 @@ export class AuthController {
       res.cookie(
         'rememberMe',
         'true',
-        this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME),
+        this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME * 12),
       );
     }
 
-    return { accessToken, refreshToken, sessionId: req.user.sessionId };
+    return true;
   }
 
   @ApiOperation({ summary: lang.get('en')?.profile })

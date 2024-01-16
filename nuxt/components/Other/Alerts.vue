@@ -32,24 +32,18 @@ const mainStore = useMainStore()
 
 <style scoped lang="scss">
 .alerts {
-
   position: fixed;
   bottom: 0;
   right: 0;
   max-width: 100%;
-
   &__item {
-
     position: relative;
     max-width: 100%;
-
     :global(.alerts__content) {
       position: relative;
       min-width: unset;
       width: 300px;
     }
-
   }
-
 }
 </style>

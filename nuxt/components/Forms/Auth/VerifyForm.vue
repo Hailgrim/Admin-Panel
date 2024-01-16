@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import FormBox from '../FormBox.vue'
-import FormAlert from '../FormAlert.vue'
-import FormTextField from '../FormTextField.vue'
-import FormButton from '../FormButton.vue'
+import Form from '~/components/Form/Form.vue'
+import FormAlert from '~/components/Form/FormAlert.vue'
+import FormField from '~/components/Form/FormField.vue'
+import FormButton from '~/components/Form/FormButton.vue'
 import { useAuthStore } from '~/stores/auth'
 
 const props = defineProps<{
@@ -16,8 +16,8 @@ const codeIsValid = (value: string) => value.length > 0 || `${t('codeFromEmail')
 const authStore = useAuthStore()
 const errorMsg = ref<string | null>(null)
 
-function submitHandler() {
-  if (codeIsValid(code.value))
+function formHandler() {
+  if (codeIsValid(code.value) === true)
     authStore.verify({ email: props.email, code: code.value })
 }
 
@@ -47,9 +47,9 @@ watch(
 </script>
 
 <template>
-  <FormBox @submit="submitHandler">
-    <FormAlert v-if="errorMsg" :title="$t('error')" :text="errorMsg" type="error" />
-    <FormTextField
+  <Form @submit="formHandler">
+    <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
+    <FormField
       v-model:model-value="code" required name="code" :label="$t('code')"
       :hint="`${$t('codeFromEmail')} (${email})`" :rules="[codeIsValid]"
     />
@@ -59,5 +59,5 @@ watch(
     <FormButton block type="button" color="error" @click="$emit('close')">
       {{ $t('close') }}
     </FormButton>
-  </FormBox>
+  </Form>
 </template>

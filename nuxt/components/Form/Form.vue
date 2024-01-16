@@ -3,7 +3,7 @@ defineEmits(['submit'])
 </script>
 
 <template>
-  <v-form class="w-100" @submit.prevent="$emit('submit')">
+  <v-form class="w-100" validate-on="submit" @submit.prevent="$emit('submit')">
     <slot />
   </v-form>
 </template>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import ForgotPassword from '~/components/Forms/Auth/ForgotPassword.vue'
+import ForgotForm from '~/components/Forms/Auth/ForgotForm.vue'
 
 definePageMeta({
   middleware: ['auth'],
-  layout: 'authorization',
+  layout: 'auth',
   name: 'forgotPassword',
   title: 'forgotPassword',
   description: 'forgotPassword',
@@ -11,5 +11,5 @@ definePageMeta({
 </script>
 
 <template>
-  <ForgotPassword />
+  <ForgotForm />
 </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import FormBox from '../FormBox.vue'
-import FormTextField from '../FormTextField.vue'
-import FormButton from '../FormButton.vue'
+import Form from '~/components/Form/Form.vue'
+import FormField from '~/components/Form/FormField.vue'
+import FormButton from '~/components/Form/FormButton.vue'
 import { useMainStore } from '~/stores/main'
 import { useAuthStore } from '~/stores/auth'
 import type { IUser } from '~/utils/types'
@@ -13,7 +13,7 @@ const name = ref(authStore.profile?.name || '')
 const nameIsValid = (value: string) => testString(NAME_REGEX, value) || t('nameValidation')
 const rights = useRights(ROUTES.api.auth.profile)
 
-function submitHandler() {
+function formHandler() {
   if (nameIsValid(name.value) && authStore.profile) {
     const updatedValues = getUpdatedValues<IUser>(
       authStore.profile,
@@ -40,13 +40,13 @@ watch(
 </script>
 
 <template>
-  <FormBox @submit="submitHandler">
-    <FormTextField
+  <Form @submit="formHandler">
+    <FormField
       v-model:model-value="name" required name="name" :label="$t('email')"
       :rules="[nameIsValid]"
     />
     <FormButton type="submit" color="success" prepand-icon="mdi-content-save" :loading="authStore.updateProfilePending" :disabled="!rights.updating">
       {{ $t('update') }}
     </FormButton>
-  </FormBox>
+  </Form>
 </template>

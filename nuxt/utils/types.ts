@@ -33,12 +33,6 @@ export interface IUpdateReq<T> {
   fields: Partial<T>
 }
 
-export interface ICookies {
-  accessToken: string | null
-  refreshToken: string | null
-  rememberMe: boolean
-}
-
 export interface IMenuItem {
   title: string
   href?: string
@@ -62,7 +56,9 @@ export interface IUser {
   createdAt?: string
 }
 export type IUserSignUp = Pick<IUser, 'name' | 'email'> & { password: string }
-export type IUserCreate = Pick<IUser, 'name' | 'email' | 'enabled'> & { password: string }
+export type IUserCreate = Pick<IUser, 'name' | 'email' | 'enabled'> & {
+  password: string
+}
 
 export interface IVerifyUser {
   email: string
@@ -73,10 +69,6 @@ export interface IResetPassword extends IVerifyUser {
   password: string
 }
 
-export interface IUsersRoles {
-  userId: number
-  roleId: number
-}
 export interface IRole {
   id: number
   name: string
@@ -88,15 +80,11 @@ export interface IRole {
   UsersRoles?: IUsersRoles
 }
 export type IRoleCreate = Pick<IRole, 'name' | 'description' | 'enabled'>
-
-export interface IRolesResources {
+export interface IUsersRoles {
+  userId: number
   roleId: number
-  resourceId: number
-  creating: boolean
-  reading: boolean
-  updating: boolean
-  deleting: boolean
 }
+
 export interface IResource {
   id: number
   name: string
@@ -106,7 +94,18 @@ export interface IResource {
   default: boolean
   RolesResources?: IRolesResources
 }
-export type IResourceCreate = Pick<IResource, 'name' | 'path' | 'description' | 'enabled'>
+export type IResourceCreate = Pick<
+  IResource,
+  'name' | 'path' | 'description' | 'enabled'
+>
+export interface IRolesResources {
+  roleId: number
+  resourceId: number
+  creating: boolean
+  reading: boolean
+  updating: boolean
+  deleting: boolean
+}
 
 export interface IRoleAndResources {
   role: IRole

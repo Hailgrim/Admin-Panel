@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import FormCheckbox from '../FormCheckbox.vue'
+import FormCheckbox from '~/components/Form/FormCheckbox.vue'
 import type { IResource, IRolesResources } from '~/utils/types'
 
 const { roleId, resource, rights } = defineProps<{ roleId: number, resource: IResource, rights?: IRolesResources }>()

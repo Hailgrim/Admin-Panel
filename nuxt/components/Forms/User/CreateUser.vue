@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import FormBox from '../FormBox.vue'
-import FormTextField from '../FormTextField.vue'
-import FormPasswordField from '../FormPasswordField.vue'
-import FormCheckbox from '../FormCheckbox.vue'
-import FormButton from '../FormButton.vue'
+import Form from '~/components/Form/Form.vue'
+import FormField from '~/components/Form/FormField.vue'
+import FormPassword from '~/components/Form/FormPassword.vue'
+import FormCheckbox from '~/components/Form/FormCheckbox.vue'
+import FormButton from '~/components/Form/FormButton.vue'
 import { useUsersStore } from '~/stores/users'
 import { useMainStore } from '~/stores/main'
 
@@ -22,10 +22,9 @@ const rights = useRights(ROUTES.api.users)
 
 function submitHandler() {
   if (
-    emailIsValid(email.value)
-    && nameIsValid(name.value)
-    && passwordIsValid(password.value,
-    ))
+    emailIsValid(email.value) === true
+    && nameIsValid(name.value) === true
+    && passwordIsValid(password.value) === true)
     usersStore.create({ email: email.value, name: name.value, password: password.value, enabled: enabled.value })
 }
 
@@ -45,16 +44,16 @@ watch(
 </script>
 
 <template>
-  <FormBox @submit="submitHandler">
-    <FormTextField
+  <Form @submit="submitHandler">
+    <FormField
       v-model:model-value="email" type="email" required name="email" :label="$t('email')"
       :rules="[emailIsValid]" :hint="$t('emailValidation')"
     />
-    <FormTextField
+    <FormField
       v-model:model-value="name" required name="name" :label="$t('name')"
       :rules="[nameIsValid]" :hint="$t('nameValidation')"
     />
-    <FormPasswordField
+    <FormPassword
       v-model:model-value="password" required name="password" :label="$t('password')"
       :rules="[passwordIsValid]" :hint="$t('passwordValidation')"
     />
@@ -62,5 +61,5 @@ watch(
     <FormButton type="submit" color="info" prepand-icon="mdi-plus" :loading="usersStore.createPending" :disabled="!rights.creating">
       {{ $t('create') }}
     </FormButton>
-  </FormBox>
+  </Form>
 </template>

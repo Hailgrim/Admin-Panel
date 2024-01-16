@@ -27,8 +27,8 @@ watch(
     <template #activator="{ props: itemProps }">
       <v-list-item v-bind="itemProps" :prepend-icon="icon" :title="title" />
     </template>
-    <SideBarMenuItem v-for="child of childs" :key="child.title" v-bind="child" />
     <v-divider />
+    <SideBarMenuItem v-for="child of childs" :key="`sbmi:${child.title}:${child.href}`" v-bind="child" />
   </v-list-group>
   <v-list-item
     v-else :prepend-icon="icon" :title="title" link :href="href" :active="selected"

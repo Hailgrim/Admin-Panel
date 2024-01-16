@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Registration from '~/components/Forms/Auth/Registration.vue'
+import SignUpForm from '~/components/Forms/Auth/SignUpForm.vue'
 
 definePageMeta({
   middleware: ['auth'],
-  layout: 'authorization',
+  layout: 'auth',
   name: 'signUp',
   title: 'signUp',
   description: 'signUp',
@@ -11,5 +11,5 @@ definePageMeta({
 </script>
 
 <template>
-  <Registration />
+  <SignUpForm />
 </template>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Authorization from '~/components/Forms/Auth/Authorization.vue'
+import SignInForm from '~/components/Forms/Auth/SignInForm.vue'
 
 definePageMeta({
   middleware: ['auth'],
-  layout: 'authorization',
+  layout: 'auth',
   name: 'signIn',
   title: 'signIn',
   description: 'signIn',
@@ -11,5 +11,5 @@ definePageMeta({
 </script>
 
 <template>
-  <Authorization />
+  <SignInForm />
 </template>

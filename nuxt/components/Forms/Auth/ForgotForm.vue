@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import FormBox from '../FormBox.vue'
-import FormAlert from '../FormAlert.vue'
-import FormTextField from '../FormTextField.vue'
-import FormButton from '../FormButton.vue'
-import FormAuthLink from '../FormAuthLink.vue'
+import Form from '~/components/Form/Form.vue'
+import FormAlert from '~/components/Form/FormAlert.vue'
+import FormField from '~/components/Form/FormField.vue'
+import FormButton from '~/components/Form/FormButton.vue'
+import FormLink from '~/components/Form/FormLink.vue'
 import CustomModal from '~/components/Other/CustomModal.vue'
-import ResetPassword from '~/components/Forms/Auth/ResetPassword.vue'
+import ResetForm from '~/components/Forms/Auth/ResetForm.vue'
 import { useAuthStore } from '~/stores/auth'
 
 const { t, locale } = useI18n()
 const email = ref('')
-const emailIsValid = (value: string) => value.length > 0
+const emailIsValid = (value: string) => value.length > 0 || t('emailValidation')
 const authStore = useAuthStore()
 const errorMsg = ref<string | null>(null)
 const resetModal = ref(false)
 const router = useRouter()
 
-function submitHandler() {
+function formHandler() {
   if (emailIsValid(email.value) === true)
     authStore.forgotPassword(email.value)
 }
@@ -55,19 +55,19 @@ watch(
 </script>
 
 <template>
-  <FormBox @submit="submitHandler">
-    <FormAlert v-if="errorMsg" :title="$t('error')" :text="errorMsg" type="error" />
-    <FormTextField
+  <Form @submit="formHandler">
+    <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
+    <FormField
       v-model:model-value="email" required name="email" type="text" :label="$t('email')"
       :rules="[emailIsValid]" :hint="$t('emailValidation')"
     />
     <FormButton block type="submit" color="success" :loading="authStore.forgotPasswordPending">
       {{ $t('confirm') }}
     </FormButton>
-    <FormAuthLink :href="ROUTES.auth.signUp" :text="$t('signUpText')" />
-    <FormAuthLink :href="ROUTES.auth.signIn" :text="$t('signInText')" />
+    <FormLink :href="ROUTES.auth.signIn" :text="$t('signInText')" />
+    <FormLink :href="ROUTES.auth.signUp" :text="$t('signUpText')" />
     <CustomModal v-model="resetModal" :title="$t('resetPassword')">
-      <ResetPassword :email="email" @close="resetModal = false" />
+      <ResetForm :email="email" @close="resetModal = false" />
     </CustomModal>
-  </FormBox>
+  </Form>
 </template>

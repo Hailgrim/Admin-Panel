@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import FormBox from '../FormBox.vue'
-import FormAlert from '../FormAlert.vue'
-import FormTextField from '../FormTextField.vue'
-import FormPasswordField from '../FormPasswordField.vue'
-import FormButton from '../FormButton.vue'
-import FormAuthLink from '../FormAuthLink.vue'
+import Form from '~/components/Form/Form.vue'
+import FormAlert from '~/components/Form/FormAlert.vue'
+import FormField from '~/components/Form/FormField.vue'
+import FormPassword from '~/components/Form/FormPassword.vue'
+import FormButton from '~/components/Form/FormButton.vue'
+import FormLink from '~/components/Form/FormLink.vue'
 import CustomModal from '~/components/Other/CustomModal.vue'
-import RegistrationSuccess from '~/components/Forms/Auth/RegistrationSuccess.vue'
+import SignUpSuccess from '~/components/Forms/Auth/SignUpSuccess.vue'
 import { useAuthStore } from '~/stores/auth'
 
 const { t, locale } = useI18n()
@@ -21,7 +21,7 @@ const errorMsg = ref<string | null>(null)
 const successModal = ref(false)
 const router = useRouter()
 
-function submitHandler() {
+function formHandler() {
   if (
     nameIsValid(name.value) === true
     && emailIsValid(email.value) === true
@@ -61,27 +61,27 @@ watch(
 </script>
 
 <template>
-  <FormBox @submit="submitHandler">
-    <FormAlert v-if="errorMsg" :title="$t('error')" :text="errorMsg" type="error" />
-    <FormTextField
+  <Form @submit="formHandler">
+    <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
+    <FormField
       v-model:model-value="name" required name="name" type="text" :label="$t('name')"
       :rules="[nameIsValid]" :hint="$t('nameValidation')"
     />
-    <FormTextField
+    <FormField
       v-model:model-value="email" required name="email" type="text" :label="$t('email')"
       :rules="[emailIsValid]" :hint="$t('emailValidation')"
     />
-    <FormPasswordField
+    <FormPassword
       v-model:model-value="password" required name="password"
       :label="$t('password')" :rules="[passwordIsValid]" :hint="$t('passwordValidation')"
     />
     <FormButton block type="submit" color="success" :loading="authStore.signUpPending">
       {{ $t('signUp') }}
     </FormButton>
-    <FormAuthLink :href="ROUTES.auth.signIn" :text="$t('signInText')" />
-    <FormAuthLink :href="ROUTES.auth.forget" :text="$t('forgotPasswordText')" />
+    <FormLink :href="ROUTES.auth.signIn" :text="$t('signInText')" />
+    <FormLink :href="ROUTES.auth.forget" :text="$t('forgotPasswordText')" />
     <CustomModal v-model="successModal" :title="$t('registration')">
-      <RegistrationSuccess :email="email" @close="successHandler" />
+      <SignUpSuccess :email="email" @close="successHandler" />
     </CustomModal>
-  </FormBox>
+  </Form>
 </template>

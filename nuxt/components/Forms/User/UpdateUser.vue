@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import FormBox from '../FormBox.vue'
-import FormTextField from '../FormTextField.vue'
-import FormCheckbox from '../FormCheckbox.vue'
-import FormButton from '../FormButton.vue'
+import Form from '~/components/Form/Form.vue'
+import FormField from '~/components/Form/FormField.vue'
+import FormCheckbox from '~/components/Form/FormCheckbox.vue'
+import FormButton from '~/components/Form/FormButton.vue'
 import { useUsersStore } from '~/stores/users'
 import { useMainStore } from '~/stores/main'
 import type { IUser } from '~/utils/types'
@@ -20,7 +20,7 @@ const mainStore = useMainStore()
 const rights = useRights(ROUTES.api.users)
 
 function submitHandler() {
-  if (emailIsValid(email.value) && nameIsValid(name.value)) {
+  if (emailIsValid(email.value) === true && nameIsValid(name.value) === true) {
     usersStore.update({
       id: user.id,
       fields: { email: email.value, name: name.value, enabled: enabled.value },
@@ -42,12 +42,12 @@ watch(
 </script>
 
 <template>
-  <FormBox @submit="submitHandler">
-    <FormTextField
+  <Form @submit="submitHandler">
+    <FormField
       v-model:model-value="email" type="email" required name="email" :label="$t('email')"
       :rules="[emailIsValid]" :hint="$t('emailValidation')"
     />
-    <FormTextField
+    <FormField
       v-model:model-value="name" required name="name" :label="$t('name')"
       :rules="[nameIsValid]" :hint="$t('nameValidation')"
     />
@@ -58,5 +58,5 @@ watch(
     >
       {{ $t('update') }}
     </FormButton>
-  </FormBox>
+  </Form>
 </template>

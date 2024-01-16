@@ -57,17 +57,13 @@ server {
     # HTTP
     listen ${NGINX_PORT};
     listen [::]:${NGINX_PORT};
-
     # HTTPS
     listen ${NGINX_SSL_PORT} ssl;
     listen [::]:${NGINX_SSL_PORT} ssl;
-
     server_name nuxt.${NGINX_HOST};
-
     location / {
         proxy_pass http://${NUXT_HOST}:${NUXT_PORT};
     }
-
     error_page 500 502 503 504 /50x.html;
     location = /50x.html {
         root /home/nginx/html;

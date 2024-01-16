@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import FormBox from '../FormBox.vue'
-import FormCheckbox from '../FormCheckbox.vue'
-import FormButton from '../FormButton.vue'
+import Form from '~/components/Form/Form.vue'
+import FormCheckbox from '~/components/Form/FormCheckbox.vue'
+import FormButton from '~/components/Form/FormButton.vue'
 import { useMainStore } from '~/stores/main'
 import { useUsersStore } from '~/stores/users'
 import type { IRole, IUser, IUsersRoles } from '~/utils/types'
@@ -57,7 +57,7 @@ watch(
 </script>
 
 <template>
-  <FormBox @submit="submitHandler">
+  <Form @submit="submitHandler">
     <div class="d-flex flex-row">
       <span v-for="role of roles" :key="`userRole.${role.id}`" class="mr-6">
         <FormCheckbox
@@ -74,5 +74,5 @@ watch(
     >
       {{ $t('update') }}
     </FormButton>
-  </FormBox>
+  </Form>
 </template>

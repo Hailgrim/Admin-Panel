@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import FormBox from '../FormBox.vue'
-import FormAlert from '../FormAlert.vue'
-import FormTextField from '../FormTextField.vue'
-import FormPasswordField from '../FormPasswordField.vue'
-import FormCheckbox from '../FormCheckbox.vue'
-import FormButton from '../FormButton.vue'
-import FormAuthLink from '../FormAuthLink.vue'
+import Form from '~/components/Form/Form.vue'
+import FormAlert from '~/components/Form/FormAlert.vue'
+import FormField from '~/components/Form/FormField.vue'
+import FormPassword from '~/components/Form/FormPassword.vue'
+import FormCheckbox from '~/components/Form/FormCheckbox.vue'
+import FormButton from '~/components/Form/FormButton.vue'
+import FormLink from '~/components/Form/FormLink.vue'
 import CustomModal from '~/components/Other/CustomModal.vue'
-import VerifyUser from '~/components/Forms/Auth/VerifyUser.vue'
+import VerifyForm from '~/components/Forms/Auth/VerifyForm.vue'
 import { useAuthStore } from '~/stores/auth'
 
 const { t, locale } = useI18n()
@@ -22,7 +22,7 @@ const authStore = useAuthStore()
 const errorMsg = ref<string | null>(null)
 const verifyModal = ref(false)
 
-function submitHandler() {
+function formHandler() {
   if (emailIsValid(email.value) && passwordIsValid(password.value))
     authStore.signIn({ username: email.value, password: password.value, rememberMe: rememberMe.value })
 }
@@ -60,13 +60,13 @@ watch(
 </script>
 
 <template>
-  <FormBox @submit="submitHandler">
-    <FormAlert v-if="errorMsg" :title="$t('error')" :text="errorMsg" type="error" />
-    <FormTextField
+  <Form @submit="formHandler">
+    <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
+    <FormField
       v-model:model-value="email" required name="email" :label="$t('email')"
       :rules="[emailIsValid]"
     />
-    <FormPasswordField
+    <FormPassword
       v-model:model-value="password" required name="password" :label="$t('password')"
       :rules="[passwordIsValid]"
     />
@@ -74,10 +74,10 @@ watch(
     <FormButton block type="submit" color="info" :loading="authStore.signInPending">
       {{ $t('signIn') }}
     </FormButton>
-    <FormAuthLink :href="ROUTES.auth.signUp" :text="$t('signUpText')" />
-    <FormAuthLink :href="ROUTES.auth.forget" :text="$t('forgotPasswordText')" />
-  </FormBox>
+    <FormLink :href="ROUTES.auth.signUp" :text="$t('signUpText')" />
+    <FormLink :href="ROUTES.auth.forget" :text="$t('forgotPasswordText')" />
+  </Form>
   <CustomModal v-model="verifyModal" :title="$t('verification')">
-    <VerifyUser :email="email" @close="verifyModal = false" />
+    <VerifyForm :email="email" @close="verifyModal = false" />
   </CustomModal>
 </template>

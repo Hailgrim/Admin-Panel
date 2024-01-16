@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import FormBox from '../FormBox.vue'
-import ResourceRights from '../Resource/ResourceRights.vue'
-import FormButton from '../FormButton.vue'
+import ResourceRights from '~/components/Forms/Resource/ResourceRights.vue'
+import Form from '~/components/Form/Form.vue'
+import FormButton from '~/components/Form/FormButton.vue'
 import { useRolesStore } from '~/stores/roles'
 import { useMainStore } from '~/stores/main'
 import type { IResource, IRole, IRolesResources } from '~/utils/types'
@@ -59,7 +59,7 @@ watch(
 </script>
 
 <template>
-  <FormBox @submit="submitHandler">
+  <Form @submit="submitHandler">
     <div class="d-flex flex-row">
       <ResourceRights
         v-for="resource of resources"
@@ -76,5 +76,5 @@ watch(
     >
       {{ $t('update') }}
     </FormButton>
-  </FormBox>
+  </Form>
 </template>

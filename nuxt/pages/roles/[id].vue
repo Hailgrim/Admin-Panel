@@ -16,6 +16,11 @@ const route = useRoute()
 const id = Number(route.params.id)
 const rolesStore = useRolesStore()
 await rolesStore.readRefresh(id)
+if (rolesStore.readData === null) {
+  showError({
+    statusCode: 404,
+  })
+}
 const resourcesStore = useResourcesStore()
 await resourcesStore.listRefresh()
 </script>
@@ -26,8 +31,7 @@ await resourcesStore.listRefresh()
     {{ $t('resources') }}
   </v-card-title>
   <UpdateRoleResources
-    v-if="rolesStore.readData && resourcesStore.listData"
-    :role="rolesStore.readData"
+    v-if="rolesStore.readData && resourcesStore.listData" :role="rolesStore.readData"
     :resources="resourcesStore.listData"
   />
 </template>

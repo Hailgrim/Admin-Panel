@@ -1,9 +1,12 @@
 import type { UnwrapRef } from 'nuxt/dist/app/compat/capi'
 import { appendResponseHeader } from 'h3'
 
-import type { ICookies, IRequestError } from '~/utils/types'
+import type { IRequestError } from '~/utils/types'
 
-export function useCustomFetch<ResT extends NonNullable<unknown>, ReqT extends NonNullable<unknown> | void>(
+export function useCustomFetch<
+  ResT extends NonNullable<unknown>,
+  ReqT extends NonNullable<unknown> | void,
+>(
   init: (payload: UnwrapRef<ReqT>) => {
     url: string
     options: {
@@ -42,14 +45,15 @@ export function useCustomFetch<ResT extends NonNullable<unknown>, ReqT extends N
       credentials: 'include',
       headers: process.server
         ? {
-            Cookie: `refreshToken=${refreshToken.value}`
-              .concat(rememberMe.value ? ';rememberMe=true' : ''),
+            Cookie: `refreshToken=${refreshToken.value}`.concat(
+              rememberMe.value ? ';rememberMe=true' : '',
+            ),
           }
         : undefined,
     }
 
     try {
-      const res = await $fetch.raw<UnwrapRef<ICookies | undefined>>(
+      const res = await $fetch.raw<UnwrapRef<boolean>>(
         ROUTES.api.auth.refresh,
         { ...defaultOptions, ...refreshOptions },
       )
@@ -58,33 +62,33 @@ export function useCustomFetch<ResT extends NonNullable<unknown>, ReqT extends N
         for (const cookie of cookies)
           appendResponseHeader(event, 'set-cookie', cookie)
       }
-      return res._data?.accessToken || null
+      return res._data
     }
     catch {
       return null
     }
   }
 
-  async function customFetch(arg: UnwrapRef<ReqT>): Promise<UnwrapRef<ResT> | null> {
+  async function customFetch(
+    arg: UnwrapRef<ReqT>,
+  ): Promise<UnwrapRef<ResT> | null> {
     const query = init(arg)
     pending.value = true
 
     try {
-      const resolve = await $fetch<UnwrapRef<ResT>>(
-        query.url,
-        {
-          ...defaultOptions,
-          ...query.options,
-          headers: {
-            'Content-Type': typeof arg === 'object'
+      const resolve = await $fetch<UnwrapRef<ResT>>(query.url, {
+        ...defaultOptions,
+        ...query.options,
+        headers: {
+          'Content-Type':
+            typeof arg === 'object'
               ? 'application/json'
               : 'text/plain;charset=UTF-8',
-            ...process.server && accessToken.value
-              ? { Cookie: `accessToken=${accessToken.value}` }
-              : undefined,
-          },
+          ...(process.server && accessToken.value
+            ? { Cookie: `accessToken=${accessToken.value}` }
+            : undefined),
         },
-      )
+      })
 
       error.value = null
       data.value = resolve
@@ -92,13 +96,16 @@ export function useCustomFetch<ResT extends NonNullable<unknown>, ReqT extends N
       return resolve
     }
     catch (fail) {
-      const fetchError: IRequestError = { status: Number((fail as any).status) || 400, message: (fail as any).message }
+      const fetchError: IRequestError = {
+        status: Number((fail as any).status) || 400,
+        message: (fail as any).message,
+      }
 
       // Trying to refresh tokens and refetch query
       if (fetchError.status === 401 && refreshed.value === false) {
         refreshed.value = true
-        const newAccessToken = await refreshTokens()
-        if (newAccessToken)
+        const success = await refreshTokens()
+        if (success)
           return customFetch(arg)
       }
 

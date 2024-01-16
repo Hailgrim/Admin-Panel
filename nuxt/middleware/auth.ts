@@ -5,8 +5,9 @@ export default defineNuxtRouteMiddleware(async (to) => {
     return
 
   const accessToken = useCookie('accessToken')
+  const refreshToken = useCookie('refreshToken')
   const authStore = useAuthStore()
-  if (accessToken.value) {
+  if (accessToken.value || refreshToken.value) {
     // Attempt to authorize the user
     await authStore.getProfile()
   }
@@ -14,7 +15,11 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (authStore.profile) {
     if (Object.values(ROUTES.auth).includes(to.path)) {
       return navigateTo(
-        { path: to.query.return ? decodeURIComponent(String(to.query.return)) : ROUTES.panel.home },
+        {
+          path: to.query.return
+            ? decodeURIComponent(String(to.query.return))
+            : ROUTES.panel.home,
+        },
         { redirectCode: 302 },
       )
     }
@@ -22,8 +27,11 @@ export default defineNuxtRouteMiddleware(async (to) => {
   else {
     if (!Object.values(ROUTES.auth).includes(to.path)) {
       return navigateTo(
-        { path: ROUTES.auth.signIn, query: { return: encodeURIComponent(to.path) } },
-        { redirectCode: 401 },
+        {
+          path: ROUTES.auth.signIn,
+          query: { return: encodeURIComponent(to.path) },
+        },
+        { redirectCode: 302 },
       )
     }
   }

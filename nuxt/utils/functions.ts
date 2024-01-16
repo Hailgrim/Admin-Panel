@@ -5,12 +5,15 @@ import type { IMenuItem, LangList } from './types'
  * @param {string} href Checked link
  * @returns {boolean} true if link found in the navigation tree
  */
-export function checkActiveLink(href: string, navTree: Partial<IMenuItem>): boolean {
+export function checkActiveLink(
+  href: string,
+  navTree: Partial<IMenuItem>,
+): boolean {
   if (navTree.href) {
     if (
-      navTree.href === href
-      || navTree.href.startsWith(`${href}/`)
-      || navTree.href.startsWith(`${href}?`)
+      href === navTree.href
+      || href.startsWith(`${navTree.href}/`)
+      || href.startsWith(`${navTree.href}?`)
     )
       return true
   }
@@ -35,12 +38,16 @@ export function testString(regex: RegExp, payload: string): boolean {
  * @param {Partial<T>} newObject Updated object
  * @returns {Partial<T>} An object with changed fields only
  */
-export function getUpdatedValues<T>(oldObject: Partial<T>, newObject: Partial<T>): Partial<T> {
+export function getUpdatedValues<T>(
+  oldObject: Partial<T>,
+  newObject: Partial<T>,
+): Partial<T> {
   const result: Partial<T> = {}
   for (const value in newObject) {
     if (newObject[value] !== oldObject[value])
       result[value] = newObject[value]
   }
+
   return result
 }
 
@@ -49,8 +56,12 @@ export function getUpdatedValues<T>(oldObject: Partial<T>, newObject: Partial<T>
  * @param {LangList} lang Error language
  * @returns {string} Formatted error text
  */
-export function makeErrorText(error: unknown, lang: LangList | string = 'en'): string {
-  const currLang: LangList = String(lang) in dictionary ? lang as LangList : 'en'
+export function makeErrorText(
+  error: unknown,
+  lang: LangList | string = 'en',
+): string {
+  const currLang: LangList
+    = String(lang) in dictionary ? (lang as LangList) : 'en'
   let result = dictionary[currLang].unknownError
 
   if (!(error instanceof Object))
@@ -62,9 +73,8 @@ export function makeErrorText(error: unknown, lang: LangList | string = 'en'): s
 
     if ('message' in error) {
       if (Array.isArray(error.message))
-        result = (error.message as Array<string>).join('; ').concat('.')
-      else
-        result = String(error.message)
+        result = (error.message as Array<string>).join('.\r\n').concat('.')
+      else result = String(error.message)
     }
   }
 

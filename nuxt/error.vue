@@ -21,16 +21,12 @@ const error: any = useError()
 
 <style scoped lang="scss">
 .content {
-
   min-height: 100vh;
-
   h1 {
     font-size: 50px;
   }
-
   main {
     font-size: 20px;
   }
-
 }
 </style>

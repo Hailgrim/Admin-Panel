@@ -23,10 +23,8 @@ defineEmits(['update:modelValue'])
 
 <style scoped lang="scss">
 .checkbox {
-
   & + & {
     margin-top: -16px !important;
   }
-
 }
 </style>

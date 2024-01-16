@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import '~/assets/styles.scss'
-import SideBar from '~/components/PanelLayout/SideBar.vue'
+import SideBar from '~/components/SideBar/SideBar.vue'
 import Alerts from '~/components/Other/Alerts.vue'
 import { useMainStore } from '~/stores/main'
 import { useAuthStore } from '~/stores/auth'
@@ -42,7 +42,7 @@ watch(
         <template #append>
           <v-app-bar-nav-icon
             icon="mdi-logout" color="error" :title="$t('signOut')"
-            :loading="authStore.signOutPending" @click="authStore.signOut()"
+            :loading="Boolean(authStore.signOutPending || authStore.signOutData)" @click="authStore.signOut()"
           />
         </template>
       </v-app-bar>
@@ -62,13 +62,11 @@ watch(
 
 <style scoped lang="scss">
 .content {
-
   min-height: 100vh;
 
   .divider {
     position: fixed;
     width: 100%;
   }
-
 }
 </style>

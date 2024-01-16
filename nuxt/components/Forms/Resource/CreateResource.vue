@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import FormBox from '../FormBox.vue'
-import FormTextField from '../FormTextField.vue'
-import FormCheckbox from '../FormCheckbox.vue'
-import FormButton from '../FormButton.vue'
+import Form from '~/components/Form/Form.vue'
+import FormField from '~/components/Form/FormField.vue'
+import FormCheckbox from '~/components/Form/FormCheckbox.vue'
+import FormButton from '~/components/Form/FormButton.vue'
 import { useResourcesStore } from '~/stores/resources'
 import { useMainStore } from '~/stores/main'
 
@@ -39,13 +39,13 @@ watch(
 </script>
 
 <template>
-  <FormBox @submit="submitHandler">
-    <FormTextField v-model:model-value="name" required name="name" :label="$t('name')" :rules="[nameIsValid]" />
-    <FormTextField v-model:model-value="path" required name="path" :label="$t('path')" :rules="[pathIsValid]" />
-    <FormTextField v-model:model-value="description" name="description" :label="$t('description')" />
+  <Form @submit="submitHandler">
+    <FormField v-model:model-value="name" required name="name" :label="$t('name')" :rules="[nameIsValid]" />
+    <FormField v-model:model-value="path" required name="path" :label="$t('path')" :rules="[pathIsValid]" />
+    <FormField v-model:model-value="description" name="description" :label="$t('description')" />
     <FormCheckbox v-model:model-value="enabled" name="enabled" :label="$t('enabled')" />
     <FormButton type="submit" color="info" prepand-icon="mdi-plus" :loading="resourcesStore.createPending" :disabled="!rights.creating">
       {{ $t('create') }}
     </FormButton>
-  </FormBox>
+  </Form>
 </template>

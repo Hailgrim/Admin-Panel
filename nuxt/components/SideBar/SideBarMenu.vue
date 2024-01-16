@@ -11,7 +11,7 @@ const resourcesRights = useRights(ROUTES.api.resources)
 
 const menu: IMenuItem[] = [{
   title: t('home'),
-  icon: 'mdi-home-city',
+  icon: 'mdi-home',
   href: ROUTES.panel.home,
 }]
 
@@ -32,7 +32,7 @@ const mainMenu: IMenuItem = {
 if (usersRights.value.reading) {
   mainMenu.childs!.push({
     title: t('users'),
-    icon: 'mdi-account-group-outline',
+    icon: 'mdi-account-group',
     href: ROUTES.panel.users,
   })
 }
@@ -40,7 +40,7 @@ if (usersRights.value.reading) {
 if (rolesRights.value.reading) {
   mainMenu.childs!.push({
     title: t('roles'),
-    icon: 'mdi-account-supervisor',
+    icon: 'mdi-account-supervisor-circle',
     href: ROUTES.panel.roles,
   })
 }
@@ -61,6 +61,6 @@ const opened = menu.find(value => checkActiveLink(route.path, { href: value.href
 
 <template>
   <v-list density="compact" nav :aria-label="$t('mainMenu')" :opened="[opened ? `${opened.title}: ${opened.href}` : '']">
-    <SideBarMenuItem v-for="item of menu" :key="item.title" v-bind="item" />
+    <SideBarMenuItem v-for="item of menu" :key="`sbmi:${item.title}:${item.href}`" v-bind="item" />
   </v-list>
 </template>
