@@ -8,7 +8,7 @@ To run it, you will need to install [Docker](https://github.com/docker).
 
 For a local proxy, add this to hosts:
 
-```sh
+```
 # C:\Windows\System32\drivers\etc\hosts on Windows
 # or
 # /etc/hosts on Linux
@@ -108,40 +108,66 @@ The standard certificate is registered for addresses localhost.com (Next.js), nu
 It has a limited duration.
 To create a new certificate, you can use the following commands:
 
-```sh
-# Launching a Docker container to create a certificate
-docker run -it --entrypoint /bin/ash frapsoft/openssl
+1. Launching a Docker container to create a certificate
 
-# Generate private key
-openssl genrsa -des3 -out myCA.key 2048
+   ```sh
+   docker run -it --entrypoint /bin/ash frapsoft/openssl
+   ```
 
-# Generate root certificate
-openssl req -x509 -new -nodes -key myCA.key -sha256 -days 825 -out myCA.pem
+2. Generate private key
 
-NAME=localhost.com # Use your own domain name
+   ```sh
+   openssl genrsa -des3 -out myCA.key 2048
+   ```
 
-# Generate a private key
-openssl genrsa -out $NAME.key 2048
+3. Generate root certificate
 
-# Create a certificate-signing request
-openssl req -new -key $NAME.key -out $NAME.csr
+   ```sh
+   openssl req -x509 -new -nodes -key myCA.key -sha256 -days 825 -out myCA.pem
+   ```
 
-# Create a config file for the extensions
-touch $NAME.ext
+4. Use your own domain name
 
-# $NAME.ext content
-authorityKeyIdentifier=keyid,issuer
-basicConstraints=CA:FALSE
-keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
-subjectAltName = @alt_names
-[alt_names]
-DNS.1 = localhost.com
-DNS.2 = www.localhost.com
-DNS.3 = nuxt.localhost.com
-DNS.4 = api.localhost.com
-IP.1 = 127.0.0.1
+   ```sh
+   NAME=localhost.com
+   ```
 
-# Create the signed certificate
-openssl x509 -req -in $NAME.csr -CA myCA.pem -CAkey myCA.key -CAcreateserial \
--out $NAME.crt -days 825 -sha256 -extfile $NAME.ext
-```
+5. Generate a private key
+
+   ```sh
+   openssl genrsa -out $NAME.key 2048
+   ```
+
+6. Create a certificate-signing request
+
+   ```sh
+   openssl req -new -key $NAME.key -out $NAME.csr
+   ```
+
+7. Create a config file for the extensions
+
+   ```sh
+   touch $NAME.ext
+   ```
+
+8. $NAME.ext content
+
+   ```sh
+   authorityKeyIdentifier=keyid,issuer
+   basicConstraints=CA:FALSE
+   keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+   subjectAltName = @alt_names
+   [alt_names]
+   DNS.1 = localhost.com
+   DNS.2 = www.localhost.com
+   DNS.3 = nuxt.localhost.com
+   DNS.4 = api.localhost.com
+   IP.1 = 127.0.0.1
+   ```
+
+9. Create the signed certificate
+
+   ```sh
+   openssl x509 -req -in $NAME.csr -CA myCA.pem -CAkey myCA.key -CAcreateserial \
+   -out $NAME.crt -days 825 -sha256 -extfile $NAME.ext
+   ```
