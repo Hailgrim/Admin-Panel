@@ -50,6 +50,10 @@ docker compose down --remove-orphans
 
 ### [Next.js](https://github.com/vercel/next.js)
 
+![sign-up-preview.png](sign-up-preview.png 'Sign Up Screen preview')
+
+![admin-preview.png](admin-preview.png 'Role Screen preview')
+
 This microservice provides a graphical interface for administration.
 In it, you can set a list of protected links, create roles with rights for links, manage registered users.
 The service is written in [React](https://github.com/facebook/react) and [TypeScript](https://github.com/microsoft/TypeScript).
