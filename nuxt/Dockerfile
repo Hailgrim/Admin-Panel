@@ -1,5 +1,5 @@
 FROM oven/bun:alpine as base
-ENV NUXT_TELEMETRY_DISABLED=1
+ARG NUXT_TELEMETRY_DISABLED=1
 ARG HOME=/home/bun
 WORKDIR ${HOME}
 COPY ./package*.json .
@@ -22,5 +22,8 @@ RUN bun run build
 
 FROM base as production
 ENV NODE_ENV=production
-COPY --from=builder ${HOME}/.output ./.output
+RUN addgroup --system --gid 1001 bunjs
+RUN adduser --system --uid 1001 nuxtjs
+COPY --from=builder --chown=nuxtjs:bunjs ${HOME}/.output ./.output
+USER nuxtjs
 CMD bun .output/server/index.mjs

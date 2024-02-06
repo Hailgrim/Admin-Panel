@@ -1,5 +1,9 @@
 version: "3.8"
 
+networks:
+  main:
+    name: ${PROJECT_TAG}_main
+
 volumes:
   rabbitmq_data:
     name: ${PROJECT_TAG}_rabbitmq_data
@@ -7,18 +11,6 @@ volumes:
     name: ${PROJECT_TAG}_postgres_data
   redis_data:
     name: ${PROJECT_TAG}_redis_data
-  nest_core_node_modules:
-    name: ${PROJECT_TAG}_nest_core_node_modules
-  nest_mailer_node_modules:
-    name: ${PROJECT_TAG}_nest_mailer_node_modules
-  next_node_modules:
-    name: ${PROJECT_TAG}_next_node_modules
-  nuxt_node_modules:
-    name: ${PROJECT_TAG}_nuxt_node_modules
-
-networks:
-  main:
-    name: ${PROJECT_TAG}_main
 
 services:
 
@@ -83,8 +75,6 @@ services:
       - main
     expose:
       - ${NEST_CORE_PORT}
-    volumes:
-      - nest_core_node_modules:/home/node/node_modules
 
   nest_mailer:
     build:
@@ -97,8 +87,6 @@ services:
       - main
     expose:
       - ${NEST_MAILER_PORT}
-    volumes:
-      - nest_mailer_node_modules:/home/node/node_modules
 
   next:
     build:
@@ -112,8 +100,6 @@ services:
     environment:
       - HOSTNAME=${NEXT_HOST}
       - PORT=${NEXT_PORT}
-    volumes:
-      - next_node_modules:/home/node/node_modules
 
   nuxt:
     build:
@@ -127,5 +113,3 @@ services:
     environment:
       - HOSTNAME=${NUXT_HOST}
       - PORT=${NUXT_PORT}
-    volumes:
-      - nuxt_node_modules:/home/bun/node_modules

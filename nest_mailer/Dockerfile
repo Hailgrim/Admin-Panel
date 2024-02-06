@@ -21,14 +21,17 @@ ARG NEST_MAILER_MAIL_PORT
 ARG NEST_MAILER_MAIL_USER
 ARG NEST_MAILER_MAIL_PASSWORD
 RUN apk add --no-cache libc6-compat
-RUN npm install
+RUN npm ci
 COPY . .
 RUN npm run build
 RUN npm prune --production
 
 FROM base as production
 ENV NODE_ENV=production
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nestjs
 COPY --from=builder ${HOME}/node_modules ./node_modules
-COPY --from=builder ${HOME}/dist ./dist
-COPY --from=builder ${HOME}/templates ./templates
+COPY --from=builder --chown=nestjs:nodejs ${HOME}/dist ./dist
+COPY --from=builder --chown=nestjs:nodejs ${HOME}/templates ./templates
+USER nestjs
 CMD node ./dist/src/main.js

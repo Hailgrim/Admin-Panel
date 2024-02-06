@@ -30,13 +30,16 @@ ARG ACCESS_TOKEN_SECRET_KEY
 ARG REFRESH_TOKEN_LIFETIME
 ARG REFRESH_TOKEN_SECRET_KEY
 RUN apk add --no-cache libc6-compat
-RUN npm install
+RUN npm ci
 COPY . .
 RUN npm run build
 RUN npm prune --production
 
 FROM base as production
 ENV NODE_ENV=production
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nestjs
 COPY --from=builder ${HOME}/node_modules ./node_modules
-COPY --from=builder ${HOME}/dist ./dist
+COPY --from=builder --chown=nestjs:nodejs ${HOME}/dist ./dist
+USER nestjs
 CMD node ./dist/src/main.js

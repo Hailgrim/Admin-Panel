@@ -1,5 +1,15 @@
 version: '3.8'
 
+volumes:
+  nest_core_node_modules:
+    name: ${PROJECT_TAG}_nest_core_node_modules
+  nest_mailer_node_modules:
+    name: ${PROJECT_TAG}_nest_mailer_node_modules
+  next_node_modules:
+    name: ${PROJECT_TAG}_next_node_modules
+  nuxt_node_modules:
+    name: ${PROJECT_TAG}_nuxt_node_modules
+
 services:
   nginx:
     build:
@@ -50,6 +60,7 @@ services:
       - .env
     volumes:
       - ./nest_core:/home/node
+      - nest_core_node_modules:/home/node/node_modules
 
   nest_mailer:
     build:
@@ -58,6 +69,7 @@ services:
       - .env
     volumes:
       - ./nest_mailer:/home/node
+      - nest_mailer_node_modules:/home/node/node_modules
 
   next:
     build:
@@ -66,6 +78,7 @@ services:
       - .env
     volumes:
       - ./next:/home/node
+      - next_node_modules:/home/node/node_modules
 
   nuxt:
     build:
@@ -74,3 +87,4 @@ services:
       - .env
     volumes:
       - ./nuxt:/home/bun
+      - nuxt_node_modules:/home/bun/node_modules
