@@ -62,7 +62,6 @@ The service is written in [React](https://github.com/facebook/react) and [TypeSc
 [RTK Query](https://github.com/rtk-incubator/rtk-query) is used for API requests.
 In the `./next/src/store` folder, you can make changes to the application state management logic.
 The `./next/src/lib/config.ts` file contains the settings received from Docker during project startup.
-In the file `./next/lib/function.ts` using the `getServerSidePropsCustom` function, you can make SSR requests to verify the presence of user authorization tokens.
 
 ### [Nuxt.js](https://github.com/nuxt/nuxt)
 
