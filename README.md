@@ -150,25 +150,21 @@ To create a new certificate, you can use the following commands:
 7. Create a config file for the extensions
 
    ```sh
-   touch $NAME.ext
-   ```
-
-8. $NAME.ext content
-
-   ```sh
+   cat > $NAME.ext <<EOF
    authorityKeyIdentifier=keyid,issuer
    basicConstraints=CA:FALSE
    keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
    subjectAltName = @alt_names
    [alt_names]
-   DNS.1 = localhost.com
-   DNS.2 = www.localhost.com
-   DNS.3 = nuxt.localhost.com
-   DNS.4 = api.localhost.com
+   DNS.1 = $NAME
+   DNS.2 = www.$NAME
+   DNS.3 = nuxt.$NAME
+   DNS.4 = api.$NAME
    IP.1 = 127.0.0.1
+   EOF
    ```
 
-9. Create the signed certificate
+8. Create the signed certificate
 
    ```sh
    openssl x509 -req -in $NAME.csr -CA myCA.pem -CAkey myCA.key -CAcreateserial \
