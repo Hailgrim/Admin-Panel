@@ -3,7 +3,13 @@ import { CacheModule } from '@nestjs/cache-manager';
 import type { RedisClientOptions } from 'redis';
 import { redisStore } from 'cache-manager-redis-yet';
 
-import { REDIS_DB, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } from 'libs/config';
+import {
+  REDIS_DB,
+  REDIS_HOST,
+  REDIS_PASSWORD,
+  REDIS_PORT,
+  REDIS_USER,
+} from 'libs/config';
 import { RedisService } from './redis.service';
 
 @Module({
@@ -12,6 +18,7 @@ import { RedisService } from './redis.service';
       isGlobal: true,
       store: redisStore,
       url: `redis://${REDIS_HOST}:${REDIS_PORT}`,
+      username: REDIS_USER,
       password: REDIS_PASSWORD,
       database: REDIS_DB,
     }),

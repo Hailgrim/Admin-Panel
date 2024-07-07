@@ -1,5 +1,3 @@
-version: '3.8'
-
 volumes:
   nest_core_node_modules:
     name: ${PROJECT_TAG}_nest_core_node_modules
@@ -17,7 +15,9 @@ services:
     env_file:
       - .env
     volumes:
-      - ./nginx:/home/nginx
+      - ./nginx/html:/home/nginx/html
+      - ./nginx/ssl:/home/nginx/ssl
+      - ./nginx/templates:/home/nginx/templates
 
   rabbitmq:
     build:
@@ -26,14 +26,19 @@ services:
       - ${RABBITMQ_MANAGEMENT_PORT}:15672
     env_file:
       - .env
+    volumes:
+      - ./rabbitmq/conf.d:/home/rabbitmq/conf.d
 
   postgres:
+    build:
+      target: development
     env_file:
       - .env
+    volumes:
+      - ./postgres/postgresql.conf:/home/postgres/postgresql.conf
 
   adminer:
-    build:
-      context: ./adminer
+    image: adminer:standalone
     container_name: ${PROJECT_TAG}_adminer
     restart: always
     networks:
@@ -51,7 +56,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./redis:/home/redis
+      - ./redis/redis-stack.conf:/redis-stack.conf
 
   nest_core:
     build:

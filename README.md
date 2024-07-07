@@ -107,7 +107,7 @@ A queue manager that is used to send requests for sending emails.
 ## SSL update
 
 Without a certificate, the project will not function normally (CORS policy).
-The standard certificate is registered for addresses localhost.com (Next.js), nuxt.localhost.com (Nuxt.js) and api.localhost.com (main server).
+The standard certificate is registered for addresses _localhost.com_ (Next.js), _nuxt.localhost.com_ (Nuxt.js) and _api.localhost.com_ (main server).
 It has a limited duration.
 To create a new certificate, you can use the following commands:
 
