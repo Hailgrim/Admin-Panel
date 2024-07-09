@@ -7,7 +7,7 @@ import {
 } from 'sequelize-typescript';
 
 import { User } from '../users/user.entity';
-import { ISession } from 'libs/types';
+import { ISession } from './auth.types';
 
 @Table({ tableName: 'sessions' })
 export class Session extends Model<Session, ISession> implements ISession {

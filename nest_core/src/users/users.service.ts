@@ -14,9 +14,10 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { Role } from 'src/roles/role.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetUsersDto } from './dto/get-users.dto';
-import { preparePaginationOptions } from 'libs/functions';
-import { IFindAndCount, UpdateUserFields } from 'libs/types';
 import { UsersRolesDto } from 'src/database/dto/users-roles.dto';
+import { IFindAndCount } from 'src/database/database.types';
+import { UpdateUserFields } from './users.types';
+import { preparePaginationOptions } from 'src/database/database.utils';
 
 @Injectable()
 export class UsersService {

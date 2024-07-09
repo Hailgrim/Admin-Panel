@@ -8,7 +8,7 @@ import {
 
 import { User } from '../users/user.entity';
 import { Role } from '../roles/role.entity';
-import { IUsersRoles } from 'libs/types';
+import { IUsersRoles } from 'src/roles/roles.types';
 
 @Table({ tableName: 'users_roles' })
 export class UsersRoles

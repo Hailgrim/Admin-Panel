@@ -1,29 +1,29 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
-import lang from 'libs/lang';
+import d from 'locales/dictionary';
 
 export class SignInDto {
-  @ApiProperty({ example: 'user@mail.com', description: lang.get('en')?.email })
-  @IsString({ message: lang.get('en')?.mustBeAString(lang.get('en')?.email) })
+  @ApiProperty({ example: 'user@mail.com', description: d['en'].email })
+  @IsString({ message: d['en'].mustBeAString(d['en'].email) })
   username: string;
 
   @ApiProperty({
     example: 'user@mail.com',
-    description: lang.get('en')?.password,
+    description: d['en'].password,
   })
   @IsString({
-    message: lang.get('en')?.mustBeAString(lang.get('en')?.password),
+    message: d['en'].mustBeAString(d['en'].password),
   })
   password: string;
 
   @ApiProperty({
     example: 'user@mail.com',
-    description: lang.get('en')?.rememberMe,
+    description: d['en'].rememberMe,
   })
   @IsOptional()
   @IsBoolean({
-    message: lang.get('en')?.mustBeABoolean(lang.get('en')?.rememberMe),
+    message: d['en'].mustBeABoolean(d['en'].rememberMe),
   })
   rememberMe?: boolean;
 }

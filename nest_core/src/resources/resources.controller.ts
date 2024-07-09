@@ -16,23 +16,24 @@ import { FastifyReply } from 'fastify';
 
 import { ResourcesService } from './resources.service';
 import { CreateResourceDto } from './dto/create-resource.dto';
-import lang from 'libs/lang';
 import { RolesGuard } from 'src/roles/roles.guard';
 import { Rights } from 'libs/constants';
 import { Roles } from 'src/roles/roles.decorator';
-import { IFindAndCount, IResource } from 'libs/types';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { GetResourcesDto } from './dto/get-resources.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
+import d from 'locales/dictionary';
+import { IResource } from './resources.types';
+import { IFindAndCount } from 'src/database/database.types';
 
 const route = 'resources';
 
-@ApiTags(String(lang.get('en')?.resources))
+@ApiTags(d['en'].resources)
 @Controller(route)
 export class ResourcesController {
   constructor(private resourceService: ResourcesService) {}
 
-  @ApiOperation({ summary: lang.get('en')?.entityCreation })
+  @ApiOperation({ summary: d['en'].entityCreation })
   @ApiResponse({ status: HttpStatus.CREATED, type: IResource })
   @Roles({ path: route, action: Rights.Creating })
   @UseGuards(JwtGuard, RolesGuard)
@@ -45,7 +46,7 @@ export class ResourcesController {
     return this.resourceService.create(createResourceDto);
   }
 
-  @ApiOperation({ summary: lang.get('en')?.getEntities })
+  @ApiOperation({ summary: d['en'].getEntities })
   @ApiResponse({ status: HttpStatus.OK, type: [IResource] })
   @Roles({ path: route, action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
@@ -60,7 +61,7 @@ export class ResourcesController {
     }
   }
 
-  @ApiOperation({ summary: lang.get('en')?.getEntity })
+  @ApiOperation({ summary: d['en'].getEntity })
   @ApiResponse({ status: HttpStatus.OK, type: IResource })
   @Roles({ path: route, action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
@@ -69,7 +70,7 @@ export class ResourcesController {
     return this.resourceService.findOnePublic(Number(id));
   }
 
-  @ApiOperation({ summary: lang.get('en')?.updateEntity })
+  @ApiOperation({ summary: d['en'].updateEntity })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Roles({ path: route, action: Rights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
@@ -89,7 +90,7 @@ export class ResourcesController {
     return result;
   }
 
-  @ApiOperation({ summary: lang.get('en')?.deleteEntity })
+  @ApiOperation({ summary: d['en'].deleteEntity })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Roles({ path: route, action: Rights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)

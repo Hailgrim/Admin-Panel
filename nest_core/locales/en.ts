@@ -1,5 +1,3 @@
-export type LangList = 'en' | 'ru';
-
 const en = {
   adminPanel: 'Admin Panel',
   adminPanelAPIDescription: 'The Admin Panel API description',
@@ -59,14 +57,4 @@ const en = {
   profile: 'Profile',
   updateProfile: 'Update profile',
 };
-
-export type LangDictionary = typeof en;
-const lang = new Map<LangList, LangDictionary>();
-lang.set('en', en);
-
-const ru: LangDictionary = {
-  ...en,
-};
-lang.set('ru', ru);
-
-export default lang;
+export default en;

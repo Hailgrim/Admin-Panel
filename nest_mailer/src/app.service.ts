@@ -8,9 +8,9 @@ import * as nodemailer from 'nodemailer';
 
 import { HOST, MAIL_FROM, MAIL_TEST } from 'libs/config';
 import { MailTemplates } from 'libs/constants';
-import lang from 'libs/lang';
 import { RegistrationDto } from './dto/registration.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import d from 'locales/dictionary';
 
 @Injectable()
 export class AppService {
@@ -21,12 +21,12 @@ export class AppService {
       const info = await this.mailerService.sendMail({
         to: registrationDto.email,
         from: MAIL_FROM,
-        subject: lang.get('en')?.subjectRegistration,
+        subject: d['en'].subjectRegistration,
         template: MailTemplates.ForgotPassword,
         context: {
           host: HOST,
-          title: lang.get('en')?.subjectRegistration,
-          action: lang.get('en')?.verificationCode,
+          title: d['en'].subjectRegistration,
+          action: d['en'].verificationCode,
           code: registrationDto.code,
         },
       });
@@ -44,12 +44,12 @@ export class AppService {
       const info = await this.mailerService.sendMail({
         to: forgotPasswordDto.email,
         from: MAIL_FROM,
-        subject: lang.get('en')?.subjectForgotPassword,
+        subject: d['en'].subjectForgotPassword,
         template: MailTemplates.ForgotPassword,
         context: {
           host: HOST,
-          title: lang.get('en')?.subjectForgotPassword,
-          action: lang.get('en')?.resetPasswordCode,
+          title: d['en'].subjectForgotPassword,
+          action: d['en'].resetPasswordCode,
           code: forgotPasswordDto.code,
         },
       });

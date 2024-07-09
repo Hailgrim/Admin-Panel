@@ -15,11 +15,11 @@ import {
 import { CreateRoleDto } from './dto/create-role.dto';
 import { Role } from './role.entity';
 import { GetRolesDto } from './dto/get-roles.dto';
-import { preparePaginationOptions } from 'libs/functions';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { IFindAndCount } from 'libs/types';
 import { RolesResources } from 'src/database/roles-resources.entity';
 import { RolesResourcesDto } from 'src/database/dto/roles-resources.dto';
+import { IFindAndCount } from 'src/database/database.types';
+import { preparePaginationOptions } from 'src/database/database.utils';
 
 @Injectable()
 export class RolesService {

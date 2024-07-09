@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { IncomingHttpHeaders } from 'http';
 
 import { ACCESS_TOKEN_SECRET_KEY } from 'libs/config';
-import { getCookies } from 'libs/functions';
+import { getCookies } from './auth.utils';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {

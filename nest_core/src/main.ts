@@ -9,9 +9,9 @@ import fastifyCookie from '@fastify/cookie';
 import fastifyHelmet from '@fastify/helmet';
 
 import { AppModule } from './app.module';
-import lang from '../libs/lang';
 import { version } from '../package.json';
 import { HOST, NGINX_HOST, PORT } from 'libs/config';
+import d from 'locales/dictionary';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -22,8 +22,8 @@ async function bootstrap() {
   await app.register(fastifyHelmet as any);
 
   const config = new DocumentBuilder()
-    .setTitle(String(lang.get('en')?.adminPanel))
-    .setDescription(String(lang.get('en')?.adminPanelAPIDescription))
+    .setTitle(d['en'].adminPanel)
+    .setDescription(d['en'].adminPanelAPIDescription)
     .setVersion(version)
     .addTag('AdminPanel [Core]')
     .build();

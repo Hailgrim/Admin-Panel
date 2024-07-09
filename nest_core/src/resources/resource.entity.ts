@@ -8,11 +8,15 @@ import {
 } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 
-import lang from 'libs/lang';
 import { Role } from '../roles/role.entity';
 import { RolesResources } from '../database/roles-resources.entity';
-import { CreateResourceFields, IResource, IRolesResources } from 'libs/types';
 import { PUBLIC } from 'libs/constants';
+import d from 'locales/dictionary';
+import {
+  CreateResourceFields,
+  IResource,
+  IRolesResources,
+} from './resources.types';
 
 @Scopes(() => ({
   [PUBLIC]: {
@@ -28,30 +32,30 @@ export class Resource
 {
   @ApiProperty({
     example: 'Users',
-    description: lang.get('en')?.name,
+    description: d['en'].name,
   })
   @Column({ type: DataType.STRING, allowNull: false, unique: true })
   name: string;
 
   @ApiProperty({
     example: 'users',
-    description: lang.get('en')?.path,
+    description: d['en'].path,
   })
   @Column({ type: DataType.STRING, allowNull: false, unique: true })
   path: string;
 
   @ApiProperty({
     example: 'Users resource',
-    description: lang.get('en')?.description,
+    description: d['en'].description,
   })
   @Column({ type: DataType.STRING, allowNull: true })
   description: string | null;
 
-  @ApiProperty({ example: true, description: lang.get('en')?.status })
+  @ApiProperty({ example: true, description: d['en'].status })
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
   enabled: boolean;
 
-  @ApiProperty({ example: true, description: lang.get('en')?.default })
+  @ApiProperty({ example: true, description: d['en'].default })
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
   default: boolean;
 

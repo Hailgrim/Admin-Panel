@@ -1,40 +1,40 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
 
-import lang from 'libs/lang';
-import { UpdateRoleFields } from 'libs/types';
+import d from 'locales/dictionary';
+import { UpdateRoleFields } from '../roles.types';
 
 export class UpdateRoleDto implements UpdateRoleFields {
   @ApiProperty({
     example: 'Client',
-    description: lang.get('en')?.name,
+    description: d['en'].name,
   })
   @IsOptional()
   @IsString({
-    message: lang.get('en')?.mustBeAString(lang.get('en')?.name),
+    message: d['en'].mustBeAString(d['en'].name),
   })
   @Length(1, 100, {
-    message: lang.get('en')?.fieldLength(lang.get('en')?.name, 1, 100),
+    message: d['en'].fieldLength(d['en'].name, 1, 100),
   })
   name?: string;
 
   @ApiProperty({
     example: 'user@mail.com',
-    description: lang.get('en')?.description,
+    description: d['en'].description,
   })
   @IsOptional()
   @IsString({
-    message: lang.get('en')?.mustBeAString(lang.get('en')?.description),
+    message: d['en'].mustBeAString(d['en'].description),
   })
   @Length(1, 1000, {
-    message: lang.get('en')?.fieldLength(lang.get('en')?.description, 1, 1000),
+    message: d['en'].fieldLength(d['en'].description, 1, 1000),
   })
   description?: string;
 
-  @ApiProperty({ example: true, description: lang.get('en')?.status })
+  @ApiProperty({ example: true, description: d['en'].status })
   @IsOptional()
   @IsBoolean({
-    message: lang.get('en')?.mustBeABoolean(lang.get('en')?.status),
+    message: d['en'].mustBeABoolean(d['en'].status),
   })
   enabled?: boolean;
 }

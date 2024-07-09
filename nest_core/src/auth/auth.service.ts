@@ -15,13 +15,6 @@ import { CookieSerializeOptions } from '@fastify/cookie';
 import { UsersService } from '../users/users.service';
 import { RolesService } from 'src/roles/roles.service';
 import { ResourcesService } from 'src/resources/resources.service';
-import {
-  ICookiesResponse,
-  IRequestUser,
-  ISession,
-  ITokensResponse,
-  IUser,
-} from 'libs/types';
 import { User } from 'src/users/user.entity';
 import { SignInDto } from './dto/sign-in-auth.dto';
 import { MAIL_SERVER, SESSION_REPOSITORY } from 'libs/constants';
@@ -35,12 +28,19 @@ import {
 import { Session } from './session.entity';
 import { Role } from 'src/roles/role.entity';
 import { CreateResourceDto } from 'src/resources/dto/create-resource.dto';
-import lang from 'libs/lang';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
 import { SignUpDto } from './dto/sign-up.dts';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { RedisService } from 'src/redis/redis.service';
+import d from 'locales/dictionary';
+import {
+  ICookiesResponse,
+  IRequestUser,
+  ISession,
+  ITokensResponse,
+} from './auth.types';
+import { IUser } from 'src/users/users.types';
 
 @Injectable()
 export class AuthService {
@@ -92,7 +92,7 @@ export class AuthService {
           return {
             path: value,
             name: value.replace(value[0], value[0].toUpperCase()),
-            description: lang.get('en')?.defaultResource(value) || null,
+            description: d['en'].defaultResource(value) || null,
             enabled: true,
           };
         });
@@ -103,14 +103,14 @@ export class AuthService {
       // Verify the existence of the administrator role
       const adminRole = await this.rolesService.findOrCreateDefault(
         'Administrator',
-        lang.get('en')?.defaultAdminRole,
+        d['en'].defaultAdminRole,
         true,
       );
 
       // Verify the existence of the user role
       const userRole = await this.rolesService.findOrCreateDefault(
         'User',
-        lang.get('en')?.defaultUserRole,
+        d['en'].defaultUserRole,
       );
 
       // Verify the existence of the administrator users

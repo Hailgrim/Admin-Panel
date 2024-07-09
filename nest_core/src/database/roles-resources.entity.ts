@@ -8,7 +8,7 @@ import {
 
 import { Role } from '../roles/role.entity';
 import { Resource } from '../resources/resource.entity';
-import { IRolesResources } from 'libs/types';
+import { IRolesResources } from 'src/resources/resources.types';
 
 @Table({ tableName: 'roles_resources' })
 export class RolesResources

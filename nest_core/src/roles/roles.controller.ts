@@ -16,24 +16,25 @@ import { FastifyReply } from 'fastify';
 
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
-import lang from 'libs/lang';
 import { Roles } from './roles.decorator';
 import { RolesGuard } from './roles.guard';
 import { Rights } from 'libs/constants';
-import { IFindAndCount, IRole } from 'libs/types';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { GetRolesDto } from './dto/get-roles.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { RolesResourcesDto } from 'src/database/dto/roles-resources.dto';
+import d from 'locales/dictionary';
+import { IRole } from './roles.types';
+import { IFindAndCount } from 'src/database/database.types';
 
 const route = 'roles';
 
-@ApiTags(String(lang.get('en')?.roles))
+@ApiTags(d['en'].roles)
 @Controller(route)
 export class RolesController {
   constructor(private roleService: RolesService) {}
 
-  @ApiOperation({ summary: lang.get('en')?.entityCreation })
+  @ApiOperation({ summary: d['en'].entityCreation })
   @ApiResponse({ status: HttpStatus.CREATED, type: IRole })
   @Roles({ path: route, action: Rights.Creating })
   @UseGuards(JwtGuard, RolesGuard)
@@ -46,7 +47,7 @@ export class RolesController {
     return this.roleService.create(createRoleDto);
   }
 
-  @ApiOperation({ summary: lang.get('en')?.getEntities })
+  @ApiOperation({ summary: d['en'].getEntities })
   @ApiResponse({ status: HttpStatus.OK, type: [IRole] })
   @Roles({ path: route, action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
@@ -61,7 +62,7 @@ export class RolesController {
     }
   }
 
-  @ApiOperation({ summary: lang.get('en')?.getEntity })
+  @ApiOperation({ summary: d['en'].getEntity })
   @ApiResponse({ status: HttpStatus.OK, type: IRole })
   @Roles({ path: route, action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
@@ -70,7 +71,7 @@ export class RolesController {
     return this.roleService.findOnePublic(Number(id));
   }
 
-  @ApiOperation({ summary: lang.get('en')?.updateEntity })
+  @ApiOperation({ summary: d['en'].updateEntity })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Roles({ path: route, action: Rights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
@@ -90,7 +91,7 @@ export class RolesController {
     return result;
   }
 
-  @ApiOperation({ summary: lang.get('en')?.updateEntity })
+  @ApiOperation({ summary: d['en'].updateEntity })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Roles({ path: route, action: Rights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
@@ -110,7 +111,7 @@ export class RolesController {
     return result;
   }
 
-  @ApiOperation({ summary: lang.get('en')?.deleteEntity })
+  @ApiOperation({ summary: d['en'].deleteEntity })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Roles({ path: route, action: Rights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)

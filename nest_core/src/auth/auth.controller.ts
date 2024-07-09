@@ -13,17 +13,10 @@ import {
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
 
-import lang from 'libs/lang';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
-import {
-  FastifyRequestWithAuth,
-  FastifyRequestWithUser,
-  IUser,
-} from 'libs/types';
 import { JwtGuard } from './jwt.guard';
 import { JwtRefreshGuard } from './jwt-refresh.guard';
-import { getCookies } from 'libs/functions';
 import { SignInDto } from './dto/sign-in-auth.dto';
 import { ACCESS_TOKEN_LIFETIME, REFRESH_TOKEN_LIFETIME } from 'libs/config';
 import { ResetPasswordDto } from './dto/reset-password.dto';
@@ -33,13 +26,17 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Roles } from 'src/roles/roles.decorator';
 import { Rights } from 'libs/constants';
 import { RolesGuard } from 'src/roles/roles.guard';
+import d from 'locales/dictionary';
+import { FastifyRequestWithAuth, FastifyRequestWithUser } from './auth.types';
+import { IUser } from 'src/users/users.types';
+import { getCookies } from './auth.utils';
 
-@ApiTags(String(lang.get('en')?.authorization))
+@ApiTags(d['en'].authorization)
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @ApiOperation({ summary: lang.get('en')?.signUp })
+  @ApiOperation({ summary: d['en'].signUp })
   @ApiResponse({ status: HttpStatus.CREATED, type: IUser })
   @Post('sign-up')
   async signUp(
@@ -50,14 +47,14 @@ export class AuthController {
     return this.authService.signUp(signUpDto);
   }
 
-  @ApiOperation({ summary: lang.get('en')?.forgotPassword })
+  @ApiOperation({ summary: d['en'].forgotPassword })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Post('forgot-password')
   async forgotPassword(@Body() email: string): Promise<boolean> {
     return this.authService.forgotPassword(email);
   }
 
-  @ApiOperation({ summary: lang.get('en')?.resetPassword })
+  @ApiOperation({ summary: d['en'].resetPassword })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Post('reset-password')
   async resetPassword(
@@ -66,7 +63,7 @@ export class AuthController {
     return this.authService.resetPassword(resetPasswordDto);
   }
 
-  @ApiOperation({ summary: lang.get('en')?.signIn })
+  @ApiOperation({ summary: d['en'].signIn })
   @ApiResponse({ status: HttpStatus.CREATED, type: IUser })
   @UseGuards(LocalAuthGuard)
   @Post('sign-in')
@@ -108,14 +105,14 @@ export class AuthController {
     return req.user;
   }
 
-  @ApiOperation({ summary: lang.get('en')?.confirmRegistration })
+  @ApiOperation({ summary: d['en'].confirmRegistration })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Post('verify-user')
   async verifyUser(@Body() verifyUserDto: VerifyUserDto): Promise<boolean> {
     return this.authService.verifyUser(verifyUserDto);
   }
 
-  @ApiOperation({ summary: lang.get('en')?.refreshToken })
+  @ApiOperation({ summary: d['en'].refreshToken })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @UseGuards(JwtRefreshGuard)
   @Get('refresh')
@@ -154,7 +151,7 @@ export class AuthController {
     return true;
   }
 
-  @ApiOperation({ summary: lang.get('en')?.profile })
+  @ApiOperation({ summary: d['en'].profile })
   @ApiResponse({ status: HttpStatus.OK, type: IUser })
   @Roles({ path: 'profile', action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
@@ -163,7 +160,7 @@ export class AuthController {
     return this.authService.getProfile(req.user);
   }
 
-  @ApiOperation({ summary: lang.get('en')?.updateProfile })
+  @ApiOperation({ summary: d['en'].updateProfile })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Roles({ path: 'profile', action: Rights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
@@ -175,7 +172,7 @@ export class AuthController {
     return this.authService.updateProfile(req.user, updateProfileDto);
   }
 
-  @ApiOperation({ summary: lang.get('en')?.signOut })
+  @ApiOperation({ summary: d['en'].signOut })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @UseGuards(JwtGuard)
   @Delete('log-out')

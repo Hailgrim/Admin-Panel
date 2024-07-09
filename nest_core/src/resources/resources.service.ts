@@ -9,10 +9,10 @@ import { FindOptions, Op } from 'sequelize';
 import { CreateResourceDto } from './dto/create-resource.dto';
 import { Resource } from './resource.entity';
 import { PUBLIC, RESOURCES_REPOSITORY } from 'libs/constants';
-import { preparePaginationOptions } from 'libs/functions';
 import { GetResourcesDto } from './dto/get-resources.dto';
-import { IFindAndCount } from 'libs/types';
 import { UpdateResourceDto } from './dto/update-resource.dto';
+import { IFindAndCount } from 'src/database/database.types';
+import { preparePaginationOptions } from 'src/database/database.utils';
 
 @Injectable()
 export class ResourcesService {

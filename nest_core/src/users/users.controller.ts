@@ -14,26 +14,27 @@ import {
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
 
-import lang from 'libs/lang';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { Roles } from 'src/roles/roles.decorator';
 import { RolesGuard } from 'src/roles/roles.guard';
 import { Rights } from 'libs/constants';
 import { JwtGuard } from 'src/auth/jwt.guard';
-import { IFindAndCount, IUser } from 'libs/types';
 import { GetUsersDto } from './dto/get-users.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRolesDto } from 'src/database/dto/users-roles.dto';
+import d from 'locales/dictionary';
+import { IUser } from './users.types';
+import { IFindAndCount } from 'src/database/database.types';
 
 const route = 'users';
 
-@ApiTags(String(lang.get('en')?.users))
+@ApiTags(d['en'].users)
 @Controller(route)
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @ApiOperation({ summary: lang.get('en')?.entityCreation })
+  @ApiOperation({ summary: d['en'].entityCreation })
   @ApiResponse({ status: HttpStatus.CREATED, type: IUser })
   @Roles({ path: route, action: Rights.Creating })
   @UseGuards(JwtGuard, RolesGuard)
@@ -46,7 +47,7 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @ApiOperation({ summary: lang.get('en')?.getEntities })
+  @ApiOperation({ summary: d['en'].getEntities })
   @ApiResponse({ status: HttpStatus.OK, type: [IUser] })
   @Roles({ path: route, action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
@@ -61,7 +62,7 @@ export class UsersController {
     }
   }
 
-  @ApiOperation({ summary: lang.get('en')?.getEntity })
+  @ApiOperation({ summary: d['en'].getEntity })
   @ApiResponse({ status: HttpStatus.OK, type: IUser })
   @Roles({ path: route, action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
@@ -70,7 +71,7 @@ export class UsersController {
     return this.usersService.findOnePublic(Number(id));
   }
 
-  @ApiOperation({ summary: lang.get('en')?.updateEntity })
+  @ApiOperation({ summary: d['en'].updateEntity })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Roles({ path: route, action: Rights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
@@ -90,7 +91,7 @@ export class UsersController {
     return result;
   }
 
-  @ApiOperation({ summary: lang.get('en')?.updateEntity })
+  @ApiOperation({ summary: d['en'].updateEntity })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Roles({ path: route, action: Rights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
@@ -110,7 +111,7 @@ export class UsersController {
     return result;
   }
 
-  @ApiOperation({ summary: lang.get('en')?.deleteEntity })
+  @ApiOperation({ summary: d['en'].deleteEntity })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Roles({ path: route, action: Rights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
