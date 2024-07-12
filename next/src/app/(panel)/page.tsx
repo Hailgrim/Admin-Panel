@@ -1,11 +1,11 @@
 import { FC } from 'react';
 import { Metadata } from 'next/types';
 
-import HomePage from '@/components/Pages/Panel/HomePage';
-import getT from '@/hooks/getT';
+import HomePage from '@/views/Panel/HomePage';
+import { getT } from '@/shared/locales/utils';
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  const t = await getT();
+  const t = getT();
   return {
     title: t.home,
     description: t.home,
@@ -13,7 +13,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
 };
 
 const Home: FC = async () => {
-  const t = await getT();
+  const t = getT();
   return <HomePage h1={t.home} />;
 };
 export default Home;

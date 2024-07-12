@@ -1,11 +1,11 @@
 import { FC } from 'react';
 import { Metadata } from 'next/types';
 
-import getT from '@/hooks/getT';
-import NewResourcePage from '@/components/Pages/Panel/Resources/NewResourcePage';
+import NewResourcePage from '@/views/Panel/Resources/NewResourcePage';
+import { getT } from '@/shared/locales/utils';
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  const t = await getT();
+  const t = getT();
   return {
     title: t.newResource,
     description: t.newResource,
@@ -13,7 +13,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
 };
 
 const NewResource: FC = async () => {
-  const t = await getT();
+  const t = getT();
   return <NewResourcePage h1={t.newResource} />;
 };
 export default NewResource;

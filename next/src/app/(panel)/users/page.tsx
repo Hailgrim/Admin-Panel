@@ -1,12 +1,12 @@
 import { FC } from 'react';
 import { Metadata } from 'next/types';
 
-import getT from '@/hooks/getT';
-import usersService from '@/services/usersService';
-import UsersPage from '@/components/Pages/Panel/Users/UsersPage';
+import usersService from '@/shared/api/users/usersService';
+import UsersPage from '@/views/Panel/Users/UsersPage';
+import { getT } from '@/shared/locales/utils';
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  const t = await getT();
+  const t = getT();
   return {
     title: t.users,
     description: t.users,
@@ -14,7 +14,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
 };
 
 const Users: FC = async () => {
-  const t = await getT();
+  const t = getT();
   const { data } = await usersService.findAndCountAll();
   return <UsersPage h1={t.users} data={data} />;
 };

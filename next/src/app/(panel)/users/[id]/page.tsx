@@ -4,14 +4,14 @@ import { FC } from 'react';
 import { Metadata } from 'next/types';
 import { notFound } from 'next/navigation';
 
-import getT from '@/hooks/getT';
-import usersService from '@/services/usersService';
-import rolesService from '@/services/rolesService';
-import { IServerPage } from '@/lib/types';
-import UserPage from '@/components/Pages/Panel/Users/UserPage';
+import usersService from '@/shared/api/users/usersService';
+import rolesService from '@/shared/api/roles/rolesService';
+import UserPage from '@/views/Panel/Users/UserPage';
+import { getT } from '@/shared/locales/utils';
+import { IServerPage } from '@/views/types';
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  const t = await getT();
+  const t = getT();
   return {
     title: t.user,
     description: t.user,
@@ -19,7 +19,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
 };
 
 const User: FC<IServerPage> = async ({ params }) => {
-  const t = await getT();
+  const t = getT();
   const id = Number(params.id);
   const user = await usersService.findOne(id);
   const roles = await rolesService.findAll();

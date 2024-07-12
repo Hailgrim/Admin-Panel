@@ -3,9 +3,8 @@
 import { FC, PropsWithChildren, useRef } from 'react';
 import { Provider } from 'react-redux';
 
-import { AppStore, makeStore } from '@/store/store';
-import { IUser } from '@/lib/types';
-import { setProfile } from '@/store/slices/appSlice';
+import { AppStore, makeStore } from '@/shared/store/store';
+import { setProfile } from '@/shared/store/slices/appSlice';
 
 const StoreProvider: FC<
   PropsWithChildren & { profileJson?: string | null }

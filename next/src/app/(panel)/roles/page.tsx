@@ -1,12 +1,12 @@
 import { FC } from 'react';
 import { Metadata } from 'next/types';
 
-import getT from '@/hooks/getT';
-import rolesService from '@/services/rolesService';
-import RolesPage from '@/components/Pages/Panel/Roles/RolesPage';
+import rolesService from '@/shared/api/roles/rolesService';
+import RolesPage from '@/views/Panel/Roles/RolesPage';
+import { getT } from '@/shared/locales/utils';
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  const t = await getT();
+  const t = getT();
   return {
     title: t.roles,
     description: t.roles,
@@ -14,7 +14,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
 };
 
 const Roles: FC = async () => {
-  const t = await getT();
+  const t = getT();
   const { data } = await rolesService.findAndCountAll();
   return <RolesPage h1={t.roles} data={data} />;
 };

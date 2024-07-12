@@ -8,7 +8,7 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
-import theme from '@/lib/theme';
+import theme from '@/shared/lib/theme';
 
 const PanelLayout: FC<PropsWithChildren> = ({ children }) => {
   return (

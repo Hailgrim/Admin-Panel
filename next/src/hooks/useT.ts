@@ -1,8 +1,0 @@
-import d from '@/locales/dictionary';
-import { useAppSelector } from '@/store/hooks';
-
-const useT = () => {
-  const language = useAppSelector((store) => store.app.language);
-  return d[language];
-};
-export default useT;

@@ -1,11 +1,11 @@
 import { FC } from 'react';
 import { Metadata } from 'next/types';
 
-import getT from '@/hooks/getT';
-import ProfilePage from '@/components/Pages/Panel/ProfilePage';
+import ProfilePage from '@/views/Panel/ProfilePage';
+import { getT } from '@/shared/locales/utils';
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  const t = await getT();
+  const t = getT();
   return {
     title: t.profile,
     description: t.profile,
@@ -13,7 +13,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
 };
 
 const Profile: FC = async () => {
-  const t = await getT();
+  const t = getT();
   return <ProfilePage h1={t.profile} />;
 };
 export default Profile;

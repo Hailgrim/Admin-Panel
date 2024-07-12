@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
 import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 
-import { ROUTES } from './lib/constants';
-import authService from './services/authService';
-import { IUser } from './lib/types';
+import { ROUTES } from './shared/lib/constants';
+import authService from './shared/api/auth/authService';
+import { IUser } from './shared/api/users/types';
 
 export const middleware = async (request: NextRequest) => {
   const accessToken = request.cookies.get('accessToken');

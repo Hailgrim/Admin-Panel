@@ -1,12 +1,17 @@
-import { IMenuItem, LangList } from '@/lib/types';
-import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX } from '@/lib/constants';
 import {
-  checkActiveLink,
+  EMAIL_REGEX,
+  NAME_REGEX,
+  PASSWORD_REGEX,
+} from '@/shared/lib/constants';
+import {
   getUpdatedValues,
   makeErrorText,
   testString,
-} from '@/lib/functions';
-import d from '@/locales/dictionary';
+} from '@/shared/lib/utils';
+import d from '@/shared/locales/dictionary';
+import { LangList } from '@/shared/locales/types';
+import { IMenuItem } from '@/kit/SideBar/types';
+import { checkActiveLink } from '@/kit/SideBar/utils';
 
 describe('checkActiveLink function', () => {
   test('checkActiveLink should return true if link found in the navigation tree', () => {

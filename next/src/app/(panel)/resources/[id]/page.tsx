@@ -2,13 +2,13 @@ import { FC } from 'react';
 import { Metadata } from 'next/types';
 import { notFound } from 'next/navigation';
 
-import getT from '@/hooks/getT';
-import resourcesService from '@/services/resourcesService';
-import { IServerPage } from '@/lib/types';
-import ResourcePage from '@/components/Pages/Panel/Resources/ResourcePage';
+import resourcesService from '@/shared/api/resources/resourcesService';
+import ResourcePage from '@/views/Panel/Resources/ResourcePage';
+import { getT } from '@/shared/locales/utils';
+import { IServerPage } from '@/views/types';
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  const t = await getT();
+  const t = getT();
   return {
     title: t.resource,
     description: t.resource,
@@ -16,7 +16,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
 };
 
 const Resource: FC<IServerPage> = async ({ params }) => {
-  const t = await getT();
+  const t = getT();
   const id = Number(params.id);
   const { data } = await resourcesService.findOne(id);
 

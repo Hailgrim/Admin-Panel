@@ -1,11 +1,11 @@
 import { Metadata } from 'next/types';
 import { FC } from 'react';
 
-import getT from '@/hooks/getT';
-import AuthorizationPage from '@/components/Pages/Auth/AuthorizationPage';
+import AuthorizationPage from '@/views/Auth/AuthorizationPage';
+import { getT } from '@/shared/locales/utils';
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  const t = await getT();
+  const t = getT();
   return {
     title: t.signIn,
     description: t.signIn,
@@ -13,7 +13,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
 };
 
 const Authorization: FC = async () => {
-  const t = await getT();
+  const t = getT();
   return <AuthorizationPage h1={t.signIn} />;
 };
 export default Authorization;

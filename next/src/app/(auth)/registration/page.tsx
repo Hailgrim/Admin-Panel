@@ -1,11 +1,11 @@
 import { Metadata } from 'next/types';
 import { FC } from 'react';
 
-import getT from '@/hooks/getT';
-import RegistrationPage from '@/components/Pages/Auth/RegistrationPage';
+import RegistrationPage from '@/views/Auth/RegistrationPage';
+import { getT } from '@/shared/locales/utils';
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  const t = await getT();
+  const t = getT();
   return {
     title: t.signUp,
     description: t.signUp,
@@ -13,7 +13,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
 };
 
 const Registration: FC = async () => {
-  const t = await getT();
+  const t = getT();
   return <RegistrationPage h1={t.signUp} />;
 };
 export default Registration;

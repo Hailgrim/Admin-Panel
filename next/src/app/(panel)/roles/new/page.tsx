@@ -1,11 +1,11 @@
 import { FC } from 'react';
 import { Metadata } from 'next/types';
 
-import getT from '@/hooks/getT';
-import NewRolePage from '@/components/Pages/Panel/Roles/NewRolePage';
+import NewRolePage from '@/views/Panel/Roles/NewRolePage';
+import { getT } from '@/shared/locales/utils';
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  const t = await getT();
+  const t = getT();
   return {
     title: t.newRole,
     description: t.newRole,
@@ -13,7 +13,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
 };
 
 const NewRole: FC = async () => {
-  const t = await getT();
+  const t = getT();
   return <NewRolePage h1={t.newRole} />;
 };
 export default NewRole;
