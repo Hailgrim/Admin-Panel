@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CreateUser from '~/components/Forms/User/CreateUser.vue'
+import CreateUser from '~/components/entities/Forms/User/CreateUser.vue'
 
 definePageMeta({
   middleware: ['auth'],

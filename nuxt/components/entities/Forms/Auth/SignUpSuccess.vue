@@ -1,0 +1,16 @@
+<script setup lang="ts">
+import Form from '~/components/kit/Form/Form.vue'
+import FormAlert from '~/components/kit/Form/FormAlert.vue'
+import FormButton from '~/components/kit/Form/FormButton.vue'
+
+defineEmits(['close'])
+</script>
+
+<template>
+  <Form @submit="$emit('close')">
+    <FormAlert :text="$t('registrationSuccessText')" type="success" />
+    <FormButton block type="submit" color="info">
+      {{ $t('signIn') }}
+    </FormButton>
+  </Form>
+</template>

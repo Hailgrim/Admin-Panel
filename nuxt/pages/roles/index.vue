@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import RolesTable from '~/components/Tables/RolesTable.vue'
-import { useRolesStore } from '~/stores/roles'
+import RolesTable from '~/components/entities/Tables/RolesTable.vue'
+import { useRolesStore } from '~/stores/roles/roles'
 
 definePageMeta({
   middleware: ['auth'],
@@ -30,11 +30,6 @@ watch(
 
 <template>
   <RolesTable
-    :roles="roles"
-    :count="count"
-    :page="page"
-    :quantity="quantity"
-    @update:page="value => page = value"
-    @update:quantity="value => quantity = value"
-  />
+:roles="roles" :count="count" :page="page" :quantity="quantity" @update:page="value => page = value"
+    @update:quantity="value => quantity = value" />
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import UpdateResource from '~/components/Forms/Resource/UpdateResource.vue'
-import { useResourcesStore } from '~/stores/resources'
+import UpdateResource from '~/components/entities/Forms/Resource/UpdateResource.vue'
+import { useResourcesStore } from '~/stores/resources/resources'
 
 definePageMeta({
   middleware: ['auth'],

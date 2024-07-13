@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import UpdateUser from '~/components/Forms/User/UpdateUser.vue'
-import UpdateUserRoles from '~/components/Forms/User/UpdateUserRoles.vue'
-import { useRolesStore } from '~/stores/roles'
-import { useUsersStore } from '~/stores/users'
+import UpdateUser from '~/components/entities/Forms/User/UpdateUser.vue'
+import UpdateUserRoles from '~/components/entities/Forms/User/UpdateUserRoles.vue'
+import { useRolesStore } from '~/stores/roles/roles'
+import { useUsersStore } from '~/stores/users/users'
 
 definePageMeta({
   middleware: ['auth'],
@@ -22,7 +22,7 @@ if (usersStore.readData === null) {
   })
 }
 const rolesStore = useRolesStore()
-await rolesStore.listRefresh()
+await rolesStore.listRefresh(undefined)
 </script>
 
 <template>
@@ -31,7 +31,6 @@ await rolesStore.listRefresh()
     {{ $t('roles') }}
   </v-card-title>
   <UpdateUserRoles
-    v-if="usersStore.readData && rolesStore.listData" :user="usersStore.readData"
-    :roles="rolesStore.listData"
-  />
+v-if="usersStore.readData && rolesStore.listData" :user="usersStore.readData"
+    :roles="rolesStore.listData" />
 </template>

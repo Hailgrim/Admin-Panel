@@ -1,14 +1,16 @@
 <script setup lang="ts">
-const error: any = useError()
+const error = useError()
 </script>
 
 <template>
+
   <Head>
     <Title>{{ $t('error') }} - {{ $t('adminPanel') }}</Title>
     <Meta :content="$t('error')" name="description" />
   </Head>
   <v-card>
-    <v-layout class="content flex-column align-center justify-center mx-auto v-col-xl-6 v-col-lg-8 v-col-md-10 v-col-12">
+    <v-layout
+      class="content flex-column align-center justify-center mx-auto v-col-xl-6 v-col-lg-8 v-col-md-10 v-col-12">
       <v-card-title tag="h1" class="text-center pb-6">
         {{ $t('error') }} {{ error.statusCode }}
       </v-card-title>
@@ -22,9 +24,11 @@ const error: any = useError()
 <style scoped lang="scss">
 .content {
   min-height: 100vh;
+
   h1 {
     font-size: 50px;
   }
+
   main {
     font-size: 20px;
   }

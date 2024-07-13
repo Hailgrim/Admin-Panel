@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CreateRole from '~/components/Forms/Role/CreateRole.vue'
+import CreateRole from '~/components/entities/Forms/Role/CreateRole.vue'
 
 definePageMeta({
   middleware: ['auth'],

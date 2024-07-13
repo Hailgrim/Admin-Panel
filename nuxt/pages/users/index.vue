@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import UsersTable from '~/components/Tables/UsersTable.vue'
-import { useUsersStore } from '~/stores/users'
+import UsersTable from '~/components/entities/Tables/UsersTable.vue'
+import { useUsersStore } from '~/stores/users/users'
 
 definePageMeta({
   middleware: ['auth'],
@@ -30,11 +30,6 @@ watch(
 
 <template>
   <UsersTable
-    :users="users"
-    :count="count"
-    :page="page"
-    :quantity="quantity"
-    @update:page="value => page = value"
-    @update:quantity="value => quantity = value"
-  />
+:users="users" :count="count" :page="page" :quantity="quantity" @update:page="value => page = value"
+    @update:quantity="value => quantity = value" />
 </template>

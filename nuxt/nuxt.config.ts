@@ -1,12 +1,11 @@
-import process from 'node:process'
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  compatibilityDate: '2024-04-03',
   devtools: { enabled: false },
   build: {
     transpile: ['vuetify'],
   },
-  modules: ['@pinia/nuxt', '@nuxtjs/i18n'],
+  modules: ['@pinia/nuxt', '@nuxtjs/i18n', '@nuxt/test-utils/module'],
   i18n: {
     vueI18n: './i18n.config.ts',
   },
@@ -23,4 +22,4 @@ export default defineNuxtConfig({
         process.env.REFRESH_TOKEN_LIFETIME || String(60 * 60 * 24 * 7),
     },
   },
-})
+});

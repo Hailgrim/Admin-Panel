@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ResourcesTable from '~/components/Tables/ResourcesTable.vue'
-import { useResourcesStore } from '~/stores/resources'
+import ResourcesTable from '~/components/entities/Tables/ResourcesTable.vue'
+import { useResourcesStore } from '~/stores/resources/resources'
 
 definePageMeta({
   middleware: ['auth'],
@@ -30,11 +30,6 @@ watch(
 
 <template>
   <ResourcesTable
-    :resources="resources"
-    :count="count"
-    :page="page"
-    :quantity="quantity"
-    @update:page="value => page = value"
-    @update:quantity="value => quantity = value"
-  />
+:resources="resources" :count="count" :page="page" :quantity="quantity"
+    @update:page="value => page = value" @update:quantity="value => quantity = value" />
 </template>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import '~/assets/styles.scss'
-import SideBar from '~/components/SideBar/SideBar.vue'
-import Alerts from '~/components/Other/Alerts.vue'
-import { useMainStore } from '~/stores/main'
-import { useAuthStore } from '~/stores/auth'
+import SideBar from '~/components/widgets/SideBar/SideBar.vue'
+import Alerts from '~/components/widgets/Alerts/Alerts.vue'
+import { useAuthStore } from '~/stores/auth/auth'
+import { useMainStore } from '~/stores/main/main';
 
 const { t } = useI18n()
 const route = useRoute()
@@ -28,6 +28,7 @@ watch(
 </script>
 
 <template>
+
   <Head>
     <Title>{{ title }} - {{ $t('adminPanel') }}</Title>
     <Meta :content="description" name="description" />
@@ -41,9 +42,8 @@ watch(
         </template>
         <template #append>
           <v-app-bar-nav-icon
-            icon="mdi-logout" color="error" :title="$t('signOut')"
-            :loading="Boolean(authStore.signOutPending || authStore.signOutData)" @click="authStore.signOut()"
-          />
+icon="mdi-logout" color="error" :title="$t('signOut')"
+            :loading="Boolean(authStore.signOutPending || authStore.signOutData)" @click="authStore.signOut()" />
         </template>
       </v-app-bar>
       <v-main class="d-flex flex-column">

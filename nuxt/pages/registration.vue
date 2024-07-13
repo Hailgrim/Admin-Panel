@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SignUpForm from '~/components/Forms/Auth/SignUpForm.vue'
+import SignUpForm from '~/components/entities/Forms/Auth/SignUpForm.vue'
 
 definePageMeta({
   middleware: ['auth'],

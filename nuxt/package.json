@@ -21,14 +21,14 @@
     "vuetify": "^3.3.15"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.4.5",
     "@mdi/font": "^7.2.96",
     "@nuxt/devtools": "latest",
+    "@nuxt/eslint-config": "^0.3.13",
     "@nuxt/test-utils": "^3.9.0",
     "@nuxtjs/i18n": "^8.0.0",
     "@vue/test-utils": "^2.4.3",
     "eslint": "^8.49.0",
-    "happy-dom": "^12.10.3",
+    "happy-dom": "^14.12.3",
     "nuxt": "^3.7.0",
     "playwright-core": "^1.40.1",
     "vitest": "^1.1.3"

@@ -1,15 +1,14 @@
-import { useAuthStore } from '~/stores/auth'
+import { useAuthStore } from '~/stores/auth/auth';
 
 export default defineNuxtRouteMiddleware(async (to) => {
-  if (process.client)
-    return
+  if (import.meta.client) return;
 
-  const accessToken = useCookie('accessToken')
-  const refreshToken = useCookie('refreshToken')
-  const authStore = useAuthStore()
+  const accessToken = useCookie('accessToken');
+  const refreshToken = useCookie('refreshToken');
+  const authStore = useAuthStore();
   if (accessToken.value || refreshToken.value) {
     // Attempt to authorize the user
-    await authStore.getProfile()
+    await authStore.getProfile();
   }
 
   if (authStore.profile) {
@@ -20,19 +19,18 @@ export default defineNuxtRouteMiddleware(async (to) => {
             ? decodeURIComponent(String(to.query.return))
             : ROUTES.panel.home,
         },
-        { redirectCode: 302 },
-      )
+        { redirectCode: 302 }
+      );
     }
-  }
-  else {
+  } else {
     if (!Object.values(ROUTES.auth).includes(to.path)) {
       return navigateTo(
         {
           path: ROUTES.auth.signIn,
           query: { return: encodeURIComponent(to.path) },
         },
-        { redirectCode: 302 },
-      )
+        { redirectCode: 302 }
+      );
     }
   }
-})
+});
