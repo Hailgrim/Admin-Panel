@@ -19,8 +19,8 @@ import { useAppDispatch } from '@/shared/store/hooks';
 import authApi from '@/shared/api/auth/authApi';
 import { addAlert } from '@/shared/store/slices/appSlice';
 import { makeErrorText } from '@/shared/lib/utils';
-import SideBar from '@/kit/SideBar/SideBar';
-import Alerts from '@/kit/Alerts/Alerts';
+import SideBar from '@/widgets/SideBar/SideBar';
+import Alerts from '@/widgets/Alerts/Alerts';
 
 const PanelPage: FC<IClientPage & PropsWithChildren> = ({ h1, children }) => {
   const dispatch = useAppDispatch();

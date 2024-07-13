@@ -10,8 +10,8 @@ import {
 } from '@/shared/lib/utils';
 import d from '@/shared/locales/dictionary';
 import { LangList } from '@/shared/locales/types';
-import { IMenuItem } from '@/kit/SideBar/types';
-import { checkActiveLink } from '@/kit/SideBar/utils';
+import { IMenuItem } from '@/widgets/SideBar/types';
+import { checkActiveLink } from '@/widgets/SideBar/utils';
 
 describe('checkActiveLink function', () => {
   test('checkActiveLink should return true if link found in the navigation tree', () => {
