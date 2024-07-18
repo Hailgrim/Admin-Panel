@@ -36,7 +36,7 @@ const UsersTable: FC<Omit<DataGridProps<IUser>, 'columns'>> = (props) => {
           </IconButton>
         ),
       },
-      { field: 'id', headerName: t.id, minWidth: 150, type: 'number' },
+      { field: 'id', headerName: t.id, minWidth: 150, type: 'string' },
       {
         field: 'email',
         headerName: t.email,
