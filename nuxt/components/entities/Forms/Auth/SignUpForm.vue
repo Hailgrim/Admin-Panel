@@ -64,11 +64,14 @@ watch(
 <template>
   <Form @submit="formHandler">
     <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
-    <FormField v-model:model-value="name" required name="name" type="text" :label="$t('name')" :rules="[nameIsValid]"
+    <FormField
+v-model:model-value="name" required name="name" type="text" :label="$t('name')" :rules="[nameIsValid]"
       :hint="$t('nameValidation')" />
-    <FormField v-model:model-value="email" required name="email" type="text" :label="$t('email')"
+    <FormField
+v-model:model-value="email" required name="email" type="text" :label="$t('email')"
       :rules="[emailIsValid]" :hint="$t('emailValidation')" />
-    <FormPassword v-model:model-value="password" required name="password" :label="$t('password')"
+    <FormPassword
+v-model:model-value="password" required name="password" :label="$t('password')"
       :rules="[passwordIsValid]" :hint="$t('passwordValidation')" />
     <FormButton block type="submit" color="success" :loading="authStore.signUpPending">
       {{ $t('signUp') }}

@@ -42,7 +42,8 @@ watch(
 <template>
   <Form @submit="formHandler">
     <FormField v-model:model-value="name" required name="name" :label="$t('email')" :rules="[nameIsValid]" />
-    <FormButton type="submit" color="success" prepand-icon="mdi-content-save" :loading="authStore.updateProfilePending"
+    <FormButton
+type="submit" color="success" prepand-icon="mdi-content-save" :loading="authStore.updateProfilePending"
       :disabled="!rights.updating">
       {{ $t('update') }}
     </FormButton>

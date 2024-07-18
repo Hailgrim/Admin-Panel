@@ -44,7 +44,8 @@ watch(
     <FormField v-model:model-value="path" required name="path" :label="$t('path')" :rules="[pathIsValid]" />
     <FormField v-model:model-value="description" name="description" :label="$t('description')" />
     <FormCheckbox v-model:model-value="enabled" name="enabled" :label="$t('enabled')" />
-    <FormButton type="submit" color="info" prepand-icon="mdi-plus" :loading="resourcesStore.createPending"
+    <FormButton
+type="submit" color="info" prepand-icon="mdi-plus" :loading="resourcesStore.createPending"
       :disabled="!rights.creating">
       {{ $t('create') }}
     </FormButton>

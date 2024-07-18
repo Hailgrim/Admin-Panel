@@ -63,11 +63,13 @@ watch(
     <FormField v-model:model-value="path" required name="path" :label="$t('path')" :rules="[pathIsValid]" />
     <FormField v-model:model-value="description" name="description" :label="$t('description')" />
     <FormCheckbox v-model:model-value="enabled" name="enabled" :label="$t('enabled')" />
-    <FormButton type="submit" color="success" prepand-icon="mdi-content-save" :loading="resourcesStore.updatePending"
+    <FormButton
+type="submit" color="success" prepand-icon="mdi-content-save" :loading="resourcesStore.updatePending"
       :disabled="!rights.updating || resourcesStore.readData?.default">
       {{ $t('update') }}
     </FormButton>
-    <FormButton type="button" color="error" prepand-icon="mdi-delete" :loading="resourcesStore.deletePending"
+    <FormButton
+type="button" color="error" prepand-icon="mdi-delete" :loading="resourcesStore.deletePending"
       :disabled="!rights.deleting || resourcesStore.readData?.default" @click="resourcesStore.delete(resource.id)">
       {{ $t('delete') }}
     </FormButton>

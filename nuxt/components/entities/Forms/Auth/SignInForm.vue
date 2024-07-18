@@ -63,7 +63,8 @@ watch(
   <Form @submit="formHandler">
     <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
     <FormField v-model:model-value="email" required name="email" :label="$t('email')" :rules="[emailIsValid]" />
-    <FormPassword v-model:model-value="password" required name="password" :label="$t('password')"
+    <FormPassword
+v-model:model-value="password" required name="password" :label="$t('password')"
       :rules="[passwordIsValid]" />
     <FormCheckbox v-model:model-value="rememberMe" name="rememberMe" :label="$t('rememberMe')" />
     <FormButton block type="submit" color="info" :loading="authStore.signInPending">

@@ -57,7 +57,8 @@ watch(
 <template>
   <Form @submit="formHandler">
     <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
-    <FormField v-model:model-value="email" required name="email" type="text" :label="$t('email')"
+    <FormField
+v-model:model-value="email" required name="email" type="text" :label="$t('email')"
       :rules="[emailIsValid]" :hint="$t('emailValidation')" />
     <FormButton block type="submit" color="success" :loading="authStore.forgotPasswordPending">
       {{ $t('confirm') }}

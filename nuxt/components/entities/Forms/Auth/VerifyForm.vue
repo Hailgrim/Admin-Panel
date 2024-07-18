@@ -49,7 +49,8 @@ watch(
 <template>
   <Form @submit="formHandler">
     <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
-    <FormField v-model:model-value="code" required name="code" :label="$t('code')"
+    <FormField
+v-model:model-value="code" required name="code" :label="$t('code')"
       :hint="`${$t('codeFromEmail')} (${email})`" :rules="[codeIsValid]" />
     <FormButton block type="submit" color="success" :loading="authStore.verifyPending">
       {{ $t('confirm') }}

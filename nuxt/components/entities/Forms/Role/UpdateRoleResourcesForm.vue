@@ -62,11 +62,13 @@ watch(
 <template>
   <Form @submit="submitHandler">
     <div class="d-flex flex-row">
-      <ResourceRightsFields v-for="resource of resources" :key="`resourceRights.${resource.id}`" :role-id="role.id"
+      <ResourceRightsFields
+v-for="resource of resources" :key="`resourceRights.${resource.id}`" :role-id="role.id"
         :resource="resource" :rights="updatedRights.filter(value => value.resourceId === resource.id)[0]"
         @update="setRights" />
     </div>
-    <FormButton type="submit" color="success" prepand-icon="mdi-content-save"
+    <FormButton
+type="submit" color="success" prepand-icon="mdi-content-save"
       :loading="rolesStore.updateResourcesPending" :disabled="!rights.updating">
       {{ $t('update') }}
     </FormButton>

@@ -60,11 +60,13 @@ watch(
     <FormField v-model:model-value="name" required name="name" :label="$t('name')" :rules="[nameIsValid]" />
     <FormField v-model:model-value="description" name="description" :label="$t('description')" />
     <FormCheckbox v-model:model-value="enabled" name="enabled" :label="$t('enabled')" />
-    <FormButton type="submit" color="success" prepand-icon="mdi-content-save" :loading="rolesStore.updatePending"
+    <FormButton
+type="submit" color="success" prepand-icon="mdi-content-save" :loading="rolesStore.updatePending"
       :disabled="!rights.updating || rolesStore.readData?.default || rolesStore.readData?.admin">
       {{ $t('update') }}
     </FormButton>
-    <FormButton type="button" color="error" prepand-icon="mdi-delete" :loading="rolesStore.deletePending"
+    <FormButton
+type="button" color="error" prepand-icon="mdi-delete" :loading="rolesStore.deletePending"
       :disabled="!rights.deleting || rolesStore.readData?.default || rolesStore.readData?.admin"
       @click="rolesStore.delete(role.id)">
       {{ $t('delete') }}

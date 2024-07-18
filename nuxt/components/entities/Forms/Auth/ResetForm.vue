@@ -52,9 +52,11 @@ watch(
 <template>
   <Form @submit="formHandler">
     <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
-    <FormField v-model:model-value="code" required name="code" :label="$t('code')"
+    <FormField
+v-model:model-value="code" required name="code" :label="$t('code')"
       :hint="`${$t('codeFromEmail')} (${email})`" :rules="[codeIsValid]" />
-    <FormPassword v-model:model-value="password" required name="password" :label="$t('newPassword')"
+    <FormPassword
+v-model:model-value="password" required name="password" :label="$t('newPassword')"
       :rules="[passwordIsValid]" :hint="$t('passwordValidation')" />
     <FormButton block type="submit" color="success" :loading="authStore.resetPasswordPending">
       {{ $t('confirm') }}

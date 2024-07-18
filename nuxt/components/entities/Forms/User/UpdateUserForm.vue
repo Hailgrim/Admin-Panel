@@ -43,12 +43,15 @@ watch(
 
 <template>
   <Form @submit="submitHandler">
-    <FormField v-model:model-value="email" type="email" required name="email" :label="$t('email')"
+    <FormField
+v-model:model-value="email" type="email" required name="email" :label="$t('email')"
       :rules="[emailIsValid]" :hint="$t('emailValidation')" />
-    <FormField v-model:model-value="name" required name="name" :label="$t('name')" :rules="[nameIsValid]"
+    <FormField
+v-model:model-value="name" required name="name" :label="$t('name')" :rules="[nameIsValid]"
       :hint="$t('nameValidation')" />
     <FormCheckbox v-model:model-value="enabled" name="enabled" :label="$t('enabled')" />
-    <FormButton type="submit" color="success" prepand-icon="mdi-content-save" :loading="usersStore.updatePending"
+    <FormButton
+type="submit" color="success" prepand-icon="mdi-content-save" :loading="usersStore.updatePending"
       :disabled="!rights.updating">
       {{ $t('update') }}
     </FormButton>
