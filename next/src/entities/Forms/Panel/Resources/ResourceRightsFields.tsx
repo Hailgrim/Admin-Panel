@@ -7,11 +7,11 @@ import {
 } from '@mui/material';
 
 import useT from '@/shared/hooks/useT';
-import FormCheckbox from '@/kit/Form/FormCheckbox';
+import FormCheckbox from '@/shared/kit/Form/FormCheckbox';
 import { IResource, IRolesResources } from '@/shared/api/resources/types';
 
-const ResourceRights: React.FC<{
-  roleId: number;
+const ResourceRightsFields: React.FC<{
+  roleId: string;
   resource: IResource;
   rights?: IRolesResources;
   setRights: (newRights: IRolesResources) => void;
@@ -73,4 +73,4 @@ const ResourceRights: React.FC<{
     </FormControl>
   );
 };
-export default ResourceRights;
+export default ResourceRightsFields;

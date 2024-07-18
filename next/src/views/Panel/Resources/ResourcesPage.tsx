@@ -3,12 +3,14 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import { GridPaginationModel } from '@mui/x-data-grid/models/gridPaginationProps';
-import { GridRowSelectionModel } from '@mui/x-data-grid/models/gridRowSelectionModel';
+import {
+  GridPaginationModel,
+  GridRowSelectionModel,
+} from '@mui/x-data-grid/models';
 
 import PanelPage from '../../PanelPage';
 import ResourcesTable from '@/entities/Tables/ResourcesTable';
-import FormButton from '@/kit/Form/FormButton';
+import FormButton from '@/shared/kit/Form/FormButton';
 import useRights from '@/shared/hooks/useRights';
 import { ROUTES } from '@/shared/lib/constants';
 import useT from '@/shared/hooks/useT';
@@ -27,14 +29,14 @@ const ResourcesPage: FC<IClientPage<IFindAndCountRes<IResource>>> = ({
     resourcesApi.useLazyFindAndCountAllQuery();
   const [findAll, findAllReq] = resourcesApi.useLazyFindAllQuery();
   const [destroy, destroyReq] = resourcesApi.useDeleteMutation();
-  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [rows, setRows] = useState(data?.rows || []);
   const [count, setCount] = useState(data?.count || 0);
   const page = useRef(0);
   const pageSize = useRef(25);
 
   const selectionHandler = (rowSelectionModel: GridRowSelectionModel) => {
-    setSelectedRows(rowSelectionModel.map((item) => Number(item)));
+    setSelectedRows(rowSelectionModel as string[]);
   };
 
   const paginationHandler = (model: GridPaginationModel) => {

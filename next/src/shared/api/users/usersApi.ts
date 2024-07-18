@@ -29,7 +29,7 @@ const usersApi = createApi({
       providesTags: ['CountedEntities'],
     }),
 
-    findOne: builder.query<IUser, number>({
+    findOne: builder.query<IUser, string>({
       query: usersService.findOneArgs,
       providesTags: ['Entity'],
     }),
@@ -44,7 +44,7 @@ const usersApi = createApi({
       invalidatesTags: ['Entity'],
     }),
 
-    delete: builder.mutation<boolean, number | number[]>({
+    delete: builder.mutation<boolean, string | string[]>({
       query: usersService.deleteArgs,
       invalidatesTags: ['CountedEntities'],
     }),

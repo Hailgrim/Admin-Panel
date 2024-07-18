@@ -59,7 +59,7 @@ class ResourcesService {
     };
   }
 
-  findOneArgs(payload: number): IReqArgs {
+  findOneArgs(payload: string): IReqArgs {
     return {
       url: ROUTES.api.resource(payload),
       method: 'GET',
@@ -67,7 +67,7 @@ class ResourcesService {
     };
   }
 
-  async findOne(payload: number): Promise<IFetchRes<IResource | null>> {
+  async findOne(payload: string): Promise<IFetchRes<IResource | null>> {
     const { data, error } = await serverFetch<IResource>(
       this.findOneArgs(payload),
       true
@@ -84,7 +84,7 @@ class ResourcesService {
     };
   }
 
-  deleteArgs(payload: number | number[]): IReqArgs {
+  deleteArgs(payload: string | string[]): IReqArgs {
     return {
       url: ROUTES.api.resources,
       method: 'DELETE',

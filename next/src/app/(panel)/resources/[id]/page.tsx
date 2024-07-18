@@ -17,13 +17,13 @@ export const generateMetadata = async (): Promise<Metadata> => {
 
 const Resource: FC<IServerPage> = async ({ params }) => {
   const t = getT();
-  const id = Number(params.id);
-  const { data } = await resourcesService.findOne(id);
+  const id = params.id;
 
-  if (!data) {
-    return notFound();
+  if (id) {
+    const { data } = await resourcesService.findOne(id);
+    return <ResourcePage h1={t.resource} data={data} />;
   }
 
-  return <ResourcePage h1={t.resource} data={data} />;
+  return notFound();
 };
 export default Resource;

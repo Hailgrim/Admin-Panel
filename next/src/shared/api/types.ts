@@ -13,7 +13,7 @@ export interface IFindAndCountRes<T> {
 }
 
 export interface IUpdateReq<T> {
-  id: number;
+  id: string;
   fields: Partial<T>;
 }
 

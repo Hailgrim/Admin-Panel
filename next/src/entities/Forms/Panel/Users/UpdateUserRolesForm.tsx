@@ -1,14 +1,14 @@
 import { FC, FormEvent, useEffect, useState } from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 
-import Form from '@/kit/Form/Form';
-import FormButton from '@/kit/Form/FormButton';
+import Form from '@/shared/kit/Form/Form';
+import FormButton from '@/shared/kit/Form/FormButton';
 import { ROUTES } from '@/shared/lib/constants';
 import useT from '@/shared/hooks/useT';
 import useLang from '@/shared/hooks/useLang';
 import d from '@/shared/locales/dictionary';
 import useRights from '@/shared/hooks/useRights';
-import FormCheckbox from '@/kit/Form/FormCheckbox';
+import FormCheckbox from '@/shared/kit/Form/FormCheckbox';
 import { useAppDispatch } from '@/shared/store/hooks';
 import usersApi from '@/shared/api/users/usersApi';
 import { IUsersRoles } from '@/shared/api/roles/types';

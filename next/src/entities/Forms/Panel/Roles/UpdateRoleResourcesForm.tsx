@@ -1,14 +1,14 @@
 import { FC, FormEvent, useEffect, useState } from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 
-import Form from '@/kit/Form/Form';
-import FormButton from '@/kit/Form/FormButton';
+import Form from '@/shared/kit/Form/Form';
+import FormButton from '@/shared/kit/Form/FormButton';
 import { ROUTES } from '@/shared/lib/constants';
 import useT from '@/shared/hooks/useT';
 import useLang from '@/shared/hooks/useLang';
 import d from '@/shared/locales/dictionary';
 import useRights from '@/shared/hooks/useRights';
-import ResourceRights from '../Resources/ResourceRights';
+import ResourceRightsFields from '../Resources/ResourceRightsFields';
 import { IRoleAndResources } from '@/shared/api/roles/types';
 import { useAppDispatch } from '@/shared/store/hooks';
 import rolesApi from '@/shared/api/roles/rolesApi';
@@ -81,7 +81,7 @@ const UpdateRoleResourcesForm: FC<IRoleAndResources> = ({
   return (
     <Form onSubmit={formHandler}>
       {resources?.map((resource) => (
-        <ResourceRights
+        <ResourceRightsFields
           key={`ResourceRights.${resource.id}`}
           roleId={role.id}
           resource={resource}

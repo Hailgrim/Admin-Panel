@@ -1,16 +1,16 @@
 import { FC, useEffect, useState } from 'react';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
-import Form from '@/kit/Form/Form';
-import FormField from '@/kit/Form/FormField';
-import FormButton from '@/kit/Form/FormButton';
-import FormLink from '@/kit/Form/FormLink';
+import Form from '@/shared/kit/Form/Form';
+import FormField from '@/shared/kit/Form/FormField';
+import FormButton from '@/shared/kit/Form/FormButton';
+import FormLink from '@/shared/kit/Form/FormLink';
 import { ROUTES } from '@/shared/lib/constants';
 import useT from '@/shared/hooks/useT';
-import FormAlert from '@/kit/Form/FormAlert';
+import FormAlert from '@/shared/kit/Form/FormAlert';
 import useLang from '@/shared/hooks/useLang';
 import d from '@/shared/locales/dictionary';
-import CustomModal from '@/kit/CustomModal/CustomModal';
+import CustomModal from '@/shared/kit/CustomModal/CustomModal';
 import ResetForm from './ResetForm';
 import authApi from '@/shared/api/auth/authApi';
 import { makeErrorText } from '@/shared/lib/utils';

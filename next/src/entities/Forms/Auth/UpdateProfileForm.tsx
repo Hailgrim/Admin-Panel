@@ -1,8 +1,8 @@
 import { FC, FormEvent, useEffect, useRef, useState } from 'react';
 
-import Form from '@/kit/Form/Form';
-import FormField from '@/kit/Form/FormField';
-import FormButton from '@/kit/Form/FormButton';
+import Form from '@/shared/kit/Form/Form';
+import FormField from '@/shared/kit/Form/FormField';
+import FormButton from '@/shared/kit/Form/FormButton';
 import { ROUTES } from '@/shared/lib/constants';
 import useT from '@/shared/hooks/useT';
 import useLang from '@/shared/hooks/useLang';

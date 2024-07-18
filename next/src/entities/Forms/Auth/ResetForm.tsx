@@ -1,13 +1,13 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import Form from '@/kit/Form/Form';
-import FormButton from '@/kit/Form/FormButton';
+import Form from '@/shared/kit/Form/Form';
+import FormButton from '@/shared/kit/Form/FormButton';
 import useT from '@/shared/hooks/useT';
-import FormAlert from '@/kit/Form/FormAlert';
+import FormAlert from '@/shared/kit/Form/FormAlert';
 import { PASSWORD_REGEX, ROUTES } from '@/shared/lib/constants';
-import FormField from '@/kit/Form/FormField';
-import FormPassword from '@/kit/Form/FormPassword';
+import FormField from '@/shared/kit/Form/FormField';
+import FormPassword from '@/shared/kit/Form/FormPassword';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import useLang from '@/shared/hooks/useLang';
 import d from '@/shared/locales/dictionary';

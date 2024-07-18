@@ -73,7 +73,7 @@ const serverFetch = async <T = unknown>(
 
       return await res.json();
     } catch (err) {
-      error = Number((err as any)?.statusCode) || null;
+      error = Number((err as Record<string, unknown>)?.statusCode) || null;
       return null;
     }
   };

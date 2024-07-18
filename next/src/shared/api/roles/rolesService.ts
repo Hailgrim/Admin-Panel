@@ -59,7 +59,7 @@ class RolesService {
     };
   }
 
-  findOneArgs(payload: number): IReqArgs {
+  findOneArgs(payload: string): IReqArgs {
     return {
       url: ROUTES.api.role(payload),
       method: 'GET',
@@ -67,7 +67,7 @@ class RolesService {
     };
   }
 
-  async findOne(payload: number): Promise<IFetchRes<IRole | null>> {
+  async findOne(payload: string): Promise<IFetchRes<IRole | null>> {
     const { data, error } = await serverFetch<IRole>(
       this.findOneArgs(payload),
       true
@@ -93,7 +93,7 @@ class RolesService {
     };
   }
 
-  deleteArgs(payload: number | number[]): IReqArgs {
+  deleteArgs(payload: string | string[]): IReqArgs {
     return {
       url: ROUTES.api.roles,
       method: 'DELETE',

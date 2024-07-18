@@ -18,19 +18,22 @@ export const generateMetadata = async (): Promise<Metadata> => {
 
 const Role: FC<IServerPage> = async ({ params }) => {
   const t = getT();
-  const id = Number(params.id);
-  const role = await rolesService.findOne(id);
-  const resources = await resourcesService.findAll();
+  const id = params.id;
 
-  if (!role.data) {
-    return notFound();
+  if (id) {
+    const role = await rolesService.findOne(id);
+    const resources = await resourcesService.findAll();
+
+    if (role.data) {
+      return (
+        <RolePage
+          h1={t.role}
+          data={{ role: role.data, resources: resources.data }}
+        />
+      );
+    }
   }
 
-  return (
-    <RolePage
-      h1={t.role}
-      data={{ role: role.data, resources: resources.data }}
-    />
-  );
+  return notFound();
 };
 export default Role;

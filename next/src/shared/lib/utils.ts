@@ -27,13 +27,13 @@ export const getUpdatedValues = <T>(
 };
 
 /**
- * @param {any} error Some request error
+ * @param {unknown} error Some request error
  * @param {LangList} lang Error language
  * @returns {string} Formatted error text
  */
 export const makeErrorText = (
   error?: unknown,
-  lang: LangList | string = 'en'
+  lang: LangList = 'en'
 ): string => {
   const currLang: LangList = lang in d ? (lang as LangList) : 'en';
   let result = d[currLang].unknownError;

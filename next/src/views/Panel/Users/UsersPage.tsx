@@ -8,7 +8,7 @@ import { GridPaginationModel } from '@mui/x-data-grid/models/gridPaginationProps
 
 import PanelPage from '../../PanelPage';
 import UsersTable from '@/entities/Tables/UsersTable';
-import FormButton from '@/kit/Form/FormButton';
+import FormButton from '@/shared/kit/Form/FormButton';
 import useRights from '@/shared/hooks/useRights';
 import { ROUTES } from '@/shared/lib/constants';
 import useT from '@/shared/hooks/useT';
@@ -24,14 +24,14 @@ const UsersPage: FC<IClientPage<IFindAndCountRes<IUser>>> = ({ h1, data }) => {
     usersApi.useLazyFindAndCountAllQuery();
   const [findAll, findAllReq] = usersApi.useLazyFindAllQuery();
   const [destroy, destroyReq] = usersApi.useDeleteMutation();
-  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [rows, setRows] = useState(data?.rows || []);
   const [count, setCount] = useState(data?.count || 0);
   const page = useRef(0);
   const pageSize = useRef(25);
 
   const selectionHandler = (rowSelectionModel: GridRowSelectionModel) => {
-    setSelectedRows(rowSelectionModel.map((item) => Number(item)));
+    setSelectedRows(rowSelectionModel as string[]);
   };
 
   const paginationHandler = (model: GridPaginationModel) => {

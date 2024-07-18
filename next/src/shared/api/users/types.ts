@@ -1,7 +1,7 @@
 import { IRole } from '../roles/types';
 
 export interface IUser {
-  id: number;
+  id: string;
   email: string;
   name: string;
   enabled: boolean;

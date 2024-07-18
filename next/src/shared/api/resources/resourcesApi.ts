@@ -28,7 +28,7 @@ const resourcesApi = createApi({
       providesTags: ['CountedEntities'],
     }),
 
-    findOne: builder.query<IResource, number>({
+    findOne: builder.query<IResource, string>({
       query: resourcesService.findOneArgs,
       providesTags: ['Entity'],
     }),
@@ -38,7 +38,7 @@ const resourcesApi = createApi({
       invalidatesTags: ['Entity'],
     }),
 
-    delete: builder.mutation<boolean, number | number[]>({
+    delete: builder.mutation<boolean, string | string[]>({
       query: resourcesService.deleteArgs,
       invalidatesTags: ['CountedEntities'],
     }),

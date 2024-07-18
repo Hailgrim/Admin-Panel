@@ -51,7 +51,7 @@ class UsersService {
     };
   }
 
-  findOneArgs(payload: number): IReqArgs {
+  findOneArgs(payload: string): IReqArgs {
     return {
       url: ROUTES.api.user(payload),
       method: 'GET',
@@ -59,7 +59,7 @@ class UsersService {
     };
   }
 
-  async findOne(payload: number): Promise<IFetchRes<IUser | null>> {
+  async findOne(payload: string): Promise<IFetchRes<IUser | null>> {
     const { data, error } = await serverFetch<IUser>(
       this.findOneArgs(payload),
       true
@@ -85,7 +85,7 @@ class UsersService {
     };
   }
 
-  deleteArgs(payload: number | number[]): IReqArgs {
+  deleteArgs(payload: string | string[]): IReqArgs {
     return {
       url: ROUTES.api.users,
       method: 'DELETE',

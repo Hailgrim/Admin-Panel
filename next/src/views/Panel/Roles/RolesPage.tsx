@@ -11,7 +11,7 @@ import RolesTable from '@/entities/Tables/RolesTable';
 import useRights from '@/shared/hooks/useRights';
 import useT from '@/shared/hooks/useT';
 import { ROUTES } from '@/shared/lib/constants';
-import FormButton from '@/kit/Form/FormButton';
+import FormButton from '@/shared/kit/Form/FormButton';
 import { IFindAndCountRes } from '@/shared/api/types';
 import { IRole } from '@/shared/api/roles/types';
 import rolesApi from '@/shared/api/roles/rolesApi';
@@ -24,14 +24,14 @@ const RolesPage: FC<IClientPage<IFindAndCountRes<IRole>>> = ({ h1, data }) => {
     rolesApi.useLazyFindAndCountAllQuery();
   const [findAll, findAllReq] = rolesApi.useLazyFindAllQuery();
   const [destroy, destroyReq] = rolesApi.useDeleteMutation();
-  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [rows, setRows] = useState(data?.rows || []);
   const [count, setCount] = useState(data?.count || 0);
   const page = useRef(0);
   const pageSize = useRef(25);
 
   const selectionHandler = (rowSelectionModel: GridRowSelectionModel) => {
-    setSelectedRows(rowSelectionModel.map((item) => Number(item)));
+    setSelectedRows(rowSelectionModel as string[]);
   };
 
   const paginationHandler = (model: GridPaginationModel) => {

@@ -1,11 +1,11 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
-import Form from '@/kit/Form/Form';
-import FormField from '@/kit/Form/FormField';
-import FormPassword from '@/kit/Form/FormPassword';
-import FormButton from '@/kit/Form/FormButton';
-import FormLink from '@/kit/Form/FormLink';
+import Form from '@/shared/kit/Form/Form';
+import FormField from '@/shared/kit/Form/FormField';
+import FormPassword from '@/shared/kit/Form/FormPassword';
+import FormButton from '@/shared/kit/Form/FormButton';
+import FormLink from '@/shared/kit/Form/FormLink';
 import {
   EMAIL_REGEX,
   NAME_REGEX,
@@ -13,11 +13,11 @@ import {
   ROUTES,
 } from '@/shared/lib/constants';
 import useT from '@/shared/hooks/useT';
-import FormAlert from '@/kit/Form/FormAlert';
+import FormAlert from '@/shared/kit/Form/FormAlert';
 import useLang from '@/shared/hooks/useLang';
 import d from '@/shared/locales/dictionary';
-import CustomModal from '@/kit/CustomModal/CustomModal';
-import SignUpSuccess from './SignUpSuccess';
+import CustomModal from '@/shared/kit/CustomModal/CustomModal';
+import SignUpSuccessForm from './SignUpSuccessForm';
 import { makeErrorText, testString } from '@/shared/lib/utils';
 import authApi from '@/shared/api/auth/authApi';
 
@@ -125,7 +125,7 @@ const SignUpForm: FC = () => {
         title={t.registration}
         onClose={() => setModalState(false)}
       >
-        <SignUpSuccess callback={() => setModalState(false)} />
+        <SignUpSuccessForm callback={() => setModalState(false)} />
       </CustomModal>
     </>
   );
