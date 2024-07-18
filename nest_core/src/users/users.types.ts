@@ -1,7 +1,7 @@
 import { IRole } from 'src/roles/roles.types';
 
 export abstract class IUser {
-  id?: any;
+  id: string;
   email: string;
   password: string;
   name: string;

@@ -5,6 +5,7 @@ import { IncomingHttpHeaders } from 'http';
 
 import { ACCESS_TOKEN_SECRET_KEY } from 'libs/config';
 import { getCookies } from './auth.utils';
+import { IToken } from './auth.types';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -20,13 +21,15 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   private static extractJWT(headers: IncomingHttpHeaders): string | null {
     const cookies = getCookies(headers.cookie);
-    if (cookies?.['accessToken']?.length > 0) {
+
+    if (cookies['accessToken']?.length > 0) {
       return cookies['accessToken'];
     }
+
     return null;
   }
 
-  async validate(payload: any) {
+  async validate(payload: IToken) {
     return { ...payload };
   }
 }

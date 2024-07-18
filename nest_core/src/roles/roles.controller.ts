@@ -68,7 +68,7 @@ export class RolesController {
   @UseGuards(JwtGuard, RolesGuard)
   @Get('/:id')
   async findOne(@Param('id') id: string): Promise<IRole> {
-    return this.roleService.findOnePublic(Number(id));
+    return this.roleService.findOnePublic(id);
   }
 
   @ApiOperation({ summary: d['en'].updateEntity })
@@ -81,13 +81,12 @@ export class RolesController {
     @Param('id') id: string,
     @Body() updateRoleDto: UpdateRoleDto,
   ): Promise<boolean> {
-    const result = await this.roleService.updateFields(
-      Number(id),
-      updateRoleDto,
-    );
+    const result = await this.roleService.updateFields(id, updateRoleDto);
+
     if (!result) {
       res.status(HttpStatus.NO_CONTENT);
     }
+
     return result;
   }
 
@@ -102,12 +101,14 @@ export class RolesController {
     @Body() rolesResourcesDtoArr: RolesResourcesDto[],
   ): Promise<boolean> {
     const result = await this.roleService.updateResources(
-      Number(id),
+      id,
       rolesResourcesDtoArr,
     );
+
     if (!result) {
       res.status(HttpStatus.NO_CONTENT);
     }
+
     return result;
   }
 
@@ -116,7 +117,7 @@ export class RolesController {
   @Roles({ path: route, action: Rights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
   @Delete()
-  async delete(@Body() id: number | number[]): Promise<boolean> {
+  async delete(@Body() id: string | string[]): Promise<boolean> {
     return this.roleService.delete(id);
   }
 }

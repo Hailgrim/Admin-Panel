@@ -2,6 +2,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { FindOptions, Op } from 'sequelize';
@@ -61,6 +62,7 @@ export class RolesService {
         admin: false,
       });
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
   }
@@ -75,16 +77,23 @@ export class RolesService {
     try {
       [role] = await this.rolesRepository.findOrCreate({
         where: { name, default: true, admin: Boolean(isAdmin) },
-        defaults: { name, description, default: true, admin: Boolean(isAdmin) },
+        defaults: {
+          name,
+          description,
+          default: true,
+          admin: Boolean(isAdmin),
+          enabled: true,
+        },
       });
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
 
     return role;
   }
 
-  async findOnePublic(id: number): Promise<Role> {
+  async findOnePublic(id: string): Promise<Role> {
     let role: Role | null;
 
     try {
@@ -92,6 +101,7 @@ export class RolesService {
         .scope([PUBLIC, WITH_RESOURCES])
         .findOne({ where: { id } });
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
 
@@ -110,9 +120,11 @@ export class RolesService {
     if (isAdmin) {
       options.where = { ...options.where, admin: true };
     }
+
     try {
       return this.rolesRepository.scope(PUBLIC).findAll(options);
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
   }
@@ -121,15 +133,17 @@ export class RolesService {
     getRolesDto?: GetRolesDto,
   ): Promise<IFindAndCount<Role>> {
     const options = this.prepareGetOptions(getRolesDto);
+
     try {
       return this.rolesRepository.scope(PUBLIC).findAndCountAll(options);
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
   }
 
   async updateFields(
-    id: number,
+    id: string,
     updateRoleDto: UpdateRoleDto,
   ): Promise<boolean> {
     let affectedCount = 0;
@@ -139,6 +153,7 @@ export class RolesService {
         where: { id, default: { [Op.ne]: true } },
       });
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
 
@@ -155,7 +170,7 @@ export class RolesService {
   }
 
   async updateResources(
-    id: number,
+    id: string,
     rolesResourcesDtoArr: RolesResourcesDto[],
   ): Promise<boolean> {
     let role: Role | null;
@@ -165,6 +180,7 @@ export class RolesService {
         .scope(WITH_RESOURCES)
         .findOne({ where: { id, admin: { [Op.ne]: true } } });
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
 
@@ -185,6 +201,7 @@ export class RolesService {
           where: { roleId: id, resourceId: deleteAllows },
         });
       } catch (error) {
+        Logger.error(error);
         throw new InternalServerErrorException();
       }
     }
@@ -199,6 +216,7 @@ export class RolesService {
             },
             defaults: roleResource,
           });
+
           if (!created) {
             await this.rolesResourcesRepository.update(roleResource, {
               where: {
@@ -209,12 +227,14 @@ export class RolesService {
           }
         }),
       );
-    } catch (error) {}
+    } catch (error) {
+      Logger.error(error);
+    }
 
     return true;
   }
 
-  async delete(id: number | number[]) {
+  async delete(id: string | string[]) {
     let destroyedCount = 0;
 
     try {
@@ -222,6 +242,7 @@ export class RolesService {
         where: { id, default: { [Op.ne]: true } },
       });
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
 

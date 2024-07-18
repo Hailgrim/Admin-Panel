@@ -1,17 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNumber } from 'class-validator';
+import { IsBoolean, IsString } from 'class-validator';
 
 import d from 'locales/dictionary';
 import { IRolesResources } from 'src/resources/resources.types';
 
 export class RolesResourcesDto implements IRolesResources {
   @ApiProperty({ example: 1, description: d['en'].roleId })
-  @IsNumber({}, { message: d['en'].mustBeANumber(d['en'].roleId) })
-  roleId: number;
+  @IsString({ message: d['en'].mustBeAString(d['en'].roleId) })
+  roleId: string;
 
   @ApiProperty({ example: 1, description: d['en'].resourceId })
-  @IsNumber({}, { message: d['en'].mustBeANumber(d['en'].resourceId) })
-  resourceId: number;
+  @IsString({ message: d['en'].mustBeAString(d['en'].resourceId) })
+  resourceId: string;
 
   @ApiProperty({
     example: false,

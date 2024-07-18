@@ -39,14 +39,14 @@ export class Role extends Model<Role, CreateRoleFields> implements IRole {
     example: 'Client',
     description: d['en'].name,
   })
-  @Column({ type: DataType.STRING, allowNull: false, unique: true })
+  @Column({ type: DataType.STRING(100), allowNull: false, unique: true })
   name: string;
 
   @ApiProperty({
     example: 'Service client',
     description: d['en'].description,
   })
-  @Column({ type: DataType.STRING, allowNull: true })
+  @Column({ type: DataType.STRING(1000), allowNull: true })
   description: string | null;
 
   @ApiProperty({ example: true, description: d['en'].status })

@@ -68,7 +68,7 @@ export class UsersController {
   @UseGuards(JwtGuard, RolesGuard)
   @Get('/:id')
   async findOne(@Param('id') id: string): Promise<IUser> {
-    return this.usersService.findOnePublic(Number(id));
+    return this.usersService.findOnePublic(id);
   }
 
   @ApiOperation({ summary: d['en'].updateEntity })
@@ -81,13 +81,12 @@ export class UsersController {
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<boolean> {
-    const result = await this.usersService.updateFields(
-      Number(id),
-      updateUserDto,
-    );
+    const result = await this.usersService.updateFields(id, updateUserDto);
+
     if (!result) {
       res.status(HttpStatus.NO_CONTENT);
     }
+
     return result;
   }
 
@@ -101,13 +100,12 @@ export class UsersController {
     @Param('id') id: string,
     @Body() usersRolesDtoArr: UsersRolesDto[],
   ): Promise<boolean> {
-    const result = await this.usersService.updateRoles(
-      Number(id),
-      usersRolesDtoArr,
-    );
+    const result = await this.usersService.updateRoles(id, usersRolesDtoArr);
+
     if (!result) {
       res.status(HttpStatus.NO_CONTENT);
     }
+
     return result;
   }
 
@@ -116,7 +114,7 @@ export class UsersController {
   @Roles({ path: route, action: Rights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
   @Delete()
-  async delete(@Body() id: number | number[]): Promise<boolean> {
+  async delete(@Body() id: string | string[]): Promise<boolean> {
     return this.usersService.delete(id);
   }
 }

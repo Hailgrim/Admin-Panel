@@ -2,26 +2,23 @@ import { FastifyRequest } from 'fastify';
 
 import { IUser } from 'src/users/users.types';
 
-export abstract class ITokensResponse {
+export abstract class ITokensPair {
   accessToken: string;
   refreshToken: string;
 }
 
-export abstract class ICookiesResponse extends ITokensResponse {
-  sessionId: number;
-}
-
-export interface IRequestUser {
-  id: number;
-  email: string;
-  sessionId: number;
+export interface IToken {
+  userId: string;
+  sessionId: string;
   sessionHash: string;
 }
+
 export type FastifyRequestWithUser = FastifyRequest & { user: IUser };
-export type FastifyRequestWithAuth = FastifyRequest & { user: IRequestUser };
+
+export type FastifyRequestWithToken = FastifyRequest & { user: IToken };
 
 export abstract class ISession {
-  userId: number;
+  userId: string;
   hash: string;
   expires: Date;
 }

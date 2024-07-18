@@ -2,12 +2,12 @@ import { Rights } from 'libs/constants';
 import { IResource } from 'src/resources/resources.types';
 
 export abstract class IUsersRoles {
-  userId: number;
-  roleId: number;
+  userId: string;
+  roleId: string;
 }
 
 export abstract class IRole {
-  id?: any;
+  id?: number;
   name: string;
   description?: string | null;
   enabled: boolean;

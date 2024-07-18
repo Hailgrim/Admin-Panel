@@ -5,7 +5,7 @@ import { ROLES_KEY } from 'libs/constants';
 import { User } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { IRoleConditions } from './roles.types';
-import { IRequestUser } from 'src/auth/auth.types';
+import { FastifyRequestWithToken, IToken } from 'src/auth/auth.types';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -19,17 +19,18 @@ export class RolesGuard implements CanActivate {
       ROLES_KEY,
       [context.getHandler(), context.getClass()],
     );
+
     if (!roleConditions) {
       return true;
     }
 
     let user: User | null = null;
-    const reqUser: IRequestUser | undefined = context
+    const token: IToken | undefined = context
       .switchToHttp()
-      .getRequest().user;
+      .getRequest<Partial<FastifyRequestWithToken>>().user;
 
-    if (reqUser?.id) {
-      user = await this.usersService.findOnePublic(reqUser.id);
+    if (token?.userId) {
+      user = await this.usersService.findOnePublic(token.userId);
     }
 
     if (user === null) {

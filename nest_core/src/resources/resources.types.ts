@@ -1,8 +1,8 @@
 import { IRole } from 'src/roles/roles.types';
 
 export type IRolesResources = {
-  roleId: number;
-  resourceId: number;
+  roleId: string;
+  resourceId: string;
   creating: boolean;
   reading: boolean;
   updating: boolean;
@@ -10,7 +10,7 @@ export type IRolesResources = {
 };
 
 export abstract class IResource {
-  id?: any;
+  id?: number;
   name: string;
   path: string;
   description?: string | null;

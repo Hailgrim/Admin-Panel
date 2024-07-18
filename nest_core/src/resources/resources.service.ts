@@ -2,6 +2,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { FindOptions, Op } from 'sequelize';
@@ -58,11 +59,12 @@ export class ResourcesService {
         default: false,
       });
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
   }
 
-  async createMany(
+  async createManyDefault(
     createResourceDtos: CreateResourceDto[],
   ): Promise<Resource[]> {
     try {
@@ -70,11 +72,12 @@ export class ResourcesService {
         createResourceDtos.map((dto) => ({ ...dto, default: true })),
       );
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
   }
 
-  async findOnePublic(id: number): Promise<Resource> {
+  async findOnePublic(id: string): Promise<Resource> {
     let resource: Resource | null;
 
     try {
@@ -82,6 +85,7 @@ export class ResourcesService {
         .scope(PUBLIC)
         .findOne({ where: { id } });
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
 
@@ -100,9 +104,11 @@ export class ResourcesService {
     if (isDefault) {
       options.where = { ...options.where, default: true };
     }
+
     try {
       return this.resourcesRepository.scope(PUBLIC).findAll(options);
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
   }
@@ -111,15 +117,17 @@ export class ResourcesService {
     getResourcesDto?: GetResourcesDto,
   ): Promise<IFindAndCount<Resource>> {
     const options = this.prepareGetOptions(getResourcesDto);
+
     try {
       return this.resourcesRepository.scope(PUBLIC).findAndCountAll(options);
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
   }
 
   async updateFields(
-    id: number,
+    id: string,
     udateResourceDto: UpdateResourceDto,
   ): Promise<boolean> {
     let affectedCount = 0;
@@ -132,6 +140,7 @@ export class ResourcesService {
         },
       );
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
 
@@ -149,7 +158,7 @@ export class ResourcesService {
     return true;
   }
 
-  async delete(id: number | number[]) {
+  async delete(id: string | string[]) {
     let destroyedCount = 0;
 
     try {
@@ -157,6 +166,7 @@ export class ResourcesService {
         where: { id, default: { [Op.ne]: true } },
       });
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
 

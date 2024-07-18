@@ -67,7 +67,7 @@ export class ResourcesController {
   @UseGuards(JwtGuard, RolesGuard)
   @Get('/:id')
   async findOne(@Param('id') id: string): Promise<IResource> {
-    return this.resourceService.findOnePublic(Number(id));
+    return this.resourceService.findOnePublic(id);
   }
 
   @ApiOperation({ summary: d['en'].updateEntity })
@@ -81,12 +81,14 @@ export class ResourcesController {
     @Body() updateResourceDto: UpdateResourceDto,
   ): Promise<boolean> {
     const result = await this.resourceService.updateFields(
-      Number(id),
+      id,
       updateResourceDto,
     );
+
     if (!result) {
       res.status(HttpStatus.NO_CONTENT);
     }
+
     return result;
   }
 
@@ -95,7 +97,7 @@ export class ResourcesController {
   @Roles({ path: route, action: Rights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
   @Delete()
-  async delete(@Body() id: number | number[]): Promise<boolean> {
+  async delete(@Body() id: string | string[]): Promise<boolean> {
     return this.resourceService.delete(id);
   }
 }

@@ -3,7 +3,7 @@ import { FindOptions } from 'sequelize';
 import { PaginationDto } from 'src/database/dto/pagination.dto';
 
 /**
- * @param {any} paginationDto DTO with pagination attributes
+ * @param {PaginationDto} paginationDto DTO with pagination attributes
  * @returns {FindOptions} Pagination options
  */
 export const preparePaginationOptions = (

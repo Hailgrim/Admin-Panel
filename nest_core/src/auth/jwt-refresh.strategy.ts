@@ -5,6 +5,7 @@ import { IncomingHttpHeaders } from 'http';
 
 import { REFRESH_TOKEN_SECRET_KEY } from 'libs/config';
 import { getCookies } from './auth.utils';
+import { IToken } from './auth.types';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
@@ -25,13 +26,15 @@ export class JwtRefreshStrategy extends PassportStrategy(
     headers: IncomingHttpHeaders,
   ): string | null {
     const cookies = getCookies(headers.cookie);
-    if (cookies?.['refreshToken']?.length > 0) {
+
+    if (cookies['refreshToken']?.length > 0) {
       return cookies['refreshToken'];
     }
+
     return null;
   }
 
-  async validate(payload: any) {
+  async validate(payload: IToken) {
     return { ...payload };
   }
 }

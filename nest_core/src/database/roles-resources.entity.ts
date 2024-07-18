@@ -17,11 +17,11 @@ export class RolesResources
 {
   @ForeignKey(() => Role)
   @Column({ type: DataType.INTEGER })
-  roleId: number;
+  roleId: string;
 
   @ForeignKey(() => Resource)
   @Column({ type: DataType.INTEGER })
-  resourceId: number;
+  resourceId: string;
 
   @Column({ type: DataType.BOOLEAN })
   creating: boolean;

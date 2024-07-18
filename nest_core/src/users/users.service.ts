@@ -4,6 +4,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
   ConflictException,
+  Logger,
 } from '@nestjs/common';
 import { FindOptions, UpdateOptions } from 'sequelize';
 import * as argon2 from 'argon2';
@@ -44,11 +45,7 @@ export class UsersService {
   }
 
   private async createPasswordHash(password: string): Promise<string> {
-    try {
-      return argon2.hash(password);
-    } catch (error) {
-      throw new InternalServerErrorException();
-    }
+    return argon2.hash(password);
   }
 
   async create(createUserDto: CreateUserDto, roles?: Role[]): Promise<User> {
@@ -62,6 +59,7 @@ export class UsersService {
         defaults: { ...createUserDto, password },
       });
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
 
@@ -75,6 +73,7 @@ export class UsersService {
         user.roles = roles;
       }
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
 
@@ -90,6 +89,7 @@ export class UsersService {
     try {
       user = await this.usersRepository.scope(scope).findOne(options);
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
 
@@ -104,15 +104,17 @@ export class UsersService {
     return this.findOne({ where: { email } }, WITH_ROLES);
   }
 
-  async findOnePublic(id: number): Promise<User> {
+  async findOnePublic(id: string): Promise<User> {
     return this.findOne({ where: { id } }, [PUBLIC, WITH_ROLES]);
   }
 
   async findAllPublic(getUsersDto?: GetUsersDto): Promise<User[]> {
     const options = this.prepareGetOptions(getUsersDto);
+
     try {
       return this.usersRepository.scope([PUBLIC, WITH_ROLES]).findAll(options);
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
   }
@@ -121,16 +123,18 @@ export class UsersService {
     getUsersDto?: GetUsersDto,
   ): Promise<IFindAndCount<User>> {
     const options = this.prepareGetOptions(getUsersDto);
+
     try {
       return this.usersRepository
         .scope([PUBLIC, WITH_ROLES])
         .findAndCountAll(options);
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
   }
 
-  async countByRole(roleId: number): Promise<number> {
+  async countByRole(roleId: string): Promise<number> {
     try {
       return await this.usersRepository.count({
         include: {
@@ -139,6 +143,7 @@ export class UsersService {
         },
       });
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
   }
@@ -152,11 +157,20 @@ export class UsersService {
     try {
       [affectedCount] = await this.usersRepository.update(fields, options);
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
 
     if (affectedCount == 0) {
-      const user = await this.usersRepository.findOne(options);
+      let user: User | null;
+
+      try {
+        user = await this.usersRepository.findOne(options);
+      } catch (error) {
+        Logger.error(error);
+        throw new InternalServerErrorException();
+      }
+
       if (!user) {
         throw new NotFoundException();
       } else {
@@ -168,7 +182,7 @@ export class UsersService {
   }
 
   async updateFields(
-    id: number,
+    id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<boolean> {
     return this.update(updateUserDto, { where: { id } });
@@ -215,7 +229,7 @@ export class UsersService {
   }
 
   async updateRoles(
-    id: number,
+    id: string,
     usersRolesDtoArr: UsersRolesDto[],
   ): Promise<boolean> {
     const user = await this.findOne({ where: { id } });
@@ -226,12 +240,13 @@ export class UsersService {
     return true;
   }
 
-  async delete(id: number | number[]) {
+  async delete(id: string | string[]) {
     let destroyedCount = 0;
 
     try {
       destroyedCount = await this.usersRepository.destroy({ where: { id } });
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
 

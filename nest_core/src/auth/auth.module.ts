@@ -8,7 +8,6 @@ import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { JwtRefreshStrategy } from './jwt-refresh.strategy';
 import { AuthController } from './auth.controller';
-import { sessionsProviders } from './sessions.providers';
 import { UsersService } from 'src/users/users.service';
 import { usersProviders } from 'src/users/users.providers';
 import { RolesService } from 'src/roles/roles.service';
@@ -35,7 +34,6 @@ import { rmqProviders } from 'src/rmq.providers';
     LocalStrategy,
     JwtStrategy,
     JwtRefreshStrategy,
-    ...sessionsProviders,
     UsersService,
     ...usersProviders,
     RolesService,

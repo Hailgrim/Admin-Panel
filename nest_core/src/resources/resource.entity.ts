@@ -34,21 +34,21 @@ export class Resource
     example: 'Users',
     description: d['en'].name,
   })
-  @Column({ type: DataType.STRING, allowNull: false, unique: true })
+  @Column({ type: DataType.STRING(100), allowNull: false, unique: true })
   name: string;
 
   @ApiProperty({
     example: 'users',
     description: d['en'].path,
   })
-  @Column({ type: DataType.STRING, allowNull: false, unique: true })
+  @Column({ type: DataType.STRING(100), allowNull: false, unique: true })
   path: string;
 
   @ApiProperty({
     example: 'Users resource',
     description: d['en'].description,
   })
-  @Column({ type: DataType.STRING, allowNull: true })
+  @Column({ type: DataType.STRING(1000), allowNull: true })
   description: string | null;
 
   @ApiProperty({ example: true, description: d['en'].status })

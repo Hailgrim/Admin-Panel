@@ -27,7 +27,7 @@ import { Roles } from 'src/roles/roles.decorator';
 import { Rights } from 'libs/constants';
 import { RolesGuard } from 'src/roles/roles.guard';
 import d from 'locales/dictionary';
-import { FastifyRequestWithAuth, FastifyRequestWithUser } from './auth.types';
+import { FastifyRequestWithToken, FastifyRequestWithUser } from './auth.types';
 import { IUser } from 'src/users/users.types';
 import { getCookies } from './auth.utils';
 
@@ -72,30 +72,26 @@ export class AuthController {
     @Res({ passthrough: true }) res: FastifyReply,
     @Body() signInDto: SignInDto,
   ): Promise<IUser> {
-    const oldSessionId = req.cookies['sessionId'];
-    const rememberMe = signInDto.rememberMe;
-    const { accessToken, refreshToken, sessionId } =
-      await this.authService.signIn(req.user, rememberMe, oldSessionId);
+    const sessionTtl = signInDto.rememberMe
+      ? REFRESH_TOKEN_LIFETIME
+      : ACCESS_TOKEN_LIFETIME * 2;
+    const { accessToken, refreshToken } = await this.authService.signIn(
+      req.user,
+      sessionTtl,
+    );
 
     res.cookie('accessToken', accessToken, this.authService.prepareCookie());
     res.cookie(
       'refreshToken',
       refreshToken,
-      this.authService.prepareCookie(
-        rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2,
-      ),
-    );
-    res.cookie(
-      'sessionId',
-      String(sessionId),
-      this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME * 12),
+      this.authService.prepareCookie(sessionTtl),
     );
 
-    if (rememberMe) {
+    if (signInDto.rememberMe) {
       res.cookie(
         'rememberMe',
         'true',
-        this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME * 12),
+        this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME),
       );
     } else {
       res.clearCookie('rememberMe', this.authService.prepareCookie());
@@ -117,34 +113,30 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @Get('refresh')
   async refresh(
-    @Req() req: FastifyRequestWithAuth,
+    @Req() req: FastifyRequestWithToken,
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<boolean> {
     const rememberMe = 'rememberMe' in getCookies(req.headers.cookie);
+    const sessionTtl = rememberMe
+      ? REFRESH_TOKEN_LIFETIME
+      : ACCESS_TOKEN_LIFETIME * 2;
     const { accessToken, refreshToken } = await this.authService.refresh(
       req.user,
-      rememberMe,
+      sessionTtl,
     );
 
     res.cookie('accessToken', accessToken, this.authService.prepareCookie());
     res.cookie(
       'refreshToken',
       refreshToken,
-      this.authService.prepareCookie(
-        rememberMe ? REFRESH_TOKEN_LIFETIME : ACCESS_TOKEN_LIFETIME * 2,
-      ),
-    );
-    res.cookie(
-      'sessionId',
-      String(req.user.sessionId),
-      this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME * 12),
+      this.authService.prepareCookie(sessionTtl),
     );
 
     if (rememberMe) {
       res.cookie(
         'rememberMe',
         'true',
-        this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME * 12),
+        this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME),
       );
     }
 
@@ -156,7 +148,7 @@ export class AuthController {
   @Roles({ path: 'profile', action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get('profile')
-  async getProfile(@Req() req: FastifyRequestWithAuth): Promise<IUser> {
+  async getProfile(@Req() req: FastifyRequestWithToken): Promise<IUser> {
     return this.authService.getProfile(req.user);
   }
 
@@ -166,7 +158,7 @@ export class AuthController {
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('profile')
   async updateProfile(
-    @Req() req: FastifyRequestWithAuth,
+    @Req() req: FastifyRequestWithToken,
     @Body() updateProfileDto: UpdateProfileDto,
   ): Promise<boolean> {
     return this.authService.updateProfile(req.user, updateProfileDto);
@@ -177,13 +169,12 @@ export class AuthController {
   @UseGuards(JwtGuard)
   @Delete('log-out')
   async signOut(
-    @Req() req: FastifyRequestWithAuth,
+    @Req() req: FastifyRequestWithToken,
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<boolean> {
     const result = await this.authService.signOut(req.user);
     res.clearCookie('accessToken', this.authService.prepareCookie());
     res.clearCookie('refreshToken', this.authService.prepareCookie());
-    res.clearCookie('sessionId', this.authService.prepareCookie());
     res.clearCookie('rememberMe', this.authService.prepareCookie());
     return result;
   }
