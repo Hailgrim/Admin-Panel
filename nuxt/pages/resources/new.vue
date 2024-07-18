@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CreateResource from '~/components/entities/Forms/Resource/CreateResource.vue'
+import CreateResourceForm from '~/components/entities/Forms/Resource/CreateResourceForm.vue'
 
 definePageMeta({
   middleware: ['auth'],
@@ -11,5 +11,5 @@ definePageMeta({
 </script>
 
 <template>
-  <CreateResource />
+  <CreateResourceForm />
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CreateUser from '~/components/entities/Forms/User/CreateUser.vue'
+import CreateUserForm from '~/components/entities/Forms/User/CreateUserForm.vue'
 
 definePageMeta({
   middleware: ['auth'],
@@ -11,5 +11,5 @@ definePageMeta({
 </script>
 
 <template>
-  <CreateUser />
+  <CreateUserForm />
 </template>

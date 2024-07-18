@@ -1,5 +1,5 @@
 export interface IResource {
-  id: number;
+  id: string;
   name: string;
   path: string;
   description: string | null;
@@ -14,8 +14,8 @@ export type IResourceCreate = Pick<
 >;
 
 export interface IRolesResources {
-  roleId: number;
-  resourceId: number;
+  roleId: string;
+  resourceId: string;
   creating: boolean;
   reading: boolean;
   updating: boolean;

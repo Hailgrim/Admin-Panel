@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import UpdateRole from '~/components/entities/Forms/Role/UpdateRole.vue'
-import UpdateRoleResources from '~/components/entities/Forms/Role/UpdateRoleResources.vue'
+import UpdateRoleForm from '~/components/entities/Forms/Role/UpdateRoleForm.vue'
+import UpdateRoleResourcesForm from '~/components/entities/Forms/Role/UpdateRoleResourcesForm.vue'
 import { useResourcesStore } from '~/stores/resources/resources'
 import { useRolesStore } from '~/stores/roles/roles'
 
@@ -13,7 +13,7 @@ definePageMeta({
 })
 
 const route = useRoute()
-const id = Number(route.params.id)
+const id = route.params.id
 const rolesStore = useRolesStore()
 await rolesStore.readRefresh(id)
 if (rolesStore.readData === null) {
@@ -26,11 +26,11 @@ await resourcesStore.listRefresh(undefined)
 </script>
 
 <template>
-  <UpdateRole v-if="rolesStore.readData" :role="rolesStore.readData" />
+  <UpdateRoleForm v-if="rolesStore.readData" :role="rolesStore.readData" />
   <v-card-title v-if="rolesStore.readData && resourcesStore.listData" class="px-0 pt-0 pb-6">
     {{ $t('resources') }}
   </v-card-title>
-  <UpdateRoleResources
+  <UpdateRoleResourcesForm
 v-if="rolesStore.readData && resourcesStore.listData" :role="rolesStore.readData"
     :resources="resourcesStore.listData" />
 </template>

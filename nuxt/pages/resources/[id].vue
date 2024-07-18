@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import UpdateResource from '~/components/entities/Forms/Resource/UpdateResource.vue'
+import UpdateResourceForm from '~/components/entities/Forms/Resource/UpdateResourceForm.vue'
 import { useResourcesStore } from '~/stores/resources/resources'
 
 definePageMeta({
@@ -11,7 +11,7 @@ definePageMeta({
 })
 
 const route = useRoute()
-const id = Number(route.params.id)
+const id = route.params.id
 const resourcesStore = useResourcesStore()
 await resourcesStore.readRefresh(id)
 if (resourcesStore.readData === null) {
@@ -22,5 +22,5 @@ if (resourcesStore.readData === null) {
 </script>
 
 <template>
-  <UpdateResource v-if="resourcesStore.readData" :resource="resourcesStore.readData" />
+  <UpdateResourceForm v-if="resourcesStore.readData" :resource="resourcesStore.readData" />
 </template>

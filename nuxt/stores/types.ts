@@ -11,6 +11,6 @@ export type IListReq<T> = Partial<T> & {
 };
 
 export interface IUpdateReq<T> {
-  id: number;
+  id: string;
   fields: Partial<T>;
 }

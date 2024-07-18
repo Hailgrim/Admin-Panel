@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import UpdateProfile from '~/components/entities/Forms/Auth/UpdateProfile.vue'
+import UpdateProfileForm from '~/components/entities/Forms/Auth/UpdateProfileForm.vue'
 
 definePageMeta({
   middleware: ['auth'],
@@ -11,5 +11,5 @@ definePageMeta({
 </script>
 
 <template>
-  <UpdateProfile />
+  <UpdateProfileForm />
 </template>

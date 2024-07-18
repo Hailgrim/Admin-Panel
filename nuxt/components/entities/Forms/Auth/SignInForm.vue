@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import Form from '~/components/kit/Form/Form.vue'
-import FormAlert from '~/components/kit/Form/FormAlert.vue'
-import FormField from '~/components/kit/Form/FormField.vue'
-import FormPassword from '~/components/kit/Form/FormPassword.vue'
-import FormCheckbox from '~/components/kit/Form/FormCheckbox.vue'
-import FormButton from '~/components/kit/Form/FormButton.vue'
-import FormLink from '~/components/kit/Form/FormLink.vue'
-import CustomModal from '~/components/kit/CustomModal/CustomModal.vue'
+import Form from '~/components/shared/kit/Form/Form.vue'
+import FormAlert from '~/components/shared/kit/Form/FormAlert.vue'
+import FormField from '~/components/shared/kit/Form/FormField.vue'
+import FormPassword from '~/components/shared/kit/Form/FormPassword.vue'
+import FormCheckbox from '~/components/shared/kit/Form/FormCheckbox.vue'
+import FormButton from '~/components/shared/kit/Form/FormButton.vue'
+import FormLink from '~/components/shared/kit/Form/FormLink.vue'
+import CustomModal from '~/components/shared/kit/CustomModal/CustomModal.vue'
 import VerifyForm from '~/components/entities/Forms/Auth/VerifyForm.vue'
 import { useAuthStore } from '~/stores/auth/auth'
 
@@ -63,8 +63,7 @@ watch(
   <Form @submit="formHandler">
     <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
     <FormField v-model:model-value="email" required name="email" :label="$t('email')" :rules="[emailIsValid]" />
-    <FormPassword
-v-model:model-value="password" required name="password" :label="$t('password')"
+    <FormPassword v-model:model-value="password" required name="password" :label="$t('password')"
       :rules="[passwordIsValid]" />
     <FormCheckbox v-model:model-value="rememberMe" name="rememberMe" :label="$t('rememberMe')" />
     <FormButton block type="submit" color="info" :loading="authStore.signInPending">

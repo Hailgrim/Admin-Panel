@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import Form from '~/components/kit/Form/Form.vue'
-import FormField from '~/components/kit/Form/FormField.vue'
-import FormButton from '~/components/kit/Form/FormButton.vue'
+import Form from '~/components/shared/kit/Form/Form.vue'
+import FormField from '~/components/shared/kit/Form/FormField.vue'
+import FormButton from '~/components/shared/kit/Form/FormButton.vue'
 import { useMainStore } from '~/stores/main/main'
 import { useAuthStore } from '~/stores/auth/auth'
 import type { IUser } from '~/stores/users/types'
@@ -42,8 +42,7 @@ watch(
 <template>
   <Form @submit="formHandler">
     <FormField v-model:model-value="name" required name="name" :label="$t('email')" :rules="[nameIsValid]" />
-    <FormButton
-type="submit" color="success" prepand-icon="mdi-content-save" :loading="authStore.updateProfilePending"
+    <FormButton type="submit" color="success" prepand-icon="mdi-content-save" :loading="authStore.updateProfilePending"
       :disabled="!rights.updating">
       {{ $t('update') }}
     </FormButton>

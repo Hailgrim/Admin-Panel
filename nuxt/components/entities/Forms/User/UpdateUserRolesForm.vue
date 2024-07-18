@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import Form from '~/components/kit/Form/Form.vue'
-import FormCheckbox from '~/components/kit/Form/FormCheckbox.vue'
-import FormButton from '~/components/kit/Form/FormButton.vue'
+import Form from '~/components/shared/kit/Form/Form.vue'
+import FormCheckbox from '~/components/shared/kit/Form/FormCheckbox.vue'
+import FormButton from '~/components/shared/kit/Form/FormButton.vue'
 import { useUsersStore } from '~/stores/users/users'
 import type { IRole, IUsersRoles } from '~/stores/roles/types';
 import type { IUser } from '~/stores/users/types';
@@ -61,14 +61,12 @@ watch(
   <Form @submit="submitHandler">
     <div class="d-flex flex-row">
       <span v-for="role of roles" :key="`userRole.${role.id}`" class="mr-6">
-        <FormCheckbox
-:model-value="updatedRoles.some(value => value?.roleId === role.id)"
+        <FormCheckbox :model-value="updatedRoles.some(value => value?.roleId === role.id)"
           :name="`${role.name}.${role.id}`" :label="role.name"
           @update:model-value="setRoles({ roleId: role.id, userId: user.id })" />
       </span>
     </div>
-    <FormButton
-type="submit" color="success" prepand-icon="mdi-content-save" :loading="usersStore.updateRolesPending"
+    <FormButton type="submit" color="success" prepand-icon="mdi-content-save" :loading="usersStore.updateRolesPending"
       :disabled="!rights.updating">
       {{ $t('update') }}
     </FormButton>

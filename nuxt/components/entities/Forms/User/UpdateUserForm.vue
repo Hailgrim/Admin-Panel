@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import Form from '~/components/kit/Form/Form.vue'
-import FormField from '~/components/kit/Form/FormField.vue'
-import FormCheckbox from '~/components/kit/Form/FormCheckbox.vue'
-import FormButton from '~/components/kit/Form/FormButton.vue'
+import Form from '~/components/shared/kit/Form/Form.vue'
+import FormField from '~/components/shared/kit/Form/FormField.vue'
+import FormCheckbox from '~/components/shared/kit/Form/FormCheckbox.vue'
+import FormButton from '~/components/shared/kit/Form/FormButton.vue'
 import { useUsersStore } from '~/stores/users/users'
 import type { IUser } from '~/stores/users/types'
 import { useMainStore } from '~/stores/main/main'
@@ -43,15 +43,12 @@ watch(
 
 <template>
   <Form @submit="submitHandler">
-    <FormField
-v-model:model-value="email" type="email" required name="email" :label="$t('email')"
+    <FormField v-model:model-value="email" type="email" required name="email" :label="$t('email')"
       :rules="[emailIsValid]" :hint="$t('emailValidation')" />
-    <FormField
-v-model:model-value="name" required name="name" :label="$t('name')" :rules="[nameIsValid]"
+    <FormField v-model:model-value="name" required name="name" :label="$t('name')" :rules="[nameIsValid]"
       :hint="$t('nameValidation')" />
     <FormCheckbox v-model:model-value="enabled" name="enabled" :label="$t('enabled')" />
-    <FormButton
-type="submit" color="success" prepand-icon="mdi-content-save" :loading="usersStore.updatePending"
+    <FormButton type="submit" color="success" prepand-icon="mdi-content-save" :loading="usersStore.updatePending"
       :disabled="!rights.updating">
       {{ $t('update') }}
     </FormButton>

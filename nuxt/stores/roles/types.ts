@@ -1,7 +1,7 @@
 import type { IResource } from '../resources/types';
 
 export interface IRole {
-  id: number;
+  id: string;
   name: string;
   description: string | null;
   enabled: boolean;
@@ -14,8 +14,8 @@ export interface IRole {
 export type IRoleCreate = Pick<IRole, 'name' | 'description' | 'enabled'>;
 
 export interface IUsersRoles {
-  userId: number;
-  roleId: number;
+  userId: string;
+  roleId: string;
 }
 
 export interface IRoleAndResources {

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import Form from '~/components/kit/Form/Form.vue'
-import FormAlert from '~/components/kit/Form/FormAlert.vue'
-import FormField from '~/components/kit/Form/FormField.vue'
-import FormButton from '~/components/kit/Form/FormButton.vue'
-import FormLink from '~/components/kit/Form/FormLink.vue'
-import CustomModal from '~/components/kit/CustomModal/CustomModal.vue'
+import Form from '~/components/shared/kit/Form/Form.vue'
+import FormAlert from '~/components/shared/kit/Form/FormAlert.vue'
+import FormField from '~/components/shared/kit/Form/FormField.vue'
+import FormButton from '~/components/shared/kit/Form/FormButton.vue'
+import FormLink from '~/components/shared/kit/Form/FormLink.vue'
+import CustomModal from '~/components/shared/kit/CustomModal/CustomModal.vue'
 import ResetForm from '~/components/entities/Forms/Auth/ResetForm.vue'
 import { useAuthStore } from '~/stores/auth/auth'
 
@@ -57,8 +57,7 @@ watch(
 <template>
   <Form @submit="formHandler">
     <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
-    <FormField
-v-model:model-value="email" required name="email" type="text" :label="$t('email')"
+    <FormField v-model:model-value="email" required name="email" type="text" :label="$t('email')"
       :rules="[emailIsValid]" :hint="$t('emailValidation')" />
     <FormButton block type="submit" color="success" :loading="authStore.forgotPasswordPending">
       {{ $t('confirm') }}

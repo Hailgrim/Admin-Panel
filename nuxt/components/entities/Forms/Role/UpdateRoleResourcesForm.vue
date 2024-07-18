@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import ResourceRights from '~/components/entities/Forms/Resource/ResourceRights.vue'
-import Form from '~/components/kit/Form/Form.vue'
-import FormButton from '~/components/kit/Form/FormButton.vue'
+import ResourceRightsFields from '~/components/entities/Forms/Resource/ResourceRightsFields.vue'
+import Form from '~/components/shared/kit/Form/Form.vue'
+import FormButton from '~/components/shared/kit/Form/FormButton.vue'
 import { useMainStore } from '~/stores/main/main';
 import type { IResource, IRolesResources } from '~/stores/resources/types';
 import { useRolesStore } from '~/stores/roles/roles'
@@ -62,13 +62,11 @@ watch(
 <template>
   <Form @submit="submitHandler">
     <div class="d-flex flex-row">
-      <ResourceRights
-v-for="resource of resources" :key="`resourceRights.${resource.id}`" :role-id="role.id"
+      <ResourceRightsFields v-for="resource of resources" :key="`resourceRights.${resource.id}`" :role-id="role.id"
         :resource="resource" :rights="updatedRights.filter(value => value.resourceId === resource.id)[0]"
         @update="setRights" />
     </div>
-    <FormButton
-type="submit" color="success" prepand-icon="mdi-content-save"
+    <FormButton type="submit" color="success" prepand-icon="mdi-content-save"
       :loading="rolesStore.updateResourcesPending" :disabled="!rights.updating">
       {{ $t('update') }}
     </FormButton>

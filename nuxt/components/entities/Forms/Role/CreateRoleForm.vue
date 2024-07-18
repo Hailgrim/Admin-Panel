@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import Form from '~/components/kit/Form/Form.vue'
-import FormField from '~/components/kit/Form/FormField.vue'
-import FormCheckbox from '~/components/kit/Form/FormCheckbox.vue'
-import FormButton from '~/components/kit/Form/FormButton.vue'
+import Form from '~/components/shared/kit/Form/Form.vue'
+import FormField from '~/components/shared/kit/Form/FormField.vue'
+import FormCheckbox from '~/components/shared/kit/Form/FormCheckbox.vue'
+import FormButton from '~/components/shared/kit/Form/FormButton.vue'
 import { useRolesStore } from '~/stores/roles/roles'
 import { useMainStore } from '~/stores/main/main'
 
@@ -41,8 +41,7 @@ watch(
     <FormField v-model:model-value="name" required name="name" :label="$t('name')" :rules="[nameIsValid]" />
     <FormField v-model:model-value="description" name="description" :label="$t('description')" />
     <FormCheckbox v-model:model-value="enabled" name="enabled" :label="$t('enabled')" />
-    <FormButton
-type="submit" color="info" prepand-icon="mdi-plus" :loading="rolesStore.createPending"
+    <FormButton type="submit" color="info" prepand-icon="mdi-plus" :loading="rolesStore.createPending"
       :disabled="!rights.creating">
       {{ $t('create') }}
     </FormButton>

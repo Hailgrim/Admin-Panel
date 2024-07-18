@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import Form from '~/components/kit/Form/Form.vue'
-import FormAlert from '~/components/kit/Form/FormAlert.vue'
-import FormButton from '~/components/kit/Form/FormButton.vue'
+import Form from '~/components/shared/kit/Form/Form.vue'
+import FormAlert from '~/components/shared/kit/Form/FormAlert.vue'
+import FormButton from '~/components/shared/kit/Form/FormButton.vue'
 
 defineEmits(['close'])
 </script>

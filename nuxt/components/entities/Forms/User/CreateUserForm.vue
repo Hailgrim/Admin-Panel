@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Form from '~/components/kit/Form/Form.vue'
-import FormField from '~/components/kit/Form/FormField.vue'
-import FormPassword from '~/components/kit/Form/FormPassword.vue'
-import FormCheckbox from '~/components/kit/Form/FormCheckbox.vue'
-import FormButton from '~/components/kit/Form/FormButton.vue'
+import Form from '~/components/shared/kit/Form/Form.vue'
+import FormField from '~/components/shared/kit/Form/FormField.vue'
+import FormPassword from '~/components/shared/kit/Form/FormPassword.vue'
+import FormCheckbox from '~/components/shared/kit/Form/FormCheckbox.vue'
+import FormButton from '~/components/shared/kit/Form/FormButton.vue'
 import { useUsersStore } from '~/stores/users/users'
 import { useMainStore } from '~/stores/main/main'
 
@@ -46,18 +46,14 @@ watch(
 
 <template>
   <Form @submit="submitHandler">
-    <FormField
-v-model:model-value="email" type="email" required name="email" :label="$t('email')"
+    <FormField v-model:model-value="email" type="email" required name="email" :label="$t('email')"
       :rules="[emailIsValid]" :hint="$t('emailValidation')" />
-    <FormField
-v-model:model-value="name" required name="name" :label="$t('name')" :rules="[nameIsValid]"
+    <FormField v-model:model-value="name" required name="name" :label="$t('name')" :rules="[nameIsValid]"
       :hint="$t('nameValidation')" />
-    <FormPassword
-v-model:model-value="password" required name="password" :label="$t('password')"
+    <FormPassword v-model:model-value="password" required name="password" :label="$t('password')"
       :rules="[passwordIsValid]" :hint="$t('passwordValidation')" />
     <FormCheckbox v-model:model-value="enabled" name="enabled" :label="$t('enabled')" />
-    <FormButton
-type="submit" color="info" prepand-icon="mdi-plus" :loading="usersStore.createPending"
+    <FormButton type="submit" color="info" prepand-icon="mdi-plus" :loading="usersStore.createPending"
       :disabled="!rights.creating">
       {{ $t('create') }}
     </FormButton>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Form from '~/components/kit/Form/Form.vue'
-import FormAlert from '~/components/kit/Form/FormAlert.vue'
-import FormField from '~/components/kit/Form/FormField.vue'
-import FormPassword from '~/components/kit/Form/FormPassword.vue'
-import FormButton from '~/components/kit/Form/FormButton.vue'
+import Form from '~/components/shared/kit/Form/Form.vue'
+import FormAlert from '~/components/shared/kit/Form/FormAlert.vue'
+import FormField from '~/components/shared/kit/Form/FormField.vue'
+import FormPassword from '~/components/shared/kit/Form/FormPassword.vue'
+import FormButton from '~/components/shared/kit/Form/FormButton.vue'
 import { useAuthStore } from '~/stores/auth/auth'
 
 const props = defineProps<{
@@ -52,11 +52,9 @@ watch(
 <template>
   <Form @submit="formHandler">
     <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
-    <FormField
-v-model:model-value="code" required name="code" :label="$t('code')"
+    <FormField v-model:model-value="code" required name="code" :label="$t('code')"
       :hint="`${$t('codeFromEmail')} (${email})`" :rules="[codeIsValid]" />
-    <FormPassword
-v-model:model-value="password" required name="password" :label="$t('newPassword')"
+    <FormPassword v-model:model-value="password" required name="password" :label="$t('newPassword')"
       :rules="[passwordIsValid]" :hint="$t('passwordValidation')" />
     <FormButton block type="submit" color="success" :loading="authStore.resetPasswordPending">
       {{ $t('confirm') }}

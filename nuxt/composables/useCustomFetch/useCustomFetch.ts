@@ -1,6 +1,6 @@
 import { appendResponseHeader } from 'h3';
 
-import type { IRequestError } from './types';
+import type { IReqError } from './types';
 
 export function useCustomFetch<ResT = void, ReqT = void>(
   init: (payload: ReqT) => {
@@ -20,7 +20,7 @@ export function useCustomFetch<ResT = void, ReqT = void>(
   const rememberMe = useCookie('rememberMe');
   const payload = ref<ReqT | null>(null) as Ref<ReqT | null>;
   const pending = ref(false);
-  const error = ref<IRequestError | null>(null);
+  const error = ref<IReqError | null>(null);
   const data = ref<ResT | null>(null) as Ref<ResT | null>;
   const refreshed = ref(false);
 
@@ -90,7 +90,7 @@ export function useCustomFetch<ResT = void, ReqT = void>(
       pending.value = false;
       return resolve;
     } catch (fail) {
-      const fetchError: IRequestError = {
+      const fetchError: IReqError = {
         status: Number((fail as Record<string, unknown>).status) || 400,
         message: String((fail as Record<string, unknown>).message),
       };
