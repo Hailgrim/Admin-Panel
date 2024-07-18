@@ -68,6 +68,7 @@ services:
     depends_on:
       - rabbitmq
       - postgres
+      - redis
     networks:
       - main
     expose:

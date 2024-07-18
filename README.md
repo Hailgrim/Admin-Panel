@@ -58,16 +58,17 @@ This microservice provides a graphical interface for administration.
 In it, you can set a list of protected links, create roles with rights for links, manage registered users.
 The service is written in [React](https://github.com/facebook/react) and [TypeScript](https://github.com/microsoft/TypeScript).
 [Material UI](https://github.com/mui/material-ui) is used as the UI kit.
-[Redux Toolkit](https://github.com/reduxjs/redux-toolkit) is used as the application state manager.
+[Redux Toolkit](https://github.com/reduxjs/redux-toolkit) is used as the application state manager (`./next/src/shared/store`).
 [RTK Query](https://github.com/rtk-incubator/rtk-query) is used for API requests.
-In the `./next/src/store` folder, you can make changes to the application state management logic.
-The `./next/src/lib/config.ts` file contains the settings received from Docker during project startup.
+The project structure uses an **FSD**-like pattern.
+In the `./next/src/shared/store` folder, you can make changes to the application state management logic.
+The `./next/src/shared/lib/config.ts` file contains the settings received from Docker during project startup.
 
 ### [Nuxt.js](https://github.com/nuxt/nuxt)
 
 Implements the same functionality as Next.js, but [Vue](https://github.com/vuejs/core) is used instead of React.
 Instead of [Node.js](https://github.com/nodejs), the container uses [Bun](https://github.com/oven-sh/bun).
-State manager ([Pinia](https://github.com/vuejs/pinia)) folder - `./nuxt/store`.
+State manager - [Pinia](https://github.com/vuejs/pinia) (`./nuxt/store`).
 UI kit - [Vuetify](https://github.com/vuetifyjs/vuetify).
 
 ### Main server
@@ -87,22 +88,24 @@ This behavior is changed in the file `./nest_mailer/libs/config.ts` using the va
 ### [nginx](https://github.com/nginx/agent)
 
 Nginx is used as a proxy server and provides the HTTPS protocol.
-In the `./nginx/html` folder, you can change the standard nginx response pages.
+In the `./nginx/html` folder you can change the default nginx response pages.
 The `./nginx/ssl` folder is used to store the SSL certificate files.
-In the `./nginx/templates/default.conf.template` file, you can set rules for routing.
+In the file `./nginx/templates/default.conf.template` you can set routing rules.
 
 ### [PostgreSQL](https://github.com/postgres/postgres)
 
 This is the main database of the project.
+In the file `./postgres/postgresql.conf` you can set the parameters of PostgreSQL.
 
 ### [Redis](https://github.com/redis/redis)
 
-This database is used for secondary storage of user sessions.
-In the `./redis/redis.conf` file, you can set Redis parameters.
+This storage is used to store user sessions.
+In the file `./redis/redis.conf` you can set the parameters of Redis.
 
 ### [RabbitMQ](https://github.com/rabbitmq/rabbitmq-tutorials)
 
 A queue manager that is used to send requests for sending emails.
+In the file `./rabbitmq/conf.d/rabbitmq.conf` you can set the parameters of RabbitMQ.
 
 ## SSL update
 
