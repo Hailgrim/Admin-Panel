@@ -56,11 +56,10 @@ docker compose down --remove-orphans
 
 This microservice provides a graphical interface for administration.
 In it, you can set a list of protected links, create roles with rights for links, manage registered users.
-The service is written in [React](https://github.com/facebook/react) and [TypeScript](https://github.com/microsoft/TypeScript).
+The service is written in [React](https://github.com/facebook/react) and [TypeScript](https://github.com/microsoft/TypeScript) with **FSD**-like structure.
 [Material UI](https://github.com/mui/material-ui) is used as the UI kit.
 [Redux Toolkit](https://github.com/reduxjs/redux-toolkit) is used as the application state manager (`./next/src/shared/store`).
 [RTK Query](https://github.com/rtk-incubator/rtk-query) is used for API requests.
-The project structure uses an **FSD**-like pattern.
 The `./next/src/shared/lib/config.ts` file contains the settings received from Docker during project startup.
 
 ### [Nuxt.js](https://github.com/nuxt/nuxt)
