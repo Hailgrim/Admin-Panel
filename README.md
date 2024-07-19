@@ -171,3 +171,9 @@ To create a new certificate, you can use the following commands:
    openssl x509 -req -in $NAME.csr -CA myCA.pem -CAkey myCA.key -CAcreateserial \
    -out $NAME.crt -days 825 -sha256 -extfile $NAME.ext
    ```
+
+## Conclusion
+
+I tried to implement the most common use cases of technologies,
+trying to follow the solutions from their documentation as much as possible.
+Hope this will be useful for someone.
