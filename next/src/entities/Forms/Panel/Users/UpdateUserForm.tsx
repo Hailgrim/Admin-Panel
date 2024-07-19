@@ -121,6 +121,7 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
         disabled={
           !rights.deleting ||
           deleteReq.isLoading ||
+          deleteReq.data ||
           data.roles?.some((role) => role.admin)
         }
       >

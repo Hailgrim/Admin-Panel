@@ -123,7 +123,11 @@ const UpdateRoleForm: FC<{ data: IRole }> = ({ data }) => {
         startIcon={<DeleteIcon />}
         onClick={() => destroy(data.id)}
         disabled={
-          !rights.deleting || deleteReq.isLoading || data.default || data.admin
+          !rights.deleting ||
+          deleteReq.isLoading ||
+          deleteReq.data ||
+          data.default ||
+          data.admin
         }
       >
         {t.delete}

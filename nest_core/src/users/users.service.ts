@@ -31,9 +31,11 @@ export class UsersService {
     const options: FindOptions<User> = {
       ...preparePaginationOptions(getUsersDto),
     };
+
     if (getUsersDto?.enabled !== undefined) {
       options.where = { ...options.where, enabled: getUsersDto.enabled };
     }
+
     return options;
   }
 
@@ -233,10 +235,12 @@ export class UsersService {
     usersRolesDtoArr: UsersRolesDto[],
   ): Promise<boolean> {
     const user = await this.findOne({ where: { id } });
+
     await user.$set(
       'roles',
       usersRolesDtoArr.map((value) => value.roleId),
     );
+
     return true;
   }
 

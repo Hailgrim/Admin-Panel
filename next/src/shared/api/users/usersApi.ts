@@ -39,7 +39,10 @@ const usersApi = createApi({
       invalidatesTags: ['Entity'],
     }),
 
-    updateRoles: builder.mutation<boolean, IUpdateReq<IUsersRoles[], number>>({
+    updateRoles: builder.mutation<
+      boolean,
+      IUpdateReq<IUsersRoles[], IUser['id']>
+    >({
       query: usersService.updateRolesArgs,
       invalidatesTags: ['Entity'],
     }),

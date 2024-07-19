@@ -3,11 +3,11 @@ export interface IFindAndCountRes<T> {
   count: number;
 }
 
-export type IListReq<T> = Partial<T> & {
+export type IListReq<T = { search: string }> = {
+  filter?: T;
   count?: boolean;
   page?: number;
   quantity?: number;
-  search?: string;
 };
 
 export interface IUpdateReq<

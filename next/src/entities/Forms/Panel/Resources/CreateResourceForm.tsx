@@ -26,7 +26,7 @@ const CreateResourceForm: FC = () => {
   const [data, setData] = useState<IResourceCreate>({
     name: '',
     path: '',
-    description: null,
+    description: '',
     enabled: false,
   });
   const rights = useRights(ROUTES.api.resources);
@@ -96,7 +96,11 @@ const CreateResourceForm: FC = () => {
         type="submit"
         color="primary"
         startIcon={<AddIcon />}
-        disabled={!rights.creating || createReq.isLoading}
+        disabled={
+          !rights.creating ||
+          createReq.isLoading ||
+          createReq.data !== undefined
+        }
       >
         {t.create}
       </FormButton>

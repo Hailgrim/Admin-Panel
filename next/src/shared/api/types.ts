@@ -1,16 +1,16 @@
 import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 
-export type IListReq<T> = Partial<T> & {
-  count?: boolean;
-  page?: number;
-  quantity?: number;
-  search?: string;
-};
-
 export interface IFindAndCountRes<T> {
   rows: T[];
   count: number;
 }
+
+export type IListReq<T = { search: string }> = {
+  filter?: T;
+  count?: boolean;
+  page?: number;
+  quantity?: number;
+};
 
 export interface IUpdateReq<
   T = unknown,
@@ -33,4 +33,5 @@ export interface IReqArgs {
   params?: Record<string, any>;
   credentials?: RequestCredentials;
   headers?: Headers | Record<string, string | undefined>;
+  mode?: RequestMode;
 }

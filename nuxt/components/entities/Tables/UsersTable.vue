@@ -22,7 +22,7 @@ const headers = [
   { title: t('verified'), key: 'verified', width: 150 },
   { title: t('enabled'), key: 'enabled', width: 150 },
 ]
-const selected = ref<number[]>([])
+const selected = ref<string[]>([])
 const usersStore = useUsersStore()
 const items = computed(() => {
   return users

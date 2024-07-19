@@ -29,14 +29,14 @@ const ResourcesPage: FC<IClientPage<IFindAndCountRes<IResource>>> = ({
     resourcesApi.useLazyFindAndCountAllQuery();
   const [findAll, findAllReq] = resourcesApi.useLazyFindAllQuery();
   const [destroy, destroyReq] = resourcesApi.useDeleteMutation();
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [rows, setRows] = useState(data?.rows || []);
   const [count, setCount] = useState(data?.count || 0);
   const page = useRef(0);
   const pageSize = useRef(25);
 
   const selectionHandler = (rowSelectionModel: GridRowSelectionModel) => {
-    setSelectedRows(rowSelectionModel as string[]);
+    setSelectedRows(rowSelectionModel as number[]);
   };
 
   const paginationHandler = (model: GridPaginationModel) => {

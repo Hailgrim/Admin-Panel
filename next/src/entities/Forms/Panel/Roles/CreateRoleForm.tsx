@@ -25,7 +25,7 @@ const CreateRoleForm: FC = () => {
   const [create, createReq] = rolesApi.useCreateMutation();
   const [data, setData] = useState<IRoleCreate>({
     name: '',
-    description: null,
+    description: '',
     enabled: false,
   });
   const rights = useRights(ROUTES.api.roles);
@@ -85,7 +85,11 @@ const CreateRoleForm: FC = () => {
         type="submit"
         color="primary"
         startIcon={<AddIcon />}
-        disabled={!rights.creating || createReq.isLoading}
+        disabled={
+          !rights.creating ||
+          createReq.isLoading ||
+          createReq.data !== undefined
+        }
       >
         {t.create}
       </FormButton>

@@ -20,21 +20,20 @@ export const getUpdatedValues = <T>(
   newObject: Partial<T>
 ): Partial<T> => {
   const result: Partial<T> = {};
+
   for (const value in newObject) {
     if (newObject[value] !== oldObject[value]) result[value] = newObject[value];
   }
+
   return result;
 };
 
 /**
  * @param {unknown} error Some request error
- * @param {LangList} lang Error language
+ * @param {string} lang Error language
  * @returns {string} Formatted error text
  */
-export const makeErrorText = (
-  error?: unknown,
-  lang: LangList = 'en'
-): string => {
+export const makeErrorText = (error?: unknown, lang: string = 'en'): string => {
   const currLang: LangList = lang in d ? (lang as LangList) : 'en';
   let result = d[currLang].unknownError;
 

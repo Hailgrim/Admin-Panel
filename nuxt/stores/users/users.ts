@@ -49,7 +49,7 @@ export const useUsersStore = defineStore('users', () => {
     data: readData,
     execute: read,
     refresh: readRefresh,
-  } = useCustomFetch<IUser, number>((payload) => ({
+  } = useCustomFetch<IUser, IUser['id']>((payload) => ({
     url: ROUTES.api.user(payload),
     options: { method: 'GET', credentials: 'include' },
   }));
@@ -69,17 +69,23 @@ export const useUsersStore = defineStore('users', () => {
     error: updateRolesError,
     data: updateRolesData,
     execute: updateRoles,
-  } = useCustomFetch<boolean, IUpdateReq<IUsersRoles[]>>((payload) => ({
-    url: ROUTES.api.userRoles(payload.id),
-    options: { method: 'PATCH', credentials: 'include', body: payload.fields },
-  }));
+  } = useCustomFetch<boolean, IUpdateReq<IUsersRoles[], IUser['id']>>(
+    (payload) => ({
+      url: ROUTES.api.userRoles(payload.id),
+      options: {
+        method: 'PATCH',
+        credentials: 'include',
+        body: payload.fields,
+      },
+    })
+  );
 
   const {
     pending: deletePending,
     error: deleteError,
     data: deleteData,
     execute,
-  } = useCustomFetch<boolean, string | string[]>((payload) => ({
+  } = useCustomFetch<boolean, IUser['id'] | IUser['id'][]>((payload) => ({
     url: ROUTES.api.users,
     options: { method: 'DELETE', credentials: 'include', body: payload },
   }));

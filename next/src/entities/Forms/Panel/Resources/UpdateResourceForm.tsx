@@ -130,7 +130,12 @@ const UpdateResourceForm: FC<{ data: IResource }> = ({ data }) => {
         color="error"
         startIcon={<DeleteIcon />}
         onClick={() => destroy(data.id)}
-        disabled={!rights.deleting || deleteReq.isLoading || data.default}
+        disabled={
+          !rights.deleting ||
+          deleteReq.isLoading ||
+          deleteReq.data ||
+          data.default
+        }
       >
         {t.delete}
       </FormButton>

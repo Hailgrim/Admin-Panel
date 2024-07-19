@@ -1,3 +1,4 @@
-import en from './en'
+import en from './en';
 
-export default { en }
+const d = { en };
+export default d;

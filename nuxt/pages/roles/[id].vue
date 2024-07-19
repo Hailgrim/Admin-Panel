@@ -13,7 +13,7 @@ definePageMeta({
 })
 
 const route = useRoute()
-const id = route.params.id
+const id = Number(route.params.id)
 const rolesStore = useRolesStore()
 await rolesStore.readRefresh(id)
 if (rolesStore.readData === null) {

@@ -79,7 +79,9 @@ class RolesService {
     };
   }
 
-  updateResourcesArgs(payload: IUpdateReq<IRolesResources[]>): IReqArgs {
+  updateResourcesArgs(
+    payload: IUpdateReq<IRolesResources[], IRole['id']>
+  ): IReqArgs {
     return {
       url: ROUTES.api.roleResources(payload.id),
       method: 'PATCH',

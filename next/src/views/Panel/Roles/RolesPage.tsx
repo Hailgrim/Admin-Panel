@@ -24,14 +24,14 @@ const RolesPage: FC<IClientPage<IFindAndCountRes<IRole>>> = ({ h1, data }) => {
     rolesApi.useLazyFindAndCountAllQuery();
   const [findAll, findAllReq] = rolesApi.useLazyFindAllQuery();
   const [destroy, destroyReq] = rolesApi.useDeleteMutation();
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [rows, setRows] = useState(data?.rows || []);
   const [count, setCount] = useState(data?.count || 0);
   const page = useRef(0);
   const pageSize = useRef(25);
 
   const selectionHandler = (rowSelectionModel: GridRowSelectionModel) => {
-    setSelectedRows(rowSelectionModel as string[]);
+    setSelectedRows(rowSelectionModel as number[]);
   };
 
   const paginationHandler = (model: GridPaginationModel) => {

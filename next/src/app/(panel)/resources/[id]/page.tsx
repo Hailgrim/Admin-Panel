@@ -17,7 +17,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
 
 const Resource: FC<IServerPage> = async ({ params }) => {
   const t = getT();
-  const id = params.id;
+  const id = Number(params.id);
 
   if (id) {
     const { data } = await resourcesService.findOne(id);

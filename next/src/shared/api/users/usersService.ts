@@ -72,7 +72,7 @@ class UsersService {
     };
   }
 
-  updateRolesArgs(payload: IUpdateReq<IUsersRoles[], number>): IReqArgs {
+  updateRolesArgs(payload: IUpdateReq<IUsersRoles[], string>): IReqArgs {
     return {
       url: ROUTES.api.userRoles(payload.id),
       method: 'PATCH',

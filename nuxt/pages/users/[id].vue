@@ -13,7 +13,7 @@ definePageMeta({
 })
 
 const route = useRoute()
-const id = route.params.id
+const id = String(route.params.id)
 const usersStore = useUsersStore()
 await usersStore.readRefresh(id)
 if (usersStore.readData === null) {

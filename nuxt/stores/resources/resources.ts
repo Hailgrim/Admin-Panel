@@ -51,7 +51,7 @@ export const useResourcesStore = defineStore('resources', () => {
     data: readData,
     execute: read,
     refresh: readRefresh,
-  } = useCustomFetch<IResource, number>((payload) => ({
+  } = useCustomFetch<IResource, IResource['id']>((payload) => ({
     url: ROUTES.api.resource(payload),
     options: { method: 'GET', credentials: 'include' },
   }));
@@ -71,10 +71,12 @@ export const useResourcesStore = defineStore('resources', () => {
     error: deleteError,
     data: deleteData,
     execute,
-  } = useCustomFetch<boolean, number | number[]>((payload) => ({
-    url: ROUTES.api.resources,
-    options: { method: 'DELETE', credentials: 'include', body: payload },
-  }));
+  } = useCustomFetch<boolean, IResource['id'] | IResource['id'][]>(
+    (payload) => ({
+      url: ROUTES.api.resources,
+      options: { method: 'DELETE', credentials: 'include', body: payload },
+    })
+  );
 
   return {
     createPending,

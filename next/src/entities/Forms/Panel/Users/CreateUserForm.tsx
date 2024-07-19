@@ -98,7 +98,11 @@ const CreateUserForm: FC = () => {
         type="submit"
         color="primary"
         startIcon={<AddIcon />}
-        disabled={!rights.creating || createReq.isLoading}
+        disabled={
+          !rights.creating ||
+          createReq.isLoading ||
+          createReq.data !== undefined
+        }
       >
         {t.create}
       </FormButton>

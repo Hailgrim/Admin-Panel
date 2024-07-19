@@ -35,15 +35,18 @@ export class RolesService {
     const options: FindOptions<Role> = {
       ...preparePaginationOptions(getRolesDto),
     };
+
     if (getRolesDto?.name !== undefined) {
       options.where = { ...options.where, name: getRolesDto.name };
     }
+
     if (getRolesDto?.description !== undefined) {
       options.where = {
         ...options.where,
         description: getRolesDto.description,
       };
     }
+
     return options;
   }
 
@@ -159,6 +162,7 @@ export class RolesService {
 
     if (affectedCount == 0) {
       const role = await this.rolesRepository.findOne({ where: { id } });
+
       if (!role) {
         throw new NotFoundException();
       } else {

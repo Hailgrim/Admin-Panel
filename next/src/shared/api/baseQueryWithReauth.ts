@@ -6,11 +6,10 @@ import type {
 } from '@reduxjs/toolkit/query';
 import { Mutex } from 'async-mutex';
 
-import { ROUTES } from '../lib/constants';
 import { API_HOST } from '../lib/config';
+import authService from './auth/authService';
 
 const mutex = new Mutex();
-
 const baseQuery = fetchBaseQuery({ baseUrl: API_HOST });
 const baseQueryWithReauth: BaseQueryFn<
   string | FetchArgs,
@@ -20,16 +19,19 @@ const baseQueryWithReauth: BaseQueryFn<
   // wait until the mutex is available without locking it
   await mutex.waitForUnlock();
   let result = await baseQuery(args, api, extraOptions);
+
   if (result.error?.status === 401) {
     // checking whether the mutex is locked
     if (!mutex.isLocked()) {
       const release = await mutex.acquire();
+
       try {
         const refreshResult = await baseQuery(
-          ROUTES.api.auth.refresh,
+          authService.refreshArgs(),
           api,
           extraOptions
         );
+
         if (refreshResult.data) {
           // retry the initial query
           result = await baseQuery(args, api, extraOptions);
@@ -46,6 +48,7 @@ const baseQueryWithReauth: BaseQueryFn<
       result = await baseQuery(args, api, extraOptions);
     }
   }
+
   return result;
 };
 export default baseQueryWithReauth;

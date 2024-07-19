@@ -39,6 +39,7 @@ const useRights = (path: string) => {
                 resource.RolesResources === undefined
               )
                 continue;
+
               newRights.creating = resource.RolesResources.creating;
               newRights.reading = resource.RolesResources.reading;
               newRights.updating = resource.RolesResources.updating;

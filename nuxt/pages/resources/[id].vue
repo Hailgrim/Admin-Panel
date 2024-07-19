@@ -11,7 +11,7 @@ definePageMeta({
 })
 
 const route = useRoute()
-const id = route.params.id
+const id = Number(route.params.id)
 const resourcesStore = useResourcesStore()
 await resourcesStore.readRefresh(id)
 if (resourcesStore.readData === null) {

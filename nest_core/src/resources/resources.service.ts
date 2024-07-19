@@ -28,18 +28,22 @@ export class ResourcesService {
     const options: FindOptions<Resource> = {
       ...preparePaginationOptions(getResourcesDto),
     };
+
     if (getResourcesDto?.name !== undefined) {
       options.where = { ...options.where, name: getResourcesDto.name };
     }
+
     if (getResourcesDto?.path !== undefined) {
       options.where = { ...options.where, path: getResourcesDto.path };
     }
+
     if (getResourcesDto?.description !== undefined) {
       options.where = {
         ...options.where,
         description: getResourcesDto.description,
       };
     }
+
     return options;
   }
 
@@ -148,6 +152,7 @@ export class ResourcesService {
       const resource = await this.resourcesRepository.findOne({
         where: { id },
       });
+
       if (!resource) {
         throw new NotFoundException();
       } else {

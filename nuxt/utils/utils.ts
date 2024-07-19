@@ -28,10 +28,10 @@ export function getUpdatedValues<T>(
 
 /**
  * @param {unknown} error Some request error
- * @param {LangList} lang Error language
+ * @param {string} lang Error language
  * @returns {string} Formatted error text
  */
-export function makeErrorText(error: unknown, lang: LangList = 'en'): string {
+export function makeErrorText(error: unknown, lang: string = 'en'): string {
   const currLang: LangList = lang in d ? (lang as LangList) : 'en';
   let result = d[currLang].unknownError;
 
