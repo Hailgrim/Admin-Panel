@@ -11,7 +11,7 @@ import FormCheckbox from '@/shared/kit/Form/FormCheckbox';
 import { IResource, IRolesResources } from '@/shared/api/resources/types';
 
 const ResourceRightsFields: React.FC<{
-  roleId: string;
+  roleId: number;
   resource: IResource;
   rights?: IRolesResources;
   setRights: (newRights: IRolesResources) => void;

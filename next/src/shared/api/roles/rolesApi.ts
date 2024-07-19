@@ -29,7 +29,7 @@ const rolesApi = createApi({
       providesTags: ['CountedEntities'],
     }),
 
-    findOne: builder.query<IRole, string>({
+    findOne: builder.query<IRole, IRole['id']>({
       query: rolesService.findOneArgs,
       providesTags: ['Entity'],
     }),
@@ -44,7 +44,7 @@ const rolesApi = createApi({
       invalidatesTags: ['Entity'],
     }),
 
-    delete: builder.mutation<boolean, string | string[]>({
+    delete: builder.mutation<boolean, IRole['id'] | IRole['id'][]>({
       query: rolesService.deleteArgs,
       invalidatesTags: ['CountedEntities'],
     }),

@@ -29,7 +29,7 @@ const usersApi = createApi({
       providesTags: ['CountedEntities'],
     }),
 
-    findOne: builder.query<IUser, string>({
+    findOne: builder.query<IUser, IUser['id']>({
       query: usersService.findOneArgs,
       providesTags: ['Entity'],
     }),
@@ -39,12 +39,12 @@ const usersApi = createApi({
       invalidatesTags: ['Entity'],
     }),
 
-    updateRoles: builder.mutation<boolean, IUpdateReq<IUsersRoles[]>>({
+    updateRoles: builder.mutation<boolean, IUpdateReq<IUsersRoles[], number>>({
       query: usersService.updateRolesArgs,
       invalidatesTags: ['Entity'],
     }),
 
-    delete: builder.mutation<boolean, string | string[]>({
+    delete: builder.mutation<boolean, IUser['id'] | IUser['id'][]>({
       query: usersService.deleteArgs,
       invalidatesTags: ['CountedEntities'],
     }),

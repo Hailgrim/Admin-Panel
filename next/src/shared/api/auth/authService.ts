@@ -64,8 +64,7 @@ class AuthService {
 
   async getProfile(): Promise<IFetchRes<IUser | null>> {
     const { data, error, newCookies } = await serverFetch<IUser>(
-      this.getProfileArgs(),
-      true
+      this.getProfileArgs()
     );
     return { data, error, newCookies };
   }

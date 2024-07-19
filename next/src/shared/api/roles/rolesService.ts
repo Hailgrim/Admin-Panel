@@ -31,8 +31,7 @@ class RolesService {
 
   async findAll(payload?: IListReq<IRole>): Promise<IFetchRes<IRole[]>> {
     const { data, error } = await serverFetch<IRole[]>(
-      this.findAllArgs(payload),
-      true
+      this.findAllArgs(payload)
     );
     return { data, error };
   }
@@ -50,8 +49,7 @@ class RolesService {
     payload?: IListReq<IRole>
   ): Promise<IFetchRes<IFindAndCountRes<IRole>>> {
     const { data: result, error } = await serverFetch<IFindAndCountRes<IRole>>(
-      this.findAndCountAllArgs(payload),
-      true
+      this.findAndCountAllArgs(payload)
     );
     return {
       data: { count: result?.count || 0, rows: result?.rows || [] },
@@ -59,7 +57,7 @@ class RolesService {
     };
   }
 
-  findOneArgs(payload: string): IReqArgs {
+  findOneArgs(payload: IRole['id']): IReqArgs {
     return {
       url: ROUTES.api.role(payload),
       method: 'GET',
@@ -67,11 +65,8 @@ class RolesService {
     };
   }
 
-  async findOne(payload: string): Promise<IFetchRes<IRole | null>> {
-    const { data, error } = await serverFetch<IRole>(
-      this.findOneArgs(payload),
-      true
-    );
+  async findOne(payload: IRole['id']): Promise<IFetchRes<IRole | null>> {
+    const { data, error } = await serverFetch<IRole>(this.findOneArgs(payload));
     return { data, error };
   }
 
@@ -93,7 +88,7 @@ class RolesService {
     };
   }
 
-  deleteArgs(payload: string | string[]): IReqArgs {
+  deleteArgs(payload: IRole['id'] | IRole['id'][]): IReqArgs {
     return {
       url: ROUTES.api.roles,
       method: 'DELETE',

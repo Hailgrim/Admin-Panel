@@ -1,11 +1,6 @@
 import { Rights } from 'libs/constants';
 import { IResource } from 'src/resources/resources.types';
 
-export abstract class IUsersRoles {
-  userId: string;
-  roleId: string;
-}
-
 export abstract class IRole {
   id?: number;
   name: string;
@@ -31,4 +26,9 @@ export type UpdateRoleFields = Partial<
 export interface IRoleConditions {
   path: string;
   action: Rights;
+}
+
+export abstract class IUsersRoles {
+  userId: string;
+  roleId: number;
 }

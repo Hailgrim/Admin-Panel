@@ -32,8 +32,7 @@ class ResourcesService {
     payload?: IListReq<IResource>
   ): Promise<IFetchRes<IResource[]>> {
     const { data, error } = await serverFetch<IResource[]>(
-      this.findAllArgs(payload),
-      true
+      this.findAllArgs(payload)
     );
     return { data, error };
   }
@@ -52,14 +51,14 @@ class ResourcesService {
   ): Promise<IFetchRes<IFindAndCountRes<IResource>>> {
     const { data: result, error } = await serverFetch<
       IFindAndCountRes<IResource>
-    >(this.findAndCountAllArgs(payload), true);
+    >(this.findAndCountAllArgs(payload));
     return {
       data: { count: result?.count || 0, rows: result?.rows || [] },
       error,
     };
   }
 
-  findOneArgs(payload: string): IReqArgs {
+  findOneArgs(payload: IResource['id']): IReqArgs {
     return {
       url: ROUTES.api.resource(payload),
       method: 'GET',
@@ -67,10 +66,11 @@ class ResourcesService {
     };
   }
 
-  async findOne(payload: string): Promise<IFetchRes<IResource | null>> {
+  async findOne(
+    payload: IResource['id']
+  ): Promise<IFetchRes<IResource | null>> {
     const { data, error } = await serverFetch<IResource>(
-      this.findOneArgs(payload),
-      true
+      this.findOneArgs(payload)
     );
     return { data, error };
   }
@@ -84,7 +84,7 @@ class ResourcesService {
     };
   }
 
-  deleteArgs(payload: string | string[]): IReqArgs {
+  deleteArgs(payload: IResource['id'] | IResource['id'][]): IReqArgs {
     return {
       url: ROUTES.api.resources,
       method: 'DELETE',

@@ -14,6 +14,7 @@ const parseRawCookies = (cookies: string) => {
     name: tempCookie[0][0],
     value: tempCookie[0][1],
   };
+
   const options = Object.fromEntries(tempCookie.slice(1));
   if (options['Max-Age'] !== undefined) result.maxAge = options['Max-Age'];
   if (options['Domain'] !== undefined) result.domain = options['Domain'];
@@ -21,12 +22,12 @@ const parseRawCookies = (cookies: string) => {
   if ('HttpOnly' in options) result.httpOnly = true;
   if ('Secure' in options) result.secure = true;
   if (options['SameSite'] !== undefined) result.sameSite = options['SameSite'];
+
   return result;
 };
 
 const serverFetch = async <T = unknown>(
-  options: IReqArgs,
-  setCookies?: boolean
+  options: IReqArgs
 ): Promise<IFetchRes<T>> => {
   const headersList = headers();
   const cookieStore = cookies();
@@ -61,14 +62,7 @@ const serverFetch = async <T = unknown>(
       const rawCookies = res.headers.getSetCookie();
       if (rawCookies.length) {
         newCookiesRaw = rawCookies[0];
-        newCookies = rawCookies[0].split(', ').map(parseRawCookies);
-
-        if (setCookies) {
-          // Doesn't work
-          // for (const cookie of newCookies) {
-          //   cookieStore.set(cookie);
-          // }
-        }
+        newCookies = newCookiesRaw.split(', ').map(parseRawCookies);
       }
 
       return await res.json();
@@ -81,14 +75,10 @@ const serverFetch = async <T = unknown>(
   data = await query<T>(options);
 
   if (error === 401) {
-    const refreshToken = cookieStore.get('refreshToken');
+    const res = await query<boolean>(authService.refreshArgs());
 
-    if (refreshToken) {
-      const res = await query<boolean>(authService.refreshArgs());
-
-      if (res) {
-        data = await query(options);
-      }
+    if (res) {
+      data = await query(options);
     }
   }
 

@@ -42,8 +42,7 @@ class UsersService {
     payload?: IListReq<IUser>
   ): Promise<IFetchRes<IFindAndCountRes<IUser>>> {
     const { data: result, error } = await serverFetch<IFindAndCountRes<IUser>>(
-      this.findAndCountAllArgs(payload),
-      true
+      this.findAndCountAllArgs(payload)
     );
     return {
       data: { count: result?.count || 0, rows: result?.rows || [] },
@@ -51,7 +50,7 @@ class UsersService {
     };
   }
 
-  findOneArgs(payload: string): IReqArgs {
+  findOneArgs(payload: IUser['id']): IReqArgs {
     return {
       url: ROUTES.api.user(payload),
       method: 'GET',
@@ -59,11 +58,8 @@ class UsersService {
     };
   }
 
-  async findOne(payload: string): Promise<IFetchRes<IUser | null>> {
-    const { data, error } = await serverFetch<IUser>(
-      this.findOneArgs(payload),
-      true
-    );
+  async findOne(payload: IUser['id']): Promise<IFetchRes<IUser | null>> {
+    const { data, error } = await serverFetch<IUser>(this.findOneArgs(payload));
     return { data, error };
   }
 
@@ -76,7 +72,7 @@ class UsersService {
     };
   }
 
-  updateRolesArgs(payload: IUpdateReq<IUsersRoles[]>): IReqArgs {
+  updateRolesArgs(payload: IUpdateReq<IUsersRoles[], number>): IReqArgs {
     return {
       url: ROUTES.api.userRoles(payload.id),
       method: 'PATCH',
@@ -85,7 +81,7 @@ class UsersService {
     };
   }
 
-  deleteArgs(payload: string | string[]): IReqArgs {
+  deleteArgs(payload: IUser['id'] | IUser['id'][]): IReqArgs {
     return {
       url: ROUTES.api.users,
       method: 'DELETE',

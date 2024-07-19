@@ -16,10 +16,10 @@ export class UsersRoles
   implements IUsersRoles
 {
   @ForeignKey(() => User)
-  @Column({ type: DataType.INTEGER })
+  @Column({ type: DataType.UUID })
   userId: string;
 
   @ForeignKey(() => Role)
   @Column({ type: DataType.INTEGER })
-  roleId: string;
+  roleId: number;
 }

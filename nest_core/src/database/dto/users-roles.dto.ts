@@ -10,6 +10,6 @@ export class UsersRolesDto implements IUsersRoles {
   userId: string;
 
   @ApiProperty({ example: 1, description: d['en'].roleId })
-  @IsString({ message: d['en'].mustBeAString(d['en'].roleId) })
-  roleId: string;
+  @IsString({ message: d['en'].mustBeANumber(d['en'].roleId) })
+  roleId: number;
 }

@@ -79,7 +79,7 @@ export const useUsersStore = defineStore('users', () => {
     error: deleteError,
     data: deleteData,
     execute,
-  } = useCustomFetch<boolean, number | number[]>((payload) => ({
+  } = useCustomFetch<boolean, string | string[]>((payload) => ({
     url: ROUTES.api.users,
     options: { method: 'DELETE', credentials: 'include', body: payload },
   }));

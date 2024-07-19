@@ -16,6 +16,7 @@ const updatedRights = ref<IRolesResources[]>(resources.map((resource) => {
         return roleResource.RolesResources
     }
   }
+
   return {
     roleId: role.id,
     resourceId: resource.id,

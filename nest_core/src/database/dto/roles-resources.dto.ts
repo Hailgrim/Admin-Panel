@@ -6,12 +6,12 @@ import { IRolesResources } from 'src/resources/resources.types';
 
 export class RolesResourcesDto implements IRolesResources {
   @ApiProperty({ example: 1, description: d['en'].roleId })
-  @IsString({ message: d['en'].mustBeAString(d['en'].roleId) })
-  roleId: string;
+  @IsString({ message: d['en'].mustBeANumber(d['en'].roleId) })
+  roleId: number;
 
   @ApiProperty({ example: 1, description: d['en'].resourceId })
-  @IsString({ message: d['en'].mustBeAString(d['en'].resourceId) })
-  resourceId: string;
+  @IsString({ message: d['en'].mustBeANumber(d['en'].resourceId) })
+  resourceId: number;
 
   @ApiProperty({
     example: false,

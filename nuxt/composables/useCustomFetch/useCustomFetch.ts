@@ -1,5 +1,3 @@
-import { appendResponseHeader } from 'h3';
-
 import type { IReqError } from './types';
 
 export function useCustomFetch<ResT = void, ReqT = void>(
@@ -14,10 +12,8 @@ export function useCustomFetch<ResT = void, ReqT = void>(
   }
 ) {
   const event = useRequestEvent();
+  const cookie = useRequestHeader('cookie');
   const config = useRuntimeConfig();
-  const accessToken = useCookie('accessToken');
-  const refreshToken = useCookie('refreshToken');
-  const rememberMe = useCookie('rememberMe');
   const payload = ref<ReqT | null>(null) as Ref<ReqT | null>;
   const pending = ref(false);
   const error = ref<IReqError | null>(null);
@@ -33,18 +29,10 @@ export function useCustomFetch<ResT = void, ReqT = void>(
   };
 
   async function refreshTokens() {
-    if (import.meta.server && !refreshToken.value) return null;
-
     const refreshOptions = {
       method: 'GET' as 'GET' | 'POST',
       credentials: 'include' as RequestCredentials,
-      headers: import.meta.server
-        ? {
-            Cookie: `refreshToken=${refreshToken.value}`.concat(
-              rememberMe.value ? ';rememberMe=true' : ''
-            ),
-          }
-        : undefined,
+      headers: import.meta.server && cookie ? { cookie } : undefined,
     };
 
     try {
@@ -52,11 +40,16 @@ export function useCustomFetch<ResT = void, ReqT = void>(
         ...defaultOptions,
         ...refreshOptions,
       });
+
       if (import.meta.server) {
-        const cookies = (res.headers.get('set-cookie') || '').split(',');
-        for (const cookie of cookies)
-          event && appendResponseHeader(event, 'set-cookie', cookie);
+        const newCookies = res.headers.get('set-cookie');
+        if (event && newCookies) {
+          newCookies
+            .split(', ')
+            .map((cookie) => event.node.res.appendHeader('set-cookie', cookie));
+        }
       }
+
       return res._data;
     } catch {
       return null;
@@ -68,7 +61,7 @@ export function useCustomFetch<ResT = void, ReqT = void>(
     pending.value = true;
 
     try {
-      const resolve = await $fetch<ResT>(query.url, {
+      const result = await $fetch<ResT>(query.url, {
         ...defaultOptions,
         ...query.options,
         body: query.options.body
@@ -79,16 +72,15 @@ export function useCustomFetch<ResT = void, ReqT = void>(
             typeof arg === 'object'
               ? 'application/json'
               : 'text/plain;charset=UTF-8',
-          ...(import.meta.server && accessToken.value
-            ? { Cookie: `accessToken=${accessToken.value}` }
-            : undefined),
+          ...(import.meta.server && cookie ? { cookie } : undefined),
         },
       });
 
       error.value = null;
-      data.value = resolve;
+      data.value = result;
       pending.value = false;
-      return resolve;
+
+      return result;
     } catch (fail) {
       const fetchError: IReqError = {
         status: Number((fail as Record<string, unknown>).status) || 400,
@@ -104,6 +96,7 @@ export function useCustomFetch<ResT = void, ReqT = void>(
 
       error.value = fetchError;
       pending.value = false;
+
       return null;
     }
   }
