@@ -1,24 +1,27 @@
 import { FindOptions } from 'sequelize';
 
-import { PaginationDto } from 'src/database/dto/pagination.dto';
+import { GetListDto } from './dto/get-list.dto';
 
 /**
- * @param {PaginationDto} paginationDto DTO with pagination attributes
+ * @param {GetListDto} getListDto DTO with pagination attributes
  * @returns {FindOptions} Pagination options
  */
 export const preparePaginationOptions = (
-  paginationDto?: PaginationDto,
+  getListDto?: GetListDto,
 ): FindOptions => {
   const options: FindOptions = { offset: 0, limit: 25 };
+
   if (
-    paginationDto?.quantity &&
-    paginationDto.quantity > 0 &&
-    paginationDto.quantity <= 100
+    getListDto?.quantity &&
+    getListDto.quantity > 0 &&
+    getListDto.quantity <= 100
   ) {
-    options.limit = paginationDto.quantity;
+    options.limit = getListDto.quantity;
   }
-  if (paginationDto?.page && paginationDto.page > 0 && options.limit) {
-    options.offset = (paginationDto.page - 1) * options?.limit;
+
+  if (getListDto?.page && getListDto.page > 0 && options.limit) {
+    options.offset = (getListDto.page - 1) * options?.limit;
   }
+
   return options;
 };

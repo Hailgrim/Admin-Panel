@@ -8,10 +8,10 @@ import {
 } from 'class-validator';
 
 import d from 'locales/dictionary';
-import { PaginationDto } from 'src/database/dto/pagination.dto';
 import { GetUsersFields } from '../users.types';
+import { GetListDto } from 'src/database/dto/get-list.dto';
 
-export class GetUsersDto extends PaginationDto implements GetUsersFields {
+export class GetUsersDto extends GetListDto implements GetUsersFields {
   @ApiProperty({ example: 'user@mail.com', description: d['en'].email })
   @IsOptional()
   @IsEmail({}, { message: d['en'].incorrect(d['en'].email) })

@@ -2,10 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
 
 import d from 'locales/dictionary';
-import { PaginationDto } from 'src/database/dto/pagination.dto';
 import { GetRolesFields } from '../roles.types';
+import { GetListDto } from 'src/database/dto/get-list.dto';
 
-export class GetRolesDto extends PaginationDto implements GetRolesFields {
+export class GetRolesDto extends GetListDto implements GetRolesFields {
   @ApiProperty({
     example: 'Client',
     description: d['en'].name,

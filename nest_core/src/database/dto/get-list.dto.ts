@@ -10,7 +10,7 @@ import {
 
 import d from 'locales/dictionary';
 
-export class PaginationDto {
+export class GetListDto {
   @ApiProperty({ example: 2, description: d['en'].page })
   @Transform(({ value }) => Number(value))
   @IsOptional()
