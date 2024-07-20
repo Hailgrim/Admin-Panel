@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
 
 import d from 'locales/dictionary';
@@ -6,7 +6,7 @@ import { GetResourcesFields } from '../resources.types';
 import { GetListDto } from 'src/database/dto/get-list.dto';
 
 export class GetResourcesDto extends GetListDto implements GetResourcesFields {
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'Users',
     description: d['en'].name,
   })
@@ -19,7 +19,7 @@ export class GetResourcesDto extends GetListDto implements GetResourcesFields {
   })
   name?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'users',
     description: d['en'].path,
   })
@@ -32,7 +32,7 @@ export class GetResourcesDto extends GetListDto implements GetResourcesFields {
   })
   path?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'Users resource',
     description: d['en'].description,
   })
@@ -45,7 +45,7 @@ export class GetResourcesDto extends GetListDto implements GetResourcesFields {
   })
   description?: string | null;
 
-  @ApiProperty({ example: true, description: d['en'].status })
+  @ApiPropertyOptional({ example: true, description: d['en'].status })
   @IsOptional()
   @IsBoolean({
     message: d['en'].mustBeABoolean(d['en'].status),

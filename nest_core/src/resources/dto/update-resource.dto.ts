@@ -1,11 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
 
 import d from 'locales/dictionary';
 import { UpdateResourceFields } from '../resources.types';
 
 export class UpdateResourceDto implements UpdateResourceFields {
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'Users',
     description: d['en'].name,
   })
@@ -18,7 +18,7 @@ export class UpdateResourceDto implements UpdateResourceFields {
   })
   name?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'users',
     description: d['en'].path,
   })
@@ -31,7 +31,7 @@ export class UpdateResourceDto implements UpdateResourceFields {
   })
   path?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'Users resource',
     description: d['en'].description,
   })
@@ -44,7 +44,7 @@ export class UpdateResourceDto implements UpdateResourceFields {
   })
   description?: string | null;
 
-  @ApiProperty({ example: true, description: d['en'].status })
+  @ApiPropertyOptional({ example: true, description: d['en'].status })
   @IsOptional()
   @IsBoolean({
     message: d['en'].mustBeABoolean(d['en'].status),

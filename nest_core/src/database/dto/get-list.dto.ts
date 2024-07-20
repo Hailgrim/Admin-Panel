@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import {
   IsBoolean,
@@ -11,19 +11,19 @@ import {
 import d from 'locales/dictionary';
 
 export class GetListDto {
-  @ApiProperty({ example: 2, description: d['en'].page })
+  @ApiPropertyOptional({ example: 2, description: d['en'].page })
   @Transform(({ value }) => Number(value))
   @IsOptional()
   @IsNumber({}, { message: d['en'].mustBeANumber(d['en'].page) })
   page?: number;
 
-  @ApiProperty({ example: 10, description: d['en'].quantity })
+  @ApiPropertyOptional({ example: 10, description: d['en'].quantity })
   @Transform(({ value }) => Number(value))
   @IsOptional()
   @IsNumber({}, { message: d['en'].mustBeANumber(d['en'].quantity) })
   quantity?: number;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: false,
     description: d['en'].isCountingNecessary,
   })
@@ -34,7 +34,7 @@ export class GetListDto {
   })
   count?: boolean;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'Linus Torvalds',
     description: d['en'].searchQuery,
   })

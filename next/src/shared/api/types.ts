@@ -5,12 +5,11 @@ export interface IFindAndCountRes<T> {
   count: number;
 }
 
-export type IListReq<T = unknown> = {
+export type IListReq<T = unknown> = Partial<T> & {
   count?: boolean;
   page?: number;
   quantity?: number;
   search?: string;
-  filter?: T;
 };
 
 export interface IUpdateReq<

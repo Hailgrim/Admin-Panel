@@ -1,11 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
 
 import d from 'locales/dictionary';
 import { UpdateRoleFields } from '../roles.types';
 
 export class UpdateRoleDto implements UpdateRoleFields {
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'Client',
     description: d['en'].name,
   })
@@ -18,7 +18,7 @@ export class UpdateRoleDto implements UpdateRoleFields {
   })
   name?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'user@mail.com',
     description: d['en'].description,
   })
@@ -31,7 +31,7 @@ export class UpdateRoleDto implements UpdateRoleFields {
   })
   description?: string;
 
-  @ApiProperty({ example: true, description: d['en'].status })
+  @ApiPropertyOptional({ example: true, description: d['en'].status })
   @IsOptional()
   @IsBoolean({
     message: d['en'].mustBeABoolean(d['en'].status),

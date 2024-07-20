@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsEmail,
@@ -12,7 +12,7 @@ import { GetUsersFields } from '../users.types';
 import { GetListDto } from 'src/database/dto/get-list.dto';
 
 export class GetUsersDto extends GetListDto implements GetUsersFields {
-  @ApiProperty({ example: 'user@mail.com', description: d['en'].email })
+  @ApiPropertyOptional({ example: 'user@mail.com', description: d['en'].email })
   @IsOptional()
   @IsEmail({}, { message: d['en'].incorrect(d['en'].email) })
   @Length(5, 100, {
@@ -20,7 +20,7 @@ export class GetUsersDto extends GetListDto implements GetUsersFields {
   })
   email?: string;
 
-  @ApiProperty({ example: 'Linus Torvalds', description: d['en'].name })
+  @ApiPropertyOptional({ example: 'Linus Torvalds', description: d['en'].name })
   @IsOptional()
   @IsString({
     message: d['en'].mustBeAString(d['en'].name),
@@ -30,7 +30,7 @@ export class GetUsersDto extends GetListDto implements GetUsersFields {
   })
   name?: string;
 
-  @ApiProperty({ example: true, description: d['en'].status })
+  @ApiPropertyOptional({ example: true, description: d['en'].status })
   @IsOptional()
   @IsBoolean({
     message: d['en'].mustBeABoolean(d['en'].status),

@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
 
 import d from 'locales/dictionary';
@@ -17,7 +17,7 @@ export class CreateRoleDto implements CreateRoleFields {
   })
   name: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'user@mail.com',
     description: d['en'].description,
   })
@@ -28,7 +28,7 @@ export class CreateRoleDto implements CreateRoleFields {
   @Length(1, 1000, {
     message: d['en'].fieldLength(d['en'].description, 1, 1000),
   })
-  description: string | null;
+  description?: string | null;
 
   @ApiProperty({ example: true, description: d['en'].status })
   @IsBoolean({

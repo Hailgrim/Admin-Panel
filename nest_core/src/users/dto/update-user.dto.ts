@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsEmail,
@@ -12,7 +12,7 @@ import d from 'locales/dictionary';
 import { UpdateUserFields } from '../users.types';
 
 export class UpdateUserDto implements UpdateUserFields {
-  @ApiProperty({ example: 'user@mail.com', description: d['en'].email })
+  @ApiPropertyOptional({ example: 'user@mail.com', description: d['en'].email })
   @IsOptional()
   @IsEmail({}, { message: d['en'].incorrect(d['en'].email) })
   @Length(5, 100, {
@@ -20,7 +20,7 @@ export class UpdateUserDto implements UpdateUserFields {
   })
   email?: string;
 
-  @ApiProperty({ example: '1q2w3e4r5', description: d['en'].password })
+  @ApiPropertyOptional({ example: '1q2w3e4r5', description: d['en'].password })
   @IsOptional()
   @IsStrongPassword({}, { message: d['en'].mustBeAStrong(d['en'].password) })
   @Length(10, 100, {
@@ -28,7 +28,7 @@ export class UpdateUserDto implements UpdateUserFields {
   })
   password?: string;
 
-  @ApiProperty({ example: 'Linus Torvalds', description: d['en'].name })
+  @ApiPropertyOptional({ example: 'Linus Torvalds', description: d['en'].name })
   @IsOptional()
   @IsString({
     message: d['en'].mustBeAString(d['en'].name),
@@ -38,7 +38,7 @@ export class UpdateUserDto implements UpdateUserFields {
   })
   name?: string;
 
-  @ApiProperty({ example: true, description: d['en'].status })
+  @ApiPropertyOptional({ example: true, description: d['en'].status })
   @IsOptional()
   @IsBoolean({
     message: d['en'].mustBeABoolean(d['en'].status),

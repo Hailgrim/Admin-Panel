@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
 
 import d from 'locales/dictionary';
@@ -29,7 +29,7 @@ export class CreateResourceDto implements CreateResourceFields {
   })
   path: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'Users resource',
     description: d['en'].description,
   })
@@ -40,7 +40,7 @@ export class CreateResourceDto implements CreateResourceFields {
   @Length(1, 1000, {
     message: d['en'].fieldLength(d['en'].description, 1, 1000),
   })
-  description: string | null;
+  description?: string | null;
 
   @ApiProperty({ example: true, description: d['en'].status })
   @IsBoolean({
