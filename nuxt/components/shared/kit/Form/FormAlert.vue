@@ -7,5 +7,5 @@ const props = defineProps<{
 </script>
 
 <template>
-  <v-alert v-bind="props" density="compact" variant="tonal" class="mb-6" />
+  <v-alert v-bind="props" class="mb-6" density="compact" variant="tonal" />
 </template>

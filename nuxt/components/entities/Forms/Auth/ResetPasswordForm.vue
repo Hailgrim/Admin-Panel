@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import type { SubmitEventPromise } from 'vuetify'
+
 import Form from '~/components/shared/kit/Form/Form.vue'
 import FormAlert from '~/components/shared/kit/Form/FormAlert.vue'
 import FormField from '~/components/shared/kit/Form/FormField.vue'
 import FormPassword from '~/components/shared/kit/Form/FormPassword.vue'
 import FormButton from '~/components/shared/kit/Form/FormButton.vue'
-import { useAuthStore } from '~/stores/auth/auth'
+import authApi from '~/api/auth/authApi'
 
 const props = defineProps<{
   email: string
@@ -16,18 +18,21 @@ const code = ref('')
 const codeIsValid = (value: string) => value.length > 0 || `${t('codeFromEmail')} (${props.email})`
 const password = ref('')
 const passwordIsValid = (value: string) => testString(PASSWORD_REGEX, value) || t('passwordValidation')
-const authStore = useAuthStore()
+const { data, error, execute, pending } = authApi.resetPassword()
 const errorMsg = ref<string | null>(null)
+const router = useRouter()
 
-function formHandler() {
-  if (codeIsValid(code.value) === true && passwordIsValid(password.value) === true)
-    authStore.resetPassword({ email: props.email, password: password.value, code: code.value })
+async function submitHandler(event: SubmitEventPromise) {
+  const results = await event
+
+  if (results.valid)
+    execute({ email: props.email, password: password.value, code: code.value })
 }
 
 watch(
-  () => authStore.resetPasswordError,
+  error,
   () => {
-    switch (authStore.resetPasswordError?.status) {
+    switch (error.value?.status) {
       case 404:
         errorMsg.value = t('wrongEmailOrCode')
         break
@@ -35,33 +40,35 @@ watch(
         errorMsg.value = null
         break
       default:
-        errorMsg.value = makeErrorText(authStore.resetPasswordError?.message, locale.value)
+        errorMsg.value = makeErrorText(error.value, locale.value)
     }
   },
 )
 
 watch(
-  () => authStore.resetPasswordData,
+  data,
   () => {
-    if (authStore.resetPasswordData)
+    if (data.value) {
       emits('close')
+      router.push(ROUTES.auth.signIn)
+    }
   },
 )
 </script>
 
 <template>
-  <Form @submit="formHandler">
+  <Form @submit="submitHandler">
     <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
     <FormField
-v-model:model-value="code" required name="code" :label="$t('code')"
-      :hint="`${$t('codeFromEmail')} (${email})`" :rules="[codeIsValid]" />
+v-model="code" :hint="`${$t('codeFromEmail')} (${email})`" :label="$t('code')" name="code" required
+      :rules="[codeIsValid]" />
     <FormPassword
-v-model:model-value="password" required name="password" :label="$t('newPassword')"
-      :rules="[passwordIsValid]" :hint="$t('passwordValidation')" />
-    <FormButton block type="submit" color="success" :loading="authStore.resetPasswordPending">
+v-model="password" :hint="$t('passwordValidation')" :label="$t('newPassword')" name="password"
+      required :rules="[passwordIsValid]" />
+    <FormButton block color="success" :loading="pending || !!data" type="submit">
       {{ $t('confirm') }}
     </FormButton>
-    <FormButton block type="button" color="error" @click="$emit('close')">
+    <FormButton block color="error" type="button" @click="$emit('close')">
       {{ $t('close') }}
     </FormButton>
   </Form>

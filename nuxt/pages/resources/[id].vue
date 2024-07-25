@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import resourcesApi from '~/api/resources/resourcesApi'
 import UpdateResourceForm from '~/components/entities/Forms/Resource/UpdateResourceForm.vue'
-import { useResourcesStore } from '~/stores/resources/resources'
 
 definePageMeta({
   middleware: ['auth'],
@@ -12,9 +12,10 @@ definePageMeta({
 
 const route = useRoute()
 const id = Number(route.params.id)
-const resourcesStore = useResourcesStore()
-await resourcesStore.readRefresh(id)
-if (resourcesStore.readData === null) {
+const { data: data, execute: execute } = resourcesApi.read()
+await execute(id)
+
+if (data.value === null) {
   showError({
     statusCode: 404,
   })
@@ -22,5 +23,5 @@ if (resourcesStore.readData === null) {
 </script>
 
 <template>
-  <UpdateResourceForm v-if="resourcesStore.readData" :resource="resourcesStore.readData" />
+  <UpdateResourceForm v-if="data" :resource="data" />
 </template>

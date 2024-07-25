@@ -1,30 +1,33 @@
 <script setup lang="ts">
+import type { SubmitEventPromise } from 'vuetify'
+
 import Form from '~/components/shared/kit/Form/Form.vue'
 import FormAlert from '~/components/shared/kit/Form/FormAlert.vue'
 import FormField from '~/components/shared/kit/Form/FormField.vue'
 import FormButton from '~/components/shared/kit/Form/FormButton.vue'
 import FormLink from '~/components/shared/kit/Form/FormLink.vue'
 import CustomModal from '~/components/shared/kit/CustomModal/CustomModal.vue'
-import ResetForm from '~/components/entities/Forms/Auth/ResetForm.vue'
-import { useAuthStore } from '~/stores/auth/auth'
+import ResetPasswordForm from '~/components/entities/Forms/Auth/ResetPasswordForm.vue'
+import authApi from '~/api/auth/authApi'
 
 const { t, locale } = useI18n()
 const email = ref('')
 const emailIsValid = (value: string) => value.length > 0 || t('emailValidation')
-const authStore = useAuthStore()
+const { data, error, execute, pending } = authApi.forgotPassword()
 const errorMsg = ref<string | null>(null)
 const resetModal = ref(false)
-const router = useRouter()
 
-function formHandler() {
-  if (emailIsValid(email.value) === true)
-    authStore.forgotPassword(email.value)
+async function submitHandler(event: SubmitEventPromise) {
+  const results = await event
+
+  if (results.valid)
+    execute(email.value)
 }
 
 watch(
-  () => authStore.forgotPasswordError,
+  error,
   () => {
-    switch (authStore.forgotPasswordError?.status) {
+    switch (error.value?.status) {
       case 404:
         errorMsg.value = t('wrongEmail')
         break
@@ -32,41 +35,33 @@ watch(
         errorMsg.value = null
         break
       default:
-        errorMsg.value = makeErrorText(authStore.forgotPasswordError?.message, locale.value)
+        errorMsg.value = makeErrorText(error.value, locale.value)
     }
   },
 )
 
 watch(
-  () => authStore.forgotPasswordData,
+  data,
   () => {
-    if (authStore.forgotPasswordData)
+    if (data.value)
       resetModal.value = true
-  },
-)
-
-watch(
-  () => authStore.resetPasswordData,
-  () => {
-    if (authStore.resetPasswordData)
-      router.push(ROUTES.auth.signIn)
   },
 )
 </script>
 
 <template>
-  <Form @submit="formHandler">
+  <Form @submit="submitHandler">
     <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
     <FormField
-v-model:model-value="email" required name="email" type="text" :label="$t('email')"
-      :rules="[emailIsValid]" :hint="$t('emailValidation')" />
-    <FormButton block type="submit" color="success" :loading="authStore.forgotPasswordPending">
+v-model="email" :hint="$t('emailValidation')" :label="$t('email')" name="email" required
+      :rules="[emailIsValid]" type="text" />
+    <FormButton block color="success" :loading="pending || !!data" type="submit">
       {{ $t('confirm') }}
     </FormButton>
     <FormLink :href="ROUTES.auth.signIn" :text="$t('signInText')" />
     <FormLink :href="ROUTES.auth.signUp" :text="$t('signUpText')" />
     <CustomModal v-model="resetModal" :title="$t('resetPassword')">
-      <ResetForm :email="email" @close="resetModal = false" />
+      <ResetPasswordForm :email="email" @close="resetModal = false" />
     </CustomModal>
   </Form>
 </template>

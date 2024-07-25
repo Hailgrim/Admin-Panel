@@ -1,15 +1,10 @@
-import { createConfigForNuxt } from '@nuxt/eslint-config/flat';
+import withNuxt from './.nuxt/eslint.config.mjs'
 
-export default createConfigForNuxt({
-  // options here
+export default withNuxt({
+  rules: {
+    'vue/valid-v-slot': 'warn',
+    'vue/no-multiple-template-root': 'off',
+    'vue/attributes-order': ['warn', { alphabetical: true }],
+    semi: ['error', 'never'],
+  },
 })
-  .override('nuxt/vue/rules', {
-    rules: {
-      'vue/valid-v-slot': ['warn'],
-    },
-  })
-  .override('nuxt/vue/single-root', {
-    rules: {
-      'vue/no-multiple-template-root': 'off',
-    },
-  });

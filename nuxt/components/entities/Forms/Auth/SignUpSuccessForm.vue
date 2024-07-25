@@ -9,7 +9,7 @@ defineEmits(['close'])
 <template>
   <Form @submit="$emit('close')">
     <FormAlert :text="$t('registrationSuccessText')" type="success" />
-    <FormButton block type="submit" color="info">
+    <FormButton block color="info" type="submit">
       {{ $t('signIn') }}
     </FormButton>
   </Form>

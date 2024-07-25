@@ -1,53 +1,77 @@
 <script setup lang="ts">
+import type { SubmitEventPromise } from 'vuetify'
+
 import Form from '~/components/shared/kit/Form/Form.vue'
 import FormField from '~/components/shared/kit/Form/FormField.vue'
 import FormCheckbox from '~/components/shared/kit/Form/FormCheckbox.vue'
 import FormButton from '~/components/shared/kit/Form/FormButton.vue'
-import { useRolesStore } from '~/stores/roles/roles'
-import { useMainStore } from '~/stores/main/main'
-import type { IRole } from '~/stores/roles/types'
+import { useMainStore } from '~/store/main/main'
+import rolesApi from '~/api/roles/rolesApi'
+import type { IRole } from '~/api/roles/types'
 
 const { role } = defineProps<{ role: IRole }>()
 
 const { t, locale } = useI18n()
-const rolesStore = useRolesStore()
-const name = ref(role.name)
+const {
+  data: uData,
+  error: uError,
+  execute: uExecute,
+  pending: uPending,
+} = rolesApi.update()
+const {
+  data: dData,
+  error: dError,
+  execute: dExecute,
+  pending: dPending,
+} = rolesApi.delete()
+const oldData = ref<IRole>(role)
+const newData = ref<IRole>(role)
 const nameIsValid = (value: string) => value.length > 0
-const description = ref(role.description)
-const enabled = ref(role.enabled)
 const mainStore = useMainStore()
 const router = useRouter()
 const rights = useRights(ROUTES.api.roles)
 
-function submitHandler() {
-  if (nameIsValid(name.value)) {
-    rolesStore.update({
+async function submitHandler(event: SubmitEventPromise) {
+  const results = await event
+  const updatedValues = getUpdatedValues<IRole>(
+    oldData.value,
+    newData.value,
+  )
+
+  if (results.valid && Object.keys(updatedValues).length > 0) {
+    uExecute({
       id: role.id,
-      fields: { name: name.value, description: description.value, enabled: enabled.value },
+      fields: updatedValues,
     })
+  } else {
+    mainStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
   }
 }
 
 watch(
-  () => rolesStore.updatePending,
+  uPending,
   () => {
-    if (rolesStore.updatePending === true)
-      return
-    if (rolesStore.updateError)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(rolesStore.updateError, locale.value) })
-    if (rolesStore.updateData)
+    if (uPending.value) return
+
+    if (uError.value)
+      mainStore.addAlert({ type: 'error', text: makeErrorText(uError.value, locale.value) })
+
+    if (uData.value) {
+      oldData.value = newData.value
       mainStore.addAlert({ type: 'success', text: t('success') })
+    }
   },
 )
 
 watch(
-  () => rolesStore.deletePending,
+  dPending,
   () => {
-    if (rolesStore.deletePending === true)
-      return
-    if (rolesStore.deleteError)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(rolesStore.deleteError, locale.value) })
-    if (rolesStore.deleteData) {
+    if (dPending.value) return
+
+    if (dError.value)
+      mainStore.addAlert({ type: 'error', text: makeErrorText(dError.value, locale.value) })
+
+    if (dData.value) {
       mainStore.addAlert({ type: 'success', text: t('success') })
       router.push(ROUTES.panel.roles)
     }
@@ -57,18 +81,23 @@ watch(
 
 <template>
   <Form @submit="submitHandler">
-    <FormField v-model:model-value="name" required name="name" :label="$t('name')" :rules="[nameIsValid]" />
-    <FormField v-model:model-value="description" name="description" :label="$t('description')" />
-    <FormCheckbox v-model:model-value="enabled" name="enabled" :label="$t('enabled')" />
+    <FormField
+:label="$t('name')" :model-value="newData.name" name="name" required :rules="[nameIsValid]"
+      @update:model-value="newData = { ...newData, name: $event }" />
+    <FormField
+:label="$t('description')" :model-value="newData.description" name="description"
+      @update:model-value="newData = { ...newData, description: $event }" />
+    <FormCheckbox
+:label="$t('enabled')" :model-value="newData.enabled" name="enabled"
+      @update:model-value="newData = { ...newData, enabled: $event }" />
     <FormButton
-type="submit" color="success" prepand-icon="mdi-content-save" :loading="rolesStore.updatePending"
-      :disabled="!rights.updating || rolesStore.readData?.default || rolesStore.readData?.admin">
+color="success" :disabled="!rights.updating || role.default || role.admin || !!dPending || !!dData"
+      :loading="uPending" prepand-icon="mdi-content-save" type="submit">
       {{ $t('update') }}
     </FormButton>
     <FormButton
-type="button" color="error" prepand-icon="mdi-delete" :loading="rolesStore.deletePending"
-      :disabled="!rights.deleting || rolesStore.readData?.default || rolesStore.readData?.admin"
-      @click="rolesStore.delete(role.id)">
+color="error" :disabled="!rights.deleting || role.default || role.admin" :loading="dPending || !!dData"
+      prepand-icon="mdi-delete" type="button" @click="dExecute(role.id)">
       {{ $t('delete') }}
     </FormButton>
   </Form>

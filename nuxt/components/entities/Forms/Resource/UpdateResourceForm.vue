@@ -1,55 +1,78 @@
 <script setup lang="ts">
+import type { SubmitEventPromise } from 'vuetify'
+
 import Form from '~/components/shared/kit/Form/Form.vue'
 import FormField from '~/components/shared/kit/Form/FormField.vue'
 import FormCheckbox from '~/components/shared/kit/Form/FormCheckbox.vue'
 import FormButton from '~/components/shared/kit/Form/FormButton.vue'
-import { useResourcesStore } from '~/stores/resources/resources'
-import { useMainStore } from '~/stores/main/main'
-import type { IResource } from '~/stores/resources/types'
+import { useMainStore } from '~/store/main/main'
+import resourcesApi from '~/api/resources/resourcesApi'
+import type { IResource } from '~/api/resources/types'
 
 const { resource } = defineProps<{ resource: IResource }>()
 
 const { t, locale } = useI18n()
-const resourcesStore = useResourcesStore()
-const name = ref(resource.name)
+const {
+  data: uData,
+  error: uError,
+  execute: uExecute,
+  pending: uPending,
+} = resourcesApi.update()
+const {
+  data: dData,
+  error: dError,
+  execute: dExecute,
+  pending: dPending,
+} = resourcesApi.delete()
+const oldData = ref<IResource>(resource)
+const newData = ref<IResource>(resource)
 const nameIsValid = (value: string) => value.length > 0
-const path = ref(resource.path)
 const pathIsValid = (value: string) => value.length > 0
-const description = ref(resource.description)
-const enabled = ref(resource.enabled)
 const mainStore = useMainStore()
 const router = useRouter()
 const rights = useRights(ROUTES.api.resources)
 
-function submitHandler() {
-  if (nameIsValid(name.value) && pathIsValid(path.value)) {
-    resourcesStore.update({
+async function submitHandler(event: SubmitEventPromise) {
+  const results = await event
+  const updatedValues = getUpdatedValues<IResource>(
+    oldData.value,
+    newData.value,
+  )
+
+  if (results.valid && Object.keys(updatedValues).length > 0) {
+    uExecute({
       id: resource.id,
-      fields: { name: name.value, path: path.value, description: description.value, enabled: enabled.value },
+      fields: updatedValues,
     })
+  } else {
+    mainStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
   }
 }
 
 watch(
-  () => resourcesStore.updatePending,
+  uPending,
   () => {
-    if (resourcesStore.updatePending === true)
-      return
-    if (resourcesStore.updateError)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(resourcesStore.updateError, locale.value) })
-    if (resourcesStore.updateData)
+    if (uPending.value) return
+
+    if (uError.value)
+      mainStore.addAlert({ type: 'error', text: makeErrorText(uError.value, locale.value) })
+
+    if (uData.value) {
+      oldData.value = newData.value
       mainStore.addAlert({ type: 'success', text: t('success') })
+    }
   },
 )
 
 watch(
-  () => resourcesStore.deletePending,
+  dPending,
   () => {
-    if (resourcesStore.deletePending === true)
-      return
-    if (resourcesStore.deleteError)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(resourcesStore.deleteError, locale.value) })
-    if (resourcesStore.deleteData) {
+    if (dPending.value) return
+
+    if (dError.value)
+      mainStore.addAlert({ type: 'error', text: makeErrorText(dError.value, locale.value) })
+
+    if (dData.value) {
       mainStore.addAlert({ type: 'success', text: t('success') })
       router.push(ROUTES.panel.resources)
     }
@@ -59,18 +82,26 @@ watch(
 
 <template>
   <Form @submit="submitHandler">
-    <FormField v-model:model-value="name" required name="name" :label="$t('name')" :rules="[nameIsValid]" />
-    <FormField v-model:model-value="path" required name="path" :label="$t('path')" :rules="[pathIsValid]" />
-    <FormField v-model:model-value="description" name="description" :label="$t('description')" />
-    <FormCheckbox v-model:model-value="enabled" name="enabled" :label="$t('enabled')" />
+    <FormField
+:label="$t('name')" :model-value="newData.name" name="name" required :rules="[nameIsValid]"
+      @update:model-value="newData = { ...newData, name: $event }" />
+    <FormField
+:label="$t('path')" :model-value="newData.path" name="path" required :rules="[pathIsValid]"
+      @update:model-value="newData = { ...newData, path: $event }" />
+    <FormField
+:label="$t('description')" :model-value="newData.description" name="description"
+      @update:model-value="newData = { ...newData, description: $event }" />
+    <FormCheckbox
+:label="$t('enabled')" :model-value="newData.enabled" name="enabled"
+      @update:model-value="newData = { ...newData, enabled: $event }" />
     <FormButton
-type="submit" color="success" prepand-icon="mdi-content-save" :loading="resourcesStore.updatePending"
-      :disabled="!rights.updating || resourcesStore.readData?.default">
+color="success" :disabled="!rights.updating || resource.default || !!dPending || !!dData"
+      :loading="uPending" prepand-icon="mdi-content-save" type="submit">
       {{ $t('update') }}
     </FormButton>
     <FormButton
-type="button" color="error" prepand-icon="mdi-delete" :loading="resourcesStore.deletePending"
-      :disabled="!rights.deleting || resourcesStore.readData?.default" @click="resourcesStore.delete(resource.id)">
+color="error" :disabled="!rights.deleting || resource.default" :loading="dPending || !!dData"
+      prepand-icon="mdi-delete" type="button" @click="dExecute(resource.id)">
       {{ $t('delete') }}
     </FormButton>
   </Form>

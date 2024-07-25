@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useMainStore } from '~/stores/main/main';
-import type { IRole } from '~/stores/roles/types';
-import type { IUser } from '~/stores/users/types';
-import { useUsersStore } from '~/stores/users/users'
+import type { IRole } from '~/api/roles/types'
+import type { IUser } from '~/api/users/types'
+import usersApi from '~/api/users/usersApi'
+import { useMainStore } from '~/store/main/main'
 
 const { users, count, page, quantity } = defineProps<{
   users: IUser[]
@@ -23,22 +23,26 @@ const headers = [
   { title: t('enabled'), key: 'enabled', width: 150 },
 ]
 const selected = ref<string[]>([])
-const usersStore = useUsersStore()
+const { data: lData, execute: lExecute, pending: lPending } = usersApi.list()
+const { data: dData, error: dError, execute: dExecute, pending: dPending } = usersApi.delete()
 const items = computed(() => {
-  return users
+  return (lData.value || users)
     .map(value => ({ ...value, selectable: !value.roles?.some(role => role.admin) }))
 })
 const mainStore = useMainStore()
 const rights = useRights(ROUTES.api.users)
 
 watch(
-  () => usersStore.deletePending,
+  dPending,
   () => {
-    if (usersStore.deleteError)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(usersStore.deleteError, locale.value) })
-    if (usersStore.deleteData) {
+    if (dPending.value) return
+
+    if (dError.value)
+      mainStore.addAlert({ type: 'error', text: makeErrorText(dError.value, locale.value) })
+
+    if (dData.value) {
       mainStore.addAlert({ type: 'success', text: t('success') })
-      usersStore.listRefresh({ page, quantity })
+      lExecute({ page, quantity })
     }
   },
 )
@@ -47,25 +51,24 @@ watch(
 <template>
   <div class="mb-3">
     <NuxtLink :href="rights.creating ? ROUTES.panel.newUser : undefined">
-      <v-btn class="me-2" variant="flat" color="info" prepend-icon="mdi-plus" :disabled="!rights.creating">
+      <v-btn class="me-2" color="info" :disabled="!rights.creating" prepend-icon="mdi-plus" variant="flat">
         {{ $t('create') }}
       </v-btn>
     </NuxtLink>
     <v-btn
-variant="flat" color="error" prepend-icon="mdi-delete" :disabled="!rights.deleting || selected.length === 0"
-      @click="usersStore.delete(selected)">
+color="error" :disabled="!rights.deleting || selected.length === 0" prepend-icon="mdi-delete" variant="flat"
+      @click="dExecute(selected)">
       {{ $t('delete') }}
     </v-btn>
   </div>
   <v-data-table-server
-v-model="selected" :headers="headers" :items="items" :items-length="count" :page="page"
-    :items-per-page="quantity" :items-per-page-options="[25, 50, 100]" :loading="usersStore.listPending"
-    item-selectable="selectable" class="full-page-table" show-select hover
-    @update:page="value => $emit('update:page', value)"
-    @update:items-per-page="value => $emit('update:quantity', value)">
+v-model="selected" class="full-page-table" :headers="headers" hover item-selectable="selectable"
+    :items="items" :items-length="count" :items-per-page="quantity" :items-per-page-options="[25, 50, 100]"
+    :loading="lPending" :page="page" show-select @update:items-per-page="value => $emit('update:quantity', value)"
+    @update:page="value => $emit('update:page', value)">
     <template #item.edit="{ item }">
       <NuxtLink :href="ROUTES.panel.user(item.id)">
-        <v-btn icon="mdi-pencil" size="small" variant="text" color="white" />
+        <v-btn color="white" icon="mdi-pencil" size="small" variant="text" />
       </NuxtLink>
     </template>
     <template #item.roles="{ item }">

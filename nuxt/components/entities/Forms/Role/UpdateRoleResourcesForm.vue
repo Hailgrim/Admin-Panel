@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import type { IResource, IRolesResources } from '~/api/resources/types'
+import rolesApi from '~/api/roles/rolesApi'
+import type { IRole } from '~/api/roles/types'
 import ResourceRightsFields from '~/components/entities/Forms/Resource/ResourceRightsFields.vue'
 import Form from '~/components/shared/kit/Form/Form.vue'
 import FormButton from '~/components/shared/kit/Form/FormButton.vue'
-import { useMainStore } from '~/stores/main/main';
-import type { IResource, IRolesResources } from '~/stores/resources/types';
-import { useRolesStore } from '~/stores/roles/roles'
-import type { IRole } from '~/stores/roles/types';
+import { useMainStore } from '~/store/main/main'
 
 const { role, resources } = defineProps<{ role: IRole, resources: IResource[] }>()
 
@@ -28,12 +28,12 @@ const updatedRights = ref<IRolesResources[]>(resources.map((resource) => {
 }))
 
 const { t, locale } = useI18n()
-const rolesStore = useRolesStore()
+const { data, error, execute, pending } = rolesApi.updateResources()
 const mainStore = useMainStore()
 const rights = useRights(ROUTES.api.roles)
 
 function submitHandler() {
-  rolesStore.updateResources({
+  execute({
     id: role.id,
     fields: updatedRights.value,
   })
@@ -43,18 +43,20 @@ function setRights(rights: IRolesResources) {
   updatedRights.value = updatedRights.value.map((value) => {
     if (value.resourceId === rights.resourceId)
       return rights
+
     return value
   })
 }
 
 watch(
-  () => rolesStore.updateResourcesPending,
+  pending,
   () => {
-    if (rolesStore.updateResourcesPending === true)
-      return
-    if (rolesStore.updateResourcesError)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(rolesStore.updateResourcesError, locale.value) })
-    if (rolesStore.updateResourcesData)
+    if (pending.value) return
+
+    if (error.value)
+      mainStore.addAlert({ type: 'error', text: makeErrorText(error.value, locale.value) })
+
+    if (data.value)
       mainStore.addAlert({ type: 'success', text: t('success') })
   },
 )
@@ -64,13 +66,13 @@ watch(
   <Form @submit="submitHandler">
     <div class="d-flex flex-row">
       <ResourceRightsFields
-v-for="resource of resources" :key="`resourceRights.${resource.id}`" :role-id="role.id"
-        :resource="resource" :rights="updatedRights.filter(value => value.resourceId === resource.id)[0]"
+v-for="resource of resources" :key="`resourceRights.${resource.id}`" :resource="resource"
+        :rights="updatedRights.filter(value => value.resourceId === resource.id)[0]" :role-id="role.id"
         @update="setRights" />
     </div>
     <FormButton
-type="submit" color="success" prepand-icon="mdi-content-save"
-      :loading="rolesStore.updateResourcesPending" :disabled="!rights.updating">
+color="success" :disabled="!rights.updating" :loading="pending" prepand-icon="mdi-content-save"
+      type="submit">
       {{ $t('update') }}
     </FormButton>
   </Form>

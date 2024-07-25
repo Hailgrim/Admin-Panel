@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import type { SubmitEventPromise } from 'vuetify'
+
 import Form from '~/components/shared/kit/Form/Form.vue'
 import FormAlert from '~/components/shared/kit/Form/FormAlert.vue'
 import FormField from '~/components/shared/kit/Form/FormField.vue'
 import FormButton from '~/components/shared/kit/Form/FormButton.vue'
-import { useAuthStore } from '~/stores/auth/auth'
+import authApi from '~/api/auth/authApi'
 
 const props = defineProps<{
   email: string
@@ -13,18 +15,21 @@ const emits = defineEmits(['close'])
 const { t, locale } = useI18n()
 const code = ref('')
 const codeIsValid = (value: string) => value.length > 0 || `${t('codeFromEmail')} (${props.email})`
-const authStore = useAuthStore()
+const { data, error, execute, pending } = authApi.verify()
+
 const errorMsg = ref<string | null>(null)
 
-function formHandler() {
-  if (codeIsValid(code.value) === true)
-    authStore.verify({ email: props.email, code: code.value })
+async function submitHandler(event: SubmitEventPromise) {
+  const results = await event
+
+  if (results.valid)
+    execute({ email: props.email, code: code.value })
 }
 
 watch(
-  () => authStore.verifyError,
+  error,
   () => {
-    switch (authStore.verifyError?.status) {
+    switch (error.value?.status) {
       case 404:
         errorMsg.value = t('wrongCode')
         break
@@ -32,30 +37,30 @@ watch(
         errorMsg.value = null
         break
       default:
-        errorMsg.value = makeErrorText(authStore.verifyError?.message, locale.value)
+        errorMsg.value = makeErrorText(error.value, locale.value)
     }
   },
 )
 
 watch(
-  () => authStore.verifyData,
+  data,
   () => {
-    if (authStore.verifyData)
+    if (data.value)
       emits('close')
   },
 )
 </script>
 
 <template>
-  <Form @submit="formHandler">
+  <Form @submit="submitHandler">
     <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
     <FormField
-v-model:model-value="code" required name="code" :label="$t('code')"
-      :hint="`${$t('codeFromEmail')} (${email})`" :rules="[codeIsValid]" />
-    <FormButton block type="submit" color="success" :loading="authStore.verifyPending">
+v-model="code" :hint="`${$t('codeFromEmail')} (${email})`" :label="$t('code')" name="code" required
+      :rules="[codeIsValid]" />
+    <FormButton block color="success" :loading="pending || !!data" type="submit">
       {{ $t('confirm') }}
     </FormButton>
-    <FormButton block type="button" color="error" @click="$emit('close')">
+    <FormButton block color="error" type="button" @click="$emit('close')">
       {{ $t('close') }}
     </FormButton>
   </Form>

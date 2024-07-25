@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IMenuItem } from './types';
+import type { IMenuItem } from './types'
 
 const props = defineProps<IMenuItem>()
 const route = useRoute()
@@ -23,7 +23,7 @@ watch(
 </script>
 
 <template>
-  <v-list-group v-if="childs?.length" :value="`${title}: ${href}`" :fluid="true">
+  <v-list-group v-if="childs?.length" :fluid="true" :value="`${title}: ${href}`">
     <template #activator="{ props: itemProps }">
       <v-list-item v-bind="itemProps" :prepend-icon="icon" :title="title" />
     </template>
@@ -31,6 +31,6 @@ watch(
     <SideBarMenuItem v-for="child of childs" :key="`sbmi:${child.title}:${child.href}`" v-bind="child" />
   </v-list-group>
   <v-list-item
-v-else :prepend-icon="icon" :title="title" link :href="href" :active="selected"
+v-else :active="selected" :href="href" link :prepend-icon="icon" :title="title"
     @click.prevent="router.push(href || '#')" />
 </template>

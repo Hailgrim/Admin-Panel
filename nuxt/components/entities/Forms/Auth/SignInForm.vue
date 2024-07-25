@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { SubmitEventPromise } from 'vuetify'
+
 import Form from '~/components/shared/kit/Form/Form.vue'
 import FormAlert from '~/components/shared/kit/Form/FormAlert.vue'
 import FormField from '~/components/shared/kit/Form/FormField.vue'
@@ -7,8 +9,9 @@ import FormCheckbox from '~/components/shared/kit/Form/FormCheckbox.vue'
 import FormButton from '~/components/shared/kit/Form/FormButton.vue'
 import FormLink from '~/components/shared/kit/Form/FormLink.vue'
 import CustomModal from '~/components/shared/kit/CustomModal/CustomModal.vue'
-import VerifyForm from '~/components/entities/Forms/Auth/VerifyForm.vue'
-import { useAuthStore } from '~/stores/auth/auth'
+import VerifyUserForm from '~/components/entities/Forms/Auth/VerifyUserForm.vue'
+import { useMainStore } from '~/store/main/main'
+import authApi from '~/api/auth/authApi'
 
 const { t, locale } = useI18n()
 const route = useRoute()
@@ -18,19 +21,22 @@ const emailIsValid = (value: string) => value.length > 0
 const password = ref('')
 const passwordIsValid = (value: string) => value.length > 0
 const rememberMe = ref(false)
-const authStore = useAuthStore()
+const mainStore = useMainStore()
+const { data, error, execute, pending } = authApi.signIn()
 const errorMsg = ref<string | null>(null)
 const verifyModal = ref(false)
 
-function formHandler() {
-  if (emailIsValid(email.value) && passwordIsValid(password.value))
-    authStore.signIn({ username: email.value, password: password.value, rememberMe: rememberMe.value })
+async function submitHandler(event: SubmitEventPromise) {
+  const results = await event
+
+  if (results.valid)
+    execute({ username: email.value, password: password.value, rememberMe: rememberMe.value })
 }
 
 watch(
-  () => authStore.signInError,
+  error,
   () => {
-    switch (authStore.signInError?.status) {
+    switch (error.value?.status) {
       case 410:
         errorMsg.value = t('userDeleted')
         break
@@ -45,35 +51,41 @@ watch(
         errorMsg.value = null
         break
       default:
-        errorMsg.value = makeErrorText(authStore.signInError?.message, locale.value)
+        errorMsg.value = makeErrorText(error.value, locale.value)
     }
   },
 )
 
 watch(
-  () => authStore.profile,
+  data,
   () => {
-    if (authStore.profile)
+    if (data.value)
+      mainStore.setProfile(data.value)
+  },
+)
+
+watch(
+  () => mainStore.profile,
+  () => {
+    if (mainStore.profile)
       router.push(route.query.return ? decodeURIComponent(String(route.query.return)) : ROUTES.panel.home)
   },
 )
 </script>
 
 <template>
-  <Form @submit="formHandler">
+  <Form @submit="submitHandler">
     <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
-    <FormField v-model:model-value="email" required name="email" :label="$t('email')" :rules="[emailIsValid]" />
-    <FormPassword
-v-model:model-value="password" required name="password" :label="$t('password')"
-      :rules="[passwordIsValid]" />
-    <FormCheckbox v-model:model-value="rememberMe" name="rememberMe" :label="$t('rememberMe')" />
-    <FormButton block type="submit" color="info" :loading="authStore.signInPending">
+    <FormField v-model="email" :label="$t('email')" name="email" required :rules="[emailIsValid]" />
+    <FormPassword v-model="password" :label="$t('password')" name="password" required :rules="[passwordIsValid]" />
+    <FormCheckbox v-model="rememberMe" :label="$t('rememberMe')" name="rememberMe" />
+    <FormButton block color="info" :loading="pending || !!data" type="submit">
       {{ $t('signIn') }}
     </FormButton>
     <FormLink :href="ROUTES.auth.signUp" :text="$t('signUpText')" />
     <FormLink :href="ROUTES.auth.forget" :text="$t('forgotPasswordText')" />
   </Form>
   <CustomModal v-model="verifyModal" :title="$t('verification')">
-    <VerifyForm :email="email" @close="verifyModal = false" />
+    <VerifyUserForm :email="email" @close="verifyModal = false" />
   </CustomModal>
 </template>

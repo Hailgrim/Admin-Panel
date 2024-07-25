@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { useMainStore } from '~/stores/main/main';
-
+import { useMainStore } from '~/store/main/main'
 
 const mainStore = useMainStore()
 </script>
@@ -8,9 +7,9 @@ const mainStore = useMainStore()
 <template>
   <div class="alerts">
     <v-snackbar
-v-for="alert of mainStore.alerts" :key="`alert:${alert.id}`" :model-value="alert.deleted !== true"
-      :color="alert.type" location="bottom right" class="alerts__item" content-class="alerts__content" multi-line
-      contained>
+v-for="alert of mainStore.alerts" :key="`alert:${alert.id}`" class="alerts__item"
+      :color="alert.type" contained content-class="alerts__content" location="bottom right" :model-value="alert.deleted !== true"
+      multi-line>
       <template #actions>
         <v-btn variant="text" @click="mainStore.deleteAlert(alert.id, 1000)">
           {{ $t('close') }}

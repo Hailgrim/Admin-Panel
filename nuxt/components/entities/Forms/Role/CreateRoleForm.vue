@@ -1,36 +1,44 @@
 <script setup lang="ts">
+import type { SubmitEventPromise } from 'vuetify'
+
 import Form from '~/components/shared/kit/Form/Form.vue'
 import FormField from '~/components/shared/kit/Form/FormField.vue'
 import FormCheckbox from '~/components/shared/kit/Form/FormCheckbox.vue'
 import FormButton from '~/components/shared/kit/Form/FormButton.vue'
-import { useRolesStore } from '~/stores/roles/roles'
-import { useMainStore } from '~/stores/main/main'
+import { useMainStore } from '~/store/main/main'
+import rolesApi from '~/api/roles/rolesApi'
+import type { IRoleCreate } from '~/api/roles/types'
 
 const { t, locale } = useI18n()
-const name = ref('')
+const newData = ref<IRoleCreate>({
+  name: '',
+  description: '',
+  enabled: false
+})
 const nameIsValid = (value: string) => value.length > 0
-const description = ref('')
-const enabled = ref(true)
-const rolesStore = useRolesStore()
+const { data, error, execute, pending } = rolesApi.create()
 const mainStore = useMainStore()
 const router = useRouter()
 const rights = useRights(ROUTES.api.roles)
 
-function submitHandler() {
-  if (nameIsValid(name.value))
-    rolesStore.create({ name: name.value, description: description.value || null, enabled: enabled.value })
+async function submitHandler(event: SubmitEventPromise) {
+  const results = await event
+
+  if (results.valid)
+    execute(newData.value)
 }
 
 watch(
-  () => rolesStore.createPending,
+  pending,
   () => {
-    if (rolesStore.createPending === true)
-      return
-    if (rolesStore.createError)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(rolesStore.createError, locale.value) })
-    if (rolesStore.createData) {
+    if (pending.value) return
+
+    if (error.value)
+      mainStore.addAlert({ type: 'error', text: makeErrorText(error.value, locale.value) })
+
+    if (data.value) {
       mainStore.addAlert({ type: 'success', text: t('success') })
-      router.push(ROUTES.panel.role(rolesStore.createData.id))
+      router.push(ROUTES.panel.role(data.value.id))
     }
   },
 )
@@ -38,12 +46,18 @@ watch(
 
 <template>
   <Form @submit="submitHandler">
-    <FormField v-model:model-value="name" required name="name" :label="$t('name')" :rules="[nameIsValid]" />
-    <FormField v-model:model-value="description" name="description" :label="$t('description')" />
-    <FormCheckbox v-model:model-value="enabled" name="enabled" :label="$t('enabled')" />
+    <FormField
+:label="$t('name')" :model-value="newData.name" name="name" required :rules="[nameIsValid]"
+      @update:model-value="newData = { ...newData, name: $event }" />
+    <FormField
+:label="$t('description')" :model-value="newData.description" name="description"
+      @update:model-value="newData = { ...newData, description: $event }" />
+    <FormCheckbox
+:label="$t('enabled')" :model-value="newData.enabled" name="enabled"
+      @update:model-value="newData = { ...newData, enabled: $event }" />
     <FormButton
-type="submit" color="info" prepand-icon="mdi-plus" :loading="rolesStore.createPending"
-      :disabled="!rights.creating">
+color="info" :disabled="!rights.creating" :loading="pending || !!data" prepand-icon="mdi-plus"
+      type="submit">
       {{ $t('create') }}
     </FormButton>
   </Form>

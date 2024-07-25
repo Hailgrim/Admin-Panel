@@ -1,34 +1,34 @@
-import { useAuthStore } from '~/stores/auth/auth';
+import { useMainStore } from '~/store/main/main'
 
 const defaultRights = {
   creating: false,
   reading: false,
   updating: false,
   deleting: false,
-};
+}
 
 export function useRights(path: string) {
-  const route = path.startsWith('/') ? path.slice(1) : path;
-  const rights = ref(defaultRights);
-  const authStore = useAuthStore();
+  const route = path.startsWith('/') ? path.slice(1) : path
+  const rights = ref(defaultRights)
+  const mainStore = useMainStore()
 
   watch(
-    () => authStore.profile,
+    () => mainStore.profile,
     () => {
-      if (authStore.profile?.roles) {
-        const roles = Array.isArray(authStore.profile.roles)
-          ? authStore.profile.roles
-          : [authStore.profile.roles];
+      if (mainStore.profile?.roles) {
+        const roles = Array.isArray(mainStore.profile.roles)
+          ? mainStore.profile.roles
+          : [mainStore.profile.roles]
 
-        const newRights = { ...defaultRights };
+        const newRights = { ...defaultRights }
 
         for (const role of roles) {
           if (role.admin) {
-            newRights.creating = true;
-            newRights.reading = true;
-            newRights.updating = true;
-            newRights.deleting = true;
-            break;
+            newRights.creating = true
+            newRights.reading = true
+            newRights.updating = true
+            newRights.deleting = true
+            break
           }
 
           if (role.resources) {
@@ -37,12 +37,12 @@ export function useRights(path: string) {
                 resource.path !== route ||
                 resource.RolesResources === undefined
               )
-                continue;
+                continue
 
-              newRights.creating = resource.RolesResources.creating;
-              newRights.reading = resource.RolesResources.reading;
-              newRights.updating = resource.RolesResources.updating;
-              newRights.deleting = resource.RolesResources.deleting;
+              newRights.creating = resource.RolesResources.creating
+              newRights.reading = resource.RolesResources.reading
+              newRights.updating = resource.RolesResources.updating
+              newRights.deleting = resource.RolesResources.deleting
             }
           }
         }
@@ -53,14 +53,14 @@ export function useRights(path: string) {
           rights.value.updating !== newRights.updating ||
           rights.value.deleting !== newRights.deleting
         ) {
-          rights.value = newRights;
+          rights.value = newRights
         }
       } else {
-        rights.value = defaultRights;
+        rights.value = defaultRights
       }
     },
     { immediate: true }
-  );
+  )
 
-  return rights;
+  return rights
 }

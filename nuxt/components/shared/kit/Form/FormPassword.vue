@@ -15,8 +15,13 @@ const visible = ref(false)
 
 <template>
   <v-text-field
-    v-bind="props" persistent-hint density="compact" variant="outlined"
-    :class="hint ? 'mb-6' : ''" :value="modelValue" :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'" :type="visible ? 'text' : 'password'"
-    @input="$emit('update:modelValue', $event.target.value)" @click:append-inner="visible = !visible"
-  />
+v-bind="props" :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'" :class="hint ? 'mb-6' : ''"
+    density="compact" persistent-hint :type="visible ? 'text' : 'password'" :value="modelValue" variant="outlined"
+    @click:append-inner="visible = !visible" @input="$emit('update:modelValue', $event.target.value)" />
 </template>
+
+<style scoped lang="scss">
+:global(label:has(~ input:required)::after) {
+  content: "*";
+}
+</style>

@@ -22,6 +22,7 @@ defineEmits(['click'])
 <style scoped lang="scss">
 .btn {
   vertical-align: top;
+
   &:disabled {
     opacity: 0.5;
   }

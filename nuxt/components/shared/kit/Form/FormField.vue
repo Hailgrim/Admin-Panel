@@ -14,7 +14,12 @@ defineEmits(['update:modelValue'])
 
 <template>
   <v-text-field
-    v-bind="props" persistent-hint density="compact" variant="outlined" :class="hint ? 'mb-6' : ''"
-    :value="modelValue" @input="$emit('update:modelValue', $event.target.value)"
-  />
+v-bind="props" :class="props.hint && 'mb-6'" density="compact" persistent-hint :value="props.modelValue"
+    variant="outlined" @input="$emit('update:modelValue', $event.target.value)" />
 </template>
+
+<style scoped lang="scss">
+:global(label:has(~ input:required)::after) {
+  content: "*";
+}
+</style>

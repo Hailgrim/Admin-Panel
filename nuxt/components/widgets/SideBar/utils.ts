@@ -1,4 +1,4 @@
-import type { IMenuItem } from './types';
+import type { IMenuItem } from './types'
 
 /**
  * @param {string} href Checked link
@@ -14,12 +14,12 @@ export function checkActiveLink(
       href.startsWith(`${navTree.href}/`) ||
       href.startsWith(`${navTree.href}?`)
     ) {
-      return true;
+      return true
     }
   }
 
   if (navTree.childs)
-    return navTree.childs.some((nav) => checkActiveLink(href, nav));
+    return navTree.childs.some((nav) => checkActiveLink(href, nav))
 
-  return false;
+  return false
 }

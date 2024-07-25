@@ -1,2 +1,2 @@
-export { useCustomFetch } from './useCustomFetch/useCustomFetch.js';
-export { useRights } from './useRights/useRights.js';
+export { useAPI } from './useAPI/useAPI.js'
+export { useRights } from './useRights/useRights.js'

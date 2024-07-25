@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { SubmitEventPromise } from 'vuetify'
+
 import Form from '~/components/shared/kit/Form/Form.vue'
 import FormAlert from '~/components/shared/kit/Form/FormAlert.vue'
 import FormField from '~/components/shared/kit/Form/FormField.vue'
@@ -7,7 +9,7 @@ import FormButton from '~/components/shared/kit/Form/FormButton.vue'
 import FormLink from '~/components/shared/kit/Form/FormLink.vue'
 import CustomModal from '~/components/shared/kit/CustomModal/CustomModal.vue'
 import SignUpSuccessForm from '~/components/entities/Forms/Auth/SignUpSuccessForm.vue'
-import { useAuthStore } from '~/stores/auth/auth'
+import authApi from '~/api/auth/authApi'
 
 const { t, locale } = useI18n()
 const name = ref('')
@@ -16,19 +18,16 @@ const email = ref('')
 const emailIsValid = (value: string) => testString(EMAIL_REGEX, value) || t('emailValidation')
 const password = ref('')
 const passwordIsValid = (value: string) => testString(PASSWORD_REGEX, value) || t('passwordValidation')
-const authStore = useAuthStore()
+const { data, error, execute, pending } = authApi.signUp()
 const errorMsg = ref<string | null>(null)
 const successModal = ref(false)
 const router = useRouter()
 
-function formHandler() {
-  if (
-    nameIsValid(name.value) === true
-    && emailIsValid(email.value) === true
-    && passwordIsValid(password.value) === true
-  ) {
-    authStore.signUp({ name: name.value, email: email.value, password: password.value })
-  }
+async function submitHandler(event: SubmitEventPromise) {
+  const results = await event
+
+  if (results.valid)
+    execute({ name: name.value, email: email.value, password: password.value })
 }
 
 function successHandler() {
@@ -37,9 +36,9 @@ function successHandler() {
 }
 
 watch(
-  () => authStore.signUpError,
+  error,
   () => {
-    switch (authStore.signUpError?.status) {
+    switch (error.value?.status) {
       case 409:
         errorMsg.value = t('userAlreadyExist')
         break
@@ -47,33 +46,33 @@ watch(
         errorMsg.value = null
         break
       default:
-        errorMsg.value = makeErrorText(authStore.signUpError?.message, locale.value)
+        errorMsg.value = makeErrorText(error.value, locale.value)
     }
   },
 )
 
 watch(
-  () => authStore.signUpData,
+  data,
   () => {
-    if (authStore.signUpData)
+    if (data.value)
       successModal.value = true
   },
 )
 </script>
 
 <template>
-  <Form @submit="formHandler">
+  <Form @submit="submitHandler">
     <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
     <FormField
-v-model:model-value="name" required name="name" type="text" :label="$t('name')" :rules="[nameIsValid]"
-      :hint="$t('nameValidation')" />
+v-model="name" :hint="$t('nameValidation')" :label="$t('name')" name="name" required
+      :rules="[nameIsValid]" type="text" />
     <FormField
-v-model:model-value="email" required name="email" type="text" :label="$t('email')"
-      :rules="[emailIsValid]" :hint="$t('emailValidation')" />
+v-model="email" :hint="$t('emailValidation')" :label="$t('email')" name="email" required
+      :rules="[emailIsValid]" type="text" />
     <FormPassword
-v-model:model-value="password" required name="password" :label="$t('password')"
-      :rules="[passwordIsValid]" :hint="$t('passwordValidation')" />
-    <FormButton block type="submit" color="success" :loading="authStore.signUpPending">
+v-model="password" :hint="$t('passwordValidation')" :label="$t('password')" name="password" required
+      :rules="[passwordIsValid]" />
+    <FormButton block color="success" :loading="pending || !!data" type="submit">
       {{ $t('signUp') }}
     </FormButton>
     <FormLink :href="ROUTES.auth.signIn" :text="$t('signInText')" />

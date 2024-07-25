@@ -1,17 +1,21 @@
-import { useAuthStore } from '~/stores/auth/auth';
+import authApi from '~/api/auth/authApi'
+import { useMainStore } from '~/store/main/main'
 
 export default defineNuxtRouteMiddleware(async (to) => {
-  if (import.meta.client) return;
+  if (import.meta.client) return
 
-  const accessToken = useCookie('accessToken');
-  const refreshToken = useCookie('refreshToken');
-  const authStore = useAuthStore();
+  const accessToken = useCookie('accessToken')
+  const refreshToken = useCookie('refreshToken')
+  const mainStore = useMainStore()
+
   if (accessToken.value || refreshToken.value) {
     // Attempt to authorize the user
-    await authStore.getProfile();
+    const { data, execute } = authApi.getProfile()
+    await execute()
+    mainStore.setProfile(data.value)
   }
 
-  if (authStore.profile) {
+  if (mainStore.profile) {
     if (Object.values(ROUTES.auth).includes(to.path)) {
       return navigateTo(
         {
@@ -20,7 +24,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
             : ROUTES.panel.home,
         },
         { redirectCode: 302 }
-      );
+      )
     }
   } else {
     if (!Object.values(ROUTES.auth).includes(to.path)) {
@@ -30,7 +34,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
           query: { return: encodeURIComponent(to.path) },
         },
         { redirectCode: 302 }
-      );
+      )
     }
   }
-});
+})

@@ -1,38 +1,46 @@
 <script setup lang="ts">
+import type { SubmitEventPromise } from 'vuetify'
+
 import Form from '~/components/shared/kit/Form/Form.vue'
 import FormField from '~/components/shared/kit/Form/FormField.vue'
 import FormCheckbox from '~/components/shared/kit/Form/FormCheckbox.vue'
 import FormButton from '~/components/shared/kit/Form/FormButton.vue'
-import { useResourcesStore } from '~/stores/resources/resources'
-import { useMainStore } from '~/stores/main/main'
+import { useMainStore } from '~/store/main/main'
+import resourcesApi from '~/api/resources/resourcesApi'
+import type { IResourceCreate } from '~/api/resources/types'
 
 const { t, locale } = useI18n()
-const name = ref('')
+const newData = ref<IResourceCreate>({
+  name: '',
+  path: '',
+  description: '',
+  enabled: false
+})
 const nameIsValid = (value: string) => value.length > 0
-const path = ref('')
 const pathIsValid = (value: string) => value.length > 0
-const description = ref('')
-const enabled = ref(true)
-const resourcesStore = useResourcesStore()
+const { data, error, execute, pending } = resourcesApi.create()
 const mainStore = useMainStore()
 const router = useRouter()
 const rights = useRights(ROUTES.api.resources)
 
-function submitHandler() {
-  if (nameIsValid(name.value) && pathIsValid(path.value))
-    resourcesStore.create({ name: name.value, path: path.value, description: description.value || null, enabled: enabled.value })
+async function submitHandler(event: SubmitEventPromise) {
+  const results = await event
+
+  if (results.valid)
+    execute(newData.value)
 }
 
 watch(
-  () => resourcesStore.createPending,
+  pending,
   () => {
-    if (resourcesStore.createPending === true)
-      return
-    if (resourcesStore.createError)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(resourcesStore.createError, locale.value) })
-    if (resourcesStore.createData) {
+    if (pending.value) return
+
+    if (error.value)
+      mainStore.addAlert({ type: 'error', text: makeErrorText(error.value, locale.value) })
+
+    if (data.value) {
       mainStore.addAlert({ type: 'success', text: t('success') })
-      router.push(ROUTES.panel.resource(resourcesStore.createData.id))
+      router.push(ROUTES.panel.resource(data.value.id))
     }
   },
 )
@@ -40,13 +48,21 @@ watch(
 
 <template>
   <Form @submit="submitHandler">
-    <FormField v-model:model-value="name" required name="name" :label="$t('name')" :rules="[nameIsValid]" />
-    <FormField v-model:model-value="path" required name="path" :label="$t('path')" :rules="[pathIsValid]" />
-    <FormField v-model:model-value="description" name="description" :label="$t('description')" />
-    <FormCheckbox v-model:model-value="enabled" name="enabled" :label="$t('enabled')" />
+    <FormField
+:label="$t('name')" :model-value="newData.name" name="name" required :rules="[nameIsValid]"
+      @update:model-value="newData = { ...newData, name: $event }" />
+    <FormField
+:label="$t('path')" :model-value="newData.path" name="path" required :rules="[pathIsValid]"
+      @update:model-value="newData = { ...newData, path: $event }" />
+    <FormField
+:label="$t('description')" :model-value="newData.description" name="description"
+      @update:model-value="newData = { ...newData, description: $event }" />
+    <FormCheckbox
+:label="$t('enabled')" :model-value="newData.enabled" name="enabled"
+      @update:model-value="newData = { ...newData, enabled: $event }" />
     <FormButton
-type="submit" color="info" prepand-icon="mdi-plus" :loading="resourcesStore.createPending"
-      :disabled="!rights.creating">
+color="info" :disabled="!rights.creating" :loading="pending || !!data" prepand-icon="mdi-plus"
+      type="submit">
       {{ $t('create') }}
     </FormButton>
   </Form>

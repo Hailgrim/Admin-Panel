@@ -1,50 +1,60 @@
 <script setup lang="ts">
+import type { SubmitEventPromise } from 'vuetify'
+
 import Form from '~/components/shared/kit/Form/Form.vue'
 import FormField from '~/components/shared/kit/Form/FormField.vue'
 import FormButton from '~/components/shared/kit/Form/FormButton.vue'
-import { useMainStore } from '~/stores/main/main'
-import { useAuthStore } from '~/stores/auth/auth'
-import type { IUser } from '~/stores/users/types'
+import { useMainStore } from '~/store/main/main'
+import authApi from '~/api/auth/authApi'
+import type { IUser } from '~/api/users/types'
 
 const { t, locale } = useI18n()
 const mainStore = useMainStore()
-const authStore = useAuthStore()
-const name = ref(authStore.profile?.name || '')
-const nameIsValid = (value: string) => testString(NAME_REGEX, value) || t('nameValidation')
+const newData = ref(mainStore.profile)
+const { data, error, execute, pending } = authApi.updateProfile()
+const nameIsValid = (value = '') => testString(NAME_REGEX, value) || t('nameValidation')
 const rights = useRights(ROUTES.api.auth.profile)
 
-function formHandler() {
-  if (nameIsValid(name.value) && authStore.profile) {
+async function submitHandler(event: SubmitEventPromise) {
+  const results = await event
+
+  if (newData.value && mainStore.profile && results.valid) {
     const updatedValues = getUpdatedValues<IUser>(
-      authStore.profile,
-      { name: name.value },
+      mainStore.profile,
+      newData.value,
     )
+
     if (Object.keys(updatedValues).length > 0)
-      authStore.updateProfile(updatedValues)
+      execute(updatedValues)
     else
       mainStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
   }
 }
 
 watch(
-  () => authStore.updateProfilePending,
+  pending,
   () => {
-    if (authStore.updateProfilePending === true)
-      return
-    if (authStore.updateProfileError || authStore.updateProfileData !== true)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(authStore.updateProfileError, locale.value) })
-    if (authStore.updateProfileData)
+    if (pending.value) return
+
+    if (error.value || data.value !== true)
+      mainStore.addAlert({ type: 'error', text: makeErrorText(error.value, locale.value) })
+
+    if (data.value) {
+      mainStore.setProfile(newData.value)
       mainStore.addAlert({ type: 'success', text: t('success') })
+    }
   },
 )
 </script>
 
 <template>
-  <Form @submit="formHandler">
-    <FormField v-model:model-value="name" required name="name" :label="$t('email')" :rules="[nameIsValid]" />
+  <Form @submit="submitHandler">
+    <FormField
+:label="$t('name')" :model-value="newData?.name" name="name" required :rules="[nameIsValid]"
+      @update:model-value="newData && (newData = { ...newData, name: $event })" />
     <FormButton
-type="submit" color="success" prepand-icon="mdi-content-save" :loading="authStore.updateProfilePending"
-      :disabled="!rights.updating">
+color="success" :disabled="!rights.updating" :loading="pending" prepand-icon="mdi-content-save"
+      type="submit">
       {{ $t('update') }}
     </FormButton>
   </Form>

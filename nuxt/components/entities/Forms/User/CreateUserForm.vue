@@ -1,44 +1,48 @@
 <script setup lang="ts">
+import type { SubmitEventPromise } from 'vuetify'
+
 import Form from '~/components/shared/kit/Form/Form.vue'
 import FormField from '~/components/shared/kit/Form/FormField.vue'
 import FormPassword from '~/components/shared/kit/Form/FormPassword.vue'
 import FormCheckbox from '~/components/shared/kit/Form/FormCheckbox.vue'
 import FormButton from '~/components/shared/kit/Form/FormButton.vue'
-import { useUsersStore } from '~/stores/users/users'
-import { useMainStore } from '~/stores/main/main'
+import { useMainStore } from '~/store/main/main'
+import usersApi from '~/api/users/usersApi'
+import type { IUserCreate } from '~/api/users/types'
 
 const { t, locale } = useI18n()
-const email = ref('')
+const newData = ref<IUserCreate>({
+  email: '',
+  name: '',
+  password: '',
+  enabled: false
+})
 const emailIsValid = (value: string) => testString(EMAIL_REGEX, value) || t('emailValidation')
-const name = ref('')
 const nameIsValid = (value: string) => testString(NAME_REGEX, value) || t('nameValidation')
-const password = ref('')
 const passwordIsValid = (value: string) => testString(PASSWORD_REGEX, value) || t('passwordValidation')
-const enabled = ref(true)
-const usersStore = useUsersStore()
+const { data, error, execute, pending } = usersApi.create()
 const mainStore = useMainStore()
 const router = useRouter()
 const rights = useRights(ROUTES.api.users)
 
-function submitHandler() {
-  if (
-    emailIsValid(email.value) === true
-    && nameIsValid(name.value) === true
-    && passwordIsValid(password.value) === true) {
-    usersStore.create({ email: email.value, name: name.value, password: password.value, enabled: enabled.value })
-  }
+async function submitHandler(event: SubmitEventPromise) {
+  const results = await event
+
+  if (results.valid)
+    execute(newData.value)
 }
 
 watch(
-  () => usersStore.createPending,
+  pending,
   () => {
-    if (usersStore.createPending === true)
-      return
-    if (usersStore.createError)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(usersStore.createError, locale.value) })
-    if (usersStore.createData) {
+    if (pending.value) return
+
+    if (error.value)
+      mainStore.addAlert({ type: 'error', text: makeErrorText(error.value, locale.value) })
+
+    if (data.value) {
       mainStore.addAlert({ type: 'success', text: t('success') })
-      router.push(ROUTES.panel.user(usersStore.createData.id))
+      router.push(ROUTES.panel.user(data.value.id))
     }
   },
 )
@@ -47,18 +51,21 @@ watch(
 <template>
   <Form @submit="submitHandler">
     <FormField
-v-model:model-value="email" type="email" required name="email" :label="$t('email')"
-      :rules="[emailIsValid]" :hint="$t('emailValidation')" />
+:hint="$t('emailValidation')" :label="$t('email')" :model-value="newData.email" name="email" required
+      :rules="[emailIsValid]" type="email" @update:model-value="newData = { ...newData, email: $event }" />
     <FormField
-v-model:model-value="name" required name="name" :label="$t('name')" :rules="[nameIsValid]"
-      :hint="$t('nameValidation')" />
+:hint="$t('nameValidation')" :label="$t('name')" :model-value="newData.name" name="name" required
+      :rules="[nameIsValid]" @update:model-value="newData = { ...newData, name: $event }" />
     <FormPassword
-v-model:model-value="password" required name="password" :label="$t('password')"
-      :rules="[passwordIsValid]" :hint="$t('passwordValidation')" />
-    <FormCheckbox v-model:model-value="enabled" name="enabled" :label="$t('enabled')" />
+:hint="$t('passwordValidation')" :label="$t('password')" :model-value="newData.password"
+      name="password" required :rules="[passwordIsValid]"
+      @update:model-value="newData = { ...newData, password: $event }" />
+    <FormCheckbox
+:label="$t('enabled')" :model-value="newData.enabled" name="enabled"
+      @update:model-value="newData = { ...newData, enabled: $event }" />
     <FormButton
-type="submit" color="info" prepand-icon="mdi-plus" :loading="usersStore.createPending"
-      :disabled="!rights.creating">
+color="info" :disabled="!rights.creating" :loading="pending || !!data" prepand-icon="mdi-plus"
+      type="submit">
       {{ $t('create') }}
     </FormButton>
   </Form>

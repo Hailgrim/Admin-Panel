@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import resourcesApi from '~/api/resources/resourcesApi'
+import rolesApi from '~/api/roles/rolesApi'
 import UpdateRoleForm from '~/components/entities/Forms/Role/UpdateRoleForm.vue'
 import UpdateRoleResourcesForm from '~/components/entities/Forms/Role/UpdateRoleResourcesForm.vue'
-import { useResourcesStore } from '~/stores/resources/resources'
-import { useRolesStore } from '~/stores/roles/roles'
 
 definePageMeta({
   middleware: ['auth'],
@@ -14,23 +14,23 @@ definePageMeta({
 
 const route = useRoute()
 const id = Number(route.params.id)
-const rolesStore = useRolesStore()
-await rolesStore.readRefresh(id)
-if (rolesStore.readData === null) {
+const { data: roleData, execute: roleExecute } = rolesApi.read()
+await roleExecute(id)
+
+if (roleData.value === null) {
   showError({
     statusCode: 404,
   })
 }
-const resourcesStore = useResourcesStore()
-await resourcesStore.listRefresh(undefined)
+
+const { data: resourcesData, execute: resourcesExecute } = resourcesApi.list()
+await resourcesExecute(undefined)
 </script>
 
 <template>
-  <UpdateRoleForm v-if="rolesStore.readData" :role="rolesStore.readData" />
-  <v-card-title v-if="rolesStore.readData && resourcesStore.listData" class="px-0 pt-0 pb-6">
+  <UpdateRoleForm v-if="roleData" :role="roleData" />
+  <v-card-title v-if="roleData && resourcesData" class="px-0 pt-0 pb-6">
     {{ $t('resources') }}
   </v-card-title>
-  <UpdateRoleResourcesForm
-v-if="rolesStore.readData && resourcesStore.listData" :role="rolesStore.readData"
-    :resources="resourcesStore.listData" />
+  <UpdateRoleResourcesForm v-if="roleData && resourcesData" :resources="resourcesData" :role="roleData" />
 </template>

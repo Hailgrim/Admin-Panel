@@ -2,21 +2,21 @@
 import Form from '~/components/shared/kit/Form/Form.vue'
 import FormCheckbox from '~/components/shared/kit/Form/FormCheckbox.vue'
 import FormButton from '~/components/shared/kit/Form/FormButton.vue'
-import { useUsersStore } from '~/stores/users/users'
-import type { IRole, IUsersRoles } from '~/stores/roles/types';
-import type { IUser } from '~/stores/users/types';
-import { useMainStore } from '~/stores/main/main';
+import { useMainStore } from '~/store/main/main'
+import usersApi from '~/api/users/usersApi'
+import type { IUser } from '~/api/users/types'
+import type { IRole, IUsersRoles } from '~/api/roles/types'
 
 const { user, roles } = defineProps<{ user: IUser, roles: IRole[] }>()
 
 const updatedRoles = ref(user.roles?.map(role => role.UsersRoles) || [])
 const { t, locale } = useI18n()
-const usersStore = useUsersStore()
+const { data, error, execute, pending } = usersApi.updateRoles()
 const mainStore = useMainStore()
 const rights = useRights(ROUTES.api.users)
 
 function submitHandler() {
-  usersStore.updateRoles({
+  execute({
     id: user.id,
     fields: updatedRoles.value,
   })
@@ -45,13 +45,14 @@ function setRoles(newRole: IUsersRoles) {
 }
 
 watch(
-  () => usersStore.updateRolesPending,
+  pending,
   () => {
-    if (usersStore.updateRolesPending === true)
-      return
-    if (usersStore.updateRolesError)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(usersStore.updateRolesError, locale.value) })
-    if (usersStore.updateRolesData)
+    if (pending.value) return
+
+    if (error.value)
+      mainStore.addAlert({ type: 'error', text: makeErrorText(error.value, locale.value) })
+
+    if (data.value)
       mainStore.addAlert({ type: 'success', text: t('success') })
   },
 )
@@ -62,14 +63,14 @@ watch(
     <div class="d-flex flex-row">
       <span v-for="role of roles" :key="`userRole.${role.id}`" class="mr-6">
         <FormCheckbox
-:model-value="updatedRoles.some(value => value?.roleId === role.id)"
-          :name="`${role.name}.${role.id}`" :label="role.name"
+:label="role.name"
+          :model-value="updatedRoles.some(value => value?.roleId === role.id)" :name="`${role.name}.${role.id}`"
           @update:model-value="setRoles({ roleId: role.id, userId: user.id })" />
       </span>
     </div>
     <FormButton
-type="submit" color="success" prepand-icon="mdi-content-save" :loading="usersStore.updateRolesPending"
-      :disabled="!rights.updating">
+color="success" :disabled="!rights.updating" :loading="pending" prepand-icon="mdi-content-save"
+      type="submit">
       {{ $t('update') }}
     </FormButton>
   </Form>

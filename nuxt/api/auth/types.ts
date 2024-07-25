@@ -1,4 +1,4 @@
-import type { IUser } from '../users/types';
+import type { IUser } from '../users/types'
 
 export type IUserSignUp = Pick<IUser, 'name' | 'email'> & { password: string };
 

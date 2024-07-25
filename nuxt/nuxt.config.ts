@@ -5,7 +5,12 @@ export default defineNuxtConfig({
   build: {
     transpile: ['vuetify'],
   },
-  modules: ['@pinia/nuxt', '@nuxtjs/i18n', '@nuxt/test-utils/module'],
+  modules: [
+    '@nuxt/eslint',
+    '@pinia/nuxt',
+    '@nuxtjs/i18n',
+    '@nuxt/test-utils/module',
+  ],
   i18n: {
     vueI18n: './i18n.config.ts',
   },
@@ -22,4 +27,4 @@ export default defineNuxtConfig({
         process.env.REFRESH_TOKEN_LIFETIME || String(60 * 60 * 24 * 7),
     },
   },
-});
+})

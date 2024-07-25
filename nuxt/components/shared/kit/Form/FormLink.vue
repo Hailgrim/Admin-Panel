@@ -11,8 +11,8 @@ defineProps<{
   </NuxtLink>
 </template>
 
-<style scoped>
-.link + .link {
+<style scoped lang="scss">
+.link+.link {
   margin-top: -12px !important;
 }
 </style>

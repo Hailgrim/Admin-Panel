@@ -1,4 +1,4 @@
-import type { IResource } from '../resources/types';
+import type { IResource } from '../resources/types'
 
 export interface IRole {
   id: number;
