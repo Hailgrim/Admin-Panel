@@ -11,11 +11,11 @@ import FormAlert from '@/shared/kit/Form/FormAlert';
 import useLang from '@/shared/hooks/useLang';
 import d from '@/shared/locales/dictionary';
 import CustomModal from '@/shared/kit/CustomModal/CustomModal';
-import ResetForm from './ResetForm';
+import ResetPasswordForm from './ResetPasswordForm';
 import authApi from '@/shared/api/auth/authApi';
 import { makeErrorText } from '@/shared/lib/utils';
 
-const ForgotForm: FC = () => {
+const ForgotPasswordForm: FC = () => {
   const t = useT();
   const lang = useLang();
   const [email, setEmail] = useState('');
@@ -69,7 +69,7 @@ const ForgotForm: FC = () => {
           onChange={(event) => setEmail(event.currentTarget.value)}
           autoFocus
         />
-        <FormButton type="submit" fullWidth disabled={isFetching}>
+        <FormButton type="submit" fullWidth loading={isFetching}>
           {t.confirm}
         </FormButton>
         <FormLink href={ROUTES.auth.signIn} mui={{ align: 'center' }}>
@@ -84,7 +84,7 @@ const ForgotForm: FC = () => {
         title={t.resetPassword}
         onClose={() => setModalState(false)}
       >
-        <ResetForm
+        <ResetPasswordForm
           email={originalArgs || ''}
           callback={() => setModalState(false)}
         />
@@ -92,4 +92,4 @@ const ForgotForm: FC = () => {
     </>
   );
 };
-export default ForgotForm;
+export default ForgotPasswordForm;

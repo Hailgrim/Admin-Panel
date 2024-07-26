@@ -11,7 +11,7 @@ import d from '@/shared/locales/dictionary';
 import authApi from '@/shared/api/auth/authApi';
 import { makeErrorText } from '@/shared/lib/utils';
 
-const VerifyUser: FC<{
+const VerifyUserForm: FC<{
   email: string;
   callback?: () => void;
 }> = ({ email, callback }) => {
@@ -65,7 +65,7 @@ const VerifyUser: FC<{
         onChange={(event) => setCode(event.currentTarget.value)}
         helperText={`${t.codeFromEmail} (${email})`}
       />
-      <FormButton type="submit" fullWidth disabled={isFetching || data}>
+      <FormButton type="submit" fullWidth loading={isFetching || data}>
         {t.confirm}
       </FormButton>
       <FormButton color="error" onClick={callback} fullWidth>
@@ -74,4 +74,4 @@ const VerifyUser: FC<{
     </Form>
   );
 };
-export default VerifyUser;
+export default VerifyUserForm;

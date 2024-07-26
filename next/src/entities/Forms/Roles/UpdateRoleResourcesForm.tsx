@@ -9,17 +9,17 @@ import useLang from '@/shared/hooks/useLang';
 import d from '@/shared/locales/dictionary';
 import useRights from '@/shared/hooks/useRights';
 import ResourceRightsFields from '../Resources/ResourceRightsFields';
-import { IRoleAndResources } from '@/shared/api/roles/types';
+import { IRole } from '@/shared/api/roles/types';
 import { useAppDispatch } from '@/shared/store/hooks';
 import rolesApi from '@/shared/api/roles/rolesApi';
-import { IRolesResources } from '@/shared/api/resources/types';
-import { addAlert } from '@/shared/store/slices/appSlice';
+import { IResource, IRolesResources } from '@/shared/api/resources/types';
+import { addAlert } from '@/shared/store/main/main';
 import { makeErrorText } from '@/shared/lib/utils';
 
-const UpdateRoleResourcesForm: FC<IRoleAndResources> = ({
-  role,
-  resources,
-}) => {
+const UpdateRoleResourcesForm: FC<{
+  role: IRole;
+  resources: IResource[];
+}> = ({ role, resources }) => {
   const dispatch = useAppDispatch();
   const lang = useLang();
   const t = useT();
@@ -80,7 +80,7 @@ const UpdateRoleResourcesForm: FC<IRoleAndResources> = ({
 
   return (
     <Form onSubmit={formHandler}>
-      {resources?.map((resource) => (
+      {resources.map((resource) => (
         <ResourceRightsFields
           key={`ResourceRights.${resource.id}`}
           roleId={role.id}
@@ -92,17 +92,12 @@ const UpdateRoleResourcesForm: FC<IRoleAndResources> = ({
         />
       ))}
       <br />
-      {!resources || (resources.length === 0 && t.error)}
       <FormButton
         type="submit"
         color="success"
         startIcon={<SaveIcon />}
-        disabled={
-          !rights.updating ||
-          updateReq.isLoading ||
-          !resources ||
-          resources.length === 0
-        }
+        disabled={!rights.updating}
+        loading={updateReq.isLoading}
       >
         {t.update}
       </FormButton>

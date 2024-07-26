@@ -11,12 +11,15 @@ import useRights from '@/shared/hooks/useRights';
 import FormCheckbox from '@/shared/kit/Form/FormCheckbox';
 import { useAppDispatch } from '@/shared/store/hooks';
 import usersApi from '@/shared/api/users/usersApi';
-import { IUsersRoles } from '@/shared/api/roles/types';
-import { addAlert } from '@/shared/store/slices/appSlice';
+import { IRole, IUsersRoles } from '@/shared/api/roles/types';
+import { addAlert } from '@/shared/store/main/main';
 import { makeErrorText } from '@/shared/lib/utils';
-import { IUserAndRoles } from '@/shared/api/users/types';
+import { IUser } from '@/shared/api/users/types';
 
-const UpdateUserRolesForm: FC<IUserAndRoles> = ({ user, roles }) => {
+const UpdateUserRolesForm: FC<{
+  user: IUser;
+  roles: IRole[];
+}> = ({ user, roles }) => {
   const dispatch = useAppDispatch();
   const lang = useLang();
   const t = useT();
@@ -72,7 +75,7 @@ const UpdateUserRolesForm: FC<IUserAndRoles> = ({ user, roles }) => {
 
   return (
     <Form onSubmit={formHandler}>
-      {roles?.map((role) => (
+      {roles.map((role) => (
         <FormCheckbox
           key={`roleRow.${role.id}`}
           labelProps={{ label: role.name, sx: { display: 'inline-flex' } }}
@@ -82,18 +85,13 @@ const UpdateUserRolesForm: FC<IUserAndRoles> = ({ user, roles }) => {
           onChange={() => updateRoles({ roleId: role.id, userId: user.id })}
         />
       ))}
-      {!roles || (roles.length === 0 && t.error)}
       <br />
       <FormButton
         type="submit"
         color="success"
         startIcon={<SaveIcon />}
-        disabled={
-          !rights.updating ||
-          updateReq.isLoading ||
-          !roles ||
-          roles.length === 0
-        }
+        disabled={!rights.updating}
+        loading={updateReq.isLoading}
       >
         {t.update}
       </FormButton>

@@ -4,7 +4,7 @@ import { FC, PropsWithChildren, useRef } from 'react';
 import { Provider } from 'react-redux';
 
 import { AppStore, makeStore } from '@/shared/store/store';
-import { setProfile } from '@/shared/store/slices/appSlice';
+import { setProfile } from '@/shared/store/main/main';
 
 const StoreProvider: FC<
   PropsWithChildren & { profileJson?: string | null }

@@ -12,7 +12,7 @@ const defaultRights = {
 const useRights = (path: string) => {
   const route = path.startsWith('/') ? path.slice(1) : path;
   const [rights, setRights] = useState(defaultRights);
-  const profile = useAppSelector((store) => store.app.profile);
+  const profile = useAppSelector((store) => store.main.profile);
 
   useEffect(() => {
     setRights((prev) => {

@@ -1,46 +1,57 @@
-import { FC, FormEvent, useEffect, useRef, useState } from 'react';
+import { FC, FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import Form from '@/shared/kit/Form/Form';
 import FormField from '@/shared/kit/Form/FormField';
 import FormButton from '@/shared/kit/Form/FormButton';
-import { ROUTES } from '@/shared/lib/constants';
+import { NAME_REGEX, ROUTES } from '@/shared/lib/constants';
 import useT from '@/shared/hooks/useT';
 import useLang from '@/shared/hooks/useLang';
 import d from '@/shared/locales/dictionary';
 import useRights from '@/shared/hooks/useRights';
 import authApi from '@/shared/api/auth/authApi';
 import { useAppDispatch, useAppSelector } from '@/shared/store/hooks';
-import { getUpdatedValues, makeErrorText } from '@/shared/lib/utils';
-import { addAlert, setProfile } from '@/shared/store/slices/appSlice';
+import {
+  getUpdatedValues,
+  makeErrorText,
+  testString,
+} from '@/shared/lib/utils';
+import { addAlert, setProfile } from '@/shared/store/main/main';
 import { IUser } from '@/shared/api/users/types';
 
 const UpdateProfileForm: FC = () => {
   const dispatch = useAppDispatch();
   const lang = useLang();
   const t = useT();
-  const profile = useAppSelector((store) => store.app.profile);
-  const newProfile = useRef(profile);
   const [update, { data, isLoading, error }] =
     authApi.useUpdateProfileMutation();
-  const [name, setName] = useState(profile?.name || '');
   const rights = useRights(ROUTES.api.auth.profile);
+  const profile = useAppSelector((store) => store.main.profile);
+  const newProfile = useRef<IUser | null>(profile);
+  const [newData, setNewData] = useState<IUser | null>(profile);
+  const nameIsValid = useMemo(
+    () => newData && testString(NAME_REGEX, newData.name),
+    [newData]
+  );
 
   const formHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (profile) {
-      const updatedValues = getUpdatedValues<IUser>(profile, { name });
+
+    if (profile && newData && nameIsValid) {
+      const updatedValues = getUpdatedValues<IUser>(profile, newData);
+
       if (Object.keys(updatedValues).length == 0) {
         dispatch(addAlert({ type: 'warning', text: t.nothingToUpdate }));
       } else {
-        if (newProfile.current) {
-          newProfile.current.name = name;
-        }
         update(updatedValues);
       }
     } else {
       dispatch(addAlert({ type: 'warning', text: t.unknownError }));
     }
   };
+
+  useEffect(() => {
+    newProfile.current = newData;
+  }, [newData]);
 
   useEffect(() => {
     if (error) {
@@ -67,13 +78,16 @@ const UpdateProfileForm: FC = () => {
         name="name"
         type="text"
         label={t.name}
-        value={name}
-        onChange={(event) => setName(event.currentTarget.value)}
+        value={newData?.name || ''}
+        onChange={(event) =>
+          newData && setNewData({ ...newData, name: event.currentTarget.value })
+        }
       />
       <FormButton
         type="submit"
         color="success"
-        disabled={!rights.updating || isLoading}
+        disabled={!rights.updating}
+        loading={isLoading}
       >
         {t.update}
       </FormButton>

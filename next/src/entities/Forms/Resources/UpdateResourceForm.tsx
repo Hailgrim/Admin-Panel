@@ -16,7 +16,7 @@ import { IResource } from '@/shared/api/resources/types';
 import { useAppDispatch } from '@/shared/store/hooks';
 import resourcesApi from '@/shared/api/resources/resourcesApi';
 import { getUpdatedValues, makeErrorText } from '@/shared/lib/utils';
-import { addAlert } from '@/shared/store/slices/appSlice';
+import { addAlert } from '@/shared/store/main/main';
 
 const UpdateResourceForm: FC<{ data: IResource }> = ({ data }) => {
   const dispatch = useAppDispatch();
@@ -25,8 +25,8 @@ const UpdateResourceForm: FC<{ data: IResource }> = ({ data }) => {
   const t = useT();
   const [update, updateReq] = resourcesApi.useUpdateMutation();
   const [destroy, deleteReq] = resourcesApi.useDeleteMutation();
-  const [oldData, setOldData] = useState<Partial<IResource>>(data);
-  const [newData, setNewData] = useState<Partial<IResource>>(data);
+  const [oldData, setOldData] = useState<IResource>(data);
+  const [newData, setNewData] = useState<IResource>(data);
   const rights = useRights(ROUTES.api.resources);
 
   const formHandler = (event: FormEvent<HTMLFormElement>) => {
@@ -122,7 +122,13 @@ const UpdateResourceForm: FC<{ data: IResource }> = ({ data }) => {
         type="submit"
         color="success"
         startIcon={<SaveIcon />}
-        disabled={!rights.updating || updateReq.isLoading || data.default}
+        disabled={
+          !rights.updating ||
+          data.default ||
+          deleteReq.isLoading ||
+          deleteReq.data
+        }
+        loading={updateReq.isLoading}
       >
         {t.update}
       </FormButton>

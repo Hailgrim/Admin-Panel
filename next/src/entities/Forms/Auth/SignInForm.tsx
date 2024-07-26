@@ -14,11 +14,11 @@ import FormAlert from '@/shared/kit/Form/FormAlert';
 import useLang from '@/shared/hooks/useLang';
 import d from '@/shared/locales/dictionary';
 import CustomModal from '@/shared/kit/CustomModal/CustomModal';
-import VerifyForm from './VerifyForm';
+import VerifyUserForm from './VerifyUserForm';
 import { useAppDispatch } from '@/shared/store/hooks';
 import authApi from '@/shared/api/auth/authApi';
 import { makeErrorText } from '@/shared/lib/utils';
-import { setProfile } from '@/shared/store/slices/appSlice';
+import { setProfile } from '@/shared/store/main/main';
 
 const SignInForm: FC = () => {
   const router = useRouter();
@@ -102,11 +102,7 @@ const SignInForm: FC = () => {
           checked={rememberMe}
           onChange={() => setRememberMe(!rememberMe)}
         />
-        <FormButton
-          type="submit"
-          fullWidth
-          disabled={Boolean(isFetching || data)}
-        >
+        <FormButton type="submit" fullWidth loading={isFetching || !!data}>
           {t.signIn}
         </FormButton>
         <FormLink href={ROUTES.auth.signUp} mui={{ align: 'center' }}>
@@ -121,7 +117,7 @@ const SignInForm: FC = () => {
         title={t.verification}
         onClose={() => setModalState(false)}
       >
-        <VerifyForm
+        <VerifyUserForm
           email={originalArgs?.username || ''}
           callback={() => setModalState(false)}
         />

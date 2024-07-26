@@ -14,7 +14,7 @@ import FormCheckbox from '@/shared/kit/Form/FormCheckbox';
 import FormPassword from '@/shared/kit/Form/FormPassword';
 import usersApi from '@/shared/api/users/usersApi';
 import { useAppDispatch } from '@/shared/store/hooks';
-import { addAlert } from '@/shared/store/slices/appSlice';
+import { addAlert } from '@/shared/store/main/main';
 import { makeErrorText } from '@/shared/lib/utils';
 import { IUserCreate } from '@/shared/api/users/types';
 
@@ -98,11 +98,8 @@ const CreateUserForm: FC = () => {
         type="submit"
         color="primary"
         startIcon={<AddIcon />}
-        disabled={
-          !rights.creating ||
-          createReq.isLoading ||
-          createReq.data !== undefined
-        }
+        disabled={!rights.creating}
+        loading={createReq.isLoading || !!createReq.data}
       >
         {t.create}
       </FormButton>

@@ -59,7 +59,7 @@ const ResourcesTable: FC<Omit<DataGridProps<IResource>, 'columns'>> = (
         type: 'string',
         flex: 1,
       },
-      { field: 'default', headerName: t.default, width: 150, type: 'boolean' },
+      { field: 'enabled', headerName: t.enabled, width: 150, type: 'boolean' },
     ],
     [t, rights]
   );

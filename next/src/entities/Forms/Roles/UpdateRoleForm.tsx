@@ -12,27 +12,27 @@ import useLang from '@/shared/hooks/useLang';
 import d from '@/shared/locales/dictionary';
 import useRights from '@/shared/hooks/useRights';
 import FormCheckbox from '@/shared/kit/Form/FormCheckbox';
+import rolesApi from '@/shared/api/roles/rolesApi';
 import { useAppDispatch } from '@/shared/store/hooks';
-import usersApi from '@/shared/api/users/usersApi';
 import { getUpdatedValues, makeErrorText } from '@/shared/lib/utils';
-import { addAlert } from '@/shared/store/slices/appSlice';
-import { IUser } from '@/shared/api/users/types';
+import { IRole } from '@/shared/api/roles/types';
+import { addAlert } from '@/shared/store/main/main';
 
-const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
+const UpdateRoleForm: FC<{ data: IRole }> = ({ data }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const lang = useLang();
   const t = useT();
-  const [update, updateReq] = usersApi.useUpdateMutation();
-  const [destroy, deleteReq] = usersApi.useDeleteMutation();
-  const [oldData, setOldData] = useState<Partial<IUser>>(data);
-  const [newData, setNewData] = useState<Partial<IUser>>(data);
-  const rights = useRights(ROUTES.api.users);
+  const [update, updateReq] = rolesApi.useUpdateMutation();
+  const [destroy, deleteReq] = rolesApi.useDeleteMutation();
+  const [oldData, setOldData] = useState<IRole>(data);
+  const [newData, setNewData] = useState<IRole>(data);
+  const rights = useRights(ROUTES.api.roles);
 
   const formHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const updatedValues = getUpdatedValues<Partial<IUser>>(oldData, newData);
+    const updatedValues = getUpdatedValues<IRole>(oldData, newData);
 
     if (Object.keys(updatedValues).length == 0) {
       dispatch(addAlert({ type: 'warning', text: t.nothingToUpdate }));
@@ -62,7 +62,7 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
   useEffect(() => {
     if (deleteReq.data) {
       dispatch(addAlert({ type: 'success', text: d[lang.current].success }));
-      router.push(ROUTES.panel.users);
+      router.push(ROUTES.panel.roles);
     }
   }, [deleteReq.data, dispatch, router, lang]);
 
@@ -81,22 +81,24 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
     <Form onSubmit={formHandler}>
       <FormField
         required
-        name="email"
-        type="email"
-        label={t.email}
-        value={newData.email}
-        onChange={(event) =>
-          setNewData({ ...newData, email: event.currentTarget.value })
-        }
-      />
-      <FormField
-        required
         name="name"
         type="text"
         label={t.name}
         value={newData.name}
         onChange={(event) =>
           setNewData({ ...newData, name: event.currentTarget.value })
+        }
+      />
+      <FormField
+        name="description"
+        type="text"
+        label={t.description}
+        value={newData.description}
+        onChange={(event) =>
+          setNewData({
+            ...newData,
+            description: event.currentTarget.value || null,
+          })
         }
       />
       <FormCheckbox
@@ -110,7 +112,14 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
         type="submit"
         color="success"
         startIcon={<SaveIcon />}
-        disabled={!rights.updating || updateReq.isLoading}
+        disabled={
+          !rights.updating ||
+          data.default ||
+          data.admin ||
+          deleteReq.isLoading ||
+          deleteReq.data
+        }
+        loading={updateReq.isLoading}
       >
         {t.update}
       </FormButton>
@@ -118,16 +127,12 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
         color="error"
         startIcon={<DeleteIcon />}
         onClick={() => destroy(data.id)}
-        disabled={
-          !rights.deleting ||
-          deleteReq.isLoading ||
-          deleteReq.data ||
-          data.roles?.some((role) => role.admin)
-        }
+        disabled={!rights.deleting || data.default || data.admin}
+        loading={deleteReq.isLoading || deleteReq.data}
       >
         {t.delete}
       </FormButton>
     </Form>
   );
 };
-export default UpdateUserForm;
+export default UpdateRoleForm;

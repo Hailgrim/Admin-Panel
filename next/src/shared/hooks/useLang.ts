@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useAppSelector } from '../store/hooks';
 
 const useLang = () => {
-  const language = useAppSelector((store) => store.app.language);
+  const language = useAppSelector((store) => store.main.language);
   const langRef = useRef(language);
 
   useEffect(() => {

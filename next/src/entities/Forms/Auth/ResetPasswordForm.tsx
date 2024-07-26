@@ -14,7 +14,7 @@ import d from '@/shared/locales/dictionary';
 import authApi from '@/shared/api/auth/authApi';
 import { makeErrorText, testString } from '@/shared/lib/utils';
 
-const ResetForm: FC<{
+const ResetPasswordForm: FC<{
   email: string;
   callback?: () => void;
 }> = ({ email, callback }) => {
@@ -59,9 +59,7 @@ const ResetForm: FC<{
 
   useEffect(() => {
     if (data) {
-      if (callback) {
-        callback();
-      }
+      callback?.();
       router.push(ROUTES.auth.signIn);
     }
   }, [data, callback, router]);
@@ -90,7 +88,7 @@ const ResetForm: FC<{
         color={passwordIsValid ? 'success' : 'error'}
         error={!passwordIsValid && password.length > 0}
       />
-      <FormButton type="submit" fullWidth disabled={isLoading}>
+      <FormButton type="submit" fullWidth loading={isLoading || data}>
         {t.confirm}
       </FormButton>
       <FormButton fullWidth color="error" onClick={callback}>
@@ -99,4 +97,4 @@ const ResetForm: FC<{
     </Form>
   );
 };
-export default ResetForm;
+export default ResetPasswordForm;

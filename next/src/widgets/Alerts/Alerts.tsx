@@ -5,23 +5,19 @@ import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 
 import theme from '@/shared/lib/theme';
-import { deleteAlert } from '@/shared/store/slices/appSlice';
+import { deleteAlert } from '@/shared/store/main/main';
 import { useAppDispatch, useAppSelector } from '@/shared/store/hooks';
 
 const Alerts: FC = () => {
   const dispatch = useAppDispatch();
-  const alerts = useAppSelector((state) => state.app.alerts);
+  const alerts = useAppSelector((state) => state.main.alerts);
 
-  const closeHandler = (args: {
-    id: number;
-    delay?: boolean;
-    reason?: string;
-  }) => {
-    if (args.reason === 'clickaway') {
+  const closeHandler = (id: number, delay?: boolean, reason?: string) => {
+    if (reason === 'clickaway') {
       return;
     }
 
-    dispatch(deleteAlert({ id: args.id, delay: args.delay }));
+    dispatch(deleteAlert({ id, delay }));
   };
 
   return (
@@ -33,15 +29,11 @@ const Alerts: FC = () => {
           autoHideDuration={5000}
           sx={{ py: 1 }}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          onClose={(_, reason) =>
-            closeHandler({ id: alert.id, delay: true, reason })
-          }
-          onTransitionEnd={() =>
-            alert.deleted && closeHandler({ id: alert.id })
-          }
+          onClose={(_, reason) => closeHandler(alert.id, true, reason)}
+          onTransitionEnd={() => alert.deleted && closeHandler(alert.id)}
         >
           <Alert
-            onClose={() => closeHandler({ id: alert.id, delay: true })}
+            onClose={() => closeHandler(alert.id, true)}
             severity={alert.type}
             variant="filled"
             sx={{ whiteSpace: 'break-spaces' }}

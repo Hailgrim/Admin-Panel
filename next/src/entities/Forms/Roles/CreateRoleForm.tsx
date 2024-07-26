@@ -13,7 +13,7 @@ import useRights from '@/shared/hooks/useRights';
 import FormCheckbox from '@/shared/kit/Form/FormCheckbox';
 import rolesApi from '@/shared/api/roles/rolesApi';
 import { useAppDispatch } from '@/shared/store/hooks';
-import { addAlert } from '@/shared/store/slices/appSlice';
+import { addAlert } from '@/shared/store/main/main';
 import { makeErrorText } from '@/shared/lib/utils';
 import { IRoleCreate } from '@/shared/api/roles/types';
 
@@ -85,11 +85,8 @@ const CreateRoleForm: FC = () => {
         type="submit"
         color="primary"
         startIcon={<AddIcon />}
-        disabled={
-          !rights.creating ||
-          createReq.isLoading ||
-          createReq.data !== undefined
-        }
+        disabled={!rights.creating}
+        loading={createReq.isLoading || !!createReq.data}
       >
         {t.create}
       </FormButton>

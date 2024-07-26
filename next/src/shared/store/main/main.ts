@@ -1,20 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { LangList } from '@/shared/locales/types';
-import { IAlert } from '../types';
+import { IAlert } from './types';
 import { IUser } from '@/shared/api/users/types';
 
-export const appSliceName = 'app';
-let alertCounter = 0;
+export const mainSliceName = 'main';
 
 const initialState = {
   profile: null as IUser | null,
   language: 'en' as LangList,
   alerts: [] as IAlert[],
+  alertCounter: 0,
 };
 
-export const appSlice = createSlice({
-  name: appSliceName,
+export const mainSlice = createSlice({
+  name: mainSliceName,
   initialState: initialState,
   reducers: {
     setProfile: (state, action: PayloadAction<IUser | null>) => {
@@ -26,7 +26,7 @@ export const appSlice = createSlice({
     },
 
     addAlert: (state, action: PayloadAction<Omit<IAlert, 'id'>>) => {
-      state.alerts.push({ ...action.payload, id: alertCounter++ });
+      state.alerts.push({ ...action.payload, id: state.alertCounter++ });
     },
 
     deleteAlert: (
@@ -48,5 +48,5 @@ export const appSlice = createSlice({
 });
 
 export const { setProfile, setUserLang, addAlert, deleteAlert } =
-  appSlice.actions;
-export default appSlice.reducer;
+  mainSlice.actions;
+export default mainSlice.reducer;

@@ -17,7 +17,7 @@ import theme, { sideBarOpenedWidth, sideBarWidth } from '@/shared/lib/theme';
 import { IClientPage } from './types';
 import { useAppDispatch } from '@/shared/store/hooks';
 import authApi from '@/shared/api/auth/authApi';
-import { addAlert } from '@/shared/store/slices/appSlice';
+import { addAlert } from '@/shared/store/main/main';
 import { makeErrorText } from '@/shared/lib/utils';
 import SideBar from '@/widgets/SideBar/SideBar';
 import Alerts from '@/widgets/Alerts/Alerts';

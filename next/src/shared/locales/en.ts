@@ -31,9 +31,7 @@ const en = {
   wrongEmailOrCode: 'Wrong email or code',
   name: 'Name',
   description: 'Description',
-  admin: 'Admin',
   path: 'Path',
-  default: 'Default',
   unknownError: 'Unknown error',
   userAlreadyExist: 'User already exist',
   error: 'Error',
@@ -43,7 +41,6 @@ const en = {
     'Latin uppercase and lowercase characters, special symbols, numbers, length from 10 to 100',
   wrongEmail: 'Wrong email',
   wrongEmailOrPassword: 'Wrong email or password',
-  loading: 'Loading',
   confirm: 'Confirm',
   create: 'Create',
   read: 'Read',
@@ -54,8 +51,6 @@ const en = {
   verified: 'Verified',
   edit: 'Edit',
   success: 'Success',
-  result: 'Result',
-  failure: 'Failure',
   newUser: 'New user',
   newRole: 'New role',
   newResource: 'New resource',
@@ -68,5 +63,6 @@ const en = {
   nothingToUpdate: 'Nothing to update',
   tooManyRequests: 'Too many requests',
   close: 'Close',
+  loading: 'Loading',
 };
 export default en;

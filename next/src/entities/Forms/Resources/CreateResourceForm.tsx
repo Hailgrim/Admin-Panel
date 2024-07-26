@@ -14,7 +14,7 @@ import FormCheckbox from '@/shared/kit/Form/FormCheckbox';
 import { useAppDispatch } from '@/shared/store/hooks';
 import resourcesApi from '@/shared/api/resources/resourcesApi';
 import { makeErrorText } from '@/shared/lib/utils';
-import { addAlert } from '@/shared/store/slices/appSlice';
+import { addAlert } from '@/shared/store/main/main';
 import { IResourceCreate } from '@/shared/api/resources/types';
 
 const CreateResourceForm: FC = () => {
@@ -96,11 +96,8 @@ const CreateResourceForm: FC = () => {
         type="submit"
         color="primary"
         startIcon={<AddIcon />}
-        disabled={
-          !rights.creating ||
-          createReq.isLoading ||
-          createReq.data !== undefined
-        }
+        disabled={!rights.creating}
+        loading={createReq.isLoading || !!createReq.data}
       >
         {t.create}
       </FormButton>

@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import appSlice, { appSliceName } from './slices/appSlice';
+import mainSlice, { mainSliceName } from './main/main';
 import authApi from '../api/auth/authApi';
 import usersApi from '../api/users/usersApi';
 import rolesApi from '../api/roles/rolesApi';
@@ -9,7 +9,7 @@ import resourcesApi from '../api/resources/resourcesApi';
 export const makeStore = () =>
   configureStore({
     reducer: {
-      [appSliceName]: appSlice,
+      [mainSliceName]: mainSlice,
       [authApi.reducerPath]: authApi.reducer,
       [usersApi.reducerPath]: usersApi.reducer,
       [rolesApi.reducerPath]: rolesApi.reducer,
