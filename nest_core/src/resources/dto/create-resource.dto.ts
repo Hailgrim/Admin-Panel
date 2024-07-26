@@ -1,5 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  Length,
+  ValidateIf,
+} from 'class-validator';
+import { Transform } from 'class-transformer';
 
 import d from 'locales/dictionary';
 import { CreateResourceFields } from '../resources.types';
@@ -34,6 +41,8 @@ export class CreateResourceDto implements CreateResourceFields {
     description: d['en'].description,
   })
   @IsOptional()
+  @ValidateIf((o: CreateResourceFields) => !!o.description)
+  @Transform(({ value }) => value || null)
   @IsString({
     message: d['en'].mustBeAString(d['en'].description),
   })

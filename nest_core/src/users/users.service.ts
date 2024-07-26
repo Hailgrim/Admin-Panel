@@ -163,7 +163,7 @@ export class UsersService {
       throw new InternalServerErrorException();
     }
 
-    if (affectedCount == 0) {
+    if (affectedCount === 0) {
       let user: User | null;
 
       try {
@@ -254,7 +254,7 @@ export class UsersService {
       throw new InternalServerErrorException();
     }
 
-    if (destroyedCount == 0) {
+    if (destroyedCount === 0) {
       throw new NotFoundException();
     }
 

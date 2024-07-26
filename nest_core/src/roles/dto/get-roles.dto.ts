@@ -7,7 +7,7 @@ import { GetListDto } from 'src/database/dto/get-list.dto';
 
 export class GetRolesDto extends GetListDto implements GetRolesFields {
   @ApiPropertyOptional({
-    example: 'Client',
+    example: 'Admin',
     description: d['en'].name,
   })
   @IsOptional()

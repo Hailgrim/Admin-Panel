@@ -160,7 +160,7 @@ export class RolesService {
       throw new InternalServerErrorException();
     }
 
-    if (affectedCount == 0) {
+    if (affectedCount === 0) {
       const role = await this.rolesRepository.findOne({ where: { id } });
 
       if (!role) {
@@ -194,7 +194,7 @@ export class RolesService {
 
     const deleteAllows: number[] = [];
     role.resources?.forEach((resource) => {
-      if (!rolesResourcesDtoArr.some((value) => value.roleId == resource.id)) {
+      if (!rolesResourcesDtoArr.some((value) => value.roleId === resource.id)) {
         deleteAllows.push(resource.id);
       }
     });
@@ -250,7 +250,7 @@ export class RolesService {
       throw new InternalServerErrorException();
     }
 
-    if (destroyedCount == 0) {
+    if (destroyedCount === 0) {
       throw new NotFoundException();
     }
 

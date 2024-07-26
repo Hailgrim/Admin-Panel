@@ -20,7 +20,7 @@ export class UpdateUserDto implements UpdateUserFields {
   })
   email?: string;
 
-  @ApiPropertyOptional({ example: '1q2w3e4r5', description: d['en'].password })
+  @ApiPropertyOptional({ example: '!Q1q2w3e4r', description: d['en'].password })
   @IsOptional()
   @IsStrongPassword({}, { message: d['en'].mustBeAStrong(d['en'].password) })
   @Length(10, 100, {

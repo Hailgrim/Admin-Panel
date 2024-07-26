@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 import d from 'locales/dictionary';
@@ -17,7 +17,7 @@ export class SignInDto {
   })
   password: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'user@mail.com',
     description: d['en'].rememberMe,
   })

@@ -148,7 +148,7 @@ export class ResourcesService {
       throw new InternalServerErrorException();
     }
 
-    if (affectedCount == 0) {
+    if (affectedCount === 0) {
       const resource = await this.resourcesRepository.findOne({
         where: { id },
       });
@@ -175,7 +175,7 @@ export class ResourcesService {
       throw new InternalServerErrorException();
     }
 
-    if (destroyedCount == 0) {
+    if (destroyedCount === 0) {
       throw new NotFoundException();
     }
 

@@ -143,7 +143,7 @@ export class AuthService {
     // Verify the existence of the administrator users
     const adminUsers = await this.usersService.countByRole(adminRole.id);
 
-    return adminUsers == 0 ? adminRole : userRole;
+    return adminUsers === 0 ? adminRole : userRole;
   }
 
   async signUp(signUpDto: SignUpDto): Promise<User> {
@@ -225,7 +225,10 @@ export class AuthService {
       `sessions:${token.sessionId}`,
     );
 
-    if (session?.userId == token.userId && session?.hash == token.sessionHash) {
+    if (
+      session?.userId === token.userId &&
+      session?.hash === token.sessionHash
+    ) {
       await this.redisService.set(
         `sessions:${token.sessionId}`,
         {

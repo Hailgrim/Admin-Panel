@@ -6,7 +6,7 @@ import {
   Scopes,
   Table,
 } from 'sequelize-typescript';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { User } from '../users/user.entity';
 import { UsersRoles } from '../database/users-roles.entity';
@@ -35,39 +35,34 @@ import { CreateRoleFields, IRole, IUsersRoles } from './roles.types';
 }))
 @Table({ tableName: 'roles' })
 export class Role extends Model<Role, CreateRoleFields> implements IRole {
-  @ApiProperty({
-    example: 'Client',
-    description: d['en'].name,
-  })
+  @ApiProperty({ type: String, description: d['en'].name })
   @Column({ type: DataType.STRING(100), allowNull: false, unique: true })
   name: string;
 
-  @ApiProperty({
-    example: 'Service client',
-    description: d['en'].description,
-  })
+  @ApiPropertyOptional({ type: String, description: d['en'].description })
   @Column({ type: DataType.STRING(1000), allowNull: true })
-  description: string | null;
+  description?: string | null;
 
-  @ApiProperty({ example: true, description: d['en'].status })
+  @ApiProperty({ type: Boolean, description: d['en'].status })
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
   enabled: boolean;
 
-  @ApiProperty({ example: true, description: d['en'].adminStatus })
+  @ApiProperty({ type: Boolean, description: d['en'].adminStatus })
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
   admin: boolean;
 
-  @ApiProperty({ example: true, description: d['en'].default })
+  @ApiProperty({ type: Boolean, description: d['en'].default })
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
   default: boolean;
 
-  @ApiProperty({ example: ['profile'], description: d['en'].users })
+  @ApiPropertyOptional({ type: [User], description: d['en'].users })
   @BelongsToMany(() => User, () => UsersRoles)
   users?: User[];
 
-  @ApiProperty({ example: ['profile'], description: d['en'].resources })
+  @ApiPropertyOptional({ type: [Resource], description: d['en'].resources })
   @BelongsToMany(() => Resource, () => RolesResources)
   resources?: Resource[];
 
+  @ApiPropertyOptional({ type: IUsersRoles })
   UsersRoles?: IUsersRoles;
 }

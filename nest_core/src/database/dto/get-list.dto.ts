@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsString,
   Length,
+  ValidateIf,
 } from 'class-validator';
 
 import d from 'locales/dictionary';
@@ -39,6 +40,7 @@ export class GetListDto {
     description: d['en'].searchQuery,
   })
   @IsOptional()
+  @ValidateIf((o: GetListDto) => !!o.search)
   @IsString({
     message: d['en'].mustBeAString(d['en'].searchQuery),
   })

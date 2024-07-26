@@ -1,3 +1,10 @@
+/** Name validation regex */
+export const NAME_REGEX = /^[\w ]{1,100}$/;
+/** Email validation regex */
+export const EMAIL_REGEX = /^[\w.]+@\w+\.+\w{2,4}$/;
+/** Password validation regex */
+export const PASSWORD_REGEX =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[A-Za-z\d\W]{10,100}$/;
 export const DEV = 'development';
 export const SEQUELIZE = 'SEQUELIZE';
 export const USERS_REPOSITORY = 'USERS_REPOSITORY';

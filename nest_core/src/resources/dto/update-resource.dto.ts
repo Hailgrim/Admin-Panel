@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 import d from 'locales/dictionary';
 import { UpdateResourceFields } from '../resources.types';
@@ -36,6 +37,7 @@ export class UpdateResourceDto implements UpdateResourceFields {
     description: d['en'].description,
   })
   @IsOptional()
+  @Transform(({ value }) => value || null)
   @IsString({
     message: d['en'].mustBeAString(d['en'].description),
   })
