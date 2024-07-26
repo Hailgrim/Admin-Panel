@@ -20,7 +20,6 @@ export const useMainStore = defineStore('main', () => {
     alerts.value = alerts.value.concat({ ...value, id: alertCounter.value++ })
   }
   function deleteAlert(value: number, delay?: number) {
-    console.log('deleteAlert', value, delay)
     if (delay) {
       alerts.value = alerts.value.map((alert) => {
         if (alert.id === value) alert.deleted = true
