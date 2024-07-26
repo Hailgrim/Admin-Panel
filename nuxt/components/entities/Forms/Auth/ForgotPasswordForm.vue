@@ -55,7 +55,7 @@ watch(
     <FormField
 v-model="email" :hint="$t('emailValidation')" :label="$t('email')" name="email" required
       :rules="[emailIsValid]" type="text" />
-    <FormButton block color="success" :loading="pending || !!data" type="submit">
+    <FormButton block color="success" :loading="pending" type="submit">
       {{ $t('confirm') }}
     </FormButton>
     <FormLink :href="ROUTES.auth.signIn" :text="$t('signInText')" />
