@@ -17,8 +17,3 @@ export interface IUsersRoles {
   userId: string;
   roleId: number;
 }
-
-export interface IRoleAndResources {
-  role: IRole;
-  resources?: IResource[];
-}

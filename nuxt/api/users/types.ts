@@ -13,8 +13,3 @@ export interface IUser {
 export type IUserCreate = Pick<IUser, 'name' | 'email' | 'enabled'> & {
   password: string;
 };
-
-export interface IUserAndRoles {
-  user: IUser;
-  roles?: IRole[];
-}

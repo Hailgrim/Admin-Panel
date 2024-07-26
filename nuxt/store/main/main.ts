@@ -16,23 +16,22 @@ export const useMainStore = defineStore('main', () => {
 
   const alerts = ref<IAlert[]>([])
   const alertCounter = ref(0)
-  function addAlert(value: Omit<IAlert, 'id'>) {
-    alerts.value = alerts.value.concat({ ...value, id: alertCounter.value++ })
+  function addAlert(error: Omit<IAlert, 'id'>) {
+    alerts.value = alerts.value.concat({ ...error, id: alertCounter.value++ })
   }
-  function deleteAlert(value: number, delay?: number) {
+  function deleteAlert(id: number, delay?: number) {
     if (delay) {
       alerts.value = alerts.value.map((alert) => {
-        if (alert.id === value) alert.deleted = true
+        if (alert.id === id) alert.deleted = true
         return alert
       })
 
       setTimeout(
-        () =>
-          (alerts.value = alerts.value.filter((alert) => alert.id !== value)),
+        () => (alerts.value = alerts.value.filter((alert) => alert.id !== id)),
         delay
       )
     } else {
-      alerts.value = alerts.value.filter((alert) => alert.id !== value)
+      alerts.value = alerts.value.filter((alert) => alert.id !== id)
     }
   }
 
