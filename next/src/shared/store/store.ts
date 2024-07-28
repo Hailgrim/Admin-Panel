@@ -5,6 +5,7 @@ import authApi from '../api/auth/authApi';
 import usersApi from '../api/users/usersApi';
 import rolesApi from '../api/roles/rolesApi';
 import resourcesApi from '../api/resources/resourcesApi';
+import authMiddleware from './authMiddleware';
 
 export const makeStore = () =>
   configureStore({
@@ -20,7 +21,8 @@ export const makeStore = () =>
         .concat(authApi.middleware)
         .concat(usersApi.middleware)
         .concat(rolesApi.middleware)
-        .concat(resourcesApi.middleware);
+        .concat(resourcesApi.middleware)
+        .concat(authMiddleware.middleware);
     },
     devTools: false,
   });
