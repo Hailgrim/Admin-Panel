@@ -1,3 +1,5 @@
+proxy_hide_header X-Powered-By;
+
 # SSL
 ssl_certificate /home/nginx/ssl/localhost.com.crt;
 ssl_certificate_key /home/nginx/ssl/localhost.com.key;
