@@ -9,6 +9,8 @@ import {
   HttpStatus,
   Delete,
   Patch,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
@@ -27,9 +29,14 @@ import { Roles } from 'src/roles/roles.decorator';
 import { Rights } from 'libs/constants';
 import { RolesGuard } from 'src/roles/roles.guard';
 import d from 'locales/dictionary';
-import { FastifyRequestWithToken, FastifyRequestWithUser } from './auth.types';
+import {
+  FastifyRequestWithToken,
+  FastifyRequestWithUser,
+  ISession,
+} from './auth.types';
 import { IUser } from 'src/users/users.types';
 import { getCookies } from './auth.utils';
+import { ExternalSessionDto } from './dto/external-session.dto';
 
 @ApiTags(d['en'].authorization)
 @Controller('auth')
@@ -39,8 +46,8 @@ export class AuthController {
   @ApiOperation({ summary: d['en'].signUp })
   @ApiResponse({ status: HttpStatus.CREATED, type: IUser })
   @Post('sign-up')
-  async signUp(
-    @Res({ passthrough: true }) res: FastifyReply,
+  signUp(
+    @Res() res: FastifyReply,
     @Body() signUpDto: SignUpDto,
   ): Promise<IUser> {
     res.status(HttpStatus.CREATED);
@@ -50,16 +57,14 @@ export class AuthController {
   @ApiOperation({ summary: d['en'].forgotPassword })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Post('forgot-password')
-  async forgotPassword(@Body() email: string): Promise<boolean> {
+  forgotPassword(@Body() email: string): Promise<boolean> {
     return this.authService.forgotPassword(email);
   }
 
   @ApiOperation({ summary: d['en'].resetPassword })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Post('reset-password')
-  async resetPassword(
-    @Body() resetPasswordDto: ResetPasswordDto,
-  ): Promise<boolean> {
+  resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<boolean> {
     return this.authService.resetPassword(resetPasswordDto);
   }
 
@@ -78,6 +83,8 @@ export class AuthController {
     const { accessToken, refreshToken } = await this.authService.signIn(
       req.user,
       sessionTtl,
+      req.ips?.length ? req.ips[0] : req.ip,
+      req.headers['user-agent'],
     );
 
     res.cookie('accessToken', accessToken, this.authService.prepareCookie());
@@ -104,7 +111,7 @@ export class AuthController {
   @ApiOperation({ summary: d['en'].confirmRegistration })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @Post('verify-user')
-  async verifyUser(@Body() verifyUserDto: VerifyUserDto): Promise<boolean> {
+  verifyUser(@Body() verifyUserDto: VerifyUserDto): Promise<boolean> {
     return this.authService.verifyUser(verifyUserDto);
   }
 
@@ -123,6 +130,8 @@ export class AuthController {
     const { accessToken, refreshToken } = await this.authService.refresh(
       req.user,
       sessionTtl,
+      req.ips?.length ? req.ips[0] : req.ip,
+      req.headers['user-agent'],
     );
 
     res.cookie('accessToken', accessToken, this.authService.prepareCookie());
@@ -148,7 +157,7 @@ export class AuthController {
   @Roles({ path: 'profile', action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get('profile')
-  async getProfile(@Req() req: FastifyRequestWithToken): Promise<IUser> {
+  getProfile(@Req() req: FastifyRequestWithToken): Promise<IUser> {
     return this.authService.getProfile(req.user);
   }
 
@@ -157,11 +166,36 @@ export class AuthController {
   @Roles({ path: 'profile', action: Rights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('profile')
-  async updateProfile(
+  updateProfile(
     @Req() req: FastifyRequestWithToken,
     @Body() updateProfileDto: UpdateProfileDto,
   ): Promise<boolean> {
     return this.authService.updateProfile(req.user, updateProfileDto);
+  }
+
+  @ApiOperation({ summary: d['en'].sessions })
+  @ApiResponse({ status: HttpStatus.OK, type: [ISession] })
+  @Roles({ path: 'sessions', action: Rights.Reading })
+  @UseGuards(JwtGuard, RolesGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('sessions')
+  async getSessions(
+    @Req() req: FastifyRequestWithToken,
+  ): Promise<ExternalSessionDto[]> {
+    const sessions = await this.authService.getSessions(req.user);
+    return sessions.map((session) => new ExternalSessionDto(session));
+  }
+
+  @ApiOperation({ summary: d['en'].deleteSessions })
+  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @Roles({ path: 'sessions', action: Rights.Deleting })
+  @UseGuards(JwtGuard, RolesGuard)
+  @Delete('sessions')
+  deleteSessions(
+    @Req() req: FastifyRequestWithToken,
+    @Body() keys: string[],
+  ): Promise<boolean> {
+    return this.authService.deleteSessions(req.user, keys);
   }
 
   @ApiOperation({ summary: d['en'].signOut })
@@ -173,9 +207,10 @@ export class AuthController {
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<boolean> {
     const result = await this.authService.signOut(req.user);
-    res.clearCookie('accessToken', this.authService.prepareCookie());
-    res.clearCookie('refreshToken', this.authService.prepareCookie());
-    res.clearCookie('rememberMe', this.authService.prepareCookie());
+    const cookieOptions = this.authService.prepareCookie();
+    res.clearCookie('accessToken', cookieOptions);
+    res.clearCookie('refreshToken', cookieOptions);
+    res.clearCookie('rememberMe', cookieOptions);
     return result;
   }
 }

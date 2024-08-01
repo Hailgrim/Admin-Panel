@@ -56,5 +56,7 @@ const en = {
   resetPassword: 'Reset password',
   profile: 'Profile',
   updateProfile: 'Update profile',
+  sessions: 'Sessions',
+  deleteSessions: 'Delete sessions',
 };
 export default en;

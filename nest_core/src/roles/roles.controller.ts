@@ -39,7 +39,7 @@ export class RolesController {
   @Roles({ path: route, action: Rights.Creating })
   @UseGuards(JwtGuard, RolesGuard)
   @Post()
-  async create(
+  create(
     @Res({ passthrough: true }) res: FastifyReply,
     @Body() createRoleDto: CreateRoleDto,
   ): Promise<IRole> {
@@ -52,7 +52,7 @@ export class RolesController {
   @Roles({ path: route, action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get()
-  async findAll(
+  findAll(
     @Query() getRolesDto: GetRolesDto,
   ): Promise<IRole[] | IFindAndCount<IRole>> {
     if (getRolesDto.count) {
@@ -67,7 +67,7 @@ export class RolesController {
   @Roles({ path: route, action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get('/:id')
-  async findOne(@Param('id') id: string): Promise<IRole> {
+  findOne(@Param('id') id: string): Promise<IRole> {
     return this.roleService.findOnePublic(id);
   }
 
@@ -117,7 +117,7 @@ export class RolesController {
   @Roles({ path: route, action: Rights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
   @Delete()
-  async delete(@Body() id: string | string[]): Promise<boolean> {
+  delete(@Body() id: string | string[]): Promise<boolean> {
     return this.roleService.delete(id);
   }
 }

@@ -34,6 +34,7 @@ import { RedisService } from 'src/redis/redis.service';
 import d from 'locales/dictionary';
 import { ISession, IToken, ITokensPair } from './auth.types';
 import { IUser } from 'src/users/users.types';
+import { ExternalSessionDto } from './dto/external-session.dto';
 
 @Injectable()
 export class AuthService {
@@ -155,7 +156,12 @@ export class AuthService {
     return user;
   }
 
-  async signIn(user: IUser, sessionTtl: number): Promise<ITokensPair> {
+  async signIn(
+    user: IUser,
+    sessionTtl: number,
+    ip: string,
+    userAgent?: string,
+  ): Promise<ITokensPair> {
     if (!user.enabled) {
       throw new GoneException();
     }
@@ -172,13 +178,16 @@ export class AuthService {
     const sessionId = uuidv4();
     const sessionHash = await argon2.hash(crypto.randomBytes(10));
     const sessionData: ISession = {
-      userId: user.id,
       hash: sessionHash,
       expires: new Date(Date.now() + sessionTtl * 1000),
+      userId: user.id,
+      ip,
+      userAgent,
+      updatedAt: new Date(),
     };
 
     await this.redisService.set(
-      `sessions:${sessionId}`,
+      `sessions:${user.id}:${sessionId}`,
       sessionData,
       sessionTtl * 1000,
     );
@@ -191,8 +200,8 @@ export class AuthService {
     return { ...tokens };
   }
 
-  async verifyUser(verifyUserDto: VerifyUserDto): Promise<boolean> {
-    return await this.usersService.updateVerificationCode(
+  verifyUser(verifyUserDto: VerifyUserDto): Promise<boolean> {
+    return this.usersService.updateVerificationCode(
       verifyUserDto.email,
       verifyUserDto.code,
       true,
@@ -211,31 +220,41 @@ export class AuthService {
     return true;
   }
 
-  async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<boolean> {
-    return await this.usersService.updatePassword(
+  resetPassword(resetPasswordDto: ResetPasswordDto): Promise<boolean> {
+    return this.usersService.updatePassword(
       resetPasswordDto.email,
       resetPasswordDto.code,
       resetPasswordDto.password,
     );
   }
 
-  async refresh(token: IToken, sessionTtl: number): Promise<ITokensPair> {
+  async refresh(
+    token: IToken,
+    sessionTtl: number,
+    ip: string,
+    userAgent?: string,
+  ): Promise<ITokensPair> {
     const newHash = await argon2.hash(crypto.randomBytes(10));
     const session = await this.redisService.get<ISession>(
-      `sessions:${token.sessionId}`,
+      `sessions:${token.userId}:${token.sessionId}`,
     );
 
     if (
       session?.userId === token.userId &&
       session?.hash === token.sessionHash
     ) {
+      const sessionData: ISession = {
+        hash: newHash,
+        expires: new Date(Date.now() + sessionTtl * 1000),
+        userId: token.userId,
+        ip,
+        userAgent,
+        updatedAt: new Date(),
+      };
+
       await this.redisService.set(
-        `sessions:${token.sessionId}`,
-        {
-          userId: token.userId,
-          hash: newHash,
-          expires: new Date(Date.now() + sessionTtl * 1000),
-        },
+        `sessions:${token.userId}:${token.sessionId}`,
+        sessionData,
         sessionTtl * 1000,
       );
     } else {
@@ -252,8 +271,8 @@ export class AuthService {
     );
   }
 
-  async getProfile(token: IToken): Promise<User> {
-    return await this.usersService.findOnePublic(token.userId);
+  getProfile(token: IToken): Promise<User> {
+    return this.usersService.findOnePublic(token.userId);
   }
 
   async updateProfile(
@@ -263,8 +282,26 @@ export class AuthService {
     return this.usersService.updateFields(token.userId, updateProfileDto);
   }
 
+  async getSessions(token: IToken): Promise<ExternalSessionDto[]> {
+    const keys = await this.redisService.keys(`sessions:${token.userId}:*`);
+    const current = `sessions:${token.userId}:${token.sessionId}`;
+    return (await this.redisService.mget<ISession>(keys)).map(
+      (session, index) => ({
+        ...session,
+        id: keys[index],
+        current: current === keys[index],
+      }),
+    );
+  }
+
+  async deleteSessions(token: IToken, remove: string[]): Promise<boolean> {
+    const keys = await this.redisService.keys(`sessions:${token.userId}:*`);
+    await this.redisService.mdel(remove.filter((key) => keys.includes(key)));
+    return true;
+  }
+
   async signOut(token: IToken): Promise<boolean> {
-    await this.redisService.del(`sessions:${token.sessionId}`);
+    await this.redisService.del(`sessions:${token.userId}:${token.sessionId}`);
     return true;
   }
 }

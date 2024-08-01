@@ -18,9 +18,12 @@ export type FastifyRequestWithUser = FastifyRequest & { user: IUser };
 export type FastifyRequestWithToken = FastifyRequest & { user: IToken };
 
 export abstract class ISession {
-  userId: string;
   hash: string;
   expires: Date;
+  userId: string;
+  userAgent?: string;
+  ip: string;
+  updatedAt: Date;
 }
 
 export type SignUpFields = Pick<IUser, 'email' | 'password' | 'name'>;

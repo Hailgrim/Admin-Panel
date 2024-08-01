@@ -39,7 +39,7 @@ export class UsersController {
   @Roles({ path: route, action: Rights.Creating })
   @UseGuards(JwtGuard, RolesGuard)
   @Post()
-  async create(
+  create(
     @Res({ passthrough: true }) res: FastifyReply,
     @Body() createUserDto: CreateUserDto,
   ): Promise<IUser> {
@@ -52,7 +52,7 @@ export class UsersController {
   @Roles({ path: route, action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get()
-  async findAll(
+  findAll(
     @Query() getUsersDto: GetUsersDto,
   ): Promise<IUser[] | IFindAndCount<IUser>> {
     if (getUsersDto.count) {
@@ -67,7 +67,7 @@ export class UsersController {
   @Roles({ path: route, action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get('/:id')
-  async findOne(@Param('id') id: string): Promise<IUser> {
+  findOne(@Param('id') id: string): Promise<IUser> {
     return this.usersService.findOnePublic(id);
   }
 
@@ -114,7 +114,7 @@ export class UsersController {
   @Roles({ path: route, action: Rights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
   @Delete()
-  async delete(@Body() id: string | string[]): Promise<boolean> {
+  delete(@Body() id: string | string[]): Promise<boolean> {
     return this.usersService.delete(id);
   }
 }

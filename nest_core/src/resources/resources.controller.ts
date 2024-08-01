@@ -38,7 +38,7 @@ export class ResourcesController {
   @Roles({ path: route, action: Rights.Creating })
   @UseGuards(JwtGuard, RolesGuard)
   @Post()
-  async create(
+  create(
     @Res({ passthrough: true }) res: FastifyReply,
     @Body() createResourceDto: CreateResourceDto,
   ): Promise<IResource> {
@@ -51,7 +51,7 @@ export class ResourcesController {
   @Roles({ path: route, action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get()
-  async findAll(
+  findAll(
     @Query() getResourcesDto: GetResourcesDto,
   ): Promise<IResource[] | IFindAndCount<IResource>> {
     if (getResourcesDto.count) {
@@ -66,7 +66,7 @@ export class ResourcesController {
   @Roles({ path: route, action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get('/:id')
-  async findOne(@Param('id') id: string): Promise<IResource> {
+  findOne(@Param('id') id: string): Promise<IResource> {
     return this.resourceService.findOnePublic(id);
   }
 
@@ -97,7 +97,7 @@ export class ResourcesController {
   @Roles({ path: route, action: Rights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
   @Delete()
-  async delete(@Body() id: string | string[]): Promise<boolean> {
+  delete(@Body() id: string | string[]): Promise<boolean> {
     return this.resourceService.delete(id);
   }
 }
