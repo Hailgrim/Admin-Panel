@@ -38,6 +38,8 @@ import { IUser } from 'src/users/users.types';
 import { getCookies } from './auth.utils';
 import { ExternalSessionDto } from './dto/external-session.dto';
 
+const route = 'profile';
+
 @ApiTags(d['en'].authorization)
 @Controller('auth')
 export class AuthController {
@@ -154,18 +156,18 @@ export class AuthController {
 
   @ApiOperation({ summary: d['en'].profile })
   @ApiResponse({ status: HttpStatus.OK, type: IUser })
-  @Roles({ path: 'profile', action: Rights.Reading })
+  @Roles({ path: route, action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
-  @Get('profile')
+  @Get(route)
   getProfile(@Req() req: FastifyRequestWithToken): Promise<IUser> {
     return this.authService.getProfile(req.user);
   }
 
   @ApiOperation({ summary: d['en'].updateProfile })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Roles({ path: 'profile', action: Rights.Updating })
+  @Roles({ path: route, action: Rights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
-  @Patch('profile')
+  @Patch(route)
   updateProfile(
     @Req() req: FastifyRequestWithToken,
     @Body() updateProfileDto: UpdateProfileDto,
@@ -175,7 +177,7 @@ export class AuthController {
 
   @ApiOperation({ summary: d['en'].sessions })
   @ApiResponse({ status: HttpStatus.OK, type: [ISession] })
-  @Roles({ path: 'sessions', action: Rights.Reading })
+  @Roles({ path: route, action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('sessions')
@@ -188,7 +190,7 @@ export class AuthController {
 
   @ApiOperation({ summary: d['en'].deleteSessions })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Roles({ path: 'sessions', action: Rights.Deleting })
+  @Roles({ path: route, action: Rights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
   @Delete('sessions')
   deleteSessions(
