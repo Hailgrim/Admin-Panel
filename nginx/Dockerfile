@@ -1,7 +1,7 @@
-FROM nginx:alpine as development
+FROM nginx:alpine AS development
 WORKDIR /home/nginx
 
-FROM development as production
+FROM development AS production
 COPY ./html ./html
 COPY ./ssl ./ssl
 COPY ./templates ./templates

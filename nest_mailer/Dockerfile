@@ -1,14 +1,14 @@
-FROM node:lts-alpine as base
+FROM node:lts-alpine AS base
 ARG HOME=/home/node
 WORKDIR ${HOME}
 COPY ./package*.json .
 
-FROM base as development
+FROM base AS development
 ENV NODE_ENV=development
 RUN npm install
 CMD npm run start:dev
 
-FROM base as builder
+FROM base AS builder
 ARG PROJECT_TAG
 ARG NEST_MAILER_HOST
 ARG NEST_MAILER_PORT
@@ -26,7 +26,7 @@ COPY . .
 RUN npm run build
 RUN npm prune --production
 
-FROM base as production
+FROM base AS production
 ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nestjs
