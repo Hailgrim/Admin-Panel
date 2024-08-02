@@ -4,7 +4,7 @@ ARG HOME=/home/node
 WORKDIR ${HOME}
 COPY ./package*.json .
 
-FROM base as development
+FROM base AS development
 ENV NODE_ENV=development
 ENV WATCHPACK_POLLING=true
 RUN npm install

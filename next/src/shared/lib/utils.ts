@@ -63,3 +63,33 @@ export const makeErrorText = (error?: unknown, lang: string = 'en'): string => {
 
   return result;
 };
+
+/**
+ * @param {Date} date Parsed date
+ * @returns {string} Formatted date string
+ */
+export const makeDateString = (
+  date: Date | string | number = Date.now()
+): string => {
+  const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
+  const now = Date.now();
+  const parsedDate = new Date(date);
+  const parsedTime = parsedDate.getTime();
+
+  if (isNaN(parsedTime)) return '-';
+
+  const differenceMS = now - parsedTime;
+  const minuteMS = 1000 * 60;
+  const hourMS = minuteMS * 60;
+  const dayMS = hourMS * 24;
+
+  if (differenceMS < minuteMS) {
+    return rtf.format(0, 'minute');
+  } else if (differenceMS < hourMS) {
+    return rtf.format(-1 * Math.floor(differenceMS / minuteMS), 'minute');
+  } else if (differenceMS < dayMS) {
+    return rtf.format(-1 * Math.floor(differenceMS / hourMS), 'hour');
+  } else {
+    return parsedDate.toLocaleString();
+  }
+};

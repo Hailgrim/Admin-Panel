@@ -78,6 +78,23 @@ class AuthService {
     };
   }
 
+  getSessionsArgs(): IReqArgs {
+    return {
+      url: ROUTES.api.auth.sessions,
+      method: 'GET',
+      credentials: 'include',
+    };
+  }
+
+  deleteSessionsArgs(payload: string[]): IReqArgs {
+    return {
+      url: ROUTES.api.auth.sessions,
+      method: 'DELETE',
+      credentials: 'include',
+      body: payload,
+    };
+  }
+
   signOutArgs(): IReqArgs {
     return {
       url: ROUTES.api.auth.signOut,

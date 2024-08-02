@@ -3,7 +3,13 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import authService from '@/shared/api/auth/authService';
 import baseQueryWithReauth from '../baseQueryWithReauth';
 import { IUser } from '../users/types';
-import { IResetPassword, IUserSignIn, IUserSignUp, IVerifyUser } from './types';
+import {
+  IResetPassword,
+  ISession,
+  IUserSignIn,
+  IUserSignUp,
+  IVerifyUser,
+} from './types';
 
 const authApi = createApi({
   reducerPath: 'auth',
@@ -39,6 +45,14 @@ const authApi = createApi({
 
     updateProfile: builder.mutation<boolean, Partial<IUser>>({
       query: authService.updateProfileArgs,
+    }),
+
+    getSessions: builder.query<ISession[], void>({
+      query: authService.getSessionsArgs,
+    }),
+
+    deleteSessions: builder.mutation<boolean, string[]>({
+      query: authService.deleteSessionsArgs,
     }),
 
     signOut: builder.mutation<boolean, void>({

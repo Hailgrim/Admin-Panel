@@ -7,6 +7,8 @@ const en = {
   mainMenu: 'Main menu',
   home: 'Home',
   profile: 'Profile',
+  sessions: 'Sessions',
+  current: 'Current',
   users: 'Users',
   user: 'User',
   roles: 'Roles',

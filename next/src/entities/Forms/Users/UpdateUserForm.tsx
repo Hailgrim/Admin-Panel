@@ -111,7 +111,7 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
         color="success"
         startIcon={<SaveIcon />}
         disabled={!rights.updating || deleteReq.isLoading || deleteReq.data}
-        loading={!rights.updating || updateReq.isLoading}
+        loading={updateReq.isLoading}
       >
         {t.update}
       </FormButton>

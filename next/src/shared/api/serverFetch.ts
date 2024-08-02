@@ -5,7 +5,7 @@ import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import { headers } from 'next/headers';
 
 import { API_HOST } from '@/shared/lib/config';
-import authService from '@/shared/api/auth/authService';
+import authService from './auth/authService';
 import { IFetchRes, IReqArgs } from './types';
 
 const parseRawCookies = (cookies: string) => {
@@ -38,19 +38,31 @@ const serverFetch = async <T = unknown>(
 
   const query = async <U>(payload: IReqArgs): Promise<U | null> => {
     try {
-      const res = await fetch(
-        `${API_HOST}${payload.url}${
-          payload.params ? `?${new URLSearchParams(payload.params)}` : ''
-        }`,
-        {
-          ...payload,
-          headers: {
-            Cookie: `${cookieStore.toString()}${
-              newCookiesRaw ? `; ${newCookiesRaw}` : ''
-            }`,
-          },
-        }
-      );
+      let url = `${API_HOST}${payload.url}`;
+      if (payload.params) {
+        url += `?${new URLSearchParams(
+          payload.params as Record<string, string>
+        )}`;
+      }
+
+      const options: RequestInit = {
+        ...payload,
+        body: JSON.stringify(payload.body),
+      };
+      options.headers ??= {};
+
+      (options.headers as Record<string, string>)[
+        'cookie'
+      ] = `${cookieStore.toString()}${
+        newCookiesRaw ? `; ${newCookiesRaw}` : ''
+      }`;
+
+      const userAgent = headersList.get('user-agent');
+      if (userAgent) {
+        (options.headers as Record<string, string>)['user-agent'] = userAgent;
+      }
+
+      const res = await fetch(url, options);
 
       if (res.status >= 400) {
         error = res.status;

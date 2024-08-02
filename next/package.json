@@ -26,7 +26,8 @@
     "react": "^18",
     "react-dom": "^18",
     "react-redux": "^9.0.4",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "ua-parser-js": "^1.0.38"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.2.0",
@@ -36,6 +37,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/ua-parser-js": "^0.7.39",
     "@types/whatwg-fetch": "^0.0.33",
     "eslint": "^8",
     "eslint-config-next": "^14.2.4",

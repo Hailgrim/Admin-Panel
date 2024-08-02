@@ -6,7 +6,7 @@ import StoreProvider from './StoreProvider';
 
 const RootLayout: FC<PropsWithChildren> = async ({ children }) => {
   const headersList = headers();
-  const profileJson = headersList.get('StoreProfile');
+  const profileJson = headersList.get('store-profile');
 
   return (
     <html lang="en">

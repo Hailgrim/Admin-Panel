@@ -60,7 +60,7 @@ export const middleware: NextMiddleware = async (request) => {
   }
 
   if (profile) {
-    response.headers.set('StoreProfile', JSON.stringify(profile));
+    response.headers.set('store-profile', JSON.stringify(profile));
   }
 
   return response;

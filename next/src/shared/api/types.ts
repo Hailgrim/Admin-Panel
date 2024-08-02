@@ -28,10 +28,10 @@ export interface IFetchRes<T = unknown> {
 
 export interface IReqArgs {
   url: string;
-  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-  body?: any;
-  params?: Record<string, any>;
+  method?: RequestInit['method'];
+  body?: unknown;
+  params?: Record<string, unknown>;
   credentials?: RequestCredentials;
-  headers?: Headers | Record<string, string | undefined>;
+  headers?: HeadersInit;
   mode?: RequestMode;
 }

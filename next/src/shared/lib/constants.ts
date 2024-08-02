@@ -38,6 +38,7 @@ export const ROUTES = {
       resetPassword: '/auth/reset-password',
       refresh: '/auth/refresh',
       profile: '/auth/profile',
+      sessions: '/auth/sessions',
       signOut: '/auth/log-out',
     },
     users: '/users',
