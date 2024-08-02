@@ -14,6 +14,14 @@ export default defineNuxtConfig({
   i18n: {
     vueI18n: './i18n.config.ts',
   },
+  hooks: {
+    // Temporary WSS fix
+    'vite:extendConfig': (config) => {
+      if (typeof config.server!.hmr === 'object') {
+        config.server!.hmr.protocol = 'wss'
+      }
+    },
+  },
   runtimeConfig: {
     public: {
       NGINX_HOST: process.env.NGINX_HOST || 'localhost',

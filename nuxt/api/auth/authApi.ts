@@ -1,6 +1,7 @@
 import { useAPI } from '~/composables/useAPI/useAPI'
 import type {
   IResetPassword,
+  ISession,
   IUserSignIn,
   IUserSignUp,
   IVerifyUser,
@@ -41,6 +42,16 @@ class AuthApi {
   updateProfile = useAPI<boolean, Partial<IUser>>((payload) => ({
     url: ROUTES.api.auth.profile,
     options: { method: 'PATCH', credentials: 'include', body: payload },
+  }))
+
+  getSessions = useAPI<ISession[]>(() => ({
+    url: ROUTES.api.auth.sessions,
+    options: { method: 'GET', credentials: 'include' },
+  }))
+
+  deleteSessions = useAPI<boolean, string[]>((payload) => ({
+    url: ROUTES.api.auth.sessions,
+    options: { method: 'DELETE', credentials: 'include', body: payload },
   }))
 
   signOut = useAPI<boolean>(() => ({

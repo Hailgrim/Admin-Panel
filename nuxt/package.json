@@ -18,6 +18,7 @@
     "@pinia/nuxt": "^0.5.1",
     "pinia": "^2.1.6",
     "sass": "^1.69.4",
+    "ua-parser-js": "^1.0.38",
     "vuetify": "^3.3.15"
   },
   "devDependencies": {
@@ -26,6 +27,7 @@
     "@nuxt/eslint": "^0.3.13",
     "@nuxt/test-utils": "^3.9.0",
     "@nuxtjs/i18n": "^8.0.0",
+    "@types/ua-parser-js": "^0.7.39",
     "@vue/test-utils": "^2.4.3",
     "eslint": "^8.57.0",
     "happy-dom": "^14.12.3",

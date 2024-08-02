@@ -16,7 +16,7 @@ const visible = ref(false)
 <template>
   <v-text-field
 v-bind="props" :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'" :class="hint ? 'mb-6' : ''"
-    density="compact" persistent-hint :type="visible ? 'text' : 'password'" :value="modelValue" variant="outlined"
+    density="compact" persistent-hint :type="visible ? 'text' : 'password'" variant="outlined"
     @click:append-inner="visible = !visible" @input="$emit('update:modelValue', $event.target.value)" />
 </template>
 

@@ -1,10 +1,10 @@
-FROM oven/bun:alpine as base
+FROM oven/bun:alpine AS base
 ARG NUXT_TELEMETRY_DISABLED=1
 ARG HOME=/home/bun
 WORKDIR ${HOME}
 COPY ./package*.json .
 
-FROM base as development
+FROM base AS development
 ENV NODE_ENV=development
 ENV CHOKIDAR_USEPOLLING=true
 RUN bun install
@@ -20,7 +20,7 @@ RUN bun install
 COPY . .
 RUN bun run build
 
-FROM base as production
+FROM base AS production
 ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 bunjs
 RUN adduser --system --uid 1001 nuxtjs

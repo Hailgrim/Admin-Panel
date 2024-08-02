@@ -8,7 +8,7 @@ const mainStore = useMainStore()
   <div class="alerts">
     <v-snackbar
 v-for="alert of mainStore.alerts" :key="`alert:${alert.id}`" class="alerts__item" :color="alert.type"
-      contained content-class="alerts__content" location="bottom right" :model-value="alert.deleted !== true" multi-line
+      contained content-class="alerts__content" location="bottom right" :model-value="!alert.deleted" multi-line
       :timeout="5000" @update:model-value="mainStore.deleteAlert(alert.id, 1000)">
       <template #actions>
         <v-btn variant="text" @click="mainStore.deleteAlert(alert.id, 1000)">

@@ -16,3 +16,12 @@ export interface IVerifyUser {
 export interface IResetPassword extends IVerifyUser {
   password: string;
 }
+
+export interface ISession {
+  id: string;
+  userId: string;
+  ip: string;
+  userAgent?: string;
+  current: boolean;
+  updatedAt: Date;
+}

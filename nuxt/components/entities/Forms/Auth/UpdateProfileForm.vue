@@ -36,7 +36,7 @@ watch(
   () => {
     if (pending.value) return
 
-    if (error.value || data.value !== true)
+    if (error.value)
       mainStore.addAlert({ type: 'error', text: makeErrorText(error.value, locale.value) })
 
     if (data.value) {

@@ -16,12 +16,23 @@ export function useAPI<ResT = unknown, ReqT = void>(
     const error = ref<IReqError | null>(null)
     const data = ref<ResT | null>(null) as Ref<ResT | null>
     const customFetch = useNuxtApp().$api
+    const userAgent = useRequestHeader('user-agent')
 
     async function execute(arg: ReqT): Promise<ResT | null> {
       const query = initQuery(arg)
+      const headers: HeadersInit = {}
       error.value = null
       data.value = null
       pending.value = true
+
+      headers['content-type'] =
+        typeof arg === 'object'
+          ? 'application/json'
+          : 'text/plain;charset=UTF-8'
+
+      if (userAgent) {
+        headers['user-agent'] = userAgent
+      }
 
       try {
         const result = await customFetch<ResT>(query.url, {
@@ -31,12 +42,7 @@ export function useAPI<ResT = unknown, ReqT = void>(
             | Record<string, unknown>
             | null
             | undefined,
-          headers: {
-            'Content-Type':
-              typeof arg === 'object'
-                ? 'application/json'
-                : 'text/plain;charset=UTF-8',
-          },
+          headers,
         })
 
         data.value = result
