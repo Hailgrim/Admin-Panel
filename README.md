@@ -52,6 +52,8 @@ docker compose down --remove-orphans
 
 ![sign-up-preview.png](sign-up-preview.png 'Sign Up Screen preview')
 
+![profile-preview.png](profile-preview.png 'Profile Screen preview')
+
 ![admin-preview.png](admin-preview.png 'Role Screen preview')
 
 This microservice provides a graphical interface for administration.
