@@ -6,46 +6,38 @@ import { IRolesResources } from 'src/resources/resources.types';
 
 export class RolesResourcesDto implements IRolesResources {
   @ApiProperty({ example: 1, description: d['en'].roleId })
-  @IsString({ message: d['en'].mustBeANumber(d['en'].roleId) })
+  @IsString()
   roleId: number;
 
   @ApiProperty({ example: 1, description: d['en'].resourceId })
-  @IsString({ message: d['en'].mustBeANumber(d['en'].resourceId) })
+  @IsString()
   resourceId: number;
 
   @ApiProperty({
     example: false,
     description: d['en'].creating,
   })
-  @IsBoolean({
-    message: d['en'].mustBeABoolean(d['en'].creating),
-  })
+  @IsBoolean()
   creating: boolean;
 
   @ApiProperty({
     example: false,
     description: d['en'].reading,
   })
-  @IsBoolean({
-    message: d['en'].mustBeABoolean(d['en'].reading),
-  })
+  @IsBoolean()
   reading: boolean;
 
   @ApiProperty({
     example: false,
     description: d['en'].updating,
   })
-  @IsBoolean({
-    message: d['en'].mustBeABoolean(d['en'].updating),
-  })
+  @IsBoolean()
   updating: boolean;
 
   @ApiProperty({
     example: false,
     description: d['en'].deleting,
   })
-  @IsBoolean({
-    message: d['en'].mustBeABoolean(d['en'].deleting),
-  })
+  @IsBoolean()
   deleting: boolean;
 }

@@ -10,7 +10,7 @@ export abstract class ITokensPair {
 export interface IToken {
   userId: string;
   sessionId: string;
-  sessionHash: string;
+  sessionPayload: string;
 }
 
 export type FastifyRequestWithUser = FastifyRequest & { user: IUser };
@@ -18,7 +18,8 @@ export type FastifyRequestWithUser = FastifyRequest & { user: IUser };
 export type FastifyRequestWithToken = FastifyRequest & { user: IToken };
 
 export abstract class ISession {
-  hash: string;
+  provider: 'default' | 'google';
+  payload: string;
   expires: Date;
   userId: string;
   userAgent?: string;

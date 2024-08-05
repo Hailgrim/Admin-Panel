@@ -65,7 +65,7 @@ v-model="code" :hint="`${$t('codeFromEmail')} (${email})`" :label="$t('code')" n
     <FormPassword
 v-model="password" :hint="$t('passwordValidation')" :label="$t('newPassword')" name="password"
       required :rules="[passwordIsValid]" />
-    <FormButton block color="success" :loading="pending || !!data" type="submit">
+    <FormButton block color="success" :loading="pending || Boolean(data)" type="submit">
       {{ $t('confirm') }}
     </FormButton>
     <FormButton block color="error" type="button" @click="$emit('close')">

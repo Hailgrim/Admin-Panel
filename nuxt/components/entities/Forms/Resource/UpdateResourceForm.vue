@@ -95,12 +95,12 @@ watch(
 :label="$t('enabled')" :model-value="newData.enabled" name="enabled"
       @update:model-value="newData = { ...newData, enabled: $event }" />
     <FormButton
-color="success" :disabled="!rights.updating || resource.default || !!dPending || !!dData"
+color="success" :disabled="!rights.updating || resource.default || dPending || Boolean(dData)"
       :loading="uPending" prepand-icon="mdi-content-save" type="submit">
       {{ $t('update') }}
     </FormButton>
     <FormButton
-color="error" :disabled="!rights.deleting || resource.default" :loading="dPending || !!dData"
+color="error" :disabled="!rights.deleting || resource.default" :loading="dPending || Boolean(dData)"
       prepand-icon="mdi-delete" type="button" @click="dExecute(resource.id)">
       {{ $t('delete') }}
     </FormButton>

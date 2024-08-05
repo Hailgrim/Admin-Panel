@@ -1,19 +1,23 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, Length, Matches } from 'class-validator';
-import { NAME_REGEX } from 'libs/constants';
+import { Transform } from 'class-transformer';
+import { IsOptional, Matches } from 'class-validator';
 
 import d from 'locales/dictionary';
 import { UpdateUserFields } from 'src/users/users.types';
+import { EMAIL_REGEX, NAME_REGEX } from 'libs/constants';
 
 export class UpdateProfileDto implements UpdateUserFields {
+  @ApiPropertyOptional({
+    example: 'example@mail.com',
+    description: d['en'].email,
+  })
+  @IsOptional()
+  @Matches(EMAIL_REGEX)
+  email?: string;
+
   @ApiPropertyOptional({ example: 'Linus Torvalds', description: d['en'].name })
   @IsOptional()
-  @IsString({
-    message: d['en'].mustBeAString(d['en'].name),
-  })
-  @Length(1, 100, {
-    message: d['en'].fieldLength(d['en'].name, 1, 100),
-  })
   @Matches(NAME_REGEX)
+  @Transform(({ value }) => (value as string).trim())
   name?: string;
 }

@@ -103,11 +103,11 @@ const UpdateResourceForm: FC<{ data: IResource }> = ({ data }) => {
         name="description"
         type="text"
         label={t.description}
-        value={newData.description}
+        value={newData.description || ''}
         onChange={(event) =>
           setNewData({
             ...newData,
-            description: event.currentTarget.value || null,
+            description: event.currentTarget.value,
           })
         }
       />

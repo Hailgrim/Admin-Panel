@@ -6,6 +6,7 @@ COPY ./package*.json .
 
 FROM base AS development
 ENV NODE_ENV=development
+# NOTE: Windows hot reload fix
 ENV WATCHPACK_POLLING=true
 RUN npm install
 CMD npx next dev

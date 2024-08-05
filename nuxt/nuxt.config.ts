@@ -15,7 +15,7 @@ export default defineNuxtConfig({
     vueI18n: './i18n.config.ts',
   },
   hooks: {
-    // Temporary WSS fix
+    // NOTE: temporary WSS fix
     'vite:extendConfig': (config) => {
       if (typeof config.server!.hmr === 'object') {
         config.server!.hmr.protocol = 'wss'

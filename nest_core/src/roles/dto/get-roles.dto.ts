@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 import d from 'locales/dictionary';
 import { GetRolesFields } from '../roles.types';
@@ -11,31 +12,19 @@ export class GetRolesDto extends GetListDto implements GetRolesFields {
     description: d['en'].name,
   })
   @IsOptional()
-  @IsString({
-    message: d['en'].mustBeAString(d['en'].name),
-  })
-  @Length(1, 100, {
-    message: d['en'].fieldLength(d['en'].name, 1, 100),
-  })
+  @IsString()
   name?: string;
 
   @ApiPropertyOptional({
-    example: 'user@mail.com',
+    example: 'Lorem ipsum',
     description: d['en'].description,
   })
   @IsOptional()
-  @IsString({
-    message: d['en'].mustBeAString(d['en'].description),
-  })
-  @Length(1, 1000, {
-    message: d['en'].fieldLength(d['en'].description, 1, 1000),
-  })
+  @IsString()
   description?: string;
 
   @ApiPropertyOptional({ example: true, description: d['en'].status })
   @IsOptional()
-  @IsBoolean({
-    message: d['en'].mustBeABoolean(d['en'].status),
-  })
+  @Transform(({ value }) => Boolean(value))
   enabled?: boolean;
 }

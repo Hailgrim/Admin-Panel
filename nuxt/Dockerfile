@@ -6,6 +6,7 @@ COPY ./package*.json .
 
 FROM base AS development
 ENV NODE_ENV=development
+# NOTE: Windows hot reload fix
 ENV CHOKIDAR_USEPOLLING=true
 RUN bun install
 CMD bun --bun run dev

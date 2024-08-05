@@ -9,7 +9,6 @@ import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import * as argon2 from 'argon2';
 import * as crypto from 'crypto';
-import { CookieSerializeOptions } from '@fastify/cookie';
 import { v4 as uuidv4 } from 'uuid';
 
 import { UsersService } from '../users/users.service';
@@ -22,7 +21,6 @@ import {
   ACCESS_TOKEN_LIFETIME,
   ACCESS_TOKEN_SECRET_KEY,
   REFRESH_TOKEN_SECRET_KEY,
-  NGINX_HOST,
 } from 'libs/config';
 import { Role } from 'src/roles/role.entity';
 import { CreateResourceDto } from 'src/resources/dto/create-resource.dto';
@@ -35,6 +33,7 @@ import d from 'locales/dictionary';
 import { ISession, IToken, ITokensPair } from './auth.types';
 import { IUser } from 'src/users/users.types';
 import { ExternalSessionDto } from './dto/external-session.dto';
+import { generateCode } from './auth.utils';
 
 @Injectable()
 export class AuthService {
@@ -47,56 +46,6 @@ export class AuthService {
     private resourcesService: ResourcesService,
     private redisService: RedisService,
   ) {}
-
-  generateCode(): string {
-    return (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
-  }
-
-  prepareCookie(
-    maxAge: number = ACCESS_TOKEN_LIFETIME,
-  ): CookieSerializeOptions {
-    return {
-      httpOnly: true,
-      sameSite: 'none',
-      secure: true,
-      path: '/',
-      maxAge,
-      domain: `.${NGINX_HOST}`,
-    };
-  }
-
-  async createTokens<T extends Buffer | object>(
-    payload: T,
-    sessionTtl: number,
-  ): Promise<ITokensPair> {
-    return {
-      accessToken: await this.jwtService.signAsync(payload, {
-        secret: ACCESS_TOKEN_SECRET_KEY,
-        expiresIn: ACCESS_TOKEN_LIFETIME,
-      }),
-      refreshToken: await this.jwtService.signAsync(payload, {
-        secret: REFRESH_TOKEN_SECRET_KEY,
-        expiresIn: sessionTtl,
-      }),
-    };
-  }
-
-  async validateUser(signInDto: SignInDto) {
-    try {
-      const user = await this.usersService.findOneAuth(signInDto.username);
-
-      if (await argon2.verify(user.password, signInDto.password)) {
-        const result: Partial<User> = { ...user.dataValues };
-        delete result.password;
-        result.roles = user.roles;
-        return result;
-      } else {
-        throw new UnauthorizedException();
-      }
-    } catch (error) {
-      throw new UnauthorizedException();
-    }
-  }
 
   async checkDefaultData(): Promise<Role> {
     // Verify the existence of the default resources
@@ -119,7 +68,7 @@ export class AuthService {
         return {
           path: value,
           name: value.replace(value[0], value[0].toUpperCase()),
-          description: d['en'].defaultResource(value) || null,
+          description: d['en'].defaultResource(value),
           enabled: true,
         };
       });
@@ -149,11 +98,45 @@ export class AuthService {
 
   async signUp(signUpDto: SignUpDto): Promise<User> {
     const defaultRole = await this.checkDefaultData();
-    const user = await this.usersService.create(
-      { ...signUpDto, enabled: true },
-      [defaultRole],
-    );
-    return user;
+    return await this.usersService.create({ ...signUpDto, enabled: true }, [
+      defaultRole,
+    ]);
+  }
+
+  async validateUser(signInDto: SignInDto) {
+    try {
+      const user = await this.usersService.findOneAuth(signInDto.username);
+
+      if (
+        user.password &&
+        (await argon2.verify(user.password, signInDto.password))
+      ) {
+        const result: Partial<User> = { ...user.dataValues };
+        delete result.password;
+        result.roles = user.roles;
+        return result;
+      } else {
+        throw new UnauthorizedException();
+      }
+    } catch (error) {
+      throw new UnauthorizedException();
+    }
+  }
+
+  async createTokens<T extends Buffer | object>(
+    payload: T,
+    sessionTtl: number,
+  ): Promise<ITokensPair> {
+    return {
+      accessToken: await this.jwtService.signAsync(payload, {
+        secret: ACCESS_TOKEN_SECRET_KEY,
+        expiresIn: ACCESS_TOKEN_LIFETIME,
+      }),
+      refreshToken: await this.jwtService.signAsync(payload, {
+        secret: REFRESH_TOKEN_SECRET_KEY,
+        expiresIn: sessionTtl,
+      }),
+    };
   }
 
   async signIn(
@@ -167,18 +150,22 @@ export class AuthService {
     }
 
     if (!user.verified) {
-      const code = this.generateCode();
-      await this.usersService.updateVerificationCode(user.email, code);
-      this.mailClient
-        .send({ method: 'registration' }, { email: user.email, code })
-        .subscribe();
+      if (user.email) {
+        const code = generateCode();
+        await this.usersService.updateVerificationCode(user.email, code);
+        this.mailClient
+          .send({ method: 'registration' }, { email: user.email, code })
+          .subscribe();
+      }
+
       throw new ForbiddenException();
     }
 
     const sessionId = uuidv4();
-    const sessionHash = await argon2.hash(crypto.randomBytes(10));
+    const sessionPayload = await argon2.hash(crypto.randomBytes(10));
     const sessionData: ISession = {
-      hash: sessionHash,
+      provider: 'default',
+      payload: sessionPayload,
       expires: new Date(Date.now() + sessionTtl * 1000),
       userId: user.id,
       ip,
@@ -193,7 +180,7 @@ export class AuthService {
     );
 
     const tokens = await this.createTokens<IToken>(
-      { userId: user.id, sessionId, sessionHash },
+      { userId: user.id, sessionId, sessionPayload },
       sessionTtl,
     );
 
@@ -209,7 +196,7 @@ export class AuthService {
   }
 
   async forgotPassword(email: string): Promise<boolean> {
-    const code = this.generateCode();
+    const code = generateCode();
 
     if (await this.usersService.updateResetPasswordCode(email, code)) {
       this.mailClient
@@ -234,17 +221,18 @@ export class AuthService {
     ip: string,
     userAgent?: string,
   ): Promise<ITokensPair> {
-    const newHash = await argon2.hash(crypto.randomBytes(10));
+    const newPayload = await argon2.hash(crypto.randomBytes(10));
     const session = await this.redisService.get<ISession>(
       `sessions:${token.userId}:${token.sessionId}`,
     );
 
     if (
       session?.userId === token.userId &&
-      session?.hash === token.sessionHash
+      session.payload === token.sessionPayload
     ) {
       const sessionData: ISession = {
-        hash: newHash,
+        provider: session.provider,
+        payload: newPayload,
         expires: new Date(Date.now() + sessionTtl * 1000),
         userId: token.userId,
         ip,
@@ -265,7 +253,7 @@ export class AuthService {
       {
         userId: token.userId,
         sessionId: token.sessionId,
-        sessionHash: newHash,
+        sessionPayload: newPayload,
       },
       sessionTtl,
     );

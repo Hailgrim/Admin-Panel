@@ -50,7 +50,7 @@ watch(
         </template>
         <template #append>
           <v-app-bar-nav-icon
-color="error" icon="mdi-logout" :loading="pending || !!data" :title="$t('signOut')"
+color="error" icon="mdi-logout" :loading="pending || Boolean(data)" :title="$t('signOut')"
             @click="execute()" />
         </template>
       </v-app-bar>

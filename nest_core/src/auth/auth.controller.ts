@@ -35,7 +35,7 @@ import {
   ISession,
 } from './auth.types';
 import { IUser } from 'src/users/users.types';
-import { getCookies } from './auth.utils';
+import { createCookieOptions, getCookies } from './auth.utils';
 import { ExternalSessionDto } from './dto/external-session.dto';
 
 const route = 'profile';
@@ -49,7 +49,7 @@ export class AuthController {
   @ApiResponse({ status: HttpStatus.CREATED, type: IUser })
   @Post('sign-up')
   signUp(
-    @Res() res: FastifyReply,
+    @Res({ passthrough: true }) res: FastifyReply,
     @Body() signUpDto: SignUpDto,
   ): Promise<IUser> {
     res.status(HttpStatus.CREATED);
@@ -89,21 +89,13 @@ export class AuthController {
       req.headers['user-agent'],
     );
 
-    res.cookie('accessToken', accessToken, this.authService.prepareCookie());
-    res.cookie(
-      'refreshToken',
-      refreshToken,
-      this.authService.prepareCookie(sessionTtl),
-    );
+    res.cookie('accessToken', accessToken, createCookieOptions());
+    res.cookie('refreshToken', refreshToken, createCookieOptions(sessionTtl));
 
     if (signInDto.rememberMe) {
-      res.cookie(
-        'rememberMe',
-        'true',
-        this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME),
-      );
+      res.cookie('rememberMe', 'true', createCookieOptions(sessionTtl));
     } else {
-      res.clearCookie('rememberMe', this.authService.prepareCookie());
+      res.clearCookie('rememberMe', createCookieOptions());
     }
 
     res.status(HttpStatus.CREATED);
@@ -136,19 +128,11 @@ export class AuthController {
       req.headers['user-agent'],
     );
 
-    res.cookie('accessToken', accessToken, this.authService.prepareCookie());
-    res.cookie(
-      'refreshToken',
-      refreshToken,
-      this.authService.prepareCookie(sessionTtl),
-    );
+    res.cookie('accessToken', accessToken, createCookieOptions());
+    res.cookie('refreshToken', refreshToken, createCookieOptions(sessionTtl));
 
     if (rememberMe) {
-      res.cookie(
-        'rememberMe',
-        'true',
-        this.authService.prepareCookie(REFRESH_TOKEN_LIFETIME),
-      );
+      res.cookie('rememberMe', 'true', createCookieOptions(sessionTtl));
     }
 
     return true;
@@ -209,7 +193,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<boolean> {
     const result = await this.authService.signOut(req.user);
-    const cookieOptions = this.authService.prepareCookie();
+    const cookieOptions = createCookieOptions();
     res.clearCookie('accessToken', cookieOptions);
     res.clearCookie('refreshToken', cookieOptions);
     res.clearCookie('rememberMe', cookieOptions);

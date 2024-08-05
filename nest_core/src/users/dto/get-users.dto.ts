@@ -1,39 +1,27 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsEmail,
-  IsOptional,
-  IsString,
-  Length,
-} from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 import d from 'locales/dictionary';
 import { GetUsersFields } from '../users.types';
 import { GetListDto } from 'src/database/dto/get-list.dto';
 
 export class GetUsersDto extends GetListDto implements GetUsersFields {
-  @ApiPropertyOptional({ example: 'user@mail.com', description: d['en'].email })
-  @IsOptional()
-  @IsEmail({}, { message: d['en'].incorrect(d['en'].email) })
-  @Length(5, 100, {
-    message: d['en'].fieldLength(d['en'].email, 5, 100),
+  @ApiPropertyOptional({
+    example: 'example@mail.com',
+    description: d['en'].email,
   })
+  @IsOptional()
+  @IsString()
   email?: string;
 
   @ApiPropertyOptional({ example: 'Linus Torvalds', description: d['en'].name })
   @IsOptional()
-  @IsString({
-    message: d['en'].mustBeAString(d['en'].name),
-  })
-  @Length(1, 100, {
-    message: d['en'].fieldLength(d['en'].name, 1, 100),
-  })
+  @IsString()
   name?: string;
 
   @ApiPropertyOptional({ example: true, description: d['en'].status })
   @IsOptional()
-  @IsBoolean({
-    message: d['en'].mustBeABoolean(d['en'].status),
-  })
+  @Transform(({ value }) => Boolean(value))
   enabled?: boolean;
 }

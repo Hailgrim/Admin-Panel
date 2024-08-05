@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 import d from 'locales/dictionary';
 import { GetResourcesFields } from '../resources.types';
@@ -7,48 +8,31 @@ import { GetListDto } from 'src/database/dto/get-list.dto';
 
 export class GetResourcesDto extends GetListDto implements GetResourcesFields {
   @ApiPropertyOptional({
-    example: 'Users',
+    example: 'Resources',
     description: d['en'].name,
   })
   @IsOptional()
-  @IsString({
-    message: d['en'].mustBeAString(d['en'].name),
-  })
-  @Length(1, 100, {
-    message: d['en'].fieldLength(d['en'].name, 1, 100),
-  })
+  @IsString()
   name?: string;
 
   @ApiPropertyOptional({
-    example: 'users',
+    example: 'resources',
     description: d['en'].path,
   })
   @IsOptional()
-  @IsString({
-    message: d['en'].mustBeAString(d['en'].path),
-  })
-  @Length(1, 100, {
-    message: d['en'].fieldLength(d['en'].path, 1, 100),
-  })
+  @IsString()
   path?: string;
 
   @ApiPropertyOptional({
-    example: 'Users resource',
+    example: 'Lorem ipsum',
     description: d['en'].description,
   })
   @IsOptional()
-  @IsString({
-    message: d['en'].mustBeAString(d['en'].description),
-  })
-  @Length(1, 1000, {
-    message: d['en'].fieldLength(d['en'].description, 1, 1000),
-  })
-  description?: string | null;
+  @IsString()
+  description?: string;
 
   @ApiPropertyOptional({ example: true, description: d['en'].status })
   @IsOptional()
-  @IsBoolean({
-    message: d['en'].mustBeABoolean(d['en'].status),
-  })
+  @Transform(({ value }) => Boolean(value))
   enabled?: boolean;
 }

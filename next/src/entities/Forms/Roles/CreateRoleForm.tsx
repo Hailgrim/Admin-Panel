@@ -71,7 +71,7 @@ const CreateRoleForm: FC = () => {
         label={t.description}
         value={data.description}
         onChange={(event) =>
-          setData({ ...data, description: event.currentTarget.value || null })
+          setData({ ...data, description: event.currentTarget.value })
         }
       />
       <FormCheckbox
@@ -86,7 +86,7 @@ const CreateRoleForm: FC = () => {
         color="primary"
         startIcon={<AddIcon />}
         disabled={!rights.creating}
-        loading={createReq.isLoading || !!createReq.data}
+        loading={createReq.isLoading || Boolean(createReq.data)}
       >
         {t.create}
       </FormButton>

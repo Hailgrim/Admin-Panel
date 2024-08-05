@@ -102,7 +102,11 @@ const SignInForm: FC = () => {
           checked={rememberMe}
           onChange={() => setRememberMe(!rememberMe)}
         />
-        <FormButton type="submit" fullWidth loading={isFetching || !!data}>
+        <FormButton
+          type="submit"
+          fullWidth
+          loading={isFetching || Boolean(data)}
+        >
           {t.signIn}
         </FormButton>
         <FormLink href={ROUTES.auth.signUp} mui={{ align: 'center' }}>

@@ -4,26 +4,22 @@ import { IsBoolean, IsOptional, IsString } from 'class-validator';
 import d from 'locales/dictionary';
 
 export class SignInDto {
-  @ApiProperty({ example: 'user@mail.com', description: d['en'].email })
-  @IsString({ message: d['en'].mustBeAString(d['en'].email) })
+  @ApiProperty({ example: 'example@mail.com', description: d['en'].email })
+  @IsString()
   username: string;
 
   @ApiProperty({
-    example: 'user@mail.com',
+    example: '!Q1q2w3e4r',
     description: d['en'].password,
   })
-  @IsString({
-    message: d['en'].mustBeAString(d['en'].password),
-  })
+  @IsString()
   password: string;
 
   @ApiPropertyOptional({
-    example: 'user@mail.com',
+    example: true,
     description: d['en'].rememberMe,
   })
   @IsOptional()
-  @IsBoolean({
-    message: d['en'].mustBeABoolean(d['en'].rememberMe),
-  })
+  @IsBoolean()
   rememberMe?: boolean;
 }

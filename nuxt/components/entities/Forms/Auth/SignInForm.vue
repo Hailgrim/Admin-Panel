@@ -79,7 +79,7 @@ watch(
     <FormField v-model="email" :label="$t('email')" name="email" required :rules="[emailIsValid]" />
     <FormPassword v-model="password" :label="$t('password')" name="password" required :rules="[passwordIsValid]" />
     <FormCheckbox v-model="rememberMe" :label="$t('rememberMe')" name="rememberMe" />
-    <FormButton block color="info" :loading="pending || !!data" type="submit">
+    <FormButton block color="info" :loading="pending || Boolean(data)" type="submit">
       {{ $t('signIn') }}
     </FormButton>
     <FormLink :href="ROUTES.auth.signUp" :text="$t('signUpText')" />

@@ -64,7 +64,7 @@ watch(
 :label="$t('enabled')" :model-value="newData.enabled" name="enabled"
       @update:model-value="newData = { ...newData, enabled: $event }" />
     <FormButton
-color="info" :disabled="!rights.creating" :loading="pending || !!data" prepand-icon="mdi-plus"
+color="info" :disabled="!rights.creating" :loading="pending || Boolean(data)" prepand-icon="mdi-plus"
       type="submit">
       {{ $t('create') }}
     </FormButton>

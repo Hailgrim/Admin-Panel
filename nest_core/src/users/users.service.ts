@@ -56,10 +56,12 @@ export class UsersService {
     const password = await this.createPasswordHash(createUserDto.password);
 
     try {
-      [user, created] = await this.usersRepository.findOrCreate({
-        where: { email: createUserDto.email },
-        defaults: { ...createUserDto, password },
-      });
+      [user, created] = await this.usersRepository
+        .scope([PUBLIC, WITH_ROLES])
+        .findOrCreate({
+          where: { email: createUserDto.email },
+          defaults: { ...createUserDto, password },
+        });
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();

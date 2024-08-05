@@ -63,7 +63,7 @@ const UsersPage: FC<IClientPage<IFindAndCountRes<IUser>>> = ({ h1, data }) => {
     }
   }, [destroyReq.data, findAndCountAll]);
 
-  // Needs to be fixed: duplicate initial query (RTK Query does not yet support SSR queries)
+  // NOTE: duplicate initial query (RTK Query does not yet support SSR queries)
   useEffect(() => {
     findAndCountAll({ page: page.current + 1, quantity: pageSize.current });
   }, [findAndCountAll]);

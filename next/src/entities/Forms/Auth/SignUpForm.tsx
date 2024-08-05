@@ -110,7 +110,11 @@ const SignUpForm: FC = () => {
           color={passwordIsValid ? 'success' : 'error'}
           error={!passwordIsValid && password.length > 0}
         />
-        <FormButton type="submit" fullWidth loading={isLoading || !!data}>
+        <FormButton
+          type="submit"
+          fullWidth
+          loading={isLoading || Boolean(data)}
+        >
           {t.signUp}
         </FormButton>
         <FormLink href={ROUTES.auth.signIn} mui={{ align: 'center' }}>

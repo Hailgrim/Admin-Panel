@@ -57,7 +57,7 @@ watch(
     <FormField
 v-model="code" :hint="`${$t('codeFromEmail')} (${email})`" :label="$t('code')" name="code" required
       :rules="[codeIsValid]" />
-    <FormButton block color="success" :loading="pending || !!data" type="submit">
+    <FormButton block color="success" :loading="pending || Boolean(data)" type="submit">
       {{ $t('confirm') }}
     </FormButton>
     <FormButton block color="error" type="button" @click="$emit('close')">

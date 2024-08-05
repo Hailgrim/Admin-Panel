@@ -6,11 +6,15 @@ import authService from './shared/api/auth/authService';
 import { IUser } from './shared/api/users/types';
 
 export const middleware: NextMiddleware = async (request) => {
-  // This check allows you to avoid repeated work by the middleware.
-  // if (request.headers.has('referer')) return;
-  // But it had to be disabled, since server requests on pages in Next.js
-  // are not able to change headers, which may contain new pairs of tokens.
-  // For this reason, you have to make a request below every time you visit a new page.
+  /**
+   * NOTE
+   *
+   * This check allows you to avoid repeated work by the middleware.
+   * if (request.headers.has('referer')) return;
+   * But it had to be disabled, since server requests on pages in Next.js
+   * are not able to change headers, which may contain new pairs of tokens.
+   * For this reason, you have to make a request below every time you visit a new page.
+   */
 
   const accessToken = request.cookies.get('accessToken');
   const refreshToken = request.cookies.get('refreshToken');

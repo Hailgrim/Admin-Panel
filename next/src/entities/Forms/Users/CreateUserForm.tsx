@@ -99,7 +99,7 @@ const CreateUserForm: FC = () => {
         color="primary"
         startIcon={<AddIcon />}
         disabled={!rights.creating}
-        loading={createReq.isLoading || !!createReq.data}
+        loading={createReq.isLoading || Boolean(createReq.data)}
       >
         {t.create}
       </FormButton>

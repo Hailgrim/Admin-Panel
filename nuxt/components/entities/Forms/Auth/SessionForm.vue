@@ -69,7 +69,7 @@ watch(
       </v-card-text>
       <v-card-actions>
         <v-btn
-color="error" :disabled="!rights.updating || pending || !!data" icon="mdi-delete" type="submit"
+color="error" :disabled="!rights.updating || pending || Boolean(data)" icon="mdi-delete" type="submit"
           variant="text" />
       </v-card-actions>
     </v-card>

@@ -22,6 +22,7 @@ import { CreateUserFields, IUser } from './users.types';
         'password',
         'verificationCode',
         'resetPasswordCode',
+        'changeEmailCode',
         'updatedAt',
       ],
     },
@@ -57,19 +58,19 @@ export class User extends Model<User, CreateUserFields> implements IUser {
   id: string;
 
   @ApiProperty({ type: String, description: d['en'].email })
-  @Column({ type: DataType.STRING(100), allowNull: false, unique: true })
-  email: string;
+  @Column({ type: DataType.STRING(100), allowNull: true, unique: true })
+  email?: string | null;
 
   @ApiProperty({ type: String, description: d['en'].password })
-  @Column({ type: DataType.STRING(100), allowNull: false })
-  password: string;
+  @Column({ type: DataType.STRING(100), allowNull: true })
+  password?: string | null;
 
   @ApiProperty({ type: String, description: d['en'].name })
   @Column({ type: DataType.STRING(100), allowNull: false })
   name: string;
 
   @ApiProperty({ type: Boolean, description: d['en'].status })
-  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
   enabled: boolean;
 
   @ApiProperty({ type: Boolean, description: d['en'].verified })
@@ -77,12 +78,16 @@ export class User extends Model<User, CreateUserFields> implements IUser {
   verified: boolean;
 
   @ApiPropertyOptional({ type: String, description: d['en'].verificationCode })
-  @Column({ type: DataType.CHAR(4), allowNull: true, defaultValue: null })
+  @Column({ type: DataType.CHAR(4), allowNull: true })
   verificationCode?: string | null;
 
   @ApiPropertyOptional({ type: String, description: d['en'].resetPasswordCode })
-  @Column({ type: DataType.CHAR(4), allowNull: true, defaultValue: null })
+  @Column({ type: DataType.CHAR(4), allowNull: true })
   resetPasswordCode?: string | null;
+
+  @ApiPropertyOptional({ type: String, description: d['en'].changeEmailCode })
+  @Column({ type: DataType.CHAR(4), allowNull: true })
+  changeEmailCode?: string | null;
 
   @ApiProperty({ type: Boolean, description: d['en'].roles })
   @BelongsToMany(() => Role, () => UsersRoles)

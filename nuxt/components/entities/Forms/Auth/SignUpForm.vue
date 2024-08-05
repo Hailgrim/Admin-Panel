@@ -72,7 +72,7 @@ v-model="email" :hint="$t('emailValidation')" :label="$t('email')" name="email" 
     <FormPassword
 v-model="password" :hint="$t('passwordValidation')" :label="$t('password')" name="password" required
       :rules="[passwordIsValid]" />
-    <FormButton block color="success" :loading="pending || !!data" type="submit">
+    <FormButton block color="success" :loading="pending || Boolean(data)" type="submit">
       {{ $t('signUp') }}
     </FormButton>
     <FormLink :href="ROUTES.auth.signIn" :text="$t('signInText')" />
