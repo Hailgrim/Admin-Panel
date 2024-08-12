@@ -21,23 +21,27 @@ const SideBarMenuItem: FC<IMenuItem> = ({ href, text, icon, childs }) => {
 
   const linkHandler: MouseEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
+
     if (href) {
       router.push(href);
     }
+
     if (childs) {
-      setOpen((prev) => !prev);
+      setOpen(!open);
     }
   };
 
   const selected = useMemo(() => {
     let result = Boolean(href);
     const pathArr = pathname.split('/');
-    const linkArr = href ? href.split('/') : [];
+    const linkArr = href?.split('/') || [];
+
     linkArr.forEach((value, index) => {
       if (value != pathArr[index]) {
         result = false;
       }
     });
+
     return result;
   }, [pathname, href]);
 

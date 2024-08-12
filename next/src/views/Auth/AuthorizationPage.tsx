@@ -2,15 +2,15 @@
 
 import { FC } from 'react';
 
-import AuthPage from '@/views/AuthPage';
-import SignInForm from '@/entities/Forms/Auth/SignInForm';
+import AuthLayout from '@/views/AuthLayout';
+import SignInForm from '@/features/Auth/SignInForm';
 import { IClientPage } from '../types';
 
 const AuthorizationPage: FC<IClientPage> = ({ h1 }) => {
   return (
-    <AuthPage h1={h1}>
+    <AuthLayout h1={h1}>
       <SignInForm />
-    </AuthPage>
+    </AuthLayout>
   );
 };
 export default AuthorizationPage;

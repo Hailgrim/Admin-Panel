@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import rolesApi from '~/api/roles/rolesApi'
-import RolesTable from '~/components/entities/Tables/RolesTable.vue'
+import RolesList from '~/components/features/Roles/RolesList.vue'
 
 definePageMeta({
   middleware: ['auth'],
@@ -14,23 +14,25 @@ const router = useRouter()
 const route = useRoute()
 const page = ref(Number(route.query.page) || 1)
 const quantity = ref(Number(route.query.quantity) || 25)
-const { data: lcData, execute: lcExecute } = rolesApi.listCounted()
-const { data: lData, execute: lExecute } = rolesApi.list()
-await lcExecute({ page: page.value, quantity: quantity.value })
-const count = ref(lcData.value?.count || 0)
-const roles = computed(() => lData.value || lcData.value?.rows || [])
+const { data, execute } = rolesApi.listCounted()
+await execute({ page: page.value, quantity: quantity.value })
+const count = ref(data.value?.count)
 
 watch(
-  [page, quantity],
+  page,
   () => {
-    router.push({ query: { page: page.value, quantity: quantity.value } })
-    lExecute({ page: page.value, quantity: quantity.value })
+    router.push({ query: { ...route.query, page: page.value } })
+  },
+)
+
+watch(
+  quantity,
+  () => {
+    router.push({ query: { ...route.query, quantity: quantity.value } })
   },
 )
 </script>
 
 <template>
-  <RolesTable
-:count="count" :page="page" :quantity="quantity" :roles="roles" @update:page="value => page = value"
-    @update:quantity="value => quantity = value" />
+  <RolesList v-model:page="page" v-model:quantity="quantity" :count="count" :rows="data?.rows" />
 </template>

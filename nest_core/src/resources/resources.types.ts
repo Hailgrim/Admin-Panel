@@ -1,13 +1,5 @@
+import { IRolesResources } from 'src/database/database.types';
 import { IRole } from 'src/roles/roles.types';
-
-export abstract class IRolesResources {
-  roleId: number;
-  resourceId: number;
-  creating: boolean;
-  reading: boolean;
-  updating: boolean;
-  deleting: boolean;
-}
 
 export abstract class IResource {
   id?: number;

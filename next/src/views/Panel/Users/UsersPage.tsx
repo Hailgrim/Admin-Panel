@@ -6,9 +6,9 @@ import AddIcon from '@mui/icons-material/Add';
 import { GridRowSelectionModel } from '@mui/x-data-grid/models/gridRowSelectionModel';
 import { GridPaginationModel } from '@mui/x-data-grid/models/gridPaginationProps';
 
-import PanelPage from '../../PanelPage';
-import UsersTable from '@/entities/Tables/UsersTable';
-import FormButton from '@/shared/kit/Form/FormButton';
+import PanelLayout from '../../PanelLayout';
+import UsersTable from '@/entities/Users/UsersTable';
+import FormButton from '@/shared/ui/Form/FormButton';
 import useRights from '@/shared/hooks/useRights';
 import { ROUTES } from '@/shared/lib/constants';
 import useT from '@/shared/hooks/useT';
@@ -19,7 +19,7 @@ import { IUser } from '@/shared/api/users/types';
 
 const UsersPage: FC<IClientPage<IFindAndCountRes<IUser>>> = ({ h1, data }) => {
   const t = useT();
-  const rights = useRights(ROUTES.panel.users);
+  const rights = useRights(ROUTES.ui.users);
   const [findAndCountAll, findAndCountAllReq] =
     usersApi.useLazyFindAndCountAllQuery();
   const [findAll, findAllReq] = usersApi.useLazyFindAllQuery();
@@ -69,12 +69,12 @@ const UsersPage: FC<IClientPage<IFindAndCountRes<IUser>>> = ({ h1, data }) => {
   }, [findAndCountAll]);
 
   return (
-    <PanelPage h1={h1}>
+    <PanelLayout h1={h1}>
       <FormButton
         color="primary"
         startIcon={<AddIcon />}
         disabled={!rights.creating}
-        href={ROUTES.panel.newUser}
+        href={ROUTES.ui.newUser}
       >
         {t.create}
       </FormButton>
@@ -100,7 +100,7 @@ const UsersPage: FC<IClientPage<IFindAndCountRes<IUser>>> = ({ h1, data }) => {
         onRowSelectionModelChange={selectionHandler}
         onPaginationModelChange={paginationHandler}
       />
-    </PanelPage>
+    </PanelLayout>
   );
 };
 export default UsersPage;

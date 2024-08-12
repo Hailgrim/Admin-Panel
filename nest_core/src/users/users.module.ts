@@ -3,24 +3,19 @@ import { Module } from '@nestjs/common';
 import { DatabaseModule } from '../database/database.module';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { usersProviders } from './users.providers';
-import { RolesService } from 'src/roles/roles.service';
-import { rolesProviders } from 'src/roles/roles.providers';
-import { ResourcesService } from 'src/resources/resources.service';
-import { resourcesProviders } from 'src/resources/resources.providers';
-import { rolesResourcesProviders } from 'src/database/roles-resources.providers';
+import { RedisModule } from 'src/redis/redis.module';
+import { USERS_REPOSITORY } from 'libs/constants';
+import { User } from './user.entity';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, RedisModule],
   controllers: [UsersController],
   providers: [
+    {
+      provide: USERS_REPOSITORY,
+      useValue: User,
+    },
     UsersService,
-    ...usersProviders,
-    RolesService,
-    ...rolesProviders,
-    ResourcesService,
-    ...resourcesProviders,
-    ...rolesResourcesProviders,
   ],
   exports: [UsersService],
 })

@@ -58,7 +58,7 @@ export class ResourcesService {
 
   async create(createResourceDto: CreateResourceDto): Promise<Resource> {
     try {
-      return this.resourcesRepository.create({
+      return await this.resourcesRepository.create({
         ...createResourceDto,
         default: false,
       });
@@ -72,7 +72,7 @@ export class ResourcesService {
     createResourceDtos: CreateResourceDto[],
   ): Promise<Resource[]> {
     try {
-      return this.resourcesRepository.bulkCreate(
+      return await this.resourcesRepository.bulkCreate(
         createResourceDtos.map((dto) => ({ ...dto, default: true })),
       );
     } catch (error) {
@@ -110,7 +110,7 @@ export class ResourcesService {
     }
 
     try {
-      return this.resourcesRepository.scope(PUBLIC).findAll(options);
+      return await this.resourcesRepository.scope(PUBLIC).findAll(options);
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -123,7 +123,9 @@ export class ResourcesService {
     const options = this.prepareGetOptions(getResourcesDto);
 
     try {
-      return this.resourcesRepository.scope(PUBLIC).findAndCountAll(options);
+      return await this.resourcesRepository
+        .scope(PUBLIC)
+        .findAndCountAll(options);
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -149,21 +151,13 @@ export class ResourcesService {
     }
 
     if (affectedCount === 0) {
-      const resource = await this.resourcesRepository.findOne({
-        where: { id },
-      });
-
-      if (!resource) {
-        throw new NotFoundException();
-      } else {
-        return false;
-      }
+      throw new NotFoundException();
     }
 
     return true;
   }
 
-  async delete(id: string | string[]) {
+  async delete(id: string[]) {
     let destroyedCount = 0;
 
     try {

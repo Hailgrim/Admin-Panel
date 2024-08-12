@@ -38,7 +38,7 @@ const resourcesApi = createApi({
       invalidatesTags: ['Entity'],
     }),
 
-    delete: builder.mutation<boolean, IResource['id'] | IResource['id'][]>({
+    delete: builder.mutation<boolean, IResource['id'][]>({
       query: resourcesService.deleteArgs,
       invalidatesTags: ['CountedEntities'],
     }),

@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 
 import d from 'locales/dictionary';
-import { IUsersRoles } from 'src/roles/roles.types';
+import { IUsersRoles } from '../database.types';
 
 export class UsersRolesDto implements IUsersRoles {
   @ApiProperty({
@@ -13,6 +13,6 @@ export class UsersRolesDto implements IUsersRoles {
   userId: string;
 
   @ApiProperty({ example: 1, description: d['en'].roleId })
-  @IsString()
+  @IsNumber()
   roleId: number;
 }

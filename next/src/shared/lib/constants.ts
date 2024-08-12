@@ -8,14 +8,10 @@ export const PASSWORD_REGEX =
 
 /** Supported application routes */
 export const ROUTES = {
-  /** Authorization routes */
-  auth: {
+  ui: {
     signIn: '/authorization',
     signUp: '/registration',
     forget: '/forgot-password',
-  },
-  /** Panel routes */
-  panel: {
     home: '/',
     profile: '/profile',
     users: '/users',
@@ -28,19 +24,18 @@ export const ROUTES = {
     newResource: '/resources/new',
     resource: (id: string | number) => `/resources/${id}`,
   },
-  /** API routes */
   api: {
-    auth: {
-      sighUp: 'auth/sign-up',
-      signIn: '/auth/sign-in',
-      verify: '/auth/verify-user',
-      forgotPassword: '/auth/forgot-password',
-      resetPassword: '/auth/reset-password',
-      refresh: '/auth/refresh',
-      profile: '/auth/profile',
-      sessions: '/auth/sessions',
-      signOut: '/auth/log-out',
-    },
+    sighUp: 'auth/sign-up',
+    signIn: '/auth/sign-in',
+    verify: '/auth/verify-user',
+    forgotPassword: '/auth/forgot-password',
+    resetPassword: '/auth/reset-password',
+    refresh: '/auth/refresh',
+    signOut: '/auth/log-out',
+    profile: '/profile',
+    updatePassword: '/profile/update-password',
+    changeEmail: '/profile/change-email',
+    sessions: '/profile/sessions',
     users: '/users',
     user: (id: string | number) => `/users/${id}`,
     userRoles: (id: string | number) => `/users/${id}/roles`,

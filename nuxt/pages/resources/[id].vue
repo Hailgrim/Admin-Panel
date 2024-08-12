@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import resourcesApi from '~/api/resources/resourcesApi'
-import UpdateResourceForm from '~/components/entities/Forms/Resource/UpdateResourceForm.vue'
+import UpdateResourceForm from '~/components/features/Resources/UpdateResourceForm.vue'
 
 definePageMeta({
   middleware: ['auth'],

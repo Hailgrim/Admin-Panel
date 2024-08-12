@@ -19,12 +19,14 @@ import { UsersRolesDto } from 'src/database/dto/users-roles.dto';
 import { IFindAndCount } from 'src/database/database.types';
 import { UpdateUserFields } from './users.types';
 import { preparePaginationOptions } from 'src/database/database.utils';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @Inject(USERS_REPOSITORY)
     private usersRepository: typeof User,
+    private redisService: RedisService,
   ) {}
 
   private prepareSearchOptions(getUsersDto?: GetUsersDto): FindOptions<User> {
@@ -46,7 +48,7 @@ export class UsersService {
     };
   }
 
-  private async createPasswordHash(password: string): Promise<string> {
+  createPasswordHash(password: string): Promise<string> {
     return argon2.hash(password);
   }
 
@@ -104,11 +106,15 @@ export class UsersService {
     return user;
   }
 
-  async findOneAuth(email: string): Promise<User> {
+  findOneAuth(email: string): Promise<User> {
     return this.findOne({ where: { email } }, WITH_ROLES);
   }
 
-  async findOnePublic(id: string): Promise<User> {
+  findOneProfile(id: string): Promise<Omit<User, 'roles'>> {
+    return this.findOne({ where: { id } });
+  }
+
+  findOnePublic(id: string): Promise<User> {
     return this.findOne({ where: { id } }, [PUBLIC, WITH_ROLES]);
   }
 
@@ -116,7 +122,9 @@ export class UsersService {
     const options = this.prepareGetOptions(getUsersDto);
 
     try {
-      return this.usersRepository.scope([PUBLIC, WITH_ROLES]).findAll(options);
+      return await this.usersRepository
+        .scope([PUBLIC, WITH_ROLES])
+        .findAll(options);
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -129,7 +137,7 @@ export class UsersService {
     const options = this.prepareGetOptions(getUsersDto);
 
     try {
-      return this.usersRepository
+      return await this.usersRepository
         .scope([PUBLIC, WITH_ROLES])
         .findAndCountAll(options);
     } catch (error) {
@@ -166,70 +174,83 @@ export class UsersService {
     }
 
     if (affectedCount === 0) {
-      let user: User | null;
-
-      try {
-        user = await this.usersRepository.findOne(options);
-      } catch (error) {
-        Logger.error(error);
-        throw new InternalServerErrorException();
-      }
-
-      if (!user) {
-        throw new NotFoundException();
-      } else {
-        return false;
-      }
+      throw new NotFoundException();
     }
 
     return true;
   }
 
-  async updateFields(
-    id: string,
-    updateUserDto: UpdateUserDto,
-  ): Promise<boolean> {
+  updateFields(id: string, updateUserDto: UpdateUserDto): Promise<boolean> {
     return this.update(updateUserDto, { where: { id } });
   }
 
-  async updateVerificationCode(
+  updateVerificationCode(
     email: string,
     verificationCode: string,
-    check?: boolean,
   ): Promise<boolean> {
-    if (check) {
-      return this.update(
-        { verificationCode: null, verified: true },
-        { where: { email, verificationCode } },
-      );
-    } else {
-      return this.update({ verificationCode }, { where: { email } });
-    }
+    return this.update({ verificationCode }, { where: { email } });
   }
 
-  async updateResetPasswordCode(
+  updateVerificationStatus(
+    email: string,
+    verificationCode: string,
+  ): Promise<boolean> {
+    return this.update(
+      { verificationCode: null, verified: true },
+      { where: { email, verificationCode } },
+    );
+  }
+
+  updateResetPasswordCode(
     email: string,
     resetPasswordCode: string,
   ): Promise<boolean> {
     return this.update({ resetPasswordCode }, { where: { email } });
   }
 
-  async updatePassword(
+  async updatePasswordWithCode(
     email: string,
     resetPasswordCode: string,
-    newPassword?: string,
+    newPassword: string,
   ): Promise<boolean> {
-    if (newPassword) {
-      return this.update(
-        {
-          resetPasswordCode: null,
-          password: await this.createPasswordHash(newPassword),
-        },
-        { where: { email, resetPasswordCode } },
-      );
-    } else {
-      return this.update({ resetPasswordCode }, { where: { email } });
-    }
+    return this.update(
+      {
+        resetPasswordCode: null,
+        password: await this.createPasswordHash(newPassword),
+      },
+      { where: { email, resetPasswordCode } },
+    );
+  }
+
+  async updatePassword(id: string, newPassword: string): Promise<boolean> {
+    return this.update(
+      { password: await this.createPasswordHash(newPassword) },
+      { where: { id } },
+    );
+  }
+
+  updateChangeEmailCode(
+    id: string,
+    changeEmailCode: string,
+    newEmail: string,
+  ): Promise<boolean> {
+    return this.update(
+      { changeEmailCode, temporaryEmail: newEmail },
+      { where: { id } },
+    );
+  }
+
+  async updateEmailWithCode(
+    id: string,
+    changeEmailCode: string,
+  ): Promise<boolean> {
+    const user = await this.findOne({ where: { id, changeEmailCode } });
+    await user.update({
+      email: user.temporaryEmail,
+      changeEmailCode: null,
+      temporaryEmail: null,
+    });
+    return true;
   }
 
   async updateRoles(
@@ -246,7 +267,7 @@ export class UsersService {
     return true;
   }
 
-  async delete(id: string | string[]) {
+  async delete(id: string[]) {
     let destroyedCount = 0;
 
     try {
@@ -258,6 +279,13 @@ export class UsersService {
 
     if (destroyedCount === 0) {
       throw new NotFoundException();
+    }
+
+    for (const userId of id) {
+      const keys = await this.redisService.keys(`sessions:${userId}:*`);
+      if (keys.length > 0) {
+        this.redisService.mdel(keys);
+      }
     }
 
     return true;

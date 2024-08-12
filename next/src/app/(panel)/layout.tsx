@@ -20,9 +20,7 @@ const PanelLayout: FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     if (!profile)
-      router.push(
-        `${ROUTES.auth.signIn}?return=${encodeURIComponent(pathname)}`
-      );
+      router.push(`${ROUTES.ui.signIn}?return=${encodeURIComponent(pathname)}`);
   }, [profile, router, pathname]);
 
   return (

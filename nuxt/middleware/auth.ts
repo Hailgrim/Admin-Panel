@@ -1,4 +1,4 @@
-import authApi from '~/api/auth/authApi'
+import profileApi from '~/api/profile/profileApi'
 import { useMainStore } from '~/store/main/main'
 
 export default defineNuxtRouteMiddleware(async (to) => {
@@ -7,30 +7,34 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const accessToken = useCookie('accessToken')
   const refreshToken = useCookie('refreshToken')
   const mainStore = useMainStore()
+  const isAuthRoute =
+    to.path === ROUTES.ui.signIn ||
+    to.path === ROUTES.ui.signUp ||
+    to.path === ROUTES.ui.forget
 
   if (accessToken.value || refreshToken.value) {
     // Attempt to authorize the user
-    const { data, execute } = authApi.getProfile()
+    const { data, execute } = profileApi.getProfile()
     await execute()
     mainStore.setProfile(data.value)
   }
 
   if (mainStore.profile) {
-    if (Object.values(ROUTES.auth).includes(to.path)) {
+    if (isAuthRoute) {
       return navigateTo(
         {
           path: to.query.return
             ? decodeURIComponent(String(to.query.return))
-            : ROUTES.panel.home,
+            : ROUTES.ui.home,
         },
         { redirectCode: 302 }
       )
     }
   } else {
-    if (!Object.values(ROUTES.auth).includes(to.path)) {
+    if (!isAuthRoute) {
       return navigateTo(
         {
-          path: ROUTES.auth.signIn,
+          path: ROUTES.ui.signIn,
           query: { return: encodeURIComponent(to.path) },
         },
         { redirectCode: 302 }

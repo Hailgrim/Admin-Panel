@@ -3,10 +3,10 @@
 import { FC } from 'react';
 import Typography from '@mui/material/Typography';
 
-import PanelPage from '../../PanelPage';
-import UpdateRoleForm from '@/entities/Forms/Roles/UpdateRoleForm';
+import PanelLayout from '../../PanelLayout';
+import UpdateRoleForm from '@/features/Roles/UpdateRoleForm';
 import useT from '@/shared/hooks/useT';
-import UpdateRoleResourcesForm from '@/entities/Forms/Roles/UpdateRoleResourcesForm';
+import UpdateRoleResourcesForm from '@/features/Roles/UpdateRoleResourcesForm';
 import { IRole } from '@/shared/api/roles/types';
 import { IClientPage } from '@/views/types';
 import { IResource } from '@/shared/api/resources/types';
@@ -20,13 +20,13 @@ const RolePage: FC<
   const t = useT();
 
   return (
-    <PanelPage h1={h1}>
+    <PanelLayout h1={h1}>
       {data?.role && (
         <>
           <UpdateRoleForm data={data.role} />
           {data.resources && (
             <>
-              <Typography component="h2" variant="h6" sx={{ my: 1 }}>
+              <Typography component="h2" variant="h6" sx={{ mt: 3, mb: 1 }}>
                 {t.resources}
               </Typography>
               <UpdateRoleResourcesForm
@@ -37,7 +37,7 @@ const RolePage: FC<
           )}
         </>
       )}
-    </PanelPage>
+    </PanelLayout>
   );
 };
 export default RolePage;

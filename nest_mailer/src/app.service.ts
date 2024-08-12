@@ -11,6 +11,7 @@ import { MailTemplates } from 'libs/constants';
 import { RegistrationDto } from './dto/registration.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import d from 'locales/dictionary';
+import { ChangeEmailDto } from './dto/change-email.dto';
 
 @Injectable()
 export class AppService {
@@ -22,7 +23,7 @@ export class AppService {
         to: registrationDto.email,
         from: MAIL_FROM,
         subject: d['en'].subjectRegistration,
-        template: MailTemplates.ForgotPassword,
+        template: MailTemplates.Registration,
         context: {
           host: HOST,
           title: d['en'].subjectRegistration,
@@ -30,6 +31,7 @@ export class AppService {
           code: registrationDto.code,
         },
       });
+
       if (MAIL_TEST) {
         const previewUri = nodemailer.getTestMessageUrl(info);
         Logger.log(previewUri);
@@ -53,6 +55,31 @@ export class AppService {
           code: forgotPasswordDto.code,
         },
       });
+
+      if (MAIL_TEST) {
+        const previewUri = nodemailer.getTestMessageUrl(info);
+        Logger.log(previewUri);
+      }
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async changeEmail(changeEmailDto: ChangeEmailDto): Promise<void> {
+    try {
+      const info = await this.mailerService.sendMail({
+        to: changeEmailDto.email,
+        from: MAIL_FROM,
+        subject: d['en'].subjectChangeEmail,
+        template: MailTemplates.ChangeEmail,
+        context: {
+          host: HOST,
+          title: d['en'].subjectChangeEmail,
+          action: d['en'].changeEmailCode,
+          code: changeEmailDto.code,
+        },
+      });
+
       if (MAIL_TEST) {
         const previewUri = nodemailer.getTestMessageUrl(info);
         Logger.log(previewUri);

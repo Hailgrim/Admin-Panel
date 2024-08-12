@@ -3,9 +3,9 @@
 import { FC } from 'react';
 import Typography from '@mui/material/Typography';
 
-import PanelPage from '../../PanelPage';
-import UpdateUserForm from '@/entities/Forms/Users/UpdateUserForm';
-import UpdateUserRolesForm from '@/entities/Forms/Users/UpdateUserRolesForm';
+import PanelLayout from '../../PanelLayout';
+import UpdateUserForm from '@/features/Users/UpdateUserForm';
+import UpdateUserRolesForm from '@/features/Users/UpdateUserRolesForm';
 import useT from '@/shared/hooks/useT';
 import { IClientPage } from '@/views/types';
 import { IUser } from '@/shared/api/users/types';
@@ -20,13 +20,13 @@ const UserPage: FC<
   const t = useT();
 
   return (
-    <PanelPage h1={h1}>
+    <PanelLayout h1={h1}>
       {data?.user && (
         <>
           <UpdateUserForm data={data.user} />
           {data.roles && (
             <>
-              <Typography component="h2" variant="h6" sx={{ my: 1 }}>
+              <Typography component="h2" variant="h6" sx={{ mt: 3, mb: 1 }}>
                 {t.roles}
               </Typography>
               <UpdateUserRolesForm user={data.user} roles={data.roles} />
@@ -34,7 +34,7 @@ const UserPage: FC<
           )}
         </>
       )}
-    </PanelPage>
+    </PanelLayout>
   );
 };
 export default UserPage;

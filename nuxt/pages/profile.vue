@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import authApi from '~/api/auth/authApi'
-import type { ISession } from '~/api/auth/types'
-import UpdateProfileForm from '~/components/entities/Forms/Auth/UpdateProfileForm.vue'
-import SessionForm from '~/components/entities/Forms/Auth/SessionForm.vue'
-import { useMainStore } from '~/store/main/main'
+import UpdateProfileForm from '~/components/features/Profile/UpdateProfileForm.vue'
+import ProfileSessions from '~/components/features/Profile/ProfileSessions.vue'
+import ProfileRoles from '~/components/features/Profile/ProfileRoles.vue'
+import UpdatePasswordForm from '~/components/features/Profile/UpdatePasswordForm.vue'
+import ChangeEmailRequestForm from '~/components/features/Profile/ChangeEmailRequestForm.vue'
 
 definePageMeta({
   middleware: ['auth'],
@@ -12,40 +12,24 @@ definePageMeta({
   title: 'profile',
   description: 'profile',
 })
-
-const { locale } = useI18n()
-const { data, error, execute, pending } = authApi.getSessions()
-const mainStore = useMainStore()
-const sessions = ref<ISession[] | null>(null)
-
-watch(
-  data,
-  () => {
-    sessions.value = data.value &&
-      Array.from(data.value).sort((a, b) => (!a.current && b.current ? 1 : -1))
-  },
-)
-
-watch(
-  error,
-  () => {
-    if (error.value)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(error.value, locale.value) })
-  },
-)
-
-execute()
 </script>
 
 <template>
   <UpdateProfileForm />
-  <v-card-title class="px-0 pt-0 pb-3">
+  <v-card-title class="px-0 py-3">
+    {{ $t('roles') }}
+  </v-card-title>
+  <ProfileRoles />
+  <v-card-title class="px-0 py-3">
+    {{ $t('changeEmail') }}
+  </v-card-title>
+  <ChangeEmailRequestForm />
+  <v-card-title class="px-0 py-3">
+    {{ $t('updatePassword') }}
+  </v-card-title>
+  <UpdatePasswordForm />
+  <v-card-title class="px-0 py-3">
     {{ $t('sessions') }}
   </v-card-title>
-  <v-skeleton-loader v-if="pending" height="68" />
-  <template v-else>
-    <SessionForm
-v-for="session of sessions" :key="session.id" :session="session"
-      @delete="sessions = sessions?.filter((item) => item.id !== session.id) || null" />
-  </template>
+  <ProfileSessions />
 </template>

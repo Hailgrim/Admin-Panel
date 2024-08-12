@@ -1,10 +1,10 @@
 const en = {
   email: 'Email',
-  incorrect: (fieldName?: string) => `[${fieldName}] Incorrect`,
-  mustBeAString: (fieldName?: string) => `[${fieldName}] Must be a string`,
-  verificationCode: 'Verification code',
-  resetPasswordCode: 'Reset password code',
   subjectRegistration: 'Registration',
+  verificationCode: 'Verification code',
   subjectForgotPassword: 'Forgot password',
+  resetPasswordCode: 'Password reset code',
+  subjectChangeEmail: 'Change email',
+  changeEmailCode: 'Code for changing email',
 };
 export default en;

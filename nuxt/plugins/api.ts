@@ -30,7 +30,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     async onResponseError({ response, options }) {
       if (response.status === 401) {
         try {
-          const refresh = await $fetch.raw<boolean>(ROUTES.api.auth.refresh, {
+          const refresh = await $fetch.raw<boolean>(ROUTES.api.refresh, {
             baseURL,
             method: 'GET',
             headers: options.headers,
@@ -50,11 +50,11 @@ export default defineNuxtPlugin((nuxtApp) => {
             }
           }
         } catch (error) {
-          if (!Object.values(ROUTES.auth).includes(nuxtApp._route.path)) {
+          if (!Object.values(ROUTES.ui).includes(nuxtApp._route.path)) {
             await nuxtApp.runWithContext(() =>
               navigateTo(
                 {
-                  path: ROUTES.auth.signIn,
+                  path: ROUTES.ui.signIn,
                   query: { return: encodeURIComponent(nuxtApp._route.path) },
                 },
                 { redirectCode: 302 }

@@ -46,7 +46,7 @@ class RolesApi {
     })
   )
 
-  delete = useAPI<boolean, IRole['id'] | IRole['id'][]>((payload) => ({
+  delete = useAPI<boolean, IRole['id'][]>((payload) => ({
     url: ROUTES.api.roles,
     options: { method: 'DELETE', credentials: 'include', body: payload },
   }))

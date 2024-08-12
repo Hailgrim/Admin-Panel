@@ -84,7 +84,7 @@ class ResourcesService {
     };
   }
 
-  deleteArgs(payload: IResource['id'] | IResource['id'][]): IReqArgs {
+  deleteArgs(payload: IResource['id'][]): IReqArgs {
     return {
       url: ROUTES.api.resources,
       method: 'DELETE',

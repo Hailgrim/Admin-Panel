@@ -2,25 +2,25 @@ import { Module } from '@nestjs/common';
 
 import { RolesController } from './roles.controller';
 import { DatabaseModule } from 'src/database/database.module';
-import { UsersService } from 'src/users/users.service';
-import { usersProviders } from 'src/users/users.providers';
 import { RolesService } from './roles.service';
-import { rolesProviders } from './roles.providers';
-import { ResourcesService } from 'src/resources/resources.service';
-import { resourcesProviders } from 'src/resources/resources.providers';
-import { rolesResourcesProviders } from 'src/database/roles-resources.providers';
+import { UsersModule } from 'src/users/users.module';
+import { ROLES_REPOSITORY, ROLES_RESOURCES_REPOSITORY } from 'libs/constants';
+import { RolesResources } from '../database/roles-resources.entity';
+import { Role } from './role.entity';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, UsersModule],
   controllers: [RolesController],
   providers: [
-    UsersService,
-    ...usersProviders,
+    {
+      provide: ROLES_REPOSITORY,
+      useValue: Role,
+    },
+    {
+      provide: ROLES_RESOURCES_REPOSITORY,
+      useValue: RolesResources,
+    },
     RolesService,
-    ...rolesProviders,
-    ResourcesService,
-    ...resourcesProviders,
-    ...rolesResourcesProviders,
   ],
   exports: [RolesService],
 })

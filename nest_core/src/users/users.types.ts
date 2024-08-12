@@ -10,6 +10,7 @@ export abstract class IUser {
   verificationCode?: string | null;
   resetPasswordCode?: string | null;
   changeEmailCode?: string | null;
+  temporaryEmail?: string | null;
   roles?: IRole[];
 }
 
@@ -20,8 +21,12 @@ export type CreateUserFields = Required<
 export type GetUsersFields = Partial<
   Omit<
     IUser,
-    'password' | 'verificationCode' | 'resetPasswordCode' | 'changeEmailCode'
+    | 'password'
+    | 'verificationCode'
+    | 'resetPasswordCode'
+    | 'changeEmailCode'
+    | 'temporaryEmail'
   >
 >;
 
-export type UpdateUserFields = Partial<Omit<IUser, 'roles' | 'id'>>;
+export type UpdateUserFields = Partial<Omit<IUser, 'id' | 'roles'>>;

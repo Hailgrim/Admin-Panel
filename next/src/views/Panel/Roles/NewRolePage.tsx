@@ -2,15 +2,15 @@
 
 import { FC } from 'react';
 
-import PanelPage from '../../PanelPage';
-import CreateRoleForm from '@/entities/Forms/Roles/CreateRoleForm';
+import PanelLayout from '../../PanelLayout';
+import CreateRoleForm from '@/features/Roles/CreateRoleForm';
 import { IClientPage } from '@/views/types';
 
 const NewRolePage: FC<IClientPage> = ({ h1 }) => {
   return (
-    <PanelPage h1={h1}>
+    <PanelLayout h1={h1}>
       <CreateRoleForm />
-    </PanelPage>
+    </PanelLayout>
   );
 };
 export default NewRolePage;

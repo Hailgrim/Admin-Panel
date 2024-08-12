@@ -8,9 +8,6 @@ import {
   Get,
   HttpStatus,
   Delete,
-  Patch,
-  UseInterceptors,
-  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
@@ -24,21 +21,10 @@ import { ACCESS_TOKEN_LIFETIME, REFRESH_TOKEN_LIFETIME } from 'libs/config';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
 import { SignUpDto } from './dto/sign-up.dts';
-import { UpdateProfileDto } from './dto/update-profile.dto';
-import { Roles } from 'src/roles/roles.decorator';
-import { Rights } from 'libs/constants';
-import { RolesGuard } from 'src/roles/roles.guard';
 import d from 'locales/dictionary';
-import {
-  FastifyRequestWithToken,
-  FastifyRequestWithUser,
-  ISession,
-} from './auth.types';
+import { FastifyRequestWithToken, FastifyRequestWithUser } from './auth.types';
 import { IUser } from 'src/users/users.types';
 import { createCookieOptions, getCookies } from './auth.utils';
-import { ExternalSessionDto } from './dto/external-session.dto';
-
-const route = 'profile';
 
 @ApiTags(d['en'].authorization)
 @Controller('auth')
@@ -136,52 +122,6 @@ export class AuthController {
     }
 
     return true;
-  }
-
-  @ApiOperation({ summary: d['en'].profile })
-  @ApiResponse({ status: HttpStatus.OK, type: IUser })
-  @Roles({ path: route, action: Rights.Reading })
-  @UseGuards(JwtGuard, RolesGuard)
-  @Get(route)
-  getProfile(@Req() req: FastifyRequestWithToken): Promise<IUser> {
-    return this.authService.getProfile(req.user);
-  }
-
-  @ApiOperation({ summary: d['en'].updateProfile })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Roles({ path: route, action: Rights.Updating })
-  @UseGuards(JwtGuard, RolesGuard)
-  @Patch(route)
-  updateProfile(
-    @Req() req: FastifyRequestWithToken,
-    @Body() updateProfileDto: UpdateProfileDto,
-  ): Promise<boolean> {
-    return this.authService.updateProfile(req.user, updateProfileDto);
-  }
-
-  @ApiOperation({ summary: d['en'].sessions })
-  @ApiResponse({ status: HttpStatus.OK, type: [ISession] })
-  @Roles({ path: route, action: Rights.Reading })
-  @UseGuards(JwtGuard, RolesGuard)
-  @UseInterceptors(ClassSerializerInterceptor)
-  @Get('sessions')
-  async getSessions(
-    @Req() req: FastifyRequestWithToken,
-  ): Promise<ExternalSessionDto[]> {
-    const sessions = await this.authService.getSessions(req.user);
-    return sessions.map((session) => new ExternalSessionDto(session));
-  }
-
-  @ApiOperation({ summary: d['en'].deleteSessions })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Roles({ path: route, action: Rights.Deleting })
-  @UseGuards(JwtGuard, RolesGuard)
-  @Delete('sessions')
-  deleteSessions(
-    @Req() req: FastifyRequestWithToken,
-    @Body() keys: string[],
-  ): Promise<boolean> {
-    return this.authService.deleteSessions(req.user, keys);
   }
 
   @ApiOperation({ summary: d['en'].signOut })

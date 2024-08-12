@@ -2,15 +2,15 @@
 
 import { FC } from 'react';
 
-import PanelPage from '../../PanelPage';
-import CreateUserForm from '@/entities/Forms/Users/CreateUserForm';
+import PanelLayout from '../../PanelLayout';
+import CreateUserForm from '@/features/Users/CreateUserForm';
 import { IClientPage } from '@/views/types';
 
 const NewUserPage: FC<IClientPage> = ({ h1 }) => {
   return (
-    <PanelPage h1={h1}>
+    <PanelLayout h1={h1}>
       <CreateUserForm />
-    </PanelPage>
+    </PanelLayout>
   );
 };
 export default NewUserPage;

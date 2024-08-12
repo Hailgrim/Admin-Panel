@@ -2,8 +2,8 @@ import { MiddlewareConfig, NextMiddleware, NextResponse } from 'next/server';
 import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 
 import { ROUTES } from './shared/lib/constants';
-import authService from './shared/api/auth/authService';
 import { IUser } from './shared/api/users/types';
+import profileService from './shared/api/profile/profileService';
 
 export const middleware: NextMiddleware = async (request) => {
   /**
@@ -21,33 +21,34 @@ export const middleware: NextMiddleware = async (request) => {
   let updatedCookies: ResponseCookie[] | null | undefined = null;
   let profile: IUser | null = null;
   let response = NextResponse.next();
+  const isAuthRoute =
+    request.nextUrl.pathname === ROUTES.ui.signIn ||
+    request.nextUrl.pathname === ROUTES.ui.signUp ||
+    request.nextUrl.pathname === ROUTES.ui.forget;
 
   if (accessToken || refreshToken) {
-    const { data, newCookies } = await authService.getProfile();
+    const { data, newCookies } = await profileService.getProfile();
     updatedCookies = newCookies;
     profile = data;
   }
 
   if (profile) {
-    if (Object.values(ROUTES.auth).includes(request.nextUrl.pathname)) {
+    if (isAuthRoute) {
       const searchParams = new URLSearchParams(request.nextUrl.search);
 
       response = NextResponse.redirect(
         new URL(
-          decodeURIComponent(searchParams.get('return') || ROUTES.panel.home),
+          decodeURIComponent(searchParams.get('return') || ROUTES.ui.home),
           request.url
         ),
         { status: 302 }
       );
     }
   } else {
-    if (
-      !Object.values(ROUTES.auth).includes(request.nextUrl.pathname) &&
-      !request.headers.has('referer')
-    ) {
+    if (!isAuthRoute && !request.headers.has('referer')) {
       response = NextResponse.redirect(
         new URL(
-          `${ROUTES.auth.signIn}?return=${encodeURIComponent(
+          `${ROUTES.ui.signIn}?return=${encodeURIComponent(
             request.nextUrl.pathname
           )}`,
           request.url

@@ -5,7 +5,7 @@ import { checkActiveLink } from './utils'
 
 const route = useRoute()
 const { t } = useI18n()
-const profileRights = useRights(ROUTES.api.auth.profile)
+const profileRights = useRights(ROUTES.api.profile)
 const usersRights = useRights(ROUTES.api.users)
 const rolesRights = useRights(ROUTES.api.roles)
 const resourcesRights = useRights(ROUTES.api.resources)
@@ -13,14 +13,14 @@ const resourcesRights = useRights(ROUTES.api.resources)
 const menu: IMenuItem[] = [{
   title: t('home'),
   icon: 'mdi-home',
-  href: ROUTES.panel.home,
+  href: ROUTES.ui.home,
 }]
 
 if (profileRights.value.reading) {
   menu.push({
     title: t('profile'),
     icon: 'mdi-account-box',
-    href: ROUTES.panel.profile,
+    href: ROUTES.ui.profile,
   })
 }
 
@@ -34,7 +34,7 @@ if (usersRights.value.reading) {
   mainMenu.childs!.push({
     title: t('users'),
     icon: 'mdi-account-group',
-    href: ROUTES.panel.users,
+    href: ROUTES.ui.users,
   })
 }
 
@@ -42,7 +42,7 @@ if (rolesRights.value.reading) {
   mainMenu.childs!.push({
     title: t('roles'),
     icon: 'mdi-account-supervisor-circle',
-    href: ROUTES.panel.roles,
+    href: ROUTES.ui.roles,
   })
 }
 
@@ -50,7 +50,7 @@ if (resourcesRights.value.reading) {
   mainMenu.childs!.push({
     title: t('resources'),
     icon: 'mdi-api',
-    href: ROUTES.panel.resources,
+    href: ROUTES.ui.resources,
   })
 }
 

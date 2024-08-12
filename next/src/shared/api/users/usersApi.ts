@@ -47,7 +47,7 @@ const usersApi = createApi({
       invalidatesTags: ['Entity'],
     }),
 
-    delete: builder.mutation<boolean, IUser['id'] | IUser['id'][]>({
+    delete: builder.mutation<boolean, IUser['id'][]>({
       query: usersService.deleteArgs,
       invalidatesTags: ['CountedEntities'],
     }),

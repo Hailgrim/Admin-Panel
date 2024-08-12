@@ -14,7 +14,8 @@ export function useAPI<ResT = unknown, ReqT = void>(
   return () => {
     const pending = ref(false)
     const error = ref<IReqError | null>(null)
-    const data = ref<ResT | null>(null) as Ref<ResT | null>
+    const data = ref(null) as Ref<ResT | null>
+    const args = ref(null) as Ref<ReqT | null>
     const customFetch = useNuxtApp().$api
     const userAgent = useRequestHeader('user-agent')
 
@@ -24,6 +25,7 @@ export function useAPI<ResT = unknown, ReqT = void>(
       error.value = null
       data.value = null
       pending.value = true
+      args.value = arg
 
       headers['content-type'] =
         typeof arg === 'object'
@@ -58,6 +60,6 @@ export function useAPI<ResT = unknown, ReqT = void>(
       return data.value
     }
 
-    return { data, error, pending, execute }
+    return { data, error, pending, execute, args }
   }
 }

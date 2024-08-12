@@ -75,21 +75,11 @@ export class ResourcesController {
   @Roles({ path: route, action: Rights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('/:id')
-  async update(
-    @Res({ passthrough: true }) res: FastifyReply,
+  update(
     @Param('id') id: string,
     @Body() updateResourceDto: UpdateResourceDto,
   ): Promise<boolean> {
-    const result = await this.resourceService.updateFields(
-      id,
-      updateResourceDto,
-    );
-
-    if (!result) {
-      res.status(HttpStatus.NO_CONTENT);
-    }
-
-    return result;
+    return this.resourceService.updateFields(id, updateResourceDto);
   }
 
   @ApiOperation({ summary: d['en'].deleteEntity })
@@ -97,7 +87,7 @@ export class ResourcesController {
   @Roles({ path: route, action: Rights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
   @Delete()
-  delete(@Body() id: string | string[]): Promise<boolean> {
-    return this.resourceService.delete(id);
+  delete(@Body() ids: string[]): Promise<boolean> {
+    return this.resourceService.delete(ids);
   }
 }

@@ -1,12 +1,10 @@
 import {
   ForbiddenException,
   GoneException,
-  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ClientProxy } from '@nestjs/microservices';
 import * as argon2 from 'argon2';
 import * as crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
@@ -16,7 +14,6 @@ import { RolesService } from 'src/roles/roles.service';
 import { ResourcesService } from 'src/resources/resources.service';
 import { User } from 'src/users/user.entity';
 import { SignInDto } from './dto/sign-in-auth.dto';
-import { MAIL_SERVER } from 'libs/constants';
 import {
   ACCESS_TOKEN_LIFETIME,
   ACCESS_TOKEN_SECRET_KEY,
@@ -27,19 +24,17 @@ import { CreateResourceDto } from 'src/resources/dto/create-resource.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
 import { SignUpDto } from './dto/sign-up.dts';
-import { UpdateProfileDto } from './dto/update-profile.dto';
 import { RedisService } from 'src/redis/redis.service';
 import d from 'locales/dictionary';
 import { ISession, IToken, ITokensPair } from './auth.types';
 import { IUser } from 'src/users/users.types';
-import { ExternalSessionDto } from './dto/external-session.dto';
 import { generateCode } from './auth.utils';
+import { RmqService } from 'src/rmq/rmq.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject(MAIL_SERVER)
-    private mailClient: ClientProxy,
+    private rmqService: RmqService,
     private jwtService: JwtService,
     private usersService: UsersService,
     private rolesService: RolesService,
@@ -98,7 +93,7 @@ export class AuthService {
 
   async signUp(signUpDto: SignUpDto): Promise<User> {
     const defaultRole = await this.checkDefaultData();
-    return await this.usersService.create({ ...signUpDto, enabled: true }, [
+    return this.usersService.create({ ...signUpDto, enabled: true }, [
       defaultRole,
     ]);
   }
@@ -108,16 +103,16 @@ export class AuthService {
       const user = await this.usersService.findOneAuth(signInDto.username);
 
       if (
-        user.password &&
-        (await argon2.verify(user.password, signInDto.password))
+        !user.password ||
+        !(await argon2.verify(user.password, signInDto.password))
       ) {
-        const result: Partial<User> = { ...user.dataValues };
-        delete result.password;
-        result.roles = user.roles;
-        return result;
-      } else {
-        throw new UnauthorizedException();
+        throw null;
       }
+
+      const result: Partial<User> = { ...user.dataValues };
+      delete result.password;
+      result.roles = user.roles;
+      return result;
     } catch (error) {
       throw new UnauthorizedException();
     }
@@ -153,9 +148,10 @@ export class AuthService {
       if (user.email) {
         const code = generateCode();
         await this.usersService.updateVerificationCode(user.email, code);
-        this.mailClient
-          .send({ method: 'registration' }, { email: user.email, code })
-          .subscribe();
+        this.rmqService.sendEmail(
+          { method: 'registration' },
+          { email: user.email, code },
+        );
       }
 
       throw new ForbiddenException();
@@ -188,10 +184,9 @@ export class AuthService {
   }
 
   verifyUser(verifyUserDto: VerifyUserDto): Promise<boolean> {
-    return this.usersService.updateVerificationCode(
+    return this.usersService.updateVerificationStatus(
       verifyUserDto.email,
       verifyUserDto.code,
-      true,
     );
   }
 
@@ -199,16 +194,14 @@ export class AuthService {
     const code = generateCode();
 
     if (await this.usersService.updateResetPasswordCode(email, code)) {
-      this.mailClient
-        .send({ method: 'forgotPassword' }, { email, code })
-        .subscribe();
+      this.rmqService.sendEmail({ method: 'forgotPassword' }, { email, code });
     }
 
     return true;
   }
 
   resetPassword(resetPasswordDto: ResetPasswordDto): Promise<boolean> {
-    return this.usersService.updatePassword(
+    return this.usersService.updatePasswordWithCode(
       resetPasswordDto.email,
       resetPasswordDto.code,
       resetPasswordDto.password,
@@ -257,35 +250,6 @@ export class AuthService {
       },
       sessionTtl,
     );
-  }
-
-  getProfile(token: IToken): Promise<User> {
-    return this.usersService.findOnePublic(token.userId);
-  }
-
-  async updateProfile(
-    token: IToken,
-    updateProfileDto: UpdateProfileDto,
-  ): Promise<boolean> {
-    return this.usersService.updateFields(token.userId, updateProfileDto);
-  }
-
-  async getSessions(token: IToken): Promise<ExternalSessionDto[]> {
-    const keys = await this.redisService.keys(`sessions:${token.userId}:*`);
-    const current = `sessions:${token.userId}:${token.sessionId}`;
-    return (await this.redisService.mget<ISession>(keys)).map(
-      (session, index) => ({
-        ...session,
-        id: keys[index],
-        current: current === keys[index],
-      }),
-    );
-  }
-
-  async deleteSessions(token: IToken, remove: string[]): Promise<boolean> {
-    const keys = await this.redisService.keys(`sessions:${token.userId}:*`);
-    await this.redisService.mdel(remove.filter((key) => keys.includes(key)));
-    return true;
   }
 
   async signOut(token: IToken): Promise<boolean> {

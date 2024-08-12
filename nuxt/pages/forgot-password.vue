@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ForgotPasswordForm from '~/components/entities/Forms/Auth/ForgotPasswordForm.vue'
+import ForgotPasswordForm from '~/components/features/Auth/ForgotPasswordForm.vue'
 
 definePageMeta({
   middleware: ['auth'],

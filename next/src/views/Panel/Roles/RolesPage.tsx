@@ -6,12 +6,12 @@ import AddIcon from '@mui/icons-material/Add';
 import { GridRowSelectionModel } from '@mui/x-data-grid/models/gridRowSelectionModel';
 import { GridPaginationModel } from '@mui/x-data-grid/models/gridPaginationProps';
 
-import PanelPage from '../../PanelPage';
-import RolesTable from '@/entities/Tables/RolesTable';
+import PanelLayout from '../../PanelLayout';
+import RolesTable from '@/entities/Roles/RolesTable';
 import useRights from '@/shared/hooks/useRights';
 import useT from '@/shared/hooks/useT';
 import { ROUTES } from '@/shared/lib/constants';
-import FormButton from '@/shared/kit/Form/FormButton';
+import FormButton from '@/shared/ui/Form/FormButton';
 import { IFindAndCountRes } from '@/shared/api/types';
 import { IRole } from '@/shared/api/roles/types';
 import rolesApi from '@/shared/api/roles/rolesApi';
@@ -19,7 +19,7 @@ import { IClientPage } from '@/views/types';
 
 const RolesPage: FC<IClientPage<IFindAndCountRes<IRole>>> = ({ h1, data }) => {
   const t = useT();
-  const rights = useRights(ROUTES.panel.roles);
+  const rights = useRights(ROUTES.ui.roles);
   const [findAndCountAll, findAndCountAllReq] =
     rolesApi.useLazyFindAndCountAllQuery();
   const [findAll, findAllReq] = rolesApi.useLazyFindAllQuery();
@@ -69,12 +69,12 @@ const RolesPage: FC<IClientPage<IFindAndCountRes<IRole>>> = ({ h1, data }) => {
   }, [findAndCountAll]);
 
   return (
-    <PanelPage h1={h1}>
+    <PanelLayout h1={h1}>
       <FormButton
         color="primary"
         startIcon={<AddIcon />}
         disabled={!rights.creating}
-        href={ROUTES.panel.newRole}
+        href={ROUTES.ui.newRole}
       >
         {t.create}
       </FormButton>
@@ -100,7 +100,7 @@ const RolesPage: FC<IClientPage<IFindAndCountRes<IRole>>> = ({ h1, data }) => {
         onRowSelectionModelChange={selectionHandler}
         onPaginationModelChange={paginationHandler}
       />
-    </PanelPage>
+    </PanelLayout>
   );
 };
 export default RolesPage;

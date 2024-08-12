@@ -44,7 +44,7 @@ const rolesApi = createApi({
       invalidatesTags: ['Entity'],
     }),
 
-    delete: builder.mutation<boolean, IRole['id'] | IRole['id'][]>({
+    delete: builder.mutation<boolean, IRole['id'][]>({
       query: rolesService.deleteArgs,
       invalidatesTags: ['CountedEntities'],
     }),

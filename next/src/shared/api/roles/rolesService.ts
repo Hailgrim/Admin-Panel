@@ -90,7 +90,7 @@ class RolesService {
     };
   }
 
-  deleteArgs(payload: IRole['id'] | IRole['id'][]): IReqArgs {
+  deleteArgs(payload: IRole['id'][]): IReqArgs {
     return {
       url: ROUTES.api.roles,
       method: 'DELETE',

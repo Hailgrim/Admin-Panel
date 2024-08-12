@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import usersApi from '~/api/users/usersApi'
-import UsersTable from '~/components/entities/Tables/UsersTable.vue'
+import UsersList from '~/components/features/Users/UsersList.vue'
 
 definePageMeta({
   middleware: ['auth'],
@@ -14,23 +14,25 @@ const router = useRouter()
 const route = useRoute()
 const page = ref(Number(route.query.page) || 1)
 const quantity = ref(Number(route.query.quantity) || 25)
-const { data: lcData, execute: lcExecute } = usersApi.listCounted()
-const { data: lData, execute: lExecute } = usersApi.list()
-await lcExecute({ page: page.value, quantity: quantity.value })
-const count = ref(lcData.value?.count || 0)
-const users = computed(() => lData.value || lcData.value?.rows || [])
+const { data, execute } = usersApi.listCounted()
+await execute({ page: page.value, quantity: quantity.value })
+const count = ref(data.value?.count)
 
 watch(
-  [page, quantity],
+  page,
   () => {
-    router.push({ query: { page: page.value, quantity: quantity.value } })
-    lExecute({ page: page.value, quantity: quantity.value })
+    router.push({ query: { ...route.query, page: page.value } })
+  },
+)
+
+watch(
+  quantity,
+  () => {
+    router.push({ query: { ...route.query, quantity: quantity.value } })
   },
 )
 </script>
 
 <template>
-  <UsersTable
-:count="count" :page="page" :quantity="quantity" :users="users" @update:page="value => page = value"
-    @update:quantity="value => quantity = value" />
+  <UsersList v-model:page="page" v-model:quantity="quantity" :count="count" :rows="data?.rows" />
 </template>

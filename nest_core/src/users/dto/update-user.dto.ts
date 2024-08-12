@@ -4,7 +4,7 @@ import { Transform } from 'class-transformer';
 
 import d from 'locales/dictionary';
 import { UpdateUserFields } from '../users.types';
-import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX } from 'libs/constants';
+import { EMAIL_REGEX, NAME_REGEX } from 'libs/constants';
 
 export class UpdateUserDto implements UpdateUserFields {
   @ApiPropertyOptional({
@@ -14,11 +14,6 @@ export class UpdateUserDto implements UpdateUserFields {
   @IsOptional()
   @Matches(EMAIL_REGEX)
   email?: string;
-
-  @ApiPropertyOptional({ example: '!Q1q2w3e4r', description: d['en'].password })
-  @IsOptional()
-  @Matches(PASSWORD_REGEX)
-  password?: string;
 
   @ApiPropertyOptional({ example: 'Linus Torvalds', description: d['en'].name })
   @IsOptional()

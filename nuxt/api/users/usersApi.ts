@@ -46,7 +46,7 @@ class UsersApi {
     })
   )
 
-  delete = useAPI<boolean, IUser['id'] | IUser['id'][]>((payload) => ({
+  delete = useAPI<boolean, IUser['id'][]>((payload) => ({
     url: ROUTES.api.users,
     options: { method: 'DELETE', credentials: 'include', body: payload },
   }))

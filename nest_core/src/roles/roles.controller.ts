@@ -22,10 +22,10 @@ import { Rights } from 'libs/constants';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { GetRolesDto } from './dto/get-roles.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { RolesResourcesDto } from 'src/database/dto/roles-resources.dto';
 import d from 'locales/dictionary';
 import { IRole } from './roles.types';
 import { IFindAndCount } from 'src/database/database.types';
+import { RolesResourcesDto } from 'src/database/dto/roles-resources.dto';
 
 const route = 'roles';
 
@@ -76,18 +76,11 @@ export class RolesController {
   @Roles({ path: route, action: Rights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('/:id')
-  async update(
-    @Res({ passthrough: true }) res: FastifyReply,
+  update(
     @Param('id') id: string,
     @Body() updateRoleDto: UpdateRoleDto,
   ): Promise<boolean> {
-    const result = await this.roleService.updateFields(id, updateRoleDto);
-
-    if (!result) {
-      res.status(HttpStatus.NO_CONTENT);
-    }
-
-    return result;
+    return this.roleService.updateFields(id, updateRoleDto);
   }
 
   @ApiOperation({ summary: d['en'].updateEntity })
@@ -95,21 +88,11 @@ export class RolesController {
   @Roles({ path: route, action: Rights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('/:id/resources')
-  async updateResources(
-    @Res({ passthrough: true }) res: FastifyReply,
+  updateResources(
     @Param('id') id: string,
     @Body() rolesResourcesDtoArr: RolesResourcesDto[],
   ): Promise<boolean> {
-    const result = await this.roleService.updateResources(
-      id,
-      rolesResourcesDtoArr,
-    );
-
-    if (!result) {
-      res.status(HttpStatus.NO_CONTENT);
-    }
-
-    return result;
+    return this.roleService.updateResources(id, rolesResourcesDtoArr);
   }
 
   @ApiOperation({ summary: d['en'].deleteEntity })
@@ -117,7 +100,7 @@ export class RolesController {
   @Roles({ path: route, action: Rights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
   @Delete()
-  delete(@Body() id: string | string[]): Promise<boolean> {
-    return this.roleService.delete(id);
+  delete(@Body() ids: string[]): Promise<boolean> {
+    return this.roleService.delete(ids);
   }
 }

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import resourcesApi from '~/api/resources/resourcesApi'
 import rolesApi from '~/api/roles/rolesApi'
-import UpdateRoleForm from '~/components/entities/Forms/Role/UpdateRoleForm.vue'
-import UpdateRoleResourcesForm from '~/components/entities/Forms/Role/UpdateRoleResourcesForm.vue'
+import UpdateRoleForm from '~/components/features/Roles/UpdateRoleForm.vue'
+import UpdateRoleResourcesForm from '~/components/features/Roles/UpdateRoleResourcesForm.vue'
 
 definePageMeta({
   middleware: ['auth'],
@@ -29,7 +29,7 @@ await resourcesExecute(undefined)
 
 <template>
   <UpdateRoleForm v-if="roleData" :role="roleData" />
-  <v-card-title v-if="roleData && resourcesData" class="px-0 pt-0 pb-6">
+  <v-card-title v-if="roleData && resourcesData" class="px-0 py-3">
     {{ $t('resources') }}
   </v-card-title>
   <UpdateRoleResourcesForm v-if="roleData && resourcesData" :resources="resourcesData" :role="roleData" />

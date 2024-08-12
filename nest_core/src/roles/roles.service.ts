@@ -17,10 +17,10 @@ import { CreateRoleDto } from './dto/create-role.dto';
 import { Role } from './role.entity';
 import { GetRolesDto } from './dto/get-roles.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { RolesResources } from 'src/database/roles-resources.entity';
-import { RolesResourcesDto } from 'src/database/dto/roles-resources.dto';
+import { RolesResources } from '../database/roles-resources.entity';
 import { IFindAndCount } from 'src/database/database.types';
 import { preparePaginationOptions } from 'src/database/database.utils';
+import { RolesResourcesDto } from 'src/database/dto/roles-resources.dto';
 
 @Injectable()
 export class RolesService {
@@ -125,7 +125,7 @@ export class RolesService {
     }
 
     try {
-      return this.rolesRepository.scope(PUBLIC).findAll(options);
+      return await this.rolesRepository.scope(PUBLIC).findAll(options);
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -138,7 +138,7 @@ export class RolesService {
     const options = this.prepareGetOptions(getRolesDto);
 
     try {
-      return this.rolesRepository.scope(PUBLIC).findAndCountAll(options);
+      return await this.rolesRepository.scope(PUBLIC).findAndCountAll(options);
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -161,13 +161,7 @@ export class RolesService {
     }
 
     if (affectedCount === 0) {
-      const role = await this.rolesRepository.findOne({ where: { id } });
-
-      if (!role) {
-        throw new NotFoundException();
-      } else {
-        return false;
-      }
+      throw new NotFoundException();
     }
 
     return true;
@@ -238,7 +232,7 @@ export class RolesService {
     return true;
   }
 
-  async delete(id: string | string[]) {
+  async delete(id: string[]) {
     let destroyedCount = 0;
 
     try {

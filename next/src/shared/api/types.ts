@@ -28,7 +28,7 @@ export interface IFetchRes<T = unknown> {
 
 export interface IReqArgs {
   url: string;
-  method?: RequestInit['method'];
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   body?: unknown;
   params?: Record<string, unknown>;
   credentials?: RequestCredentials;

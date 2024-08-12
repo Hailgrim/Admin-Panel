@@ -76,18 +76,11 @@ export class UsersController {
   @Roles({ path: route, action: Rights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('/:id')
-  async update(
-    @Res({ passthrough: true }) res: FastifyReply,
+  update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<boolean> {
-    const result = await this.usersService.updateFields(id, updateUserDto);
-
-    if (!result) {
-      res.status(HttpStatus.NO_CONTENT);
-    }
-
-    return result;
+    return this.usersService.updateFields(id, updateUserDto);
   }
 
   @ApiOperation({ summary: d['en'].updateEntity })
@@ -95,18 +88,11 @@ export class UsersController {
   @Roles({ path: route, action: Rights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('/:id/roles')
-  async updateRoles(
-    @Res({ passthrough: true }) res: FastifyReply,
+  updateRoles(
     @Param('id') id: string,
     @Body() usersRolesDtoArr: UsersRolesDto[],
   ): Promise<boolean> {
-    const result = await this.usersService.updateRoles(id, usersRolesDtoArr);
-
-    if (!result) {
-      res.status(HttpStatus.NO_CONTENT);
-    }
-
-    return result;
+    return this.usersService.updateRoles(id, usersRolesDtoArr);
   }
 
   @ApiOperation({ summary: d['en'].deleteEntity })
@@ -114,7 +100,7 @@ export class UsersController {
   @Roles({ path: route, action: Rights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
   @Delete()
-  delete(@Body() id: string | string[]): Promise<boolean> {
-    return this.usersService.delete(id);
+  delete(@Body() ids: string[]): Promise<boolean> {
+    return this.usersService.delete(ids);
   }
 }

@@ -2,10 +2,10 @@
 
 import { FC } from 'react';
 
-import PanelPage from '../PanelPage';
+import PanelLayout from '../PanelLayout';
 import { IClientPage } from '../types';
 
 const HomePage: FC<IClientPage> = ({ h1 }) => {
-  return <PanelPage h1={h1}></PanelPage>;
+  return <PanelLayout h1={h1}></PanelLayout>;
 };
 export default HomePage;

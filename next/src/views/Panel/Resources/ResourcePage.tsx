@@ -2,14 +2,16 @@
 
 import { FC } from 'react';
 
-import PanelPage from '../../PanelPage';
-import UpdateResourceForm from '@/entities/Forms/Resources/UpdateResourceForm';
+import PanelLayout from '../../PanelLayout';
+import UpdateResourceForm from '@/features/Resources/UpdateResourceForm';
 import { IResource } from '@/shared/api/resources/types';
 import { IClientPage } from '@/views/types';
 
 const ResourcePage: FC<IClientPage<IResource>> = ({ h1, data }) => {
   return (
-    <PanelPage h1={h1}>{data && <UpdateResourceForm data={data} />}</PanelPage>
+    <PanelLayout h1={h1}>
+      {data && <UpdateResourceForm data={data} />}
+    </PanelLayout>
   );
 };
 export default ResourcePage;

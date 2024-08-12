@@ -8,9 +8,9 @@ import {
   GridRowSelectionModel,
 } from '@mui/x-data-grid/models';
 
-import PanelPage from '../../PanelPage';
-import ResourcesTable from '@/entities/Tables/ResourcesTable';
-import FormButton from '@/shared/kit/Form/FormButton';
+import PanelLayout from '../../PanelLayout';
+import ResourcesTable from '@/entities/Resources/ResourcesTable';
+import FormButton from '@/shared/ui/Form/FormButton';
 import useRights from '@/shared/hooks/useRights';
 import { ROUTES } from '@/shared/lib/constants';
 import useT from '@/shared/hooks/useT';
@@ -24,7 +24,7 @@ const ResourcesPage: FC<IClientPage<IFindAndCountRes<IResource>>> = ({
   data,
 }) => {
   const t = useT();
-  const rights = useRights(ROUTES.panel.resources);
+  const rights = useRights(ROUTES.ui.resources);
   const [findAndCountAll, findAndCountAllReq] =
     resourcesApi.useLazyFindAndCountAllQuery();
   const [findAll, findAllReq] = resourcesApi.useLazyFindAllQuery();
@@ -74,12 +74,12 @@ const ResourcesPage: FC<IClientPage<IFindAndCountRes<IResource>>> = ({
   }, [findAndCountAll]);
 
   return (
-    <PanelPage h1={h1}>
+    <PanelLayout h1={h1}>
       <FormButton
         color="primary"
         startIcon={<AddIcon />}
         disabled={!rights.creating}
-        href={ROUTES.panel.newResource}
+        href={ROUTES.ui.newResource}
       >
         {t.create}
       </FormButton>
@@ -105,7 +105,7 @@ const ResourcesPage: FC<IClientPage<IFindAndCountRes<IResource>>> = ({
         onRowSelectionModelChange={selectionHandler}
         onPaginationModelChange={paginationHandler}
       />
-    </PanelPage>
+    </PanelLayout>
   );
 };
 export default ResourcesPage;

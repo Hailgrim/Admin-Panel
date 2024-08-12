@@ -35,7 +35,7 @@ class ResourcesApi {
     options: { method: 'PATCH', credentials: 'include', body: payload.fields },
   }))
 
-  delete = useAPI<boolean, IResource['id'] | IResource['id'][]>((payload) => ({
+  delete = useAPI<boolean, IResource['id'][]>((payload) => ({
     url: ROUTES.api.resources,
     options: { method: 'DELETE', credentials: 'include', body: payload },
   }))

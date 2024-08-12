@@ -1,13 +1,11 @@
 import { ROUTES } from '@/shared/lib/constants';
 import { IResetPassword, IUserSignIn, IUserSignUp, IVerifyUser } from './types';
-import { IFetchRes, IReqArgs } from '../types';
-import { IUser } from '../users/types';
-import serverFetch from '../serverFetch';
+import { IReqArgs } from '../types';
 
 class AuthService {
   signUpArgs(payload: IUserSignUp): IReqArgs {
     return {
-      url: ROUTES.api.auth.sighUp,
+      url: ROUTES.api.sighUp,
       method: 'POST',
       body: payload,
     };
@@ -15,7 +13,7 @@ class AuthService {
 
   signInArgs(payload: IUserSignIn): IReqArgs {
     return {
-      url: ROUTES.api.auth.signIn,
+      url: ROUTES.api.signIn,
       method: 'POST',
       credentials: 'include',
       body: payload,
@@ -24,7 +22,7 @@ class AuthService {
 
   verifyUserArgs(payload: IVerifyUser): IReqArgs {
     return {
-      url: ROUTES.api.auth.verify,
+      url: ROUTES.api.verify,
       method: 'POST',
       body: payload,
     };
@@ -32,7 +30,7 @@ class AuthService {
 
   forgotPasswordArgs(payload: string): IReqArgs {
     return {
-      url: ROUTES.api.auth.forgotPassword,
+      url: ROUTES.api.forgotPassword,
       method: 'POST',
       body: payload,
     };
@@ -40,7 +38,7 @@ class AuthService {
 
   resetPasswordArgs(payload: IResetPassword): IReqArgs {
     return {
-      url: ROUTES.api.auth.resetPassword,
+      url: ROUTES.api.resetPassword,
       method: 'POST',
       body: payload,
     };
@@ -48,56 +46,15 @@ class AuthService {
 
   refreshArgs(): IReqArgs {
     return {
-      url: ROUTES.api.auth.refresh,
+      url: ROUTES.api.refresh,
       method: 'GET',
       credentials: 'include',
-    };
-  }
-
-  getProfileArgs(): IReqArgs {
-    return {
-      url: ROUTES.api.auth.profile,
-      method: 'GET',
-      credentials: 'include',
-    };
-  }
-
-  async getProfile(): Promise<IFetchRes<IUser | null>> {
-    const { data, error, newCookies } = await serverFetch<IUser>(
-      this.getProfileArgs()
-    );
-    return { data, error, newCookies };
-  }
-
-  updateProfileArgs(payload: Partial<IUser>): IReqArgs {
-    return {
-      url: ROUTES.api.auth.profile,
-      method: 'PATCH',
-      credentials: 'include',
-      body: payload,
-    };
-  }
-
-  getSessionsArgs(): IReqArgs {
-    return {
-      url: ROUTES.api.auth.sessions,
-      method: 'GET',
-      credentials: 'include',
-    };
-  }
-
-  deleteSessionsArgs(payload: string[]): IReqArgs {
-    return {
-      url: ROUTES.api.auth.sessions,
-      method: 'DELETE',
-      credentials: 'include',
-      body: payload,
     };
   }
 
   signOutArgs(): IReqArgs {
     return {
-      url: ROUTES.api.auth.signOut,
+      url: ROUTES.api.signOut,
       method: 'DELETE',
       credentials: 'include',
     };

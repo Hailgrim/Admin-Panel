@@ -15,7 +15,7 @@ import { IMenuItem } from './types';
 
 const SideBarMenu: FC = () => {
   const t = useT();
-  const profileRights = useRights(ROUTES.api.auth.profile);
+  const profileRights = useRights(ROUTES.api.profile);
   const usersRights = useRights(ROUTES.api.users);
   const rolesRights = useRights(ROUTES.api.roles);
   const resourcesRights = useRights(ROUTES.api.resources);
@@ -25,7 +25,7 @@ const SideBarMenu: FC = () => {
       {
         text: t.home,
         icon: <HomeIcon />,
-        href: ROUTES.panel.home,
+        href: ROUTES.ui.home,
       },
     ];
 
@@ -33,7 +33,7 @@ const SideBarMenu: FC = () => {
       root.push({
         text: t.profile,
         icon: <AccountBoxIcon />,
-        href: ROUTES.panel.profile,
+        href: ROUTES.ui.profile,
       });
     }
 
@@ -47,7 +47,7 @@ const SideBarMenu: FC = () => {
       mainMenu.childs!.push({
         text: t.users,
         icon: <GroupIcon />,
-        href: ROUTES.panel.users,
+        href: ROUTES.ui.users,
       });
     }
 
@@ -55,7 +55,7 @@ const SideBarMenu: FC = () => {
       mainMenu.childs!.push({
         text: t.roles,
         icon: <SupervisedUserCircleIcon />,
-        href: ROUTES.panel.roles,
+        href: ROUTES.ui.roles,
       });
     }
 
@@ -63,7 +63,7 @@ const SideBarMenu: FC = () => {
       mainMenu.childs!.push({
         text: t.resources,
         icon: <ApiIcon />,
-        href: ROUTES.panel.resources,
+        href: ROUTES.ui.resources,
       });
     }
 

@@ -30,7 +30,7 @@ watch(
   () => mainStore.profile,
   () => {
     if (mainStore.profile === null)
-      router.push(ROUTES.auth.signIn)
+      router.push(ROUTES.ui.signIn)
   },
 )
 </script>

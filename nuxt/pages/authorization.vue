@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SignInForm from '~/components/entities/Forms/Auth/SignInForm.vue'
+import SignInForm from '~/components/features/Auth/SignInForm.vue'
 
 definePageMeta({
   middleware: ['auth'],

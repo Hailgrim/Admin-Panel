@@ -81,7 +81,7 @@ class UsersService {
     };
   }
 
-  deleteArgs(payload: IUser['id'] | IUser['id'][]): IReqArgs {
+  deleteArgs(payload: IUser['id'][]): IReqArgs {
     return {
       url: ROUTES.api.users,
       method: 'DELETE',

@@ -1,65 +1,40 @@
 'use client';
 
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 import Typography from '@mui/material/Typography';
-import Skeleton from '@mui/material/Skeleton';
 
-import PanelPage from '../PanelPage';
-import UpdateProfileForm from '@/entities/Forms/Auth/UpdateProfileForm';
+import PanelLayout from '../PanelLayout';
+import UpdateProfileForm from '@/features/Profile/UpdateProfileForm';
 import { IClientPage } from '../types';
 import useT from '@/shared/hooks/useT';
-import authApi from '@/shared/api/auth/authApi';
-import SessionForm from '@/entities/Forms/Auth/SessionForm';
-import { makeErrorText } from '@/shared/lib/utils';
-import { addAlert } from '@/shared/store/main/main';
-import { useAppDispatch } from '@/shared/store/hooks';
-import useLang from '@/shared/hooks/useLang';
-import { ISession } from '@/shared/api/auth/types';
+import ProfileSessions from '@/features/Profile/ProfileSessions';
+import ProfileRoles from '@/features/Profile/ProfileRoles';
+import UpdatePasswordForm from '@/features/Profile/UpdatePasswordForm';
+import ChangeEmailRequestForm from '@/features/Profile/ChangeEmailRequestForm';
 
 const ProfilePage: FC<IClientPage> = ({ h1 }) => {
-  const dispatch = useAppDispatch();
   const t = useT();
-  const lang = useLang();
-  const { data, isLoading, error } = authApi.useGetSessionsQuery();
-  const [sessions, setSessions] = useState<ISession[]>();
-
-  useEffect(() => {
-    setSessions(
-      data &&
-        Array.from(data).sort((a, b) => (!a.current && b.current ? 1 : -1))
-    );
-  }, [data]);
-
-  useEffect(() => {
-    if (error) {
-      dispatch(
-        addAlert({
-          type: 'error',
-          text: makeErrorText(error, lang.current),
-        })
-      );
-    }
-  }, [dispatch, error, lang]);
 
   return (
-    <PanelPage h1={h1}>
+    <PanelLayout h1={h1}>
       <UpdateProfileForm />
-      <Typography component="h2" variant="h6" sx={{ my: 1 }}>
+      <Typography component="h2" variant="h6" sx={{ mt: 3, mb: 1 }}>
+        {t.roles}
+      </Typography>
+      <ProfileRoles />
+      <Typography component="h2" variant="h6" sx={{ mt: 3, mb: 1 }}>
+        {t.changeEmail}
+      </Typography>
+      <ChangeEmailRequestForm />
+      <Typography component="h2" variant="h6" sx={{ mt: 3, mb: 1 }}>
+        {t.updatePassword}
+      </Typography>
+      <UpdatePasswordForm />
+      <Typography component="h2" variant="h6" sx={{ mt: 3, mb: 1 }}>
         {t.sessions}
       </Typography>
-      {isLoading && (
-        <Skeleton variant="rounded" width="100%" height={56} sx={{ mb: 1 }} />
-      )}
-      {sessions?.map((session) => (
-        <SessionForm
-          key={session.id}
-          session={session}
-          onDelete={() =>
-            setSessions(sessions.filter((item) => item.id !== session.id))
-          }
-        />
-      ))}
-    </PanelPage>
+      <ProfileSessions />
+    </PanelLayout>
   );
 };
 export default ProfilePage;

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import rolesApi from '~/api/roles/rolesApi'
 import usersApi from '~/api/users/usersApi'
-import UpdateUserForm from '~/components/entities/Forms/User/UpdateUserForm.vue'
-import UpdateUserRolesForm from '~/components/entities/Forms/User/UpdateUserRolesForm.vue'
+import UpdateUserForm from '~/components/features/Users/UpdateUserForm.vue'
+import UpdateUserRolesForm from '~/components/features/Users/UpdateUserRolesForm.vue'
 
 definePageMeta({
   middleware: ['auth'],
@@ -29,7 +29,7 @@ await rlExecute(undefined)
 
 <template>
   <UpdateUserForm v-if="urData" :user="urData" />
-  <v-card-title v-if="urData && rlData" class="px-0 pt-0 pb-3">
+  <v-card-title v-if="urData && rlData" class="px-0 py-3">
     {{ $t('roles') }}
   </v-card-title>
   <UpdateUserRolesForm v-if="urData && rlData" :roles="rlData" :user="urData" />

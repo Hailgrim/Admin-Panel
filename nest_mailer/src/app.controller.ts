@@ -4,6 +4,7 @@ import { MessagePattern } from '@nestjs/microservices';
 import { AppService } from './app.service';
 import { RegistrationDto } from './dto/registration.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ChangeEmailDto } from './dto/change-email.dto';
 
 @Controller()
 export class AppController {
@@ -17,5 +18,10 @@ export class AppController {
   @MessagePattern({ method: 'forgotPassword' })
   forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
     return this.appService.forgotPassword(forgotPasswordDto);
+  }
+
+  @MessagePattern({ method: 'changeEmail' })
+  changeEmail(changeEmailDto: ChangeEmailDto) {
+    return this.appService.changeEmail(changeEmailDto);
   }
 }

@@ -1,19 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString } from 'class-validator';
+import { IsString, Matches } from 'class-validator';
 
 import d from 'locales/dictionary';
+import { EMAIL_REGEX } from 'libs/constants';
 
 export class ForgotPasswordDto {
-  @ApiProperty({ example: 'user@mail.com', description: d['en'].email })
-  @IsEmail({}, { message: d['en'].incorrect(d['en'].email) })
+  @ApiProperty({ example: 'example@mail.com', description: d['en'].email })
+  @Matches(EMAIL_REGEX)
   email: string;
 
   @ApiProperty({
-    example: '1q2w3e4r5',
+    example: '1234',
     description: d['en'].resetPasswordCode,
   })
-  @IsString({
-    message: d['en'].mustBeAString(d['en'].resetPasswordCode),
-  })
+  @IsString()
   code: string;
 }

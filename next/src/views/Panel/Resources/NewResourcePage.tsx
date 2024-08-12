@@ -2,15 +2,15 @@
 
 import { FC } from 'react';
 
-import PanelPage from '../../PanelPage';
-import CreateResourceForm from '@/entities/Forms/Resources/CreateResourceForm';
+import PanelLayout from '../../PanelLayout';
+import CreateResourceForm from '@/features/Resources/CreateResourceForm';
 import { IClientPage } from '@/views/types';
 
 const NewResourcePage: FC<IClientPage> = ({ h1 }) => {
   return (
-    <PanelPage h1={h1}>
+    <PanelLayout h1={h1}>
       <CreateResourceForm />
-    </PanelPage>
+    </PanelLayout>
   );
 };
 export default NewResourcePage;

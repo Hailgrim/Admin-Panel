@@ -72,7 +72,7 @@ const serverFetch = async <T = unknown>(
       }
 
       const rawCookies = res.headers.getSetCookie();
-      if (rawCookies.length) {
+      if (rawCookies.length > 0) {
         newCookiesRaw = rawCookies[0];
         newCookies = newCookiesRaw.split(', ').map(parseRawCookies);
       }

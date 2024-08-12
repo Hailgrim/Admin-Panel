@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { IMenuItem } from './types'
 
-const props = defineProps<IMenuItem>()
+const { href } = defineProps<IMenuItem>()
 const route = useRoute()
 const router = useRouter()
 const selected = ref(false)
@@ -9,9 +9,9 @@ const selected = ref(false)
 watch(
   () => route.path,
   () => {
-    let result = Boolean(props.href)
+    let result = Boolean(href)
     const pathArr = route.path.split('/')
-    const linkArr = props.href ? props.href.split('/') : []
+    const linkArr = href?.split('/') || []
     linkArr.forEach((value, index) => {
       if (value !== pathArr[index])
         result = false
