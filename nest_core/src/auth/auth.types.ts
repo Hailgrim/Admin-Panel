@@ -15,7 +15,10 @@ export interface IToken {
 
 export type FastifyRequestWithUser = FastifyRequest & { user: IUser };
 
-export type FastifyRequestWithToken = FastifyRequest & { user: IToken };
+export type FastifyRequestWithToken = FastifyRequest & {
+  user: IToken;
+  originalUser: IUser;
+};
 
 export abstract class ISession {
   provider: 'default' | 'google';

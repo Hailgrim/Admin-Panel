@@ -12,8 +12,8 @@ export const generateMetadata = async (): Promise<Metadata> => {
   };
 };
 
-const Authorization: FC = async () => {
+const Page: FC = async () => {
   const t = getT();
   return <AuthorizationPage h1={t.signIn} />;
 };
-export default Authorization;
+export default Page;

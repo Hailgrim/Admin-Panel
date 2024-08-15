@@ -13,7 +13,7 @@ import { IUser } from '@/shared/api/users/types';
 
 const UsersTable: FC<Omit<DataGridProps<IUser>, 'columns'>> = (props) => {
   const t = useT();
-  const rights = useRights(ROUTES.ui.users);
+  const rights = useRights(ROUTES.api.users);
 
   const сolumns: GridColDef<IUser>[] = useMemo(
     () => [

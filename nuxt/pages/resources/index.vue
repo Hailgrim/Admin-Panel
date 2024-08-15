@@ -14,8 +14,9 @@ const router = useRouter()
 const route = useRoute()
 const page = ref(Number(route.query.page) || 1)
 const quantity = ref(Number(route.query.quantity) || 25)
-const { data, execute } = resourcesApi.listCounted()
-await execute({ page: page.value, quantity: quantity.value })
+const { data, execute } = resourcesApi.listCounted(ROUTES.api.resources)
+if (import.meta.server)
+  await execute({ page: page.value, quantity: quantity.value })
 const count = ref(data.value?.count)
 
 watch(

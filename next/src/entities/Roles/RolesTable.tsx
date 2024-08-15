@@ -12,7 +12,7 @@ import { IRole } from '@/shared/api/roles/types';
 
 const RolesTable: FC<Omit<DataGridProps<IRole>, 'columns'>> = (props) => {
   const t = useT();
-  const rights = useRights(ROUTES.ui.roles);
+  const rights = useRights(ROUTES.api.roles);
 
   const сolumns: GridColDef<IRole>[] = useMemo(
     () => [

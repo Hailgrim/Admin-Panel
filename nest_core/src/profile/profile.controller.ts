@@ -37,8 +37,8 @@ export class ProfileController {
   @Roles({ path: route, action: Rights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get()
-  getProfile(@Req() req: FastifyRequestWithToken): Promise<IUser> {
-    return this.profileService.getProfile(req.user);
+  getProfile(@Req() req: FastifyRequestWithToken): IUser {
+    return req.originalUser;
   }
 
   @ApiOperation({ summary: d['en'].updateProfile })

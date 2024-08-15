@@ -7,12 +7,12 @@ import PanelLayout from '../../PanelLayout';
 import UpdateUserForm from '@/features/Users/UpdateUserForm';
 import UpdateUserRolesForm from '@/features/Users/UpdateUserRolesForm';
 import useT from '@/shared/hooks/useT';
-import { IClientPage } from '@/views/types';
+import { IPage } from '@/views/types';
 import { IUser } from '@/shared/api/users/types';
 import { IRole } from '@/shared/api/roles/types';
 
 const UserPage: FC<
-  IClientPage<{
+  IPage<{
     user: IUser;
     roles?: IRole[] | null;
   }>

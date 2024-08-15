@@ -12,8 +12,8 @@ export const generateMetadata = async (): Promise<Metadata> => {
   };
 };
 
-const NewRole: FC = async () => {
+const Page: FC = async () => {
   const t = getT();
   return <NewRolePage h1={t.newRole} />;
 };
-export default NewRole;
+export default Page;

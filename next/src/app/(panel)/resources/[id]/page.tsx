@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import resourcesService from '@/shared/api/resources/resourcesService';
 import ResourcePage from '@/views/Panel/Resources/ResourcePage';
 import { getT } from '@/shared/locales/utils';
-import { IServerPage } from '@/views/types';
+import { IAppPage } from '@/app/types';
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const t = getT();
@@ -15,7 +15,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
   };
 };
 
-const Resource: FC<IServerPage> = async ({ params }) => {
+const Page: FC<IAppPage> = async ({ params }) => {
   const t = getT();
   const id = Number(params.id);
 
@@ -26,4 +26,4 @@ const Resource: FC<IServerPage> = async ({ params }) => {
 
   return notFound();
 };
-export default Resource;
+export default Page;

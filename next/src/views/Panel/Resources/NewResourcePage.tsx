@@ -4,9 +4,9 @@ import { FC } from 'react';
 
 import PanelLayout from '../../PanelLayout';
 import CreateResourceForm from '@/features/Resources/CreateResourceForm';
-import { IClientPage } from '@/views/types';
+import { IPage } from '@/views/types';
 
-const NewResourcePage: FC<IClientPage> = ({ h1 }) => {
+const NewResourcePage: FC<IPage> = ({ h1 }) => {
   return (
     <PanelLayout h1={h1}>
       <CreateResourceForm />

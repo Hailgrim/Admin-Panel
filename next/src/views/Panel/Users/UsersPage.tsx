@@ -1,104 +1,34 @@
 'use client';
 
-import React, { FC, useEffect, useRef, useState } from 'react';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import { GridRowSelectionModel } from '@mui/x-data-grid/models/gridRowSelectionModel';
-import { GridPaginationModel } from '@mui/x-data-grid/models/gridPaginationProps';
+import { FC } from 'react';
+import { GridPaginationModel } from '@mui/x-data-grid/models';
+import { useSearchParams } from 'next/navigation';
 
 import PanelLayout from '../../PanelLayout';
-import UsersTable from '@/entities/Users/UsersTable';
-import FormButton from '@/shared/ui/Form/FormButton';
-import useRights from '@/shared/hooks/useRights';
-import { ROUTES } from '@/shared/lib/constants';
-import useT from '@/shared/hooks/useT';
-import { IFindAndCountRes } from '@/shared/api/types';
-import usersApi from '@/shared/api/users/usersApi';
-import { IClientPage } from '@/views/types';
+import { IPage } from '@/views/types';
+import { IList } from '@/shared/lib/types';
 import { IUser } from '@/shared/api/users/types';
+import UsersList from '@/features/Users/UsersList';
 
-const UsersPage: FC<IClientPage<IFindAndCountRes<IUser>>> = ({ h1, data }) => {
-  const t = useT();
-  const rights = useRights(ROUTES.ui.users);
-  const [findAndCountAll, findAndCountAllReq] =
-    usersApi.useLazyFindAndCountAllQuery();
-  const [findAll, findAllReq] = usersApi.useLazyFindAllQuery();
-  const [destroy, destroyReq] = usersApi.useDeleteMutation();
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
-  const [rows, setRows] = useState(data?.rows || []);
-  const [count, setCount] = useState(data?.count || 0);
-  const page = useRef(0);
-  const pageSize = useRef(25);
-
-  const selectionHandler = (rowSelectionModel: GridRowSelectionModel) => {
-    setSelectedRows(rowSelectionModel as string[]);
-  };
+const UsersPage: FC<IPage<IList<IUser>>> = ({ h1, data }) => {
+  const searchParams = useSearchParams();
+  const page = Number(searchParams.get('page') || 1) - 1;
+  const quantity = Number(searchParams.get('quantity'));
 
   const paginationHandler = (model: GridPaginationModel) => {
-    findAll({ page: model.page + 1, quantity: model.pageSize });
-    page.current = model.page;
-    pageSize.current = model.pageSize;
+    var queryParams = new URLSearchParams(window.location.search);
+    queryParams.set('page', String(model.page + 1));
+    queryParams.set('quantity', String(model.pageSize));
+    history.pushState(null, '', `?${queryParams.toString()}`);
   };
-
-  const deleteHandler = () => {
-    destroy(selectedRows);
-  };
-
-  useEffect(() => {
-    if (findAllReq.data) {
-      setRows(findAllReq.data);
-    }
-  }, [findAllReq.data]);
-
-  useEffect(() => {
-    if (findAndCountAllReq.data) {
-      setRows(findAndCountAllReq.data.rows);
-      setCount(findAndCountAllReq.data.count);
-    }
-  }, [findAndCountAllReq.data]);
-
-  useEffect(() => {
-    if (destroyReq.data) {
-      findAndCountAll({ page: page.current + 1, quantity: pageSize.current });
-    }
-  }, [destroyReq.data, findAndCountAll]);
-
-  // NOTE: duplicate initial query (RTK Query does not yet support SSR queries)
-  useEffect(() => {
-    findAndCountAll({ page: page.current + 1, quantity: pageSize.current });
-  }, [findAndCountAll]);
 
   return (
     <PanelLayout h1={h1}>
-      <FormButton
-        color="primary"
-        startIcon={<AddIcon />}
-        disabled={!rights.creating}
-        href={ROUTES.ui.newUser}
-      >
-        {t.create}
-      </FormButton>
-      <FormButton
-        color="error"
-        startIcon={<DeleteIcon />}
-        disabled={
-          !rights.deleting || selectedRows.length === 0 || destroyReq.isLoading
-        }
-        onClick={deleteHandler}
-      >
-        {t.delete}
-      </FormButton>
-      <UsersTable
-        initialState={{
-          pagination: {
-            paginationModel: { page: page.current, pageSize: pageSize.current },
-          },
-        }}
-        rows={rows}
-        rowCount={count}
-        loading={findAndCountAllReq.isLoading || findAllReq.isLoading}
-        onRowSelectionModelChange={selectionHandler}
-        onPaginationModelChange={paginationHandler}
+      <UsersList
+        {...data}
+        page={page}
+        quantity={quantity}
+        onPaginationUpdate={paginationHandler}
       />
     </PanelLayout>
   );

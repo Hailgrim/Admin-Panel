@@ -12,8 +12,8 @@ export const generateMetadata = async (): Promise<Metadata> => {
   };
 };
 
-const NewResource: FC = async () => {
+const Page: FC = async () => {
   const t = getT();
   return <NewResourcePage h1={t.newResource} />;
 };
-export default NewResource;
+export default Page;

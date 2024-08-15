@@ -25,9 +25,10 @@ export class RolesGuard implements CanActivate {
     }
 
     let user: User | null = null;
-    const token = context
+    const request = context
       .switchToHttp()
-      .getRequest<Partial<FastifyRequestWithToken>>().user;
+      .getRequest<Partial<FastifyRequestWithToken>>();
+    const token = request.user;
 
     if (token?.userId) {
       user = await this.usersService.findOnePublic(token.userId);
@@ -37,6 +38,7 @@ export class RolesGuard implements CanActivate {
       return false;
     }
 
+    request.originalUser = user;
     return Boolean(
       user.roles?.some(
         (role) =>

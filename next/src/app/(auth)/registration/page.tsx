@@ -12,8 +12,8 @@ export const generateMetadata = async (): Promise<Metadata> => {
   };
 };
 
-const Registration: FC = async () => {
+const Page: FC = async () => {
   const t = getT();
   return <RegistrationPage h1={t.signUp} />;
 };
-export default Registration;
+export default Page;

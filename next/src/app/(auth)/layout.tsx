@@ -1,6 +1,7 @@
 'use client';
 
-import { ThemeProvider } from '@mui/material/styles';
+import { styled, ThemeProvider } from '@mui/material/styles';
+import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import { FC, PropsWithChildren } from 'react';
 import '@fontsource/roboto/300.css';
@@ -10,12 +11,20 @@ import '@fontsource/roboto/700.css';
 
 import theme from '@/shared/lib/theme';
 
-const AuthLayout: FC<PropsWithChildren> = ({ children }) => {
+const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {children}
+      <AuthContainerStyled maxWidth="xs">{children}</AuthContainerStyled>
     </ThemeProvider>
   );
 };
-export default AuthLayout;
+export default Layout;
+
+const AuthContainerStyled = styled(Container)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  padding-block: ${theme.spacing(1)};
+`;

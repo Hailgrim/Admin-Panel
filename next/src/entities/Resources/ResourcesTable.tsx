@@ -14,7 +14,7 @@ const ResourcesTable: FC<Omit<DataGridProps<IResource>, 'columns'>> = (
   props
 ) => {
   const t = useT();
-  const rights = useRights(ROUTES.ui.resources);
+  const rights = useRights(ROUTES.api.resources);
 
   const сolumns: GridColDef<IResource>[] = useMemo(
     () => [

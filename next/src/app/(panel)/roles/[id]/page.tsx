@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import rolesService from '@/shared/api/roles/rolesService';
 import resourcesService from '@/shared/api/resources/resourcesService';
 import RolePage from '@/views/Panel/Roles/RolePage';
-import { IServerPage } from '@/views/types';
+import { IAppPage } from '@/app/types';
 import { getT } from '@/shared/locales/utils';
 
 export const generateMetadata = async (): Promise<Metadata> => {
@@ -16,7 +16,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
   };
 };
 
-const Role: FC<IServerPage> = async ({ params }) => {
+const Page: FC<IAppPage> = async ({ params }) => {
   const t = getT();
   const id = Number(params.id);
 
@@ -36,4 +36,4 @@ const Role: FC<IServerPage> = async ({ params }) => {
 
   return notFound();
 };
-export default Role;
+export default Page;

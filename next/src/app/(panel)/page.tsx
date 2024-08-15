@@ -12,8 +12,8 @@ export const generateMetadata = async (): Promise<Metadata> => {
   };
 };
 
-const Home: FC = async () => {
+const Page: FC = async () => {
   const t = getT();
   return <HomePage h1={t.home} />;
 };
-export default Home;
+export default Page;

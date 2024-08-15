@@ -4,7 +4,7 @@ import { headers } from 'next/headers';
 
 import StoreProvider from './StoreProvider';
 
-const RootLayout: FC<PropsWithChildren> = async ({ children }) => {
+const Layout: FC<PropsWithChildren> = async ({ children }) => {
   const headersList = headers();
   const profileJson = headersList.get('store-profile');
 
@@ -18,4 +18,4 @@ const RootLayout: FC<PropsWithChildren> = async ({ children }) => {
     </html>
   );
 };
-export default RootLayout;
+export default Layout;

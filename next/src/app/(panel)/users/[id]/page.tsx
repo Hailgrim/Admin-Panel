@@ -8,7 +8,7 @@ import usersService from '@/shared/api/users/usersService';
 import rolesService from '@/shared/api/roles/rolesService';
 import UserPage from '@/views/Panel/Users/UserPage';
 import { getT } from '@/shared/locales/utils';
-import { IServerPage } from '@/views/types';
+import { IAppPage } from '@/app/types';
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const t = getT();
@@ -18,7 +18,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
   };
 };
 
-const User: FC<IServerPage> = async ({ params }) => {
+const Page: FC<IAppPage> = async ({ params }) => {
   const t = getT();
   const id = params.id;
 
@@ -35,4 +35,4 @@ const User: FC<IServerPage> = async ({ params }) => {
 
   return notFound();
 };
-export default User;
+export default Page;

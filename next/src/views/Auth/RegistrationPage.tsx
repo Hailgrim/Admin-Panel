@@ -4,9 +4,9 @@ import { FC } from 'react';
 
 import AuthLayout from '@/views/AuthLayout';
 import SignUpForm from '@/features/Auth/SignUpForm';
-import { IClientPage } from '../types';
+import { IPage } from '../types';
 
-const RegistrationPage: FC<IClientPage> = ({ h1 }) => {
+const RegistrationPage: FC<IPage> = ({ h1 }) => {
   return (
     <AuthLayout h1={h1}>
       <SignUpForm />

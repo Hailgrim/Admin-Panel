@@ -2,6 +2,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   const event = useRequestEvent()
   const config = useRuntimeConfig()
   const cookie = useRequestHeader('cookie')
+  const userAgent = useRequestHeader('user-agent')
   const baseURL = import.meta.client
     ? `https://api.${config.public.NGINX_HOST}`
     : `http://${config.public.NEST_CORE_HOST}:${config.public.NEST_CORE_PORT}`
@@ -15,16 +16,29 @@ export default defineNuxtPlugin((nuxtApp) => {
     retryDelay: 0,
     retryStatusCodes: [401],
     onRequest({ options }) {
-      if (import.meta.server && cookie) {
-        const headers = (options.headers ||= {})
+      const newHeaders: Map<string, string> = new Map()
 
-        if (Array.isArray(headers)) {
-          headers.push(['cookie', cookie])
-        } else if (headers instanceof Headers) {
-          headers.set('cookie', cookie)
-        } else {
-          headers.cookie = cookie
-        }
+      if (import.meta.server && cookie) {
+        newHeaders.set('cookie', cookie)
+      }
+
+      if (typeof options.body === 'object') {
+        newHeaders.set('content-type', 'application/json')
+      } else {
+        newHeaders.set('content-type', 'text/plain;charset=UTF-8')
+      }
+
+      if (userAgent) {
+        newHeaders.set('user-agent', userAgent)
+      }
+
+      const headers = (options.headers ||= {})
+      if (Array.isArray(headers)) {
+        newHeaders.forEach((value, key) => headers.push([key, value]))
+      } else if (headers instanceof Headers) {
+        newHeaders.forEach((value, key) => headers.set(key, value))
+      } else {
+        newHeaders.forEach((value, key) => (headers[key] = value))
       }
     },
     async onResponseError({ response, options }) {

@@ -8,11 +8,11 @@ import UpdateRoleForm from '@/features/Roles/UpdateRoleForm';
 import useT from '@/shared/hooks/useT';
 import UpdateRoleResourcesForm from '@/features/Roles/UpdateRoleResourcesForm';
 import { IRole } from '@/shared/api/roles/types';
-import { IClientPage } from '@/views/types';
+import { IPage } from '@/views/types';
 import { IResource } from '@/shared/api/resources/types';
 
 const RolePage: FC<
-  IClientPage<{
+  IPage<{
     role: IRole;
     resources?: IResource[] | null;
   }>

@@ -2,7 +2,6 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import * as argon2 from 'argon2';
 
 import { UsersService } from '../users/users.service';
-import { User } from 'src/users/user.entity';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { RedisService } from 'src/redis/redis.service';
 import { ExternalSessionDto } from './dto/external-session.dto';
@@ -18,10 +17,6 @@ export class ProfileService {
     private usersService: UsersService,
     private redisService: RedisService,
   ) {}
-
-  getProfile(token: IToken): Promise<User> {
-    return this.usersService.findOnePublic(token.userId);
-  }
 
   updateProfile(
     token: IToken,

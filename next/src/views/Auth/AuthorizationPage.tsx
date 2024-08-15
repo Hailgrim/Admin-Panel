@@ -4,9 +4,9 @@ import { FC } from 'react';
 
 import AuthLayout from '@/views/AuthLayout';
 import SignInForm from '@/features/Auth/SignInForm';
-import { IClientPage } from '../types';
+import { IPage } from '../types';
 
-const AuthorizationPage: FC<IClientPage> = ({ h1 }) => {
+const AuthorizationPage: FC<IPage> = ({ h1 }) => {
   return (
     <AuthLayout h1={h1}>
       <SignInForm />

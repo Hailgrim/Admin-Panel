@@ -5,14 +5,14 @@ import Typography from '@mui/material/Typography';
 
 import PanelLayout from '../PanelLayout';
 import UpdateProfileForm from '@/features/Profile/UpdateProfileForm';
-import { IClientPage } from '../types';
+import { IPage } from '../types';
 import useT from '@/shared/hooks/useT';
 import ProfileSessions from '@/features/Profile/ProfileSessions';
 import ProfileRoles from '@/features/Profile/ProfileRoles';
 import UpdatePasswordForm from '@/features/Profile/UpdatePasswordForm';
 import ChangeEmailRequestForm from '@/features/Profile/ChangeEmailRequestForm';
 
-const ProfilePage: FC<IClientPage> = ({ h1 }) => {
+const ProfilePage: FC<IPage> = ({ h1 }) => {
   const t = useT();
 
   return (

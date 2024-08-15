@@ -14,7 +14,7 @@ definePageMeta({
 
 const route = useRoute()
 const id = String(route.params.id)
-const { data: urData, execute: urExecute } = usersApi.read()
+const { data: urData, execute: urExecute } = usersApi.read(ROUTES.api.user(id))
 await urExecute(id)
 
 if (urData.value === null) {

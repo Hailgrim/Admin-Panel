@@ -11,13 +11,17 @@ export function useAPI<ResT = unknown, ReqT = void>(
     };
   }
 ) {
-  return () => {
+  return (cacheKey?: string) => {
+    const customFetch = useNuxtApp().$api
+    const args = ref(null) as Ref<ReqT | null>
     const pending = ref(false)
     const error = ref<IReqError | null>(null)
-    const data = ref(null) as Ref<ResT | null>
-    const args = ref(null) as Ref<ReqT | null>
-    const customFetch = useNuxtApp().$api
-    const userAgent = useRequestHeader('user-agent')
+    let cache = ref(null) as Ref<ResT | null>
+    if (cacheKey) {
+      const { data: nuxtData } = useNuxtData<ResT | null>(cacheKey)
+      cache = nuxtData
+    }
+    const data = ref(cache.value) as Ref<ResT | null>
 
     async function execute(arg: ReqT): Promise<ResT | null> {
       const query = initQuery(arg)
@@ -26,15 +30,6 @@ export function useAPI<ResT = unknown, ReqT = void>(
       data.value = null
       pending.value = true
       args.value = arg
-
-      headers['content-type'] =
-        typeof arg === 'object'
-          ? 'application/json'
-          : 'text/plain;charset=UTF-8'
-
-      if (userAgent) {
-        headers['user-agent'] = userAgent
-      }
 
       try {
         const result = await customFetch<ResT>(query.url, {
@@ -47,6 +42,7 @@ export function useAPI<ResT = unknown, ReqT = void>(
           headers,
         })
 
+        cache.value = result
         data.value = result
         pending.value = false
       } catch (fail) {

@@ -12,8 +12,8 @@ export const generateMetadata = async (): Promise<Metadata> => {
   };
 };
 
-const ForgotPassword: FC = async () => {
+const Page: FC = async () => {
   const t = getT();
   return <ForgotPasswordPage h1={t.forgotPassword} />;
 };
-export default ForgotPassword;
+export default Page;
