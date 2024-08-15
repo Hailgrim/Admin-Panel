@@ -24,7 +24,7 @@ import useLang from '@/shared/hooks/useLang';
 import theme, { sideBarOpenedWidth, sideBarWidth } from '@/shared/lib/theme';
 import { useAppDispatch } from '@/shared/store/hooks';
 import authApi from '@/shared/api/auth/authApi';
-import { addAlert } from '@/shared/store/main/main';
+import { addAlert, setProfile } from '@/shared/store/main/main';
 import { makeErrorText } from '@/shared/lib/utils';
 import SideBar from '@/widgets/SideBar/SideBar';
 import Alerts from '@/widgets/Alerts/Alerts';
@@ -45,8 +45,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   }, [profile, router, pathname]);
 
   useEffect(() => {
-    if (data) router.push(ROUTES.ui.signIn);
-  }, [data, router]);
+    if (data) dispatch(setProfile(null));
+  }, [dispatch, data, router]);
 
   useEffect(() => {
     if (error) {
