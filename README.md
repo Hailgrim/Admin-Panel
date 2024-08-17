@@ -64,7 +64,7 @@ The service is written in [React](https://github.com/facebook/react) and [TypeSc
 [RTK Query](https://github.com/rtk-incubator/rtk-query) is used for API requests.
 The `./next/src/shared/lib/config.ts` file contains the settings received from Docker during project startup.
 
-### [Nuxt.js](https://github.com/nuxt/nuxt) `./nuxt`
+### [Nuxt](https://github.com/nuxt/nuxt) `./nuxt`
 
 Implements the same functionality as Next.js, but [Vue](https://github.com/vuejs/core) is used instead of React.
 Instead of [Node.js](https://github.com/nodejs), the container uses [Bun](https://github.com/oven-sh/bun).
