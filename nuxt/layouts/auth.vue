@@ -13,14 +13,15 @@ const name = computed(() => route.meta.name ? t(String(route.meta.name)) : '?')
     <Meta :content="description" name="description" />
   </Head>
   <v-card>
-    <v-layout
-      class="content flex-column align-stretch justify-center mx-auto v-col-xl-3 v-col-lg-4 v-col-sm-6 v-col-12">
-      <v-card-title class="flex-grow-0 text-center pb-6 text-h5" tag="h1">
-        {{ name }}
-      </v-card-title>
-      <v-main class="flex-grow-0">
-        <slot />
-      </v-main>
+    <v-layout class="content">
+      <v-row class="flex-column align-stretch justify-center mx-auto v-col-xl-3 v-col-lg-4 v-col-sm-6 v-col-12">
+        <v-card-title class="flex-grow-0 text-center pb-6 text-h5" tag="h1">
+          {{ name }}
+        </v-card-title>
+        <v-main class="flex-grow-0">
+          <slot />
+        </v-main>
+      </v-row>
     </v-layout>
   </v-card>
 </template>

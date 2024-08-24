@@ -1,9 +1,31 @@
-import { MiddlewareConfig, NextMiddleware, NextResponse } from 'next/server';
+import { NextMiddleware, NextResponse } from 'next/server';
 import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 
 import { ROUTES } from './shared/lib/constants';
 import { IUser } from './shared/api/users/types';
 import profileService from './shared/api/profile/profileService';
+
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+     */
+    {
+      source:
+        '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+      // originalSource:
+      //   '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+      missing: [
+        { type: 'header', key: 'next-router-prefetch' },
+        { type: 'header', key: 'purpose', value: 'prefetch' },
+      ],
+    },
+  ],
+};
 
 export const middleware: NextMiddleware = async (request) => {
   /**
@@ -23,6 +45,7 @@ export const middleware: NextMiddleware = async (request) => {
   let response = NextResponse.next();
   const isAuthRoute =
     request.nextUrl.pathname === ROUTES.ui.signIn ||
+    request.nextUrl.pathname === ROUTES.ui.signInGoogle ||
     request.nextUrl.pathname === ROUTES.ui.signUp ||
     request.nextUrl.pathname === ROUTES.ui.forget;
 
@@ -65,12 +88,11 @@ export const middleware: NextMiddleware = async (request) => {
   }
 
   if (profile) {
-    response.headers.set('store-profile', JSON.stringify(profile));
+    response.headers.set(
+      'store-profile',
+      encodeURIComponent(JSON.stringify(profile))
+    );
   }
 
   return response;
-};
-
-export const config: MiddlewareConfig = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };

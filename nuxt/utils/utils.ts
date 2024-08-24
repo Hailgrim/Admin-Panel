@@ -6,7 +6,7 @@ import type { LangList } from '~/locales/types'
  * @param {string} payload The string being checked
  * @returns {boolean} true if the payload matches a regular expression
  */
-export function testString(regex: RegExp, payload: string): boolean {
+export const testString = (regex: RegExp, payload: string): boolean => {
   return new RegExp(regex).test(payload)
 }
 
@@ -15,10 +15,10 @@ export function testString(regex: RegExp, payload: string): boolean {
  * @param {Partial<T>} newObject Updated object
  * @returns {Partial<T>} An object with changed fields only
  */
-export function getUpdatedValues<T>(
+export const getUpdatedValues = <T>(
   oldObject: Partial<T>,
   newObject: Partial<T>
-): Partial<T> {
+): Partial<T> => {
   const result: Partial<T> = {}
   for (const value in newObject) {
     if (newObject[value] !== oldObject[value]) result[value] = newObject[value]
@@ -31,7 +31,7 @@ export function getUpdatedValues<T>(
  * @param {string} lang Error language
  * @returns {string} Formatted error text
  */
-export function makeErrorText(error: unknown, lang: string = 'en'): string {
+export const makeErrorText = (error: unknown, lang: string = 'en'): string => {
   const currLang: LangList = lang in d ? (lang as LangList) : 'en'
   let result = d[currLang].unknownError
 
@@ -51,7 +51,7 @@ export function makeErrorText(error: unknown, lang: string = 'en'): string {
 }
 
 /**
- * @param {Date} date Parsed date
+ * @param {Date | string | number} date Parsed date
  * @returns {string} Formatted date string
  */
 export const makeDateString = (

@@ -17,7 +17,6 @@ const quantity = ref(Number(route.query.quantity) || 25)
 const { data, execute } = resourcesApi.listCounted(ROUTES.api.resources)
 if (import.meta.server)
   await execute({ page: page.value, quantity: quantity.value })
-const count = ref(data.value?.count)
 
 watch(
   page,
@@ -35,5 +34,5 @@ watch(
 </script>
 
 <template>
-  <ResourcesList v-model:page="page" v-model:quantity="quantity" :count="count" :rows="data?.rows" />
+  <ResourcesList v-model:page="page" v-model:quantity="quantity" :count="data?.count" :rows="data?.rows" />
 </template>

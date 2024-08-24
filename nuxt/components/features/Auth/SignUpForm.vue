@@ -19,7 +19,7 @@ const emailIsValid = (value: string) => testString(EMAIL_REGEX, value) || t('ema
 const password = ref('')
 const passwordIsValid = (value: string) => testString(PASSWORD_REGEX, value) || t('passwordValidation')
 const { data, error, execute, pending } = authApi.signUp()
-const errorMsg = ref<string | null>(null)
+const errorText = ref<string | null>(null)
 const successModal = ref(false)
 const router = useRouter()
 
@@ -41,13 +41,13 @@ watch(
     if (error.value)
       switch (error.value?.status) {
         case 409:
-          errorMsg.value = t('userAlreadyExist')
+          errorText.value = t('userAlreadyExist')
           break
         case undefined:
-          errorMsg.value = null
+          errorText.value = null
           break
         default:
-          errorMsg.value = makeErrorText(error.value, locale.value)
+          errorText.value = makeErrorText(error.value, locale.value)
       }
   },
 )
@@ -63,7 +63,7 @@ watch(
 
 <template>
   <Form @submit="submitHandler">
-    <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
+    <FormAlert v-if="errorText" :text="errorText" type="error" />
     <FormField
 v-model="name" :hint="$t('nameValidation')" :label="$t('name')" name="name" required
       :rules="[nameIsValid]" />

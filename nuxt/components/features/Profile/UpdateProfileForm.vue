@@ -55,6 +55,9 @@ watch(
 <template>
   <Form @submit="submitHandler">
     <FormField
+v-if="mainStore.profile?.googleId" disabled :label="$t('googleId')"
+      :model-value="mainStore.profile.googleId" name="googleId" />
+    <FormField
 :label="$t('name')" :model-value="newData.name" name="name" required :rules="[nameIsValid]"
       @update:model-value="newData && (newData = { ...newData, name: $event })" />
     <FormButton

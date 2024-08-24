@@ -57,7 +57,7 @@ if (resourcesRights.value.reading) {
 if (mainMenu.childs!.length > 0)
   menu.push(mainMenu)
 
-const opened = menu.find(value => checkActiveLink(route.path, { href: value.href, childs: value.childs }))
+const opened = computed(() => menu.find(value => checkActiveLink(route.path, { href: value.href, childs: value.childs })))
 </script>
 
 <template>

@@ -11,7 +11,7 @@ import { UsersRoles } from 'src/database/users-roles.entity';
 import { Role } from 'src/roles/role.entity';
 import { Resource } from 'src/resources/resource.entity';
 import { PUBLIC, WITH_ROLES } from 'libs/constants';
-import { CreateUserFields, IUser } from './users.types';
+import { CreateGoogleUserFields, CreateUserFields, IUser } from './users.types';
 
 @Scopes(() => ({
   [PUBLIC]: {
@@ -46,7 +46,10 @@ import { CreateUserFields, IUser } from './users.types';
   },
 }))
 @Table({ tableName: 'users' })
-export class User extends Model<User, CreateUserFields> implements IUser {
+export class User
+  extends Model<User, CreateUserFields | CreateGoogleUserFields>
+  implements IUser
+{
   @Column({
     type: DataType.UUID,
     defaultValue: DataType.UUIDV4,
@@ -63,6 +66,9 @@ export class User extends Model<User, CreateUserFields> implements IUser {
 
   @Column({ type: DataType.STRING(100), allowNull: false })
   name: string;
+
+  @Column({ type: DataType.STRING(100), allowNull: true, unique: true })
+  googleId?: string | null;
 
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
   enabled: boolean;

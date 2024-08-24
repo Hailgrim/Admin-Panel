@@ -10,13 +10,13 @@ import {
   Delete,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { FastifyReply } from 'fastify';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtGuard } from './jwt.guard';
 import { JwtRefreshGuard } from './jwt-refresh.guard';
-import { SignInDto } from './dto/sign-in-auth.dto';
+import { SignInDto } from './dto/sign-in.dto';
 import { ACCESS_TOKEN_LIFETIME, REFRESH_TOKEN_LIFETIME } from 'libs/config';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
@@ -86,6 +86,38 @@ export class AuthController {
 
     res.status(HttpStatus.CREATED);
     return req.user;
+  }
+
+  @ApiOperation({ summary: d['en'].signUp })
+  @ApiResponse({ status: HttpStatus.CREATED, type: IUser })
+  @Post('sign-in/google')
+  async signInGoogle(
+    @Req() req: FastifyRequest,
+    @Res({ passthrough: true }) res: FastifyReply,
+    @Body() googleAccessToken: string,
+  ): Promise<IUser> {
+    const { accessToken, refreshToken, user } =
+      await this.authService.signInGoogle(
+        googleAccessToken,
+        REFRESH_TOKEN_LIFETIME,
+        req.ips?.length ? req.ips[0] : req.ip,
+        req.headers['user-agent'],
+      );
+
+    res.cookie('accessToken', accessToken, createCookieOptions());
+    res.cookie(
+      'refreshToken',
+      refreshToken,
+      createCookieOptions(REFRESH_TOKEN_LIFETIME),
+    );
+    res.cookie(
+      'rememberMe',
+      'true',
+      createCookieOptions(REFRESH_TOKEN_LIFETIME),
+    );
+
+    res.status(HttpStatus.CREATED);
+    return user;
   }
 
   @ApiOperation({ summary: d['en'].confirmRegistration })

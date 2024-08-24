@@ -15,7 +15,8 @@ const { t, locale } = useI18n()
 const mainStore = useMainStore()
 const { data, error, execute, pending } = profileApi.deleteSessions()
 const rights = useRights(ROUTES.api.profile)
-const userAgent = ref(new UAParser(session.userAgent).getResult())
+const userAgent = new UAParser(session.userAgent).getResult()
+const updatedAt = makeDateString(session.updatedAt)
 
 async function submitHandler() {
   execute([session.id])
@@ -33,8 +34,11 @@ watch(
   data,
   () => {
     if (data.value) {
-      emit('delete')
       mainStore.addAlert({ type: 'success', text: t('success') })
+      emit('delete')
+      if (session.current) {
+        mainStore.setProfile(null)
+      }
     }
   },
 )
@@ -64,7 +68,7 @@ watch(
           {{ session.ip }}{{ ',' }}&nbsp;
         </span>
         <span class="text-body-2 opacity-60 mr-2">
-          {{ makeDateString(session.updatedAt) }}
+          {{ updatedAt }}
         </span>
         <v-chip v-if="session.current" color="success" variant="outlined">{{ $t('current') }}</v-chip>
       </v-card-text>

@@ -2,6 +2,8 @@ import {
   ForbiddenException,
   GoneException,
   Injectable,
+  InternalServerErrorException,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -13,7 +15,7 @@ import { UsersService } from '../users/users.service';
 import { RolesService } from 'src/roles/roles.service';
 import { ResourcesService } from 'src/resources/resources.service';
 import { User } from 'src/users/user.entity';
-import { SignInDto } from './dto/sign-in-auth.dto';
+import { SignInDto } from './dto/sign-in.dto';
 import {
   ACCESS_TOKEN_LIFETIME,
   ACCESS_TOKEN_SECRET_KEY,
@@ -113,13 +115,13 @@ export class AuthService {
       delete result.password;
       result.roles = user.roles;
       return result;
-    } catch (error) {
+    } catch {
       throw new UnauthorizedException();
     }
   }
 
-  async createTokens<T extends Buffer | object>(
-    payload: T,
+  async createTokens(
+    payload: Buffer | object,
     sessionTtl: number,
   ): Promise<ITokensPair> {
     return {
@@ -160,7 +162,6 @@ export class AuthService {
     const sessionId = uuidv4();
     const sessionPayload = await argon2.hash(crypto.randomBytes(10));
     const sessionData: ISession = {
-      provider: 'default',
       payload: sessionPayload,
       expires: new Date(Date.now() + sessionTtl * 1000),
       userId: user.id,
@@ -175,12 +176,44 @@ export class AuthService {
       sessionTtl * 1000,
     );
 
-    const tokens = await this.createTokens<IToken>(
+    return this.createTokens(
       { userId: user.id, sessionId, sessionPayload },
       sessionTtl,
     );
+  }
 
-    return { ...tokens };
+  async signInGoogle(
+    googleAccessToken: string,
+    sessionTtl: number,
+    ip: string,
+    userAgent?: string,
+  ): Promise<ITokensPair & { user: IUser }> {
+    let googleUser: Record<string, string> | null = null;
+
+    try {
+      const googleRes = await fetch(
+        `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleAccessToken}`,
+      );
+      googleUser = await googleRes.json();
+
+      if (!googleUser || !googleUser['id'] || !googleUser['name'])
+        throw new InternalServerErrorException();
+    } catch (error) {
+      Logger.error(error);
+      throw new InternalServerErrorException();
+    }
+
+    const defaultRole = await this.checkDefaultData();
+    const user = await this.usersService.createByGoogle(
+      googleUser['id'],
+      googleUser['name'],
+      [defaultRole],
+    );
+
+    return {
+      ...(await this.signIn(user, sessionTtl, ip, userAgent)),
+      user: { ...user.dataValues, roles: user.roles },
+    };
   }
 
   verifyUser(verifyUserDto: VerifyUserDto): Promise<boolean> {
@@ -224,7 +257,6 @@ export class AuthService {
       session.payload === token.sessionPayload
     ) {
       const sessionData: ISession = {
-        provider: session.provider,
         payload: newPayload,
         expires: new Date(Date.now() + sessionTtl * 1000),
         userId: token.userId,
@@ -242,7 +274,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    return this.createTokens<IToken>(
+    return this.createTokens(
       {
         userId: token.userId,
         sessionId: token.sessionId,

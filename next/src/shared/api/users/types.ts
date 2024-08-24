@@ -4,6 +4,7 @@ export interface IUser {
   id: string;
   email?: string;
   name: string;
+  googleId?: string;
   enabled: boolean;
   verified: boolean;
   roles?: IRole[];

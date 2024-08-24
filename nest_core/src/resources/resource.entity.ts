@@ -33,7 +33,7 @@ export class Resource
   @Column({ type: DataType.STRING(1000), allowNull: true })
   description?: string | null;
 
-  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
   enabled: boolean;
 
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })

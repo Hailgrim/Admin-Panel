@@ -14,7 +14,7 @@ const { t, locale } = useI18n()
 const email = ref('')
 const emailIsValid = (value: string) => value.length > 0 || t('emailValidation')
 const { data, error, execute, pending, args } = authApi.forgotPassword()
-const errorMsg = ref<string | null>(null)
+const errorText = ref<string | null>(null)
 const resetModal = ref(false)
 
 async function submitHandler(event: SubmitEventPromise) {
@@ -30,13 +30,13 @@ watch(
     if (error.value)
       switch (error.value?.status) {
         case 404:
-          errorMsg.value = t('wrongEmail')
+          errorText.value = t('wrongEmail')
           break
         case undefined:
-          errorMsg.value = null
+          errorText.value = null
           break
         default:
-          errorMsg.value = makeErrorText(error.value, locale.value)
+          errorText.value = makeErrorText(error.value, locale.value)
       }
   },
 )
@@ -52,7 +52,7 @@ watch(
 
 <template>
   <Form @submit="submitHandler">
-    <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
+    <FormAlert v-if="errorText" :text="errorText" type="error" />
     <FormField
 v-model="email" :hint="$t('emailValidation')" :label="$t('email')" name="email" required
       :rules="[emailIsValid]" type="email" />

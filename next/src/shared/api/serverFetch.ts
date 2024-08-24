@@ -4,7 +4,6 @@ import { cookies } from 'next/headers';
 import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import { headers } from 'next/headers';
 
-import { API_HOST } from '@/shared/lib/config';
 import authService from './auth/authService';
 import { IFetchRes, IReqArgs } from './types';
 
@@ -38,7 +37,7 @@ const serverFetch = async <T = unknown>(
 
   const query = async <U>(payload: IReqArgs): Promise<U | null> => {
     try {
-      let url = `${API_HOST}${payload.url}`;
+      let url = `${process.env.INTERNAL_API_HOST}${payload.url}`;
       if (payload.params) {
         url += `?${new URLSearchParams(
           payload.params as Record<string, string>

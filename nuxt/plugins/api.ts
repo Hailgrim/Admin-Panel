@@ -4,8 +4,8 @@ export default defineNuxtPlugin((nuxtApp) => {
   const cookie = useRequestHeader('cookie')
   const userAgent = useRequestHeader('user-agent')
   const baseURL = import.meta.client
-    ? `https://api.${config.public.NGINX_HOST}`
-    : `http://${config.public.NEST_CORE_HOST}:${config.public.NEST_CORE_PORT}`
+    ? config.public.EXTERNAL_API_HOST
+    : config.public.INTERNAL_API_HOST
   const timeout = 5000
 
   const api = $fetch.create({
@@ -63,7 +63,7 @@ export default defineNuxtPlugin((nuxtApp) => {
                 )
             }
           }
-        } catch (error) {
+        } catch {
           if (!Object.values(ROUTES.ui).includes(nuxtApp._route.path)) {
             await nuxtApp.runWithContext(() =>
               navigateTo(

@@ -25,14 +25,14 @@ watch(
   },
 )
 
-execute()
+onMounted(() => {
+  execute()
+})
 </script>
 
 <template>
   <v-skeleton-loader v-if="pending" height="68" />
-  <template v-else>
-    <SessionForm
+  <SessionForm
 v-for="session of sessions" :key="session.id" :session="session"
-      @delete="sessions = sessions?.filter((item) => item.id !== session.id) || null" />
-  </template>
+    @delete="sessions = sessions?.filter((item) => item.id !== session.id) || null" />
 </template>

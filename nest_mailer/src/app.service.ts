@@ -37,6 +37,7 @@ export class AppService {
         Logger.log(previewUri);
       }
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
   }
@@ -61,6 +62,7 @@ export class AppService {
         Logger.log(previewUri);
       }
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
   }
@@ -85,6 +87,7 @@ export class AppService {
         Logger.log(previewUri);
       }
     } catch (error) {
+      Logger.error(error);
       throw new InternalServerErrorException();
     }
   }

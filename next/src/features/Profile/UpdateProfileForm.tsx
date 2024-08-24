@@ -80,6 +80,14 @@ const UpdateProfileForm: FC = () => {
 
   return (
     <Form onSubmit={submitHandler}>
+      {profile?.googleId && (
+        <FormField
+          name="googleId"
+          label={t.googleId}
+          value={profile.googleId}
+          disabled
+        />
+      )}
       <FormField
         required
         name="name"
@@ -88,6 +96,9 @@ const UpdateProfileForm: FC = () => {
         onChange={(event) =>
           newData && setNewData({ ...newData, name: event.currentTarget.value })
         }
+        helperText={t.nameValidation}
+        color={nameIsValid ? 'success' : 'error'}
+        error={!nameIsValid && (newData?.name || '').length > 0}
       />
       <FormButton
         type="submit"

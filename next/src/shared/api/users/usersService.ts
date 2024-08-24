@@ -41,13 +41,9 @@ class UsersService {
   async findAndCountAll(
     payload?: IListReq<IUser>
   ): Promise<IFetchRes<IFindAndCountRes<IUser>>> {
-    const { data: result, error } = await serverFetch<IFindAndCountRes<IUser>>(
+    return serverFetch<IFindAndCountRes<IUser>>(
       this.findAndCountAllArgs(payload)
     );
-    return {
-      data: { count: result?.count || 0, rows: result?.rows || [] },
-      error,
-    };
   }
 
   findOneArgs(payload: IUser['id']): IReqArgs {

@@ -9,9 +9,6 @@ export class ExternalSessionDto implements ISession {
   current: boolean;
 
   @Exclude()
-  provider: 'default' | 'google';
-
-  @Exclude()
   userId: string;
 
   @Exclude()

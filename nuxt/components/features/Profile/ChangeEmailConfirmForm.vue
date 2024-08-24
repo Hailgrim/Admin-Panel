@@ -31,7 +31,6 @@ async function submitHandler(event: SubmitEventPromise) {
 watch(
   error,
   () => {
-    console.log(error.value?.status)
     if (error.value)
       switch (error.value?.status) {
         case 404:

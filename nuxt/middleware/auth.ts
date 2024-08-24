@@ -9,6 +9,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const mainStore = useMainStore()
   const isAuthRoute =
     to.path === ROUTES.ui.signIn ||
+    to.path === ROUTES.ui.signInGoogle ||
     to.path === ROUTES.ui.signUp ||
     to.path === ROUTES.ui.forget
 

@@ -5,6 +5,7 @@ export abstract class IUser {
   email?: string | null;
   password?: string | null;
   name: string;
+  googleId?: string | null;
   enabled: boolean;
   verified: boolean;
   verificationCode?: string | null;
@@ -16,6 +17,11 @@ export abstract class IUser {
 
 export type CreateUserFields = Required<
   Pick<IUser, 'email' | 'password' | 'name' | 'enabled'>
+>;
+
+export type CreateGoogleUserFields = Pick<
+  IUser,
+  'googleId' | 'name' | 'verified' | 'enabled'
 >;
 
 export type GetUsersFields = Partial<

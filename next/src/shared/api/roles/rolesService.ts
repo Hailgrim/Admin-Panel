@@ -48,13 +48,9 @@ class RolesService {
   async findAndCountAll(
     payload?: IListReq<IRole>
   ): Promise<IFetchRes<IFindAndCountRes<IRole>>> {
-    const { data: result, error } = await serverFetch<IFindAndCountRes<IRole>>(
+    return serverFetch<IFindAndCountRes<IRole>>(
       this.findAndCountAllArgs(payload)
     );
-    return {
-      data: { count: result?.count || 0, rows: result?.rows || [] },
-      error,
-    };
   }
 
   findOneArgs(payload: IRole['id']): IReqArgs {

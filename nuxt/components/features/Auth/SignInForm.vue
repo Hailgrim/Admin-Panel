@@ -10,6 +10,7 @@ import FormButton from '~/components/shared/ui/Form/FormButton.vue'
 import FormLink from '~/components/shared/ui/Form/FormLink.vue'
 import CustomModal from '~/components/shared/ui/CustomModal/CustomModal.vue'
 import VerifyUserForm from '~/components/features/Auth/VerifyUserForm.vue'
+import SignInGoogleLink from '~/components/features/Auth/SignInGoogleLink.vue'
 import { useMainStore } from '~/store/main/main'
 import authApi from '~/api/auth/authApi'
 
@@ -23,7 +24,7 @@ const passwordIsValid = (value: string) => value.length > 0
 const rememberMe = ref(false)
 const mainStore = useMainStore()
 const { data, error, execute, pending } = authApi.signIn()
-const errorMsg = ref<string | null>(null)
+const errorText = ref<string | null>(null)
 const verifyModal = ref(false)
 
 async function submitHandler(event?: SubmitEventPromise) {
@@ -39,20 +40,20 @@ watch(
     if (error.value)
       switch (error.value?.status) {
         case 410:
-          errorMsg.value = t('userDeleted')
+          errorText.value = t('userDeleted')
           break
         case 403:
-          errorMsg.value = null
+          errorText.value = null
           verifyModal.value = true
           break
         case 401:
-          errorMsg.value = t('wrongEmailOrPassword')
+          errorText.value = t('wrongEmailOrPassword')
           break
         case undefined:
-          errorMsg.value = null
+          errorText.value = null
           break
         default:
-          errorMsg.value = makeErrorText(error.value, locale.value)
+          errorText.value = makeErrorText(error.value, locale.value)
       }
   },
 )
@@ -70,7 +71,7 @@ watch(
 
 <template>
   <Form @submit="submitHandler">
-    <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
+    <FormAlert v-if="errorText" :text="errorText" type="error" />
     <FormField v-model="email" :label="$t('email')" name="email" required :rules="[emailIsValid]" type="email" />
     <FormPassword v-model="password" :label="$t('password')" name="password" required :rules="[passwordIsValid]" />
     <FormCheckbox v-model="rememberMe" :label="$t('rememberMe')" name="rememberMe" />
@@ -79,6 +80,7 @@ watch(
     </FormButton>
     <FormLink :href="ROUTES.ui.signUp" :text="$t('signUpText')" />
     <FormLink :href="ROUTES.ui.forget" :text="$t('forgotPasswordText')" />
+    <SignInGoogleLink />
   </Form>
   <CustomModal v-model="verifyModal" :title="$t('verification')">
     <VerifyUserForm :email="email" @close="verifyModal = false" @success="submitHandler" />

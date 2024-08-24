@@ -1,12 +1,17 @@
 <script setup lang="ts">
 defineProps<{
-  href: string
+  href?: string
   text: string
+}>()
+defineEmits<{
+  click: [event: MouseEvent]
 }>()
 </script>
 
 <template>
-  <NuxtLink class="link d-block mb-6 text-center text-decoration-none" :href="href">
+  <NuxtLink
+class="link d-block mb-6 text-center text-decoration-none" :href="href"
+    @click.capture="$emit('click', $event)">
     {{ text }}
   </NuxtLink>
 </template>

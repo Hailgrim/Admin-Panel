@@ -13,20 +13,24 @@ const authApi = createApi({
       query: authService.signUpArgs,
     }),
 
-    signIn: builder.query<IUser, IUserSignIn>({
-      query: authService.signInArgs,
-    }),
-
-    verifyUser: builder.query<boolean, IVerifyUser>({
-      query: authService.verifyUserArgs,
-    }),
-
     forgotPassword: builder.query<boolean, string>({
       query: authService.forgotPasswordArgs,
     }),
 
     resetPassword: builder.query<boolean, IResetPassword>({
       query: authService.resetPasswordArgs,
+    }),
+
+    signIn: builder.query<IUser, IUserSignIn>({
+      query: authService.signInArgs,
+    }),
+
+    signInGoogle: builder.query<IUser, string>({
+      query: authService.signInGoogleArgs,
+    }),
+
+    verifyUser: builder.query<boolean, IVerifyUser>({
+      query: authService.verifyUserArgs,
     }),
 
     refresh: builder.query<boolean, void>({

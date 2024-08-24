@@ -19,6 +19,7 @@ import { useAppDispatch } from '@/shared/store/hooks';
 import authApi from '@/shared/api/auth/authApi';
 import { makeErrorText } from '@/shared/lib/utils';
 import { setProfile } from '@/shared/store/main/main';
+import SignInGoogleLink from './SignInGoogleLink';
 
 const SignInForm: FC = () => {
   const router = useRouter();
@@ -123,6 +124,7 @@ const SignInForm: FC = () => {
         <FormLink href={ROUTES.ui.forget} mui={{ align: 'center' }}>
           {t.forgotPasswordText}
         </FormLink>
+        <SignInGoogleLink />
       </Form>
       <CustomModal
         open={verifyModal}

@@ -16,7 +16,9 @@ const StoreProvider: FC<
 
     if (profileJson) {
       try {
-        storeRef.current.dispatch(setProfile(JSON.parse(profileJson)));
+        storeRef.current.dispatch(
+          setProfile(JSON.parse(decodeURIComponent(profileJson)))
+        );
       } catch {}
     }
   }

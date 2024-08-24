@@ -28,6 +28,11 @@ class AuthApi {
     options: { method: 'POST', credentials: 'include', body: payload },
   }))
 
+  signInGoogle = useAPI<IUser, string>((payload) => ({
+    url: ROUTES.api.signInGoogle,
+    options: { method: 'POST', credentials: 'include', body: payload },
+  }))
+
   verify = useAPI<boolean, IVerifyUser>((payload) => ({
     url: ROUTES.api.verify,
     options: { method: 'POST', body: payload },

@@ -95,6 +95,7 @@ services:
         - NEST_CORE_PORT
         - ACCESS_TOKEN_LIFETIME
         - REFRESH_TOKEN_LIFETIME
+        - GOOGLE_CLIENT_ID
 
   nuxt:
     build:
@@ -105,3 +106,4 @@ services:
         - NEST_CORE_PORT
         - ACCESS_TOKEN_LIFETIME
         - REFRESH_TOKEN_LIFETIME
+        - GOOGLE_CLIENT_ID

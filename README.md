@@ -50,11 +50,11 @@ docker compose down --remove-orphans
 
 ### [Next.js](https://github.com/vercel/next.js) `./next`
 
-![sign-up-preview.png](sign-up-preview.png 'Sign Up Screen preview')
+![sign-in-preview.png](sign-in-preview.png 'Sign In Screen preview')
 
 ![profile-preview.png](profile-preview.png 'Profile Screen preview')
 
-![admin-preview.png](admin-preview.png 'Role Screen preview')
+![roles-preview.png](roles-preview.png 'Role Screen preview')
 
 This microservice provides a graphical interface for administration.
 In it, you can set a list of protected links, create roles with rights for links, manage registered users.

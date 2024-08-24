@@ -18,6 +18,7 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
   );
+
   await app.register(fastifyCookie as any);
   await app.register(fastifyHelmet as any);
 
@@ -39,6 +40,7 @@ async function bootstrap() {
     ],
     credentials: true,
   });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

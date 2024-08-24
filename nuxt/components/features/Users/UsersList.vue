@@ -15,13 +15,14 @@ defineEmits<{
   'update:quantity': [value: number]
 }>()
 
-const { t, locale } = useI18n()
+const { locale } = useI18n()
+const { data: lData, error: lError, execute: lExecute, pending: lPending } = usersApi.list()
+const { data: lcData, error: lcError, execute: lcExecute, pending: lcPending } = usersApi.listCounted()
+const { data: dData, error: dError, execute: dExecute, pending: dPending } = usersApi.delete()
 const page = ref(props.page || 1)
 const quantity = ref(props.quantity || 25)
-const count = ref(props.count || page.value * quantity.value)
-const { data: lData, execute: lExecute, pending: lPending } = usersApi.list()
-const { data: dData, error: dError, execute: dExecute, pending: dPending } = usersApi.delete()
-const items = computed(() => lData.value || props.rows || [])
+const count = computed(() => lcData.value?.count || props.count || page.value * quantity.value)
+const items = ref(props.rows)
 const rights = useRights(ROUTES.api.users)
 const mainStore = useMainStore()
 const selected = ref<string[]>([])
@@ -34,6 +35,25 @@ watch(
 )
 
 watch(
+  () => props.rows,
+  () => {
+    if (!props.rows) {
+      lcExecute({ page: page.value, quantity: quantity.value })
+    }
+  },
+  { immediate: true },
+)
+
+watch(
+  dData,
+  () => {
+    if (dData.value) {
+      lcExecute({ page: page.value, quantity: quantity.value })
+    }
+  },
+)
+
+watch(
   dError,
   () => {
     if (dError.value)
@@ -42,12 +62,34 @@ watch(
 )
 
 watch(
-  dData,
+  lData,
   () => {
-    if (dData.value) {
-      mainStore.addAlert({ type: 'success', text: t('success') })
-      lExecute({ page: page.value, quantity: quantity.value })
-    }
+    if (lData.value)
+      items.value = lData.value
+  },
+)
+
+watch(
+  lError,
+  () => {
+    if (lError.value)
+      mainStore.addAlert({ type: 'error', text: makeErrorText(lError.value, locale.value) })
+  },
+)
+
+watch(
+  lcData,
+  () => {
+    if (lcData.value)
+      items.value = lcData.value.rows
+  },
+)
+
+watch(
+  lcError,
+  () => {
+    if (lcError.value)
+      mainStore.addAlert({ type: 'error', text: makeErrorText(lcError.value, locale.value) })
   },
 )
 </script>
@@ -67,6 +109,6 @@ color="error" :disabled="!rights.deleting || selected.length === 0" :loading="dP
   </div>
   <UsersTable
 v-model:page="page" v-model:quantity="quantity" v-model:selected="selected" :count="count"
-    :loading="dPending || lPending" :rows="items" @update:page="$emit('update:page', $event)"
+    :loading="dPending || lPending || lcPending" :rows="items" @update:page="$emit('update:page', $event)"
     @update:quantity="$emit('update:quantity', $event)" />
 </template>

@@ -19,7 +19,7 @@ import useLang from '@/shared/hooks/useLang';
 import d from '@/shared/locales/dictionary';
 import { useAppDispatch } from '@/shared/store/hooks';
 import { makeDateString, makeErrorText } from '@/shared/lib/utils';
-import { addAlert } from '@/shared/store/main/main';
+import { addAlert, setProfile } from '@/shared/store/main/main';
 import theme from '@/shared/lib/theme';
 import { ROUTES } from '@/shared/lib/constants';
 import useRights from '@/shared/hooks/useRights';
@@ -35,8 +35,7 @@ const SessionForm: FC<{ session: ISession; onDelete?: () => void }> = ({
   const t = useT();
   const rights = useRights(ROUTES.api.profile);
   const userAgent = useRef(new UAParser(session.userAgent).getResult());
-  const [remove, { data, isLoading, error }] =
-    profileApi.useDeleteSessionsMutation();
+  const [remove, removeReq] = profileApi.useDeleteSessionsMutation();
 
   const submitHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -44,22 +43,25 @@ const SessionForm: FC<{ session: ISession; onDelete?: () => void }> = ({
   };
 
   useEffect(() => {
-    if (error) {
+    if (removeReq.error) {
       dispatch(
         addAlert({
           type: 'error',
-          text: makeErrorText(error, lang.current),
+          text: makeErrorText(removeReq.error, lang.current),
         })
       );
     }
-  }, [dispatch, error, lang]);
+  }, [dispatch, removeReq.error, lang]);
 
   useEffect(() => {
-    if (data) {
+    if (removeReq.data) {
       dispatch(addAlert({ type: 'success', text: d[lang.current].success }));
       onDelete?.();
+      if (session.current) {
+        dispatch(setProfile(null));
+      }
     }
-  }, [data, dispatch, lang, onDelete]);
+  }, [removeReq.data, dispatch, session, lang, onDelete]);
 
   return (
     <Form onSubmit={submitHandler}>
@@ -113,7 +115,7 @@ const SessionForm: FC<{ session: ISession; onDelete?: () => void }> = ({
             color="error"
             aria-label="sign out"
             title={t.signOut}
-            disabled={!rights.updating || isLoading || data}
+            disabled={!rights.updating || removeReq.isLoading || removeReq.data}
             type="submit"
           >
             <DeleteIcon />

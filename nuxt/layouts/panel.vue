@@ -13,23 +13,23 @@ const description = computed(() => route.meta.description ? t(String(route.meta.
 const name = computed(() => route.meta.name ? t(String(route.meta.name)) : '?')
 const mainStore = useMainStore()
 const loading = ref(false)
-const { data, execute, pending } = authApi.signOut()
+const { data, error, execute, pending } = authApi.signOut()
 
 router.beforeEach(() => loading.value = true)
 router.afterEach(() => loading.value = false)
 
 watch(
-  data,
+  () => mainStore.profile,
   () => {
-    if (data.value === true)
-      mainStore.setProfile(null)
+    if (mainStore.profile === null)
+      execute()
   },
 )
 
 watch(
-  () => mainStore.profile,
+  [data, error],
   () => {
-    if (mainStore.profile === null)
+    if (data.value || error.value?.status === 401)
       router.push(ROUTES.ui.signIn)
   },
 )
@@ -51,7 +51,7 @@ watch(
         <template #append>
           <v-app-bar-nav-icon
 color="error" icon="mdi-logout" :loading="pending || Boolean(data)" :title="$t('signOut')"
-            @click="execute()" />
+            @click="mainStore.setProfile(null)" />
         </template>
       </v-app-bar>
       <v-main class="d-flex flex-column">

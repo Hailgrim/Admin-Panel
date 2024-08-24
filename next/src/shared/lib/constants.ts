@@ -10,6 +10,7 @@ export const PASSWORD_REGEX =
 export const ROUTES = {
   ui: {
     signIn: '/authorization',
+    signInGoogle: '/authorization/google',
     signUp: '/registration',
     forget: '/forgot-password',
     home: '/',
@@ -27,6 +28,7 @@ export const ROUTES = {
   api: {
     sighUp: 'auth/sign-up',
     signIn: '/auth/sign-in',
+    signInGoogle: '/auth/sign-in/google',
     verify: '/auth/verify-user',
     forgotPassword: '/auth/forgot-password',
     resetPassword: '/auth/reset-password',

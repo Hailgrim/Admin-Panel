@@ -6,11 +6,10 @@ import type {
 } from '@reduxjs/toolkit/query';
 import { Mutex } from 'async-mutex';
 
-import { API_HOST } from '../lib/config';
 import authService from './auth/authService';
 
 const mutex = new Mutex();
-const baseQuery = fetchBaseQuery({ baseUrl: API_HOST });
+const baseQuery = fetchBaseQuery({ baseUrl: process.env.EXTERNAL_API_HOST });
 const baseQueryWithReauth: BaseQueryFn<
   string | FetchArgs,
   unknown,

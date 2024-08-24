@@ -40,13 +40,13 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!profile)
-      router.push(`${ROUTES.ui.signIn}?return=${encodeURIComponent(pathname)}`);
-  }, [profile, router, pathname]);
+    if (!profile) signOut();
+  }, [profile, signOut]);
 
   useEffect(() => {
-    if (data) dispatch(setProfile(null));
-  }, [dispatch, data, router]);
+    if (data || (error && 'status' in error && error.status === 401))
+      router.push(`${ROUTES.ui.signIn}?return=${encodeURIComponent(pathname)}`);
+  }, [data, router, pathname, error]);
 
   useEffect(() => {
     if (error) {
@@ -87,7 +87,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 aria-label="sign out"
                 title={t.signOut}
                 disabled={isLoading || data}
-                onClick={() => signOut()}
+                onClick={() => dispatch(setProfile(null))}
               >
                 <LogoutIcon />
               </IconButton>

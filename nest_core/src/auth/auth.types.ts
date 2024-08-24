@@ -21,7 +21,6 @@ export type FastifyRequestWithToken = FastifyRequest & {
 };
 
 export abstract class ISession {
-  provider: 'default' | 'google';
   payload: string;
   expires: Date;
   userId: string;

@@ -7,7 +7,6 @@ import {
   Logger,
 } from '@nestjs/common';
 import { FindOptions, UpdateOptions } from 'sequelize';
-import * as argon2 from 'argon2';
 
 import { User } from './user.entity';
 import { USERS_REPOSITORY, PUBLIC, WITH_ROLES } from 'libs/constants';
@@ -20,6 +19,7 @@ import { IFindAndCount } from 'src/database/database.types';
 import { UpdateUserFields } from './users.types';
 import { preparePaginationOptions } from 'src/database/database.utils';
 import { RedisService } from 'src/redis/redis.service';
+import { createPasswordHash } from './users.utils';
 
 @Injectable()
 export class UsersService {
@@ -48,14 +48,10 @@ export class UsersService {
     };
   }
 
-  createPasswordHash(password: string): Promise<string> {
-    return argon2.hash(password);
-  }
-
   async create(createUserDto: CreateUserDto, roles?: Role[]): Promise<User> {
     let user: User;
-    let created = false;
-    const password = await this.createPasswordHash(createUserDto.password);
+    let created: boolean;
+    const password = await createPasswordHash(createUserDto.password);
 
     try {
       [user, created] = await this.usersRepository
@@ -75,6 +71,39 @@ export class UsersService {
 
     try {
       if (roles && roles.length > 0) {
+        await user.$set('roles', roles);
+        user.roles = roles;
+      }
+    } catch (error) {
+      Logger.error(error);
+      throw new InternalServerErrorException();
+    }
+
+    return user;
+  }
+
+  async createByGoogle(
+    googleId: string,
+    name: string,
+    roles?: Role[],
+  ): Promise<User> {
+    let user: User;
+    let created: boolean;
+
+    try {
+      [user, created] = await this.usersRepository
+        .scope([WITH_ROLES])
+        .findOrCreate({
+          where: { googleId },
+          defaults: { googleId, name, enabled: true, verified: true },
+        });
+    } catch (error) {
+      Logger.error(error);
+      throw new InternalServerErrorException();
+    }
+
+    try {
+      if (roles && roles.length > 0 && created) {
         await user.$set('roles', roles);
         user.roles = roles;
       }
@@ -216,7 +245,7 @@ export class UsersService {
     return this.update(
       {
         resetPasswordCode: null,
-        password: await this.createPasswordHash(newPassword),
+        password: await createPasswordHash(newPassword),
       },
       { where: { email, resetPasswordCode } },
     );
@@ -224,7 +253,7 @@ export class UsersService {
 
   async updatePassword(id: string, newPassword: string): Promise<boolean> {
     return this.update(
-      { password: await this.createPasswordHash(newPassword) },
+      { password: await createPasswordHash(newPassword) },
       { where: { id } },
     );
   }

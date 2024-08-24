@@ -49,13 +49,9 @@ class ResourcesService {
   async findAndCountAll(
     payload?: IListReq<IResource>
   ): Promise<IFetchRes<IFindAndCountRes<IResource>>> {
-    const { data: result, error } = await serverFetch<
-      IFindAndCountRes<IResource>
-    >(this.findAndCountAllArgs(payload));
-    return {
-      data: { count: result?.count || 0, rows: result?.rows || [] },
-      error,
-    };
+    return serverFetch<IFindAndCountRes<IResource>>(
+      this.findAndCountAllArgs(payload)
+    );
   }
 
   findOneArgs(payload: IResource['id']): IReqArgs {

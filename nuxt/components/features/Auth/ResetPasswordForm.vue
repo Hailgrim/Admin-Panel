@@ -21,7 +21,7 @@ const codeIsValid = (value: string) => value.length > 0 || `${t('codeFromEmail')
 const password = ref('')
 const passwordIsValid = (value: string) => testString(PASSWORD_REGEX, value) || t('passwordValidation')
 const { data, error, execute, pending } = authApi.resetPassword()
-const errorMsg = ref<string | null>(null)
+const errorText = ref<string | null>(null)
 const router = useRouter()
 
 async function submitHandler(event: SubmitEventPromise) {
@@ -37,13 +37,13 @@ watch(
     if (error.value)
       switch (error.value?.status) {
         case 404:
-          errorMsg.value = t('wrongEmailOrCode')
+          errorText.value = t('wrongEmailOrCode')
           break
         case undefined:
-          errorMsg.value = null
+          errorText.value = null
           break
         default:
-          errorMsg.value = makeErrorText(error.value, locale.value)
+          errorText.value = makeErrorText(error.value, locale.value)
       }
   },
 )
@@ -61,7 +61,7 @@ watch(
 
 <template>
   <Form @submit="submitHandler">
-    <FormAlert v-if="errorMsg" :text="errorMsg" type="error" />
+    <FormAlert v-if="errorText" :text="errorText" type="error" />
     <FormField
 v-model="code" :hint="`${$t('codeFromEmail')} (${email})`" :label="$t('code')" name="code" required
       :rules="[codeIsValid]" />

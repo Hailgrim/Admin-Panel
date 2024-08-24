@@ -1,3 +1,4 @@
+import { useMainStore } from '~/store/main/main'
 import type { IReqError } from './types'
 
 export function useAPI<ResT = unknown, ReqT = void>(
@@ -12,6 +13,7 @@ export function useAPI<ResT = unknown, ReqT = void>(
   }
 ) {
   return (cacheKey?: string) => {
+    const mainStore = useMainStore()
     const customFetch = useNuxtApp().$api
     const args = ref(null) as Ref<ReqT | null>
     const pending = ref(false)
@@ -51,6 +53,9 @@ export function useAPI<ResT = unknown, ReqT = void>(
           message: String((fail as Record<string, unknown>).message),
         }
         pending.value = false
+        if (error.value.status === 401) {
+          mainStore.setProfile(null)
+        }
       }
 
       return data.value
