@@ -5,6 +5,6 @@ subjectAltName = @alt_names
 [alt_names]
 DNS.1 = localhost.com
 DNS.2 = www.localhost.com
-DNS.3 = api.localhost.com
-DNS.4 = nuxt.localhost.com
+DNS.3 = nuxt.localhost.com
+DNS.4 = api.localhost.com
 IP.1 = 127.0.0.1
