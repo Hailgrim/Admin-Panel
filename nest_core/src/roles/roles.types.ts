@@ -3,7 +3,7 @@ import { IUsersRoles } from 'src/database/database.types';
 import { IResource } from 'src/resources/resources.types';
 
 export abstract class IRole {
-  id?: number;
+  id: string;
   name: string;
   description?: string | null;
   enabled: boolean;

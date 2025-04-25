@@ -27,7 +27,7 @@ const RolesList: FC<IList<IRole>> = (props) => {
   const [findAndCountAll, findAndCountAllReq] =
     rolesApi.useLazyFindAndCountAllQuery();
   const [destroy, destroyReq] = rolesApi.useDeleteMutation();
-  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [items, setItems] = useState(props.rows);
   const paginationModel = useRef<GridPaginationModel>({
     page: (props.page || 1) - 1,
@@ -145,7 +145,7 @@ const RolesList: FC<IList<IRole>> = (props) => {
           destroyReq.isLoading
         }
         onRowSelectionModelChange={(rowSelectionModel) =>
-          setSelectedRows(rowSelectionModel as number[])
+          setSelectedRows(rowSelectionModel as string[])
         }
         onPaginationModelChange={paginationHandler}
       />

@@ -8,15 +8,15 @@ import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { JwtRefreshStrategy } from './jwt-refresh.strategy';
 import { AuthController } from './auth.controller';
-import { RedisModule } from 'src/redis/redis.module';
+import { CacheModule } from 'src/cache/cache.module';
 import { RolesModule } from 'src/roles/roles.module';
 import { ResourcesModule } from 'src/resources/resources.module';
-import { RmqModule } from 'src/rmq/rmq.module';
+import { QueueModule } from 'src/queue/queue.module';
 
 @Module({
   imports: [
-    RedisModule,
-    RmqModule,
+    CacheModule,
+    QueueModule,
     UsersModule,
     RolesModule,
     ResourcesModule,

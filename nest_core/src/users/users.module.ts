@@ -3,12 +3,12 @@ import { Module } from '@nestjs/common';
 import { DatabaseModule } from '../database/database.module';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { RedisModule } from 'src/redis/redis.module';
+import { CacheModule } from 'src/cache/cache.module';
 import { USERS_REPOSITORY } from 'libs/constants';
 import { User } from './user.entity';
 
 @Module({
-  imports: [DatabaseModule, RedisModule],
+  imports: [DatabaseModule, CacheModule],
   controllers: [UsersController],
   providers: [
     {

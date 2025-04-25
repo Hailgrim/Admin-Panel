@@ -20,6 +20,6 @@ export class UsersRoles
   userId: string;
 
   @ForeignKey(() => Role)
-  @Column({ type: DataType.INTEGER })
-  roleId: number;
+  @Column({ type: DataType.UUID })
+  roleId: string;
 }

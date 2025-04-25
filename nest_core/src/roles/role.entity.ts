@@ -33,6 +33,13 @@ import { RolesResources } from '../database/roles-resources.entity';
 }))
 @Table({ tableName: 'roles' })
 export class Role extends Model<Role, CreateRoleFields> implements IRole {
+  @Column({
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
+    primaryKey: true,
+  })
+  declare id: string;
+
   @Column({ type: DataType.STRING(100), allowNull: false, unique: true })
   name: string;
 

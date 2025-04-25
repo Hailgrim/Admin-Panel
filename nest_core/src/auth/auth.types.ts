@@ -10,7 +10,6 @@ export abstract class ITokensPair {
 export interface IToken {
   userId: string;
   sessionId: string;
-  sessionPayload: string;
 }
 
 export type FastifyRequestWithUser = FastifyRequest & { user: IUser };
@@ -21,12 +20,14 @@ export type FastifyRequestWithToken = FastifyRequest & {
 };
 
 export abstract class ISession {
-  payload: string;
-  expires: Date;
-  userId: string;
   userAgent?: string;
   ip: string;
   updatedAt: Date;
+}
+
+export abstract class IExternalSession extends ISession {
+  id: string;
+  current: boolean;
 }
 
 export type SignUpFields = Pick<IUser, 'email' | 'password' | 'name'>;

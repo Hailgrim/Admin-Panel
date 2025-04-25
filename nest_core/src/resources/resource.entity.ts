@@ -24,6 +24,13 @@ export class Resource
   extends Model<Resource, CreateResourceFields>
   implements IResource
 {
+  @Column({
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
+    primaryKey: true,
+  })
+  declare id: string;
+
   @Column({ type: DataType.STRING(100), allowNull: false, unique: true })
   name: string;
 

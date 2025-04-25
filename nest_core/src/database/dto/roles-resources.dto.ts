@@ -5,13 +5,19 @@ import d from 'locales/dictionary';
 import { IRolesResources } from '../database.types';
 
 export class RolesResourcesDto implements IRolesResources {
-  @ApiProperty({ example: 1, description: d['en'].roleId })
+  @ApiProperty({
+    example: '00000000-0000-0000-0000-000000000000',
+    description: d['en'].roleId,
+  })
   @IsNumber()
-  roleId: number;
+  roleId: string;
 
-  @ApiProperty({ example: 1, description: d['en'].resourceId })
+  @ApiProperty({
+    example: '00000000-0000-0000-0000-000000000000',
+    description: d['en'].resourceId,
+  })
   @IsNumber()
-  resourceId: number;
+  resourceId: string;
 
   @ApiProperty({
     example: false,

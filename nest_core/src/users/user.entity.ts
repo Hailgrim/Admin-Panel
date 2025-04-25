@@ -54,9 +54,8 @@ export class User
     type: DataType.UUID,
     defaultValue: DataType.UUIDV4,
     primaryKey: true,
-    allowNull: false,
   })
-  id: string;
+  declare id: string;
 
   @Column({ type: DataType.STRING(100), allowNull: true, unique: true })
   email?: string | null;

@@ -25,7 +25,7 @@ const count = computed(() => lcData.value?.count || props.count || page.value * 
 const items = ref(props.rows)
 const rights = useRights(ROUTES.api.roles)
 const mainStore = useMainStore()
-const selected = ref<number[]>([])
+const selected = ref<string[]>([])
 
 watch(
   [page, quantity],

@@ -2,7 +2,7 @@ import { IRolesResources } from 'src/database/database.types';
 import { IRole } from 'src/roles/roles.types';
 
 export abstract class IResource {
-  id?: number;
+  id: string;
   name: string;
   path: string;
   description?: string | null;

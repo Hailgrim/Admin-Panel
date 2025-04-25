@@ -19,8 +19,8 @@ import { GetRolesDto } from './dto/get-roles.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { RolesResources } from '../database/roles-resources.entity';
 import { IFindAndCount } from 'src/database/database.types';
-import { preparePaginationOptions } from 'src/database/database.utils';
 import { RolesResourcesDto } from 'src/database/dto/roles-resources.dto';
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class RolesService {
@@ -29,11 +29,12 @@ export class RolesService {
     private rolesRepository: typeof Role,
     @Inject(ROLES_RESOURCES_REPOSITORY)
     private rolesResourcesRepository: typeof RolesResources,
+    private databaseService: DatabaseService,
   ) {}
 
   private prepareSearchOptions(getRolesDto?: GetRolesDto): FindOptions<Role> {
     const options: FindOptions<Role> = {
-      ...preparePaginationOptions(getRolesDto),
+      ...this.databaseService.preparePaginationOptions(getRolesDto),
     };
 
     if (getRolesDto?.name !== undefined) {
@@ -53,7 +54,7 @@ export class RolesService {
   private prepareGetOptions(getRolesDto?: GetRolesDto): FindOptions<Role> {
     return {
       ...this.prepareSearchOptions(getRolesDto),
-      ...preparePaginationOptions(getRolesDto),
+      ...this.databaseService.preparePaginationOptions(getRolesDto),
     };
   }
 
@@ -186,9 +187,13 @@ export class RolesService {
       throw new NotFoundException();
     }
 
-    const deleteAllows: number[] = [];
+    const deleteAllows: string[] = [];
     role.resources?.forEach((resource) => {
-      if (!rolesResourcesDtoArr.some((value) => value.roleId === resource.id)) {
+      if (
+        !rolesResourcesDtoArr.some(
+          (value) => value.roleId === resource.get('id'),
+        )
+      ) {
         deleteAllows.push(resource.id);
       }
     });
@@ -232,7 +237,7 @@ export class RolesService {
     return true;
   }
 
-  async delete(id: string[]) {
+  async delete(id: string[]): Promise<boolean> {
     let destroyedCount = 0;
 
     try {

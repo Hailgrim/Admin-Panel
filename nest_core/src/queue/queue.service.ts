@@ -9,7 +9,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { MAIL_SERVER } from 'libs/constants';
 
 @Injectable()
-export class RmqService {
+export class QueueService {
   constructor(
     @Inject(MAIL_SERVER)
     private mailClient: ClientProxy,

@@ -9,35 +9,35 @@ import fastifyCookie from '@fastify/cookie';
 import fastifyHelmet from '@fastify/helmet';
 
 import { AppModule } from './app.module';
-import { version } from '../package.json';
+import { version, name } from '../package.json';
 import { HOST, NGINX_HOST, PORT } from 'libs/config';
 import d from 'locales/dictionary';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter(),
+    new FastifyAdapter({ trustProxy: true }),
   );
 
-  await app.register(fastifyCookie as any);
-  await app.register(fastifyHelmet as any);
+  await app.register(fastifyCookie);
+  await app.register(fastifyHelmet);
 
   const config = new DocumentBuilder()
     .setTitle(d['en'].adminPanel)
     .setDescription(d['en'].adminPanelAPIDescription)
     .setVersion(version)
-    .addTag('AdminPanel [Core]')
+    .addTag(name)
     .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, documentFactory);
 
   app.enableCors({
     origin: [
       `https://${NGINX_HOST}`,
       `https://www.${NGINX_HOST}`,
       `https://nuxt.${NGINX_HOST}`,
-      `https://api.${NGINX_HOST}`,
     ],
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     credentials: true,
   });
 
@@ -48,6 +48,7 @@ async function bootstrap() {
       errorHttpStatusCode: 400,
     }),
   );
+
   await app.listen(PORT, HOST);
 }
 bootstrap();

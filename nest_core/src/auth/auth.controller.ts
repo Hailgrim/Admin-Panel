@@ -24,7 +24,7 @@ import { SignUpDto } from './dto/sign-up.dts';
 import d from 'locales/dictionary';
 import { FastifyRequestWithToken, FastifyRequestWithUser } from './auth.types';
 import { IUser } from 'src/users/users.types';
-import { createCookieOptions, getCookies } from './auth.utils';
+import { createCookieOptions, getIP } from 'libs/utils';
 
 @ApiTags(d['en'].authorization)
 @Controller('auth')
@@ -42,20 +42,6 @@ export class AuthController {
     return this.authService.signUp(signUpDto);
   }
 
-  @ApiOperation({ summary: d['en'].forgotPassword })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Post('forgot-password')
-  forgotPassword(@Body() email: string): Promise<boolean> {
-    return this.authService.forgotPassword(email);
-  }
-
-  @ApiOperation({ summary: d['en'].resetPassword })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Post('reset-password')
-  resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<boolean> {
-    return this.authService.resetPassword(resetPasswordDto);
-  }
-
   @ApiOperation({ summary: d['en'].signIn })
   @ApiResponse({ status: HttpStatus.CREATED, type: IUser })
   @UseGuards(LocalAuthGuard)
@@ -71,7 +57,7 @@ export class AuthController {
     const { accessToken, refreshToken } = await this.authService.signIn(
       req.user,
       sessionTtl,
-      req.ips?.length ? req.ips[0] : req.ip,
+      getIP(req),
       req.headers['user-agent'],
     );
 
@@ -88,6 +74,13 @@ export class AuthController {
     return req.user;
   }
 
+  @ApiOperation({ summary: d['en'].confirmRegistration })
+  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @Post('verify-user')
+  verifyUser(@Body() verifyUserDto: VerifyUserDto): Promise<boolean> {
+    return this.authService.verifyUser(verifyUserDto);
+  }
+
   @ApiOperation({ summary: d['en'].signUp })
   @ApiResponse({ status: HttpStatus.CREATED, type: IUser })
   @Post('sign-in/google')
@@ -100,7 +93,7 @@ export class AuthController {
       await this.authService.signInGoogle(
         googleAccessToken,
         REFRESH_TOKEN_LIFETIME,
-        req.ips?.length ? req.ips[0] : req.ip,
+        getIP(req),
         req.headers['user-agent'],
       );
 
@@ -120,11 +113,18 @@ export class AuthController {
     return user;
   }
 
-  @ApiOperation({ summary: d['en'].confirmRegistration })
+  @ApiOperation({ summary: d['en'].forgotPassword })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Post('verify-user')
-  verifyUser(@Body() verifyUserDto: VerifyUserDto): Promise<boolean> {
-    return this.authService.verifyUser(verifyUserDto);
+  @Post('forgot-password')
+  forgotPassword(@Body() email: string): Promise<boolean> {
+    return this.authService.forgotPassword(email);
+  }
+
+  @ApiOperation({ summary: d['en'].resetPassword })
+  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @Post('reset-password')
+  resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<boolean> {
+    return this.authService.resetPassword(resetPasswordDto);
   }
 
   @ApiOperation({ summary: d['en'].refreshToken })
@@ -135,14 +135,15 @@ export class AuthController {
     @Req() req: FastifyRequestWithToken,
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<boolean> {
-    const rememberMe = 'rememberMe' in getCookies(req.headers.cookie);
+    const rememberMe = req.cookies['rememberMe'] !== undefined;
     const sessionTtl = rememberMe
       ? REFRESH_TOKEN_LIFETIME
       : ACCESS_TOKEN_LIFETIME * 2;
     const { accessToken, refreshToken } = await this.authService.refresh(
-      req.user,
+      req.user.userId,
+      req.user.sessionId,
       sessionTtl,
-      req.ips?.length ? req.ips[0] : req.ip,
+      getIP(req),
       req.headers['user-agent'],
     );
 
@@ -159,12 +160,15 @@ export class AuthController {
   @ApiOperation({ summary: d['en'].signOut })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
   @UseGuards(JwtGuard)
-  @Delete('log-out')
+  @Delete('sign-out')
   async signOut(
     @Req() req: FastifyRequestWithToken,
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<boolean> {
-    const result = await this.authService.signOut(req.user);
+    const result = await this.authService.signOut(
+      req.user.userId,
+      req.user.sessionId,
+    );
     const cookieOptions = createCookieOptions();
     res.clearCookie('accessToken', cookieOptions);
     res.clearCookie('refreshToken', cookieOptions);

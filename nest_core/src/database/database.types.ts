@@ -4,8 +4,8 @@ export interface IFindAndCount<T> {
 }
 
 export abstract class IRolesResources {
-  roleId: number;
-  resourceId: number;
+  roleId: string;
+  resourceId: string;
   creating: boolean;
   reading: boolean;
   updating: boolean;
@@ -14,5 +14,5 @@ export abstract class IRolesResources {
 
 export abstract class IUsersRoles {
   userId: string;
-  roleId: number;
+  roleId: string;
 }

@@ -17,6 +17,7 @@ export const PUBLIC = 'public';
 export const WITH_ROLES = 'withRoles';
 export const WITH_RESOURCES = 'withResources';
 export const MAIL_SERVER = 'MAIL_SERVER';
+export const REDIS = 'REDIS';
 
 export enum Rights {
   Creating = 'creating',

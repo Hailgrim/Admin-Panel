@@ -2,9 +2,11 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 import { Injectable } from '@nestjs/common';
 import { FastifyRequest } from 'fastify';
 
+import { getIP } from 'libs/utils';
+
 @Injectable()
 export class ThrottlerBehindProxyGuard extends ThrottlerGuard {
-  protected async getTracker(req: FastifyRequest): Promise<string> {
-    return req.ips?.length ? req.ips[0] : req.ip;
+  protected getTracker(req: FastifyRequest): Promise<string> {
+    return Promise.resolve(getIP(req));
   }
 }

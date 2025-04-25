@@ -7,8 +7,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as argon2 from 'argon2';
-import * as crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 
 import { UsersService } from '../users/users.service';
@@ -20,28 +18,30 @@ import {
   ACCESS_TOKEN_LIFETIME,
   ACCESS_TOKEN_SECRET_KEY,
   REFRESH_TOKEN_SECRET_KEY,
+  MAIL_FORGOT_PASSWORD,
+  MAIL_REGISTRATION,
 } from 'libs/config';
 import { Role } from 'src/roles/role.entity';
 import { CreateResourceDto } from 'src/resources/dto/create-resource.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
 import { SignUpDto } from './dto/sign-up.dts';
-import { RedisService } from 'src/redis/redis.service';
+import { CacheService } from 'src/cache/cache.service';
 import d from 'locales/dictionary';
 import { ISession, IToken, ITokensPair } from './auth.types';
 import { IUser } from 'src/users/users.types';
-import { generateCode } from './auth.utils';
-import { RmqService } from 'src/rmq/rmq.service';
+import { QueueService } from 'src/queue/queue.service';
+import { generateCode, verifyHash } from 'libs/utils';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private rmqService: RmqService,
+    private queueService: QueueService,
     private jwtService: JwtService,
     private usersService: UsersService,
     private rolesService: RolesService,
     private resourcesService: ResourcesService,
-    private redisService: RedisService,
+    private cacheService: CacheService,
   ) {}
 
   async checkDefaultData(): Promise<Role> {
@@ -59,7 +59,7 @@ export class AuthService {
     ]
       .filter(
         (value) =>
-          !defaultResources.find((resource) => resource.path === value),
+          !defaultResources.find((resource) => resource.get('path') === value),
       )
       .map((value) => {
         return {
@@ -100,28 +100,8 @@ export class AuthService {
     ]);
   }
 
-  async validateUser(signInDto: SignInDto) {
-    try {
-      const user = await this.usersService.findOneAuth(signInDto.username);
-
-      if (
-        !user.password ||
-        !(await argon2.verify(user.password, signInDto.password))
-      ) {
-        throw null;
-      }
-
-      const result: Partial<User> = { ...user.dataValues };
-      delete result.password;
-      result.roles = user.roles;
-      return result;
-    } catch {
-      throw new UnauthorizedException();
-    }
-  }
-
   async createTokens(
-    payload: Buffer | object,
+    payload: IToken,
     sessionTtl: number,
   ): Promise<ITokensPair> {
     return {
@@ -134,6 +114,26 @@ export class AuthService {
         expiresIn: sessionTtl,
       }),
     };
+  }
+
+  async validateUser(signInDto: SignInDto): Promise<IUser> {
+    try {
+      const user: IUser = await this.usersService
+        .findOneAuth(signInDto.username)
+        .then((result) => result.get({ plain: true }));
+
+      if (
+        !user.password ||
+        !(await verifyHash(user.password, signInDto.password))
+      ) {
+        throw new Error();
+      }
+
+      delete user.password;
+      return user;
+    } catch {
+      throw new UnauthorizedException();
+    }
   }
 
   async signIn(
@@ -150,8 +150,8 @@ export class AuthService {
       if (user.email) {
         const code = generateCode();
         await this.usersService.updateVerificationCode(user.email, code);
-        this.rmqService.sendEmail(
-          { method: 'registration' },
+        this.queueService.sendEmail(
+          { method: MAIL_REGISTRATION },
           { email: user.email, code },
         );
       }
@@ -160,25 +160,25 @@ export class AuthService {
     }
 
     const sessionId = uuidv4();
-    const sessionPayload = await argon2.hash(crypto.randomBytes(10));
     const sessionData: ISession = {
-      payload: sessionPayload,
-      expires: new Date(Date.now() + sessionTtl * 1000),
-      userId: user.id,
       ip,
       userAgent,
       updatedAt: new Date(),
     };
 
-    await this.redisService.set(
+    await this.cacheService.set(
       `sessions:${user.id}:${sessionId}`,
       sessionData,
       sessionTtl * 1000,
     );
 
-    return this.createTokens(
-      { userId: user.id, sessionId, sessionPayload },
-      sessionTtl,
+    return this.createTokens({ userId: user.id, sessionId }, sessionTtl);
+  }
+
+  verifyUser(verifyUserDto: VerifyUserDto): Promise<boolean> {
+    return this.usersService.updateVerificationStatus(
+      verifyUserDto.email,
+      verifyUserDto.code,
     );
   }
 
@@ -194,40 +194,34 @@ export class AuthService {
       const googleRes = await fetch(
         `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleAccessToken}`,
       );
-      googleUser = await googleRes.json();
+      googleUser = (await googleRes.json()) as Record<string, string>;
 
       if (!googleUser || !googleUser['id'] || !googleUser['name'])
-        throw new InternalServerErrorException();
+        throw new Error();
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
     }
 
     const defaultRole = await this.checkDefaultData();
-    const user = await this.usersService.createByGoogle(
-      googleUser['id'],
-      googleUser['name'],
-      [defaultRole],
-    );
+    const user = await this.usersService
+      .createByGoogle(googleUser['id'], googleUser['name'], [defaultRole])
+      .then((result) => result.get({ plain: true }));
 
     return {
       ...(await this.signIn(user, sessionTtl, ip, userAgent)),
-      user: { ...user.dataValues, roles: user.roles },
+      user,
     };
-  }
-
-  verifyUser(verifyUserDto: VerifyUserDto): Promise<boolean> {
-    return this.usersService.updateVerificationStatus(
-      verifyUserDto.email,
-      verifyUserDto.code,
-    );
   }
 
   async forgotPassword(email: string): Promise<boolean> {
     const code = generateCode();
 
     if (await this.usersService.updateResetPasswordCode(email, code)) {
-      this.rmqService.sendEmail({ method: 'forgotPassword' }, { email, code });
+      this.queueService.sendEmail(
+        { method: MAIL_FORGOT_PASSWORD },
+        { email, code },
+      );
     }
 
     return true;
@@ -242,31 +236,25 @@ export class AuthService {
   }
 
   async refresh(
-    token: IToken,
+    userId: string,
+    sessionId: string,
     sessionTtl: number,
     ip: string,
     userAgent?: string,
   ): Promise<ITokensPair> {
-    const newPayload = await argon2.hash(crypto.randomBytes(10));
-    const session = await this.redisService.get<ISession>(
-      `sessions:${token.userId}:${token.sessionId}`,
+    const session = await this.cacheService.get<ISession>(
+      `sessions:${userId}:${sessionId}`,
     );
 
-    if (
-      session?.userId === token.userId &&
-      session.payload === token.sessionPayload
-    ) {
+    if (session) {
       const sessionData: ISession = {
-        payload: newPayload,
-        expires: new Date(Date.now() + sessionTtl * 1000),
-        userId: token.userId,
         ip,
         userAgent,
         updatedAt: new Date(),
       };
 
-      await this.redisService.set(
-        `sessions:${token.userId}:${token.sessionId}`,
+      await this.cacheService.set(
+        `sessions:${userId}:${sessionId}`,
         sessionData,
         sessionTtl * 1000,
       );
@@ -274,18 +262,11 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    return this.createTokens(
-      {
-        userId: token.userId,
-        sessionId: token.sessionId,
-        sessionPayload: newPayload,
-      },
-      sessionTtl,
-    );
+    return this.createTokens({ userId, sessionId }, sessionTtl);
   }
 
-  async signOut(token: IToken): Promise<boolean> {
-    await this.redisService.del(`sessions:${token.userId}:${token.sessionId}`);
+  async signOut(userId: string, sessionId: string): Promise<boolean> {
+    await this.cacheService.del(`sessions:${userId}:${sessionId}`);
     return true;
   }
 }

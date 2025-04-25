@@ -16,12 +16,12 @@ export class RolesResources
   implements IRolesResources
 {
   @ForeignKey(() => Role)
-  @Column({ type: DataType.INTEGER })
-  roleId: number;
+  @Column({ type: DataType.UUID })
+  roleId: string;
 
   @ForeignKey(() => Resource)
-  @Column({ type: DataType.INTEGER })
-  resourceId: number;
+  @Column({ type: DataType.UUID })
+  resourceId: string;
 
   @Column({ type: DataType.BOOLEAN })
   creating: boolean;

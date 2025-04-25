@@ -1,9 +1,8 @@
 export interface ISession {
   id: string;
-  userId: string;
+  current: boolean;
   ip: string;
   userAgent?: string;
-  current: boolean;
   updatedAt: Date;
 }
 

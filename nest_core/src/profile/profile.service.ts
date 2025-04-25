@@ -1,62 +1,57 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import * as argon2 from 'argon2';
 
 import { UsersService } from '../users/users.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { RedisService } from 'src/redis/redis.service';
-import { ExternalSessionDto } from './dto/external-session.dto';
-import { ISession, IToken } from 'src/auth/auth.types';
+import { CacheService } from 'src/cache/cache.service';
+import { IExternalSession, ISession } from 'src/auth/auth.types';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { generateCode } from 'src/auth/auth.utils';
-import { RmqService } from 'src/rmq/rmq.service';
+import { QueueService } from 'src/queue/queue.service';
+import { generateCode, verifyHash } from 'libs/utils';
+import { MAIL_CHANGE_EMAIL } from 'libs/config';
 
 @Injectable()
 export class ProfileService {
   constructor(
-    private rmqService: RmqService,
+    private queueService: QueueService,
     private usersService: UsersService,
-    private redisService: RedisService,
+    private cacheService: CacheService,
   ) {}
 
   updateProfile(
-    token: IToken,
+    userId: string,
     updateProfileDto: UpdateProfileDto,
   ): Promise<boolean> {
-    return this.usersService.updateFields(token.userId, updateProfileDto);
+    return this.usersService.updateFields(userId, updateProfileDto);
   }
 
   async updatePassword(
-    token: IToken,
+    userId: string,
     updatePasswordDto: UpdatePasswordDto,
   ): Promise<boolean> {
-    const user = await this.usersService.findOneProfile(token.userId);
+    const user = (await this.usersService.findOneProfile(userId)).get({
+      plain: true,
+    });
 
     if (
       user.password &&
       (!updatePasswordDto.oldPassword ||
-        !(await argon2.verify(user.password, updatePasswordDto.oldPassword)))
+        !(await verifyHash(user.password, updatePasswordDto.oldPassword)))
     ) {
       throw new ConflictException();
     }
 
     return this.usersService.updatePassword(
-      token.userId,
+      userId,
       updatePasswordDto.newPassword,
     );
   }
 
-  async changeEmailRequest(token: IToken, newEmail: string): Promise<boolean> {
+  async changeEmailRequest(userId: string, newEmail: string): Promise<boolean> {
     const code = generateCode();
 
-    if (
-      await this.usersService.updateChangeEmailCode(
-        token.userId,
-        code,
-        newEmail,
-      )
-    ) {
-      this.rmqService.sendEmail(
-        { method: 'changeEmail' },
+    if (await this.usersService.updateChangeEmailCode(userId, code, newEmail)) {
+      this.queueService.sendEmail(
+        { method: MAIL_CHANGE_EMAIL },
         { email: newEmail, code },
       );
     }
@@ -64,25 +59,27 @@ export class ProfileService {
     return true;
   }
 
-  changeEmailConfirm(token: IToken, code: string): Promise<boolean> {
-    return this.usersService.updateEmailWithCode(token.userId, code);
+  changeEmailConfirm(userId: string, code: string): Promise<boolean> {
+    return this.usersService.updateEmailWithCode(userId, code);
   }
 
-  async getSessions(token: IToken): Promise<ExternalSessionDto[]> {
-    const keys = await this.redisService.keys(`sessions:${token.userId}:*`);
-    const current = `sessions:${token.userId}:${token.sessionId}`;
-    return (await this.redisService.mget<ISession>(keys)).map(
-      (session, index) => ({
-        ...session,
-        id: keys[index],
-        current: current === keys[index],
-      }),
-    );
+  async getSessions(
+    userId: string,
+    currentSessionId?: string,
+  ): Promise<IExternalSession[]> {
+    const keys = await this.cacheService.keys(`sessions:${userId}:*`);
+    const current = `sessions:${userId}:${currentSessionId}`;
+    const sessions = await this.cacheService.mget<ISession>(keys);
+    return sessions.map((session, index) => ({
+      ...session,
+      id: keys[index],
+      current: current === keys[index],
+    }));
   }
 
-  async deleteSessions(token: IToken, remove: string[]): Promise<boolean> {
-    const keys = await this.redisService.keys(`sessions:${token.userId}:*`);
-    await this.redisService.mdel(remove.filter((key) => keys.includes(key)));
+  async deleteSessions(userId: string, remove: string[]): Promise<boolean> {
+    const keys = await this.cacheService.keys(`sessions:${userId}:*`);
+    await this.cacheService.mdel(remove.filter((key) => keys.includes(key)));
     return true;
   }
 }

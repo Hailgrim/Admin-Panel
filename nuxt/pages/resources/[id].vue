@@ -11,7 +11,7 @@ definePageMeta({
 })
 
 const route = useRoute()
-const id = Number(route.params.id)
+const id = String(route.params.id)
 const { data: data, execute: execute } = resourcesApi.read(ROUTES.api.resource(id))
 await execute(id)
 

@@ -13,20 +13,21 @@ import { PUBLIC, RESOURCES_REPOSITORY } from 'libs/constants';
 import { GetResourcesDto } from './dto/get-resources.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
 import { IFindAndCount } from 'src/database/database.types';
-import { preparePaginationOptions } from 'src/database/database.utils';
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class ResourcesService {
   constructor(
     @Inject(RESOURCES_REPOSITORY)
     private resourcesRepository: typeof Resource,
+    private databaseService: DatabaseService,
   ) {}
 
   private prepareSearchOptions(
     getResourcesDto?: GetResourcesDto,
   ): FindOptions<Resource> {
     const options: FindOptions<Resource> = {
-      ...preparePaginationOptions(getResourcesDto),
+      ...this.databaseService.preparePaginationOptions(getResourcesDto),
     };
 
     if (getResourcesDto?.name !== undefined) {
@@ -52,7 +53,7 @@ export class ResourcesService {
   ): FindOptions<Resource> {
     return {
       ...this.prepareSearchOptions(getResourcesDto),
-      ...preparePaginationOptions(getResourcesDto),
+      ...this.databaseService.preparePaginationOptions(getResourcesDto),
     };
   }
 
@@ -134,13 +135,13 @@ export class ResourcesService {
 
   async updateFields(
     id: string,
-    udateResourceDto: UpdateResourceDto,
+    updateResourceDto: UpdateResourceDto,
   ): Promise<boolean> {
     let affectedCount = 0;
 
     try {
       [affectedCount] = await this.resourcesRepository.update(
-        udateResourceDto,
+        updateResourceDto,
         {
           where: { id, default: { [Op.ne]: true } },
         },
@@ -157,7 +158,7 @@ export class ResourcesService {
     return true;
   }
 
-  async delete(id: string[]) {
+  async delete(id: string[]): Promise<boolean> {
     let destroyedCount = 0;
 
     try {

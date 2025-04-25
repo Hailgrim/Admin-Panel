@@ -19,8 +19,11 @@ import { Rights } from 'libs/constants';
 import { RolesGuard } from 'src/roles/roles.guard';
 import d from 'locales/dictionary';
 import { IUser } from 'src/users/users.types';
-import { ExternalSessionDto } from './dto/external-session.dto';
-import { FastifyRequestWithToken, ISession } from 'src/auth/auth.types';
+import {
+  FastifyRequestWithToken,
+  IExternalSession,
+  ISession,
+} from 'src/auth/auth.types';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { ProfileService } from './profile.service';
 import { UpdatePasswordDto } from './dto/update-password.dto';
@@ -50,7 +53,7 @@ export class ProfileController {
     @Req() req: FastifyRequestWithToken,
     @Body() updateProfileDto: UpdateProfileDto,
   ): Promise<boolean> {
-    return this.profileService.updateProfile(req.user, updateProfileDto);
+    return this.profileService.updateProfile(req.user.userId, updateProfileDto);
   }
 
   @ApiOperation({ summary: d['en'].updatePassword })
@@ -62,7 +65,10 @@ export class ProfileController {
     @Req() req: FastifyRequestWithToken,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ): Promise<boolean> {
-    return this.profileService.updatePassword(req.user, updatePasswordDto);
+    return this.profileService.updatePassword(
+      req.user.userId,
+      updatePasswordDto,
+    );
   }
 
   @ApiOperation({ summary: d['en'].changeEmailRequest })
@@ -74,7 +80,7 @@ export class ProfileController {
     @Req() req: FastifyRequestWithToken,
     @Body() newEmail: string,
   ): Promise<boolean> {
-    return this.profileService.changeEmailRequest(req.user, newEmail);
+    return this.profileService.changeEmailRequest(req.user.userId, newEmail);
   }
 
   @ApiOperation({ summary: d['en'].changeEmailConfirm })
@@ -86,7 +92,7 @@ export class ProfileController {
     @Req() req: FastifyRequestWithToken,
     @Body() code: string,
   ): Promise<boolean> {
-    return this.profileService.changeEmailConfirm(req.user, code);
+    return this.profileService.changeEmailConfirm(req.user.userId, code);
   }
 
   @ApiOperation({ summary: d['en'].sessions })
@@ -95,11 +101,10 @@ export class ProfileController {
   @UseGuards(JwtGuard, RolesGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('sessions')
-  async getSessions(
+  getSessions(
     @Req() req: FastifyRequestWithToken,
-  ): Promise<ExternalSessionDto[]> {
-    const sessions = await this.profileService.getSessions(req.user);
-    return sessions.map((session) => new ExternalSessionDto(session));
+  ): Promise<IExternalSession[]> {
+    return this.profileService.getSessions(req.user.userId, req.user.sessionId);
   }
 
   @ApiOperation({ summary: d['en'].deleteSessions })
@@ -111,6 +116,6 @@ export class ProfileController {
     @Req() req: FastifyRequestWithToken,
     @Body() keys: string[],
   ): Promise<boolean> {
-    return this.profileService.deleteSessions(req.user, keys);
+    return this.profileService.deleteSessions(req.user.userId, keys);
   }
 }

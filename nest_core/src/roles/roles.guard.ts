@@ -38,7 +38,9 @@ export class RolesGuard implements CanActivate {
       return false;
     }
 
+    user = user.get({ plain: true });
     request.originalUser = user;
+
     return Boolean(
       user.roles?.some(
         (role) =>

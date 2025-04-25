@@ -27,7 +27,7 @@ const ResourcesList: FC<IList<IResource>> = (props) => {
   const [findAndCountAll, findAndCountAllReq] =
     resourcesApi.useLazyFindAndCountAllQuery();
   const [destroy, destroyReq] = resourcesApi.useDeleteMutation();
-  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [items, setItems] = useState(props.rows);
   const paginationModel = useRef<GridPaginationModel>({
     page: (props.page || 1) - 1,
@@ -145,7 +145,7 @@ const ResourcesList: FC<IList<IResource>> = (props) => {
           destroyReq.isLoading
         }
         onRowSelectionModelChange={(rowSelectionModel) =>
-          setSelectedRows(rowSelectionModel as number[])
+          setSelectedRows(rowSelectionModel as string[])
         }
         onPaginationModelChange={paginationHandler}
       />

@@ -17,21 +17,22 @@ import { GetUsersDto } from './dto/get-users.dto';
 import { UsersRolesDto } from 'src/database/dto/users-roles.dto';
 import { IFindAndCount } from 'src/database/database.types';
 import { UpdateUserFields } from './users.types';
-import { preparePaginationOptions } from 'src/database/database.utils';
-import { RedisService } from 'src/redis/redis.service';
-import { createPasswordHash } from './users.utils';
+import { CacheService } from 'src/cache/cache.service';
+import { DatabaseService } from 'src/database/database.service';
+import { createHash } from 'libs/utils';
 
 @Injectable()
 export class UsersService {
   constructor(
     @Inject(USERS_REPOSITORY)
     private usersRepository: typeof User,
-    private redisService: RedisService,
+    private cacheService: CacheService,
+    private databaseService: DatabaseService,
   ) {}
 
   private prepareSearchOptions(getUsersDto?: GetUsersDto): FindOptions<User> {
     const options: FindOptions<User> = {
-      ...preparePaginationOptions(getUsersDto),
+      ...this.databaseService.preparePaginationOptions(getUsersDto),
     };
 
     if (getUsersDto?.enabled !== undefined) {
@@ -44,14 +45,14 @@ export class UsersService {
   private prepareGetOptions(getUsersDto?: GetUsersDto): FindOptions<User> {
     return {
       ...this.prepareSearchOptions(getUsersDto),
-      ...preparePaginationOptions(getUsersDto),
+      ...this.databaseService.preparePaginationOptions(getUsersDto),
     };
   }
 
   async create(createUserDto: CreateUserDto, roles?: Role[]): Promise<User> {
     let user: User;
     let created: boolean;
-    const password = await createPasswordHash(createUserDto.password);
+    const password = await createHash(createUserDto.password);
 
     try {
       [user, created] = await this.usersRepository
@@ -245,7 +246,7 @@ export class UsersService {
     return this.update(
       {
         resetPasswordCode: null,
-        password: await createPasswordHash(newPassword),
+        password: await createHash(newPassword),
       },
       { where: { email, resetPasswordCode } },
     );
@@ -253,7 +254,7 @@ export class UsersService {
 
   async updatePassword(id: string, newPassword: string): Promise<boolean> {
     return this.update(
-      { password: await createPasswordHash(newPassword) },
+      { password: await createHash(newPassword) },
       { where: { id } },
     );
   }
@@ -274,11 +275,18 @@ export class UsersService {
     changeEmailCode: string,
   ): Promise<boolean> {
     const user = await this.findOne({ where: { id, changeEmailCode } });
-    await user.update({
-      email: user.temporaryEmail,
-      changeEmailCode: null,
-      temporaryEmail: null,
-    });
+
+    try {
+      await user.update({
+        email: user.get('temporaryEmail'),
+        changeEmailCode: null,
+        temporaryEmail: null,
+      });
+    } catch (error) {
+      Logger.error(error);
+      throw new InternalServerErrorException();
+    }
+
     return true;
   }
 
@@ -288,15 +296,20 @@ export class UsersService {
   ): Promise<boolean> {
     const user = await this.findOne({ where: { id } });
 
-    await user.$set(
-      'roles',
-      usersRolesDtoArr.map((value) => value.roleId),
-    );
+    try {
+      await user.$set(
+        'roles',
+        usersRolesDtoArr.map((value) => value.roleId),
+      );
+    } catch (error) {
+      Logger.error(error);
+      throw new InternalServerErrorException();
+    }
 
     return true;
   }
 
-  async delete(id: string[]) {
+  async delete(id: string[]): Promise<boolean> {
     let destroyedCount = 0;
 
     try {
@@ -311,9 +324,9 @@ export class UsersService {
     }
 
     for (const userId of id) {
-      const keys = await this.redisService.keys(`sessions:${userId}:*`);
+      const keys = await this.cacheService.keys(`sessions:${userId}:*`);
       if (keys.length > 0) {
-        this.redisService.mdel(keys);
+        await this.cacheService.mdel(keys);
       }
     }
 

@@ -13,7 +13,7 @@ definePageMeta({
 })
 
 const route = useRoute()
-const id = Number(route.params.id)
+const id = String(route.params.id)
 const { data: roleData, execute: roleExecute } = rolesApi.read(ROUTES.api.role(id))
 await roleExecute(id)
 

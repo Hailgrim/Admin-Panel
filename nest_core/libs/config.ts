@@ -11,6 +11,13 @@ export const RMQ_HOST = process.env.RABBITMQ_HOST || 'localhost';
 export const RMQ_PORT = Number(process.env.RABBITMQ_PORT) || 5672;
 export const RMQ_USER = process.env.RABBITMQ_DEFAULT_USER || 'user';
 export const RMQ_PASSWORD = process.env.RABBITMQ_DEFAULT_PASS || 'password';
+export const RMQ_MAIL_QUEUE = process.env.RABBITMQ_MAIL_QUEUE || 'mailQueue';
+
+export const MAIL_REGISTRATION =
+  process.env.MAIL_REGISTRATION || 'registration';
+export const MAIL_FORGOT_PASSWORD =
+  process.env.MAIL_FORGOT_PASSWORD || 'forgotPassword';
+export const MAIL_CHANGE_EMAIL = process.env.MAIL_CHANGE_EMAIL || 'changeEmail';
 
 export const DB_HOST = process.env.POSTGRES_HOST || 'localhost';
 export const DB_PORT = Number(process.env.POSTGRES_PORT) || 5432;
