@@ -1,33 +1,19 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsOptional, Length, MaxLength } from 'class-validator';
+import { IntersectionType, PartialType, PickType } from '@nestjs/swagger';
 
-import d from 'locales/dictionary';
-import { CreateResourceFields } from '../resources.types';
+import { TCreateResource } from '../resources.types';
+import { ResourceDto } from './resource.dto';
 
-export class CreateResourceDto implements CreateResourceFields {
-  @ApiProperty({
-    example: 'Users',
-    description: d['en'].name,
-  })
-  @Length(1, 100)
-  name: string;
-
-  @ApiProperty({
-    example: 'users',
-    description: d['en'].path,
-  })
-  @Length(1, 100)
-  path: string;
-
-  @ApiPropertyOptional({
-    example: 'Users resource',
-    description: d['en'].description,
-  })
-  @IsOptional()
-  @MaxLength(1000)
-  description?: string;
-
-  @ApiProperty({ example: true, description: d['en'].status })
-  @IsBoolean()
-  enabled: boolean;
-}
+export class CreateResourceDto
+  extends IntersectionType(
+    PickType<ResourceDto, keyof TCreateResource>(ResourceDto, [
+      'name',
+      'path',
+      'enabled',
+    ]),
+    PartialType(
+      PickType<ResourceDto, keyof TCreateResource>(ResourceDto, [
+        'description',
+      ]),
+    ),
+  )
+  implements TCreateResource {}

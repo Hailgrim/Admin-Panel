@@ -3,17 +3,24 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import authService from '@/shared/api/auth/authService';
 import baseQueryWithReauth from '../baseQueryWithReauth';
 import { IUser } from '../users/types';
-import { IResetPassword, IUserSignIn, IUserSignUp, IVerifyUser } from './types';
+import {
+  IResetPassword,
+  ISignIn,
+  TSignUp,
+  IVerifyUser,
+  IForgotPassword,
+  ISignInGoogle,
+} from './types';
 
 const authApi = createApi({
   reducerPath: 'auth',
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
-    signUp: builder.query<IUser, IUserSignUp>({
+    signUp: builder.query<IUser, TSignUp>({
       query: authService.signUpArgs,
     }),
 
-    forgotPassword: builder.query<boolean, string>({
+    forgotPassword: builder.query<boolean, IForgotPassword>({
       query: authService.forgotPasswordArgs,
     }),
 
@@ -21,16 +28,16 @@ const authApi = createApi({
       query: authService.resetPasswordArgs,
     }),
 
-    signIn: builder.query<IUser, IUserSignIn>({
+    verifyUser: builder.query<boolean, IVerifyUser>({
+      query: authService.verifyUserArgs,
+    }),
+
+    signIn: builder.query<IUser, ISignIn>({
       query: authService.signInArgs,
     }),
 
-    signInGoogle: builder.query<IUser, string>({
+    signInGoogle: builder.query<IUser, ISignInGoogle>({
       query: authService.signInGoogleArgs,
-    }),
-
-    verifyUser: builder.query<boolean, IVerifyUser>({
-      query: authService.verifyUserArgs,
     }),
 
     refresh: builder.query<boolean, void>({

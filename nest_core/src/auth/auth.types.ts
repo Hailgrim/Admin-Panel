@@ -1,8 +1,38 @@
 import { FastifyRequest } from 'fastify';
+import { WithoutNulls } from 'libs/types';
 
 import { IUser } from 'src/users/users.types';
 
-export abstract class ITokensPair {
+export type TSignUp = WithoutNulls<
+  Required<Pick<IUser, 'email' | 'password' | 'name'>>
+>;
+
+export interface IForgotPassword {
+  email: string;
+}
+
+export interface IResetPassword {
+  email: string;
+  code: string;
+  password: string;
+}
+
+export interface IVerifyUser {
+  email: string;
+  code: string;
+}
+
+export interface ISignIn {
+  username: string;
+  password: string;
+  rememberMe?: boolean;
+}
+
+export interface ISignInGoogle {
+  googleAccessToken: string;
+}
+
+export interface ITokensPair {
   accessToken: string;
   refreshToken: string;
 }
@@ -12,22 +42,9 @@ export interface IToken {
   sessionId: string;
 }
 
-export type FastifyRequestWithUser = FastifyRequest & { user: IUser };
+export type TFastifyRequestWithUser = FastifyRequest & { user: IUser };
 
-export type FastifyRequestWithToken = FastifyRequest & {
+export type TFastifyRequestWithToken = FastifyRequest & {
   user: IToken;
   originalUser: IUser;
 };
-
-export abstract class ISession {
-  userAgent?: string;
-  ip: string;
-  updatedAt: Date;
-}
-
-export abstract class IExternalSession extends ISession {
-  id: string;
-  current: boolean;
-}
-
-export type SignUpFields = Pick<IUser, 'email' | 'password' | 'name'>;

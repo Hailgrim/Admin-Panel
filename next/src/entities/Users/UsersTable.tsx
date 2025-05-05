@@ -26,9 +26,7 @@ const UsersTable: FC<Omit<DataGridProps<IUser>, 'columns'>> = (props) => {
         disableColumnMenu: true,
         renderCell: (params) => (
           <IconButton
-            {...(rights.reading && {
-              href: ROUTES.ui.user(params.row.id),
-            })}
+            href={ROUTES.ui.user(params.row.id)}
             LinkComponent={Link}
             disabled={!rights.reading}
           >

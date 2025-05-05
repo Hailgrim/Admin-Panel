@@ -25,11 +25,9 @@ const RolesTable: FC<Omit<DataGridProps<IRole>, 'columns'>> = (props) => {
         disableColumnMenu: true,
         renderCell: (params) => (
           <IconButton
-            {...(rights.reading && {
-              href: ROUTES.ui.role(params.row.id),
-            })}
+            href={ROUTES.ui.role(params.row.id)}
             LinkComponent={Link}
-            disabled={!rights.reading || params.row.default || params.row.admin}
+            disabled={!rights.reading || params.row.default}
           >
             <EditIcon />
           </IconButton>
@@ -61,9 +59,7 @@ const RolesTable: FC<Omit<DataGridProps<IRole>, 'columns'>> = (props) => {
       sx={{ width: '100%', minHeight: 200, my: 1 }}
       pageSizeOptions={[25, 50, 100]}
       columns={сolumns}
-      isRowSelectable={(params) =>
-        rights.deleting && !params.row.admin && !params.row.default
-      }
+      isRowSelectable={(params) => rights.deleting && !params.row.default}
       paginationMode="server"
       checkboxSelection
     />

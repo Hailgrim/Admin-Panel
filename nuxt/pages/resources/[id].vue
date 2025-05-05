@@ -12,7 +12,7 @@ definePageMeta({
 
 const route = useRoute()
 const id = String(route.params.id)
-const { data: data, execute: execute } = resourcesApi.read(ROUTES.api.resource(id))
+const { data: data, execute: execute } = resourcesApi.findOne(ROUTES.api.resource(id))
 await execute(id)
 
 if (data.value === null) {

@@ -1,8 +1,13 @@
 import { ROUTES } from '@/shared/lib/constants';
-import { IFetchRes, IReqArgs } from '../types';
-import { IUser } from '../users/types';
+import { IFetchRes, IQueryItems, IReqArgs } from '../types';
+import { IUser, TUpdateUser } from '../users/types';
 import serverFetch from '../serverFetch';
-import { IUpdatePassword } from './types';
+import {
+  IChangeEmail,
+  IChangeEmailRequest,
+  IExternalSession,
+  IUpdatePassword,
+} from './types';
 
 class ProfileService {
   getProfileArgs(): IReqArgs {
@@ -13,14 +18,11 @@ class ProfileService {
     };
   }
 
-  async getProfile(): Promise<IFetchRes<IUser | null>> {
-    const { data, error, newCookies } = await serverFetch<IUser>(
-      this.getProfileArgs()
-    );
-    return { data, error, newCookies };
+  async getProfile(): Promise<IFetchRes<IUser>> {
+    return serverFetch<IUser>(this.getProfileArgs());
   }
 
-  updateProfileArgs(payload: Partial<IUser>): IReqArgs {
+  updateProfileArgs(payload: TUpdateUser): IReqArgs {
     return {
       url: ROUTES.api.profile,
       method: 'PATCH',
@@ -38,7 +40,7 @@ class ProfileService {
     };
   }
 
-  changeEmailRequestArgs(payload: string): IReqArgs {
+  changeEmailRequestArgs(payload: IChangeEmailRequest): IReqArgs {
     return {
       url: ROUTES.api.changeEmail,
       method: 'POST',
@@ -47,7 +49,7 @@ class ProfileService {
     };
   }
 
-  changeEmailConfirmArgs(payload: string): IReqArgs {
+  changeEmailArgs(payload: IChangeEmail): IReqArgs {
     return {
       url: ROUTES.api.changeEmail,
       method: 'PATCH',
@@ -64,7 +66,7 @@ class ProfileService {
     };
   }
 
-  deleteSessionsArgs(payload: string[]): IReqArgs {
+  deleteSessionsArgs(payload: IQueryItems<IExternalSession['id']>): IReqArgs {
     return {
       url: ROUTES.api.sessions,
       method: 'DELETE',

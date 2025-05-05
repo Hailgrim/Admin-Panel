@@ -1,23 +1,25 @@
+import { IRights } from '../types';
+
 export interface IResource {
   id: string;
   name: string;
   path: string;
-  description: string | null;
+  description?: string | null;
   enabled: boolean;
   default: boolean;
-  RolesResources?: IRolesResources;
+  RightsModel?: IRights;
 }
 
-export type IResourceCreate = Pick<
+export type TCreateResource = Pick<
   IResource,
   'name' | 'path' | 'description' | 'enabled'
+> &
+  Partial<Pick<IResource, 'default'>>;
+
+export type TGetResources = Partial<
+  Pick<IResource, 'name' | 'path' | 'description' | 'enabled'>
 >;
 
-export interface IRolesResources {
-  roleId: string;
-  resourceId: string;
-  creating: boolean;
-  reading: boolean;
-  updating: boolean;
-  deleting: boolean;
-}
+export type TUpdateResource = Partial<
+  Pick<IResource, 'name' | 'path' | 'description' | 'enabled'>
+>;

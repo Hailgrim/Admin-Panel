@@ -11,10 +11,11 @@ import useRights from '@/shared/hooks/useRights';
 import FormCheckbox from '@/shared/ui/Form/FormCheckbox';
 import { useAppDispatch } from '@/shared/store/hooks';
 import usersApi from '@/shared/api/users/usersApi';
-import { IRole, IUsersRoles } from '@/shared/api/roles/types';
+import { IRole } from '@/shared/api/roles/types';
 import { addAlert } from '@/shared/store/main/main';
 import { makeErrorText } from '@/shared/lib/utils';
 import { IUser } from '@/shared/api/users/types';
+import { IUsersRoles } from '@/shared/api/types';
 
 const UpdateUserRolesForm: FC<{
   user: IUser;
@@ -24,8 +25,8 @@ const UpdateUserRolesForm: FC<{
   const lang = useLang();
   const t = useT();
   const [update, updateReq] = usersApi.useUpdateRolesMutation();
-  const [updatedRoles, setUpdatedRoles] = useState(
-    user.roles?.map((value) => value.UsersRoles) || []
+  const [updatedRoles, setUpdatedRoles] = useState<IUsersRoles[]>(
+    user.roles?.map((value) => ({ roleId: value.id, userId: user.id })) || []
   );
   const rights = useRights(ROUTES.api.users);
 

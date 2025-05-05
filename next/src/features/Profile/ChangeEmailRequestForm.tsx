@@ -34,7 +34,7 @@ const ChangeEmailRequestForm: FC = () => {
       if (email === profile?.email) {
         dispatch(addAlert({ type: 'warning', text: t.nothingToUpdate }));
       } else {
-        changeEmailRequest(email);
+        changeEmailRequest({ newEmail: email });
       }
     } else {
       dispatch(addAlert({ type: 'warning', text: t.unknownError }));
@@ -82,7 +82,10 @@ const ChangeEmailRequestForm: FC = () => {
         </FormButton>
       </Form>
       <CustomModal open={confirmModal} title={t.changeEmail} onClose={onClose}>
-        <ChangeEmailConfirmForm email={originalArgs || ''} onClose={onClose} />
+        <ChangeEmailConfirmForm
+          email={originalArgs?.newEmail || ''}
+          onClose={onClose}
+        />
       </CustomModal>
     </>
   );

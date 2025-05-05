@@ -1,25 +1,59 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { App } from 'supertest/types';
-import { AppModule } from './../src/app.module';
+import { HttpStatus } from '@nestjs/common';
 
-describe('AppController (e2e)', () => {
-  let app: INestApplication<App>;
+import {
+  adminCookies,
+  app,
+  closeApp,
+  createApp,
+  userCookies,
+} from './app.setup';
+import runAuthTests from './auth.test';
+import runProfileTests from './profile.test';
+import runResourcesTests from './resources.test';
+import runRolesTests from './roles.test';
+import runUsersTests from './users.test';
 
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    await app.init();
+describe('App (e2e)', () => {
+  beforeAll(async () => {
+    await createApp();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  afterAll(async () => {
+    await closeApp();
+  });
+
+  runAuthTests();
+  runProfileTests();
+  runResourcesTests();
+  runRolesTests();
+  runUsersTests();
+
+  describe('Sign Out', () => {
+    it('Incorrect', async () => {
+      await request(app.getHttpServer())
+        .delete('/auth/sign-out')
+        .expect(HttpStatus.UNAUTHORIZED);
+    });
+
+    it('Correct (admin)', async () => {
+      const resHeaders = await request(app.getHttpServer())
+        .delete('/auth/sign-out')
+        .set('Cookie', adminCookies)
+        .expect(HttpStatus.OK)
+        .then((res) => res.headers);
+
+      expect(resHeaders).toHaveProperty('set-cookie');
+    });
+
+    it('Correct (user)', async () => {
+      const resHeaders = await request(app.getHttpServer())
+        .delete('/auth/sign-out')
+        .set('Cookie', userCookies)
+        .expect(HttpStatus.OK)
+        .then((res) => res.headers);
+
+      expect(resHeaders).toHaveProperty('set-cookie');
+    });
   });
 });

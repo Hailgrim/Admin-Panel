@@ -1,17 +1,18 @@
 import { ROUTES } from '@/shared/lib/constants';
-import { IUser, IUserCreate } from './types';
+import { IUser, TCreateUser, TGetUsers, TUpdateUser } from './types';
 import {
   IFetchRes,
-  IFindAndCountRes,
-  IListReq,
+  IGetListResponse,
+  TGetListRequest,
   IReqArgs,
   IUpdateReq,
+  IQueryItems,
+  IUsersRoles,
 } from '../types';
-import { IUsersRoles } from '../roles/types';
 import serverFetch from '../serverFetch';
 
 class UsersService {
-  createArgs(payload: IUserCreate): IReqArgs {
+  createArgs(payload: TCreateUser): IReqArgs {
     return {
       url: ROUTES.api.users,
       method: 'POST',
@@ -20,7 +21,7 @@ class UsersService {
     };
   }
 
-  findAllArgs(payload?: IListReq<IUser>): IReqArgs {
+  findAllArgs(payload?: TGetListRequest<TGetUsers>): IReqArgs {
     return {
       url: ROUTES.api.users,
       method: 'GET',
@@ -29,21 +30,10 @@ class UsersService {
     };
   }
 
-  findAndCountAllArgs(payload?: IListReq<IUser>): IReqArgs {
-    return {
-      url: ROUTES.api.users,
-      method: 'GET',
-      credentials: 'include',
-      params: { ...payload, count: true },
-    };
-  }
-
-  async findAndCountAll(
-    payload?: IListReq<IUser>
-  ): Promise<IFetchRes<IFindAndCountRes<IUser>>> {
-    return serverFetch<IFindAndCountRes<IUser>>(
-      this.findAndCountAllArgs(payload)
-    );
+  async findAll(
+    payload?: TGetListRequest<TGetUsers>
+  ): Promise<IFetchRes<IGetListResponse<IUser>>> {
+    return serverFetch<IGetListResponse<IUser>>(this.findAllArgs(payload));
   }
 
   findOneArgs(payload: IUser['id']): IReqArgs {
@@ -54,12 +44,11 @@ class UsersService {
     };
   }
 
-  async findOne(payload: IUser['id']): Promise<IFetchRes<IUser | null>> {
-    const { data, error } = await serverFetch<IUser>(this.findOneArgs(payload));
-    return { data, error };
+  async findOne(payload: IUser['id']): Promise<IFetchRes<IUser>> {
+    return serverFetch<IUser>(this.findOneArgs(payload));
   }
 
-  updateArgs(payload: IUpdateReq<IUser>): IReqArgs {
+  updateArgs(payload: IUpdateReq<TUpdateUser, IUser['id']>): IReqArgs {
     return {
       url: ROUTES.api.user(payload.id),
       method: 'PATCH',
@@ -68,7 +57,7 @@ class UsersService {
     };
   }
 
-  updateRolesArgs(payload: IUpdateReq<IUsersRoles[], string>): IReqArgs {
+  updateRolesArgs(payload: IUpdateReq<IUsersRoles[], IUser['id']>): IReqArgs {
     return {
       url: ROUTES.api.userRoles(payload.id),
       method: 'PATCH',
@@ -77,7 +66,7 @@ class UsersService {
     };
   }
 
-  deleteArgs(payload: IUser['id'][]): IReqArgs {
+  deleteArgs(payload: IQueryItems<IUser['id']>): IReqArgs {
     return {
       url: ROUTES.api.users,
       method: 'DELETE',

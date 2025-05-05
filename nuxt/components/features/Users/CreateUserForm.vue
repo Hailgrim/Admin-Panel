@@ -8,10 +8,10 @@ import FormCheckbox from '~/components/shared/ui/Form/FormCheckbox.vue'
 import FormButton from '~/components/shared/ui/Form/FormButton.vue'
 import { useMainStore } from '~/store/main/main'
 import usersApi from '~/api/users/usersApi'
-import type { IUserCreate } from '~/api/users/types'
+import type { TCreateUser } from '~/api/users/types'
 
 const { t, locale } = useI18n()
-const newData = ref<IUserCreate>({
+const newData = ref<TCreateUser>({
   email: '',
   name: '',
   password: '',

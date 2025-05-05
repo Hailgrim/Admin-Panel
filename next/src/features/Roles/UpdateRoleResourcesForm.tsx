@@ -12,9 +12,10 @@ import ResourceRightsFields from '../Resources/ResourceRightsFields';
 import { IRole } from '@/shared/api/roles/types';
 import { useAppDispatch } from '@/shared/store/hooks';
 import rolesApi from '@/shared/api/roles/rolesApi';
-import { IResource, IRolesResources } from '@/shared/api/resources/types';
+import { IResource } from '@/shared/api/resources/types';
 import { addAlert } from '@/shared/store/main/main';
 import { makeErrorText } from '@/shared/lib/utils';
+import { IRights } from '@/shared/api/types';
 
 const UpdateRoleResourcesForm: FC<{
   role: IRole;
@@ -25,7 +26,9 @@ const UpdateRoleResourcesForm: FC<{
   const t = useT();
   const [update, updateReq] = rolesApi.useUpdateResourcesMutation();
   const [updatedRights, setUpdatedRights] = useState(
-    role.resources?.map((value) => value.RolesResources) || []
+    role.resources
+      ?.map((value) => value.RightsModel)
+      .filter((value) => value !== undefined) || []
   );
   const rights = useRights(ROUTES.api.roles);
 
@@ -37,7 +40,7 @@ const UpdateRoleResourcesForm: FC<{
     });
   };
 
-  const updateRights = (newRights: IRolesResources) => {
+  const updateRights = (newRights: IRights) => {
     const filtered = updatedRights.filter((value) => {
       if (
         newRights.roleId == value?.roleId &&
@@ -48,6 +51,7 @@ const UpdateRoleResourcesForm: FC<{
         return true;
       }
     });
+
     if (
       !(
         newRights.creating == false &&
@@ -96,7 +100,7 @@ const UpdateRoleResourcesForm: FC<{
         type="submit"
         color="success"
         startIcon={<SaveIcon />}
-        disabled={!rights.updating}
+        disabled={!rights.updating || role.default}
         loading={updateReq.isLoading}
       >
         {t.update}

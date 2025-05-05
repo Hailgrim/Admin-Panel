@@ -5,64 +5,29 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { FindOptions, Op } from 'sequelize';
+import { FindOptions } from 'sequelize';
 
-import { CreateResourceDto } from './dto/create-resource.dto';
-import { Resource } from './resource.entity';
+import { ResourceModel } from './resource.entity';
 import { PUBLIC, RESOURCES_REPOSITORY } from 'libs/constants';
-import { GetResourcesDto } from './dto/get-resources.dto';
-import { UpdateResourceDto } from './dto/update-resource.dto';
-import { IFindAndCount } from 'src/database/database.types';
+import { TGetListRequest, IGetListResponse } from 'src/database/database.types';
 import { DatabaseService } from 'src/database/database.service';
+import {
+  TCreateResource,
+  TGetResources,
+  TUpdateResource,
+} from './resources.types';
 
 @Injectable()
 export class ResourcesService {
   constructor(
     @Inject(RESOURCES_REPOSITORY)
-    private resourcesRepository: typeof Resource,
+    private resourcesRepository: typeof ResourceModel,
     private databaseService: DatabaseService,
   ) {}
 
-  private prepareSearchOptions(
-    getResourcesDto?: GetResourcesDto,
-  ): FindOptions<Resource> {
-    const options: FindOptions<Resource> = {
-      ...this.databaseService.preparePaginationOptions(getResourcesDto),
-    };
-
-    if (getResourcesDto?.name !== undefined) {
-      options.where = { ...options.where, name: getResourcesDto.name };
-    }
-
-    if (getResourcesDto?.path !== undefined) {
-      options.where = { ...options.where, path: getResourcesDto.path };
-    }
-
-    if (getResourcesDto?.description !== undefined) {
-      options.where = {
-        ...options.where,
-        description: getResourcesDto.description,
-      };
-    }
-
-    return options;
-  }
-
-  private prepareGetOptions(
-    getResourcesDto?: GetResourcesDto,
-  ): FindOptions<Resource> {
-    return {
-      ...this.prepareSearchOptions(getResourcesDto),
-      ...this.databaseService.preparePaginationOptions(getResourcesDto),
-    };
-  }
-
-  async create(createResourceDto: CreateResourceDto): Promise<Resource> {
+  async create(fields: TCreateResource): Promise<ResourceModel> {
     try {
-      return await this.resourcesRepository.create({
-        ...createResourceDto,
-        default: false,
-      });
+      return await this.resourcesRepository.create(fields);
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -70,11 +35,11 @@ export class ResourcesService {
   }
 
   async createManyDefault(
-    createResourceDtos: CreateResourceDto[],
-  ): Promise<Resource[]> {
+    resources: TCreateResource[],
+  ): Promise<ResourceModel[]> {
     try {
       return await this.resourcesRepository.bulkCreate(
-        createResourceDtos.map((dto) => ({ ...dto, default: true })),
+        resources.map((resource) => ({ ...resource, default: true })),
       );
     } catch (error) {
       Logger.error(error);
@@ -82,8 +47,8 @@ export class ResourcesService {
     }
   }
 
-  async findOnePublic(id: string): Promise<Resource> {
-    let resource: Resource | null;
+  async findOnePublic(id: string): Promise<ResourceModel> {
+    let resource: ResourceModel | null;
 
     try {
       resource = await this.resourcesRepository
@@ -101,51 +66,68 @@ export class ResourcesService {
     return resource;
   }
 
-  async findAllPublic(
-    getResourcesDto?: GetResourcesDto,
+  prepareFindAllOptions(
+    fields?: TGetListRequest<TGetResources>,
     isDefault?: boolean,
-  ): Promise<Resource[]> {
-    const options = this.prepareGetOptions(getResourcesDto);
-    if (isDefault) {
-      options.where = { ...options.where, default: true };
+  ): FindOptions<ResourceModel> {
+    const options: FindOptions<ResourceModel> =
+      this.databaseService.preparePaginationOptions<
+        ResourceModel,
+        TGetResources
+      >(fields);
+
+    options.where = {};
+
+    if (fields?.name !== undefined) {
+      options.where.name = { [this.databaseService.iLike]: `%${fields.name}%` };
     }
 
+    if (fields?.path !== undefined) {
+      options.where.path = { [this.databaseService.iLike]: `%${fields.path}%` };
+    }
+
+    if (fields?.description !== undefined) {
+      options.where.description = {
+        [this.databaseService.iLike]: `%${fields.description}%`,
+      };
+    }
+
+    if (isDefault !== undefined) {
+      options.where.default = isDefault;
+    }
+
+    return options;
+  }
+
+  async findAllPublic(
+    fields?: TGetListRequest<TGetResources>,
+    isDefault?: boolean,
+  ): Promise<IGetListResponse<ResourceModel>> {
+    const options = this.prepareFindAllOptions(fields, isDefault);
+
     try {
-      return await this.resourcesRepository.scope(PUBLIC).findAll(options);
+      if (fields?.reqCount) {
+        return await this.resourcesRepository
+          .scope(PUBLIC)
+          .findAndCountAll(options);
+      } else {
+        return {
+          rows: await this.resourcesRepository.scope(PUBLIC).findAll(options),
+        };
+      }
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
     }
   }
 
-  async findAndCountAllPublic(
-    getResourcesDto?: GetResourcesDto,
-  ): Promise<IFindAndCount<Resource>> {
-    const options = this.prepareGetOptions(getResourcesDto);
-
-    try {
-      return await this.resourcesRepository
-        .scope(PUBLIC)
-        .findAndCountAll(options);
-    } catch (error) {
-      Logger.error(error);
-      throw new InternalServerErrorException();
-    }
-  }
-
-  async updateFields(
-    id: string,
-    updateResourceDto: UpdateResourceDto,
-  ): Promise<boolean> {
+  async updateFields(id: string, fields: TUpdateResource): Promise<boolean> {
     let affectedCount = 0;
 
     try {
-      [affectedCount] = await this.resourcesRepository.update(
-        updateResourceDto,
-        {
-          where: { id, default: { [Op.ne]: true } },
-        },
-      );
+      [affectedCount] = await this.resourcesRepository.update(fields, {
+        where: { id, default: false },
+      });
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -158,12 +140,12 @@ export class ResourcesService {
     return true;
   }
 
-  async delete(id: string[]): Promise<boolean> {
+  async delete(ids: string[]): Promise<boolean> {
     let destroyedCount = 0;
 
     try {
       destroyedCount = await this.resourcesRepository.destroy({
-        where: { id, default: { [Op.ne]: true } },
+        where: { id: ids, default: false },
       });
     } catch (error) {
       Logger.error(error);

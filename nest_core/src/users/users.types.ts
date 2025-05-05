@@ -1,6 +1,6 @@
 import { IRole } from 'src/roles/roles.types';
 
-export abstract class IUser {
+export interface IUser {
   id: string;
   email?: string | null;
   password?: string | null;
@@ -15,24 +15,15 @@ export abstract class IUser {
   roles?: IRole[];
 }
 
-export type CreateUserFields = Required<
+export type TCreateUser = Required<
   Pick<IUser, 'email' | 'password' | 'name' | 'enabled'>
 >;
 
-export type CreateGoogleUserFields = Pick<
+export type TCreateGoogleUser = Pick<
   IUser,
   'googleId' | 'name' | 'verified' | 'enabled'
 >;
 
-export type GetUsersFields = Partial<
-  Omit<
-    IUser,
-    | 'password'
-    | 'verificationCode'
-    | 'resetPasswordCode'
-    | 'changeEmailCode'
-    | 'temporaryEmail'
-  >
->;
+export type TGetUsers = Partial<Pick<IUser, 'email' | 'name' | 'enabled'>>;
 
-export type UpdateUserFields = Partial<Omit<IUser, 'id' | 'roles'>>;
+export type TUpdateUser = Partial<Omit<IUser, 'id' | 'roles'>>;

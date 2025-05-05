@@ -15,7 +15,7 @@ import { useAppDispatch } from '@/shared/store/hooks';
 import resourcesApi from '@/shared/api/resources/resourcesApi';
 import { makeErrorText } from '@/shared/lib/utils';
 import { addAlert } from '@/shared/store/main/main';
-import { IResourceCreate } from '@/shared/api/resources/types';
+import { TCreateResource } from '@/shared/api/resources/types';
 
 const CreateResourceForm: FC = () => {
   const dispatch = useAppDispatch();
@@ -23,7 +23,7 @@ const CreateResourceForm: FC = () => {
   const lang = useLang();
   const t = useT();
   const [create, createReq] = resourcesApi.useCreateMutation();
-  const [data, setData] = useState<IResourceCreate>({
+  const [data, setData] = useState<TCreateResource>({
     name: '',
     path: '',
     description: '',

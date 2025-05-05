@@ -21,8 +21,8 @@ const ChangeEmailConfirmForm: FC<{
   const dispatch = useAppDispatch();
   const t = useT();
   const lang = useLang();
-  const [changeEmailConfirm, { data, error, isLoading }] =
-    profileApi.useChangeEmailConfirmMutation();
+  const [changeEmail, { data, error, isLoading }] =
+    profileApi.useChangeEmailMutation();
   const rights = useRights(ROUTES.api.profile);
   const profile = useAppSelector((store) => store.main.profile);
   const emailRef = useRef(email);
@@ -31,7 +31,7 @@ const ChangeEmailConfirmForm: FC<{
 
   const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    changeEmailConfirm(code);
+    changeEmail({ code });
   };
 
   useEffect(() => {

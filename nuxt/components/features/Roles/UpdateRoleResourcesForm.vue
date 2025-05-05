@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { IResource, IRolesResources } from '~/api/resources/types'
+import type { IResource } from '~/api/resources/types'
 import rolesApi from '~/api/roles/rolesApi'
 import type { IRole } from '~/api/roles/types'
+import type { IRights } from '~/api/types'
 import ResourceRightsFields from '~/components/features/Resources/ResourceRightsFields.vue'
 import Form from '~/components/shared/ui/Form/Form.vue'
 import FormButton from '~/components/shared/ui/Form/FormButton.vue'
@@ -9,11 +10,11 @@ import { useMainStore } from '~/store/main/main'
 
 const { role, resources } = defineProps<{ role: IRole, resources: IResource[] }>()
 
-const updatedRights = ref<IRolesResources[]>(resources.map((resource) => {
+const updatedRights = ref<IRights[]>(resources.map((resource) => {
   if (role.resources) {
     for (const roleResource of role.resources) {
-      if (roleResource.id === resource.id && roleResource.RolesResources)
-        return roleResource.RolesResources
+      if (roleResource.id === resource.id && roleResource.RightsModel)
+        return roleResource.RightsModel
     }
   }
 
@@ -39,7 +40,7 @@ function submitHandler() {
   })
 }
 
-function setRights(rights: IRolesResources) {
+function setRights(rights: IRights) {
   updatedRights.value = updatedRights.value.map((value) => {
     if (value.resourceId === rights.resourceId)
       return rights
@@ -74,8 +75,8 @@ v-for="resource of resources" :key="`resourceRights.${resource.id}`" :resource="
         @update="setRights" />
     </div>
     <FormButton
-color="success" :disabled="!rights.updating" :loading="pending" prepand-icon="mdi-content-save"
-      type="submit">
+color="success" :disabled="!rights.updating || role.default" :loading="pending"
+      prepand-icon="mdi-content-save" type="submit">
       {{ $t('update') }}
     </FormButton>
   </Form>

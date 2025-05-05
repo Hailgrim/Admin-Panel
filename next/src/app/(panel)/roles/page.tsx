@@ -18,7 +18,11 @@ const Page: FC<IAppPage> = async (props) => {
   const t = getT();
   const page = Number(props.searchParams.page) || 1;
   const quantity = Number(props.searchParams.quantity) || 25;
-  const { data } = await rolesService.findAndCountAll({ page, quantity });
+  const { data } = await rolesService.findAll({
+    reqPage: page,
+    reqLimit: quantity,
+    reqCount: true,
+  });
 
   return <RolesPage data={data} h1={t.roles} />;
 };

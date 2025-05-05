@@ -7,11 +7,11 @@ import {
   Scopes,
 } from 'sequelize-typescript';
 
-import { UsersRoles } from 'src/database/users-roles.entity';
-import { Role } from 'src/roles/role.entity';
-import { Resource } from 'src/resources/resource.entity';
+import { UsersRolesModel } from 'src/database/users-roles.entity';
+import { RoleModel } from 'src/roles/role.entity';
+import { ResourceModel } from 'src/resources/resource.entity';
 import { PUBLIC, WITH_ROLES } from 'libs/constants';
-import { CreateGoogleUserFields, CreateUserFields, IUser } from './users.types';
+import { TCreateGoogleUser, TCreateUser, IUser } from './users.types';
 
 @Scopes(() => ({
   [PUBLIC]: {
@@ -29,13 +29,14 @@ import { CreateGoogleUserFields, CreateUserFields, IUser } from './users.types';
   [WITH_ROLES]: {
     include: [
       {
-        model: Role,
+        model: RoleModel,
         attributes: {
           exclude: ['createdAt', 'updatedAt'],
         },
+        through: { attributes: [] },
         include: [
           {
-            model: Resource,
+            model: ResourceModel,
             attributes: {
               exclude: ['createdAt', 'updatedAt'],
             },
@@ -46,8 +47,8 @@ import { CreateGoogleUserFields, CreateUserFields, IUser } from './users.types';
   },
 }))
 @Table({ tableName: 'users' })
-export class User
-  extends Model<User, CreateUserFields | CreateGoogleUserFields>
+export class UserModel
+  extends Model<UserModel, TCreateUser | TCreateGoogleUser>
   implements IUser
 {
   @Column({
@@ -58,35 +59,35 @@ export class User
   declare id: string;
 
   @Column({ type: DataType.STRING(100), allowNull: true, unique: true })
-  email?: string | null;
+  declare email?: string | null;
 
   @Column({ type: DataType.STRING(100), allowNull: true })
-  password?: string | null;
+  declare password?: string | null;
 
   @Column({ type: DataType.STRING(100), allowNull: false })
-  name: string;
+  declare name: string;
 
   @Column({ type: DataType.STRING(100), allowNull: true, unique: true })
-  googleId?: string | null;
+  declare googleId?: string | null;
 
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
-  enabled: boolean;
+  declare enabled: boolean;
 
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
-  verified: boolean;
+  declare verified: boolean;
 
   @Column({ type: DataType.CHAR(4), allowNull: true })
-  verificationCode?: string | null;
+  declare verificationCode?: string | null;
 
   @Column({ type: DataType.CHAR(4), allowNull: true })
-  resetPasswordCode?: string | null;
+  declare resetPasswordCode?: string | null;
 
   @Column({ type: DataType.CHAR(4), allowNull: true })
-  changeEmailCode?: string | null;
+  declare changeEmailCode?: string | null;
 
   @Column({ type: DataType.STRING(100), allowNull: true })
-  temporaryEmail?: string | null;
+  declare temporaryEmail?: string | null;
 
-  @BelongsToMany(() => Role, () => UsersRoles)
-  roles?: Role[];
+  @BelongsToMany(() => RoleModel, () => UsersRolesModel)
+  declare roles?: RoleModel[];
 }

@@ -107,7 +107,7 @@ color="success" :disabled="!rights.updating || resource.default || dPending || B
     </FormButton>
     <FormButton
 color="error" :disabled="!rights.deleting || resource.default" :loading="dPending || Boolean(dData)"
-      prepand-icon="mdi-delete" type="button" @click="dExecute([resource.id])">
+      prepand-icon="mdi-delete" type="button" @click="dExecute({items: [resource.id]})">
       {{ $t('delete') }}
     </FormButton>
   </Form>

@@ -1,28 +1,14 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsOptional, Length, MaxLength } from 'class-validator';
+import { PartialType, PickType } from '@nestjs/swagger';
 
-import d from 'locales/dictionary';
-import { UpdateRoleFields } from '../roles.types';
+import { TUpdateRole } from '../roles.types';
+import { RoleDto } from './role.dto';
 
-export class UpdateRoleDto implements UpdateRoleFields {
-  @ApiPropertyOptional({
-    example: 'Admin',
-    description: d['en'].name,
-  })
-  @IsOptional()
-  @Length(1, 100)
-  name?: string;
-
-  @ApiPropertyOptional({
-    example: 'Lorem ipsum',
-    description: d['en'].description,
-  })
-  @IsOptional()
-  @MaxLength(1000)
-  description?: string;
-
-  @ApiPropertyOptional({ example: true, description: d['en'].status })
-  @IsOptional()
-  @IsBoolean()
-  enabled?: boolean;
-}
+export class UpdateRoleDto
+  extends PartialType(
+    PickType<RoleDto, keyof TUpdateRole>(RoleDto, [
+      'name',
+      'description',
+      'enabled',
+    ]),
+  )
+  implements TUpdateRole {}

@@ -15,7 +15,7 @@ import rolesApi from '@/shared/api/roles/rolesApi';
 import { useAppDispatch } from '@/shared/store/hooks';
 import { addAlert } from '@/shared/store/main/main';
 import { makeErrorText } from '@/shared/lib/utils';
-import { IRoleCreate } from '@/shared/api/roles/types';
+import { TCreateRole } from '@/shared/api/roles/types';
 
 const CreateRoleForm: FC = () => {
   const dispatch = useAppDispatch();
@@ -23,7 +23,7 @@ const CreateRoleForm: FC = () => {
   const lang = useLang();
   const t = useT();
   const [create, createReq] = rolesApi.useCreateMutation();
-  const [data, setData] = useState<IRoleCreate>({
+  const [data, setData] = useState<TCreateRole>({
     name: '',
     description: '',
     enabled: false,

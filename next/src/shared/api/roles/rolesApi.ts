@@ -2,31 +2,31 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import rolesService from '@/shared/api/roles/rolesService';
 import baseQueryWithReauth from '../baseQueryWithReauth';
-import { IRole, IRoleCreate } from './types';
-import { IFindAndCountRes, IListReq, IUpdateReq } from '../types';
-import { IRolesResources } from '../resources/types';
+import { IRole, TCreateRole, TGetRoles, TUpdateRole } from './types';
+import {
+  IGetListResponse,
+  TGetListRequest,
+  IUpdateReq,
+  IQueryItems,
+  IRights,
+} from '../types';
 
 const rolesApi = createApi({
   reducerPath: 'roles',
   baseQuery: baseQueryWithReauth,
   tagTypes: ['CountedEntities', 'Entities', 'Entity'],
   endpoints: (builder) => ({
-    create: builder.mutation<IRole, IRoleCreate>({
+    create: builder.mutation<IRole, TCreateRole>({
       query: rolesService.createArgs,
       invalidatesTags: ['CountedEntities'],
     }),
 
-    findAll: builder.query<IRole[], IListReq<IRole> | void>({
+    findAll: builder.query<
+      IGetListResponse<IRole>,
+      TGetListRequest<TGetRoles> | void
+    >({
       query: rolesService.findAllArgs,
       providesTags: ['Entities'],
-    }),
-
-    findAndCountAll: builder.query<
-      IFindAndCountRes<IRole>,
-      IListReq<IRole> | void
-    >({
-      query: rolesService.findAndCountAllArgs,
-      providesTags: ['CountedEntities'],
     }),
 
     findOne: builder.query<IRole, IRole['id']>({
@@ -34,17 +34,20 @@ const rolesApi = createApi({
       providesTags: ['Entity'],
     }),
 
-    update: builder.mutation<boolean, IUpdateReq<IRole>>({
+    update: builder.mutation<boolean, IUpdateReq<TUpdateRole, IRole['id']>>({
       query: rolesService.updateArgs,
       invalidatesTags: ['Entity'],
     }),
 
-    updateResources: builder.mutation<boolean, IUpdateReq<IRolesResources[]>>({
+    updateResources: builder.mutation<
+      boolean,
+      IUpdateReq<IRights[], IRole['id']>
+    >({
       query: rolesService.updateResourcesArgs,
       invalidatesTags: ['Entity'],
     }),
 
-    delete: builder.mutation<boolean, IRole['id'][]>({
+    delete: builder.mutation<boolean, IQueryItems<IRole['id']>>({
       query: rolesService.deleteArgs,
       invalidatesTags: ['CountedEntities'],
     }),

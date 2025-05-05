@@ -2,8 +2,14 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import profileService from '@/shared/api/profile/profileService';
 import baseQueryWithReprofile from '../baseQueryWithReauth';
-import { IUser } from '../users/types';
-import { ISession, IUpdatePassword } from './types';
+import { IUser, TUpdateUser } from '../users/types';
+import {
+  IChangeEmail,
+  IChangeEmailRequest,
+  IExternalSession,
+  IUpdatePassword,
+} from './types';
+import { IQueryItems } from '../types';
 
 const profileApi = createApi({
   reducerPath: 'profile',
@@ -13,7 +19,7 @@ const profileApi = createApi({
       query: profileService.getProfileArgs,
     }),
 
-    updateProfile: builder.mutation<boolean, Partial<IUser>>({
+    updateProfile: builder.mutation<boolean, TUpdateUser>({
       query: profileService.updateProfileArgs,
     }),
 
@@ -21,19 +27,22 @@ const profileApi = createApi({
       query: profileService.updatePasswordArgs,
     }),
 
-    changeEmailRequest: builder.mutation<boolean, string>({
+    changeEmailRequest: builder.mutation<boolean, IChangeEmailRequest>({
       query: profileService.changeEmailRequestArgs,
     }),
 
-    changeEmailConfirm: builder.mutation<boolean, string>({
-      query: profileService.changeEmailConfirmArgs,
+    changeEmail: builder.mutation<boolean, IChangeEmail>({
+      query: profileService.changeEmailArgs,
     }),
 
-    getSessions: builder.query<ISession[], void>({
+    getSessions: builder.query<IExternalSession[], void>({
       query: profileService.getSessionsArgs,
     }),
 
-    deleteSessions: builder.mutation<boolean, string[]>({
+    deleteSessions: builder.mutation<
+      boolean,
+      IQueryItems<IExternalSession['id']>
+    >({
       query: profileService.deleteSessionsArgs,
     }),
   }),

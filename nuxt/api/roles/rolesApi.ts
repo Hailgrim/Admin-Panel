@@ -1,41 +1,38 @@
 import { useAPI } from '~/composables/useAPI/useAPI'
-import type { IRole, IRoleCreate } from './types'
-import type { IRolesResources } from '../resources/types'
-import type { IFindAndCountRes, IListReq, IUpdateReq } from '../types'
+import type { IRole, TCreateRole, TGetRoles, TUpdateRole } from './types'
+import type {
+  IGetListResponse,
+  TGetListRequest,
+  IUpdateReq,
+  IRights,
+  IQueryItems,
+} from '../types'
 
 class RolesApi {
-  create = useAPI<IRole, IRoleCreate>((payload) => ({
+  create = useAPI<IRole, TCreateRole>((payload) => ({
     url: ROUTES.api.roles,
     options: { method: 'POST', credentials: 'include', body: payload },
   }))
 
-  list = useAPI<IRole[], IListReq<IRole> | undefined>((payload) => ({
+  findAll = useAPI<
+    IGetListResponse<IRole>,
+    TGetListRequest<TGetRoles> | undefined
+  >((payload) => ({
     url: ROUTES.api.roles,
     options: { method: 'GET', credentials: 'include', params: payload },
   }))
 
-  listCounted = useAPI<IFindAndCountRes<IRole>, IListReq<IRole> | undefined>(
-    (payload) => ({
-      url: ROUTES.api.roles,
-      options: {
-        method: 'GET',
-        credentials: 'include',
-        params: { ...payload, count: true },
-      },
-    })
-  )
-
-  read = useAPI<IRole, IRole['id']>((payload) => ({
+  findOne = useAPI<IRole, IRole['id']>((payload) => ({
     url: ROUTES.api.role(payload),
     options: { method: 'GET', credentials: 'include' },
   }))
 
-  update = useAPI<boolean, IUpdateReq<IRole>>((payload) => ({
+  update = useAPI<boolean, IUpdateReq<TUpdateRole, IRole['id']>>((payload) => ({
     url: ROUTES.api.role(payload.id),
     options: { method: 'PATCH', credentials: 'include', body: payload.fields },
   }))
 
-  updateResources = useAPI<boolean, IUpdateReq<IRolesResources[], IRole['id']>>(
+  updateResources = useAPI<boolean, IUpdateReq<IRights[], IRole['id']>>(
     (payload) => ({
       url: ROUTES.api.roleResources(payload.id),
       options: {
@@ -46,7 +43,7 @@ class RolesApi {
     })
   )
 
-  delete = useAPI<boolean, IRole['id'][]>((payload) => ({
+  delete = useAPI<boolean, IQueryItems<IRole['id']>>((payload) => ({
     url: ROUTES.api.roles,
     options: { method: 'DELETE', credentials: 'include', body: payload },
   }))

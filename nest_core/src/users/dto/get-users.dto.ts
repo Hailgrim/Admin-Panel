@@ -1,27 +1,27 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  ApiPropertyOptional,
+  IntersectionType,
+  PartialType,
+  PickType,
+} from '@nestjs/swagger';
+
+import { TGetUsers } from '../users.types';
+import { GetListRequestDto } from 'src/database/dto/get-list-request.dto';
+import { TGetListRequest } from 'src/database/database.types';
+import { UserDto } from './user.dto';
 import { IsOptional, IsString } from 'class-validator';
-import { Transform } from 'class-transformer';
 
-import d from 'locales/dictionary';
-import { GetUsersFields } from '../users.types';
-import { GetListDto } from 'src/database/dto/get-list.dto';
-
-export class GetUsersDto extends GetListDto implements GetUsersFields {
-  @ApiPropertyOptional({
-    example: 'example@mail.com',
-    description: d['en'].email,
-  })
+export class GetUsersDto
+  extends IntersectionType(
+    GetListRequestDto,
+    PartialType(
+      PickType<UserDto, keyof TGetUsers>(UserDto, ['name', 'enabled']),
+    ),
+  )
+  implements TGetListRequest<TGetUsers>
+{
+  @ApiPropertyOptional({ type: String, example: 'example@mail.com' })
   @IsOptional()
   @IsString()
-  email?: string;
-
-  @ApiPropertyOptional({ example: 'Linus Torvalds', description: d['en'].name })
-  @IsOptional()
-  @IsString()
-  name?: string;
-
-  @ApiPropertyOptional({ example: true, description: d['en'].status })
-  @IsOptional()
-  @Transform(({ value }) => Boolean(value))
-  enabled?: boolean;
+  email: string;
 }

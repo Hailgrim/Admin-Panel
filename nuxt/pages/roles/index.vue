@@ -14,9 +14,9 @@ const router = useRouter()
 const route = useRoute()
 const page = ref(Number(route.query.page) || 1)
 const quantity = ref(Number(route.query.quantity) || 25)
-const { data, execute } = rolesApi.listCounted(ROUTES.api.roles)
+const { data, execute } = rolesApi.findAll(ROUTES.api.roles)
 if (import.meta.server)
-  await execute({ page: page.value, quantity: quantity.value })
+  await execute({ reqPage: page.value, reqLimit: quantity.value, reqCount: true })
 
 watch(
   page,

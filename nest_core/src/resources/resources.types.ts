@@ -1,27 +1,25 @@
-import { IRolesResources } from 'src/database/database.types';
-import { IRole } from 'src/roles/roles.types';
+import { IRights } from 'src/database/database.types';
 
-export abstract class IResource {
+export interface IResource {
   id: string;
   name: string;
   path: string;
   description?: string | null;
   enabled: boolean;
   default: boolean;
-  roles?: IRole[];
-  RolesResources?: IRolesResources;
+  RightsModel?: IRights;
 }
 
-export type CreateResourceFields = Pick<
+export type TCreateResource = Pick<
   IResource,
   'name' | 'path' | 'description' | 'enabled'
 > &
   Partial<Pick<IResource, 'default'>>;
 
-export type GetResourcesFields = Partial<
+export type TGetResources = Partial<
   Pick<IResource, 'name' | 'path' | 'description' | 'enabled'>
 >;
 
-export type UpdateResourceFields = Partial<
+export type TUpdateResource = Partial<
   Pick<IResource, 'name' | 'path' | 'description' | 'enabled'>
 >;

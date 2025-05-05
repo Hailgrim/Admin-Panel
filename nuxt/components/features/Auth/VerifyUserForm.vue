@@ -18,7 +18,7 @@ const emit = defineEmits<{
 const { t, locale } = useI18n()
 const code = ref('')
 const codeIsValid = (value: string) => value.length > 0 || `${t('codeFromEmail')} (${email})`
-const { data, error, execute, pending } = authApi.verify()
+const { data, error, execute, pending } = authApi.verifyUser()
 
 const errorText = ref<string | null>(null)
 

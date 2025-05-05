@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { FindOptions, Op } from 'sequelize';
+import { FindOptions } from 'sequelize';
 
 import {
   PUBLIC,
@@ -13,58 +13,29 @@ import {
   ROLES_RESOURCES_REPOSITORY,
   WITH_RESOURCES,
 } from 'libs/constants';
-import { CreateRoleDto } from './dto/create-role.dto';
-import { Role } from './role.entity';
-import { GetRolesDto } from './dto/get-roles.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
-import { RolesResources } from '../database/roles-resources.entity';
-import { IFindAndCount } from 'src/database/database.types';
-import { RolesResourcesDto } from 'src/database/dto/roles-resources.dto';
+import { RoleModel } from './role.entity';
+import { RightsModel } from '../database/rights.entity';
+import {
+  IGetListResponse,
+  IRights,
+  TGetListRequest,
+} from 'src/database/database.types';
 import { DatabaseService } from 'src/database/database.service';
+import { TCreateRole, TGetRoles, TUpdateRole } from './roles.types';
 
 @Injectable()
 export class RolesService {
   constructor(
     @Inject(ROLES_REPOSITORY)
-    private rolesRepository: typeof Role,
+    private rolesRepository: typeof RoleModel,
     @Inject(ROLES_RESOURCES_REPOSITORY)
-    private rolesResourcesRepository: typeof RolesResources,
+    private rolesResourcesRepository: typeof RightsModel,
     private databaseService: DatabaseService,
   ) {}
 
-  private prepareSearchOptions(getRolesDto?: GetRolesDto): FindOptions<Role> {
-    const options: FindOptions<Role> = {
-      ...this.databaseService.preparePaginationOptions(getRolesDto),
-    };
-
-    if (getRolesDto?.name !== undefined) {
-      options.where = { ...options.where, name: getRolesDto.name };
-    }
-
-    if (getRolesDto?.description !== undefined) {
-      options.where = {
-        ...options.where,
-        description: getRolesDto.description,
-      };
-    }
-
-    return options;
-  }
-
-  private prepareGetOptions(getRolesDto?: GetRolesDto): FindOptions<Role> {
-    return {
-      ...this.prepareSearchOptions(getRolesDto),
-      ...this.databaseService.preparePaginationOptions(getRolesDto),
-    };
-  }
-
-  async create(createRoleDto: CreateRoleDto): Promise<Role> {
+  async create(fields: TCreateRole): Promise<RoleModel> {
     try {
-      return await this.rolesRepository.create({
-        ...createRoleDto,
-        default: false,
-        admin: false,
-      });
+      return await this.rolesRepository.create(fields);
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -75,11 +46,11 @@ export class RolesService {
     name: string,
     description?: string,
     isAdmin?: boolean,
-  ): Promise<Role> {
-    let role: Role;
+  ): Promise<RoleModel> {
+    let role: RoleModel;
 
     try {
-      [role] = await this.rolesRepository.findOrCreate({
+      [role] = await this.rolesRepository.scope(WITH_RESOURCES).findOrCreate({
         where: { name, default: true, admin: Boolean(isAdmin) },
         defaults: {
           name,
@@ -97,8 +68,8 @@ export class RolesService {
     return role;
   }
 
-  async findOnePublic(id: string): Promise<Role> {
-    let role: Role | null;
+  async findOnePublic(id: string): Promise<RoleModel> {
+    let role: RoleModel | null;
 
     try {
       role = await this.rolesRepository
@@ -116,45 +87,70 @@ export class RolesService {
     return role;
   }
 
-  async findAllPublic(
-    getRolesDto?: GetRolesDto,
+  prepareFindAllOptions(
+    fields?: TGetListRequest<TGetRoles>,
     isAdmin?: boolean,
-  ): Promise<Role[]> {
-    const options = this.prepareGetOptions(getRolesDto);
-    if (isAdmin) {
-      options.where = { ...options.where, admin: true };
+  ): FindOptions<RoleModel> {
+    const options: FindOptions<RoleModel> =
+      this.databaseService.preparePaginationOptions<RoleModel, TGetRoles>(
+        fields,
+      );
+
+    options.where = {};
+
+    if (fields?.name !== undefined) {
+      options.where.name = { [this.databaseService.iLike]: `%${fields.name}%` };
+    }
+
+    if (fields?.description !== undefined) {
+      options.where.description = {
+        [this.databaseService.iLike]: `%${fields.description}%`,
+      };
+    }
+
+    if (fields?.enabled !== undefined) {
+      options.where.enabled = fields.enabled;
+    }
+
+    if (isAdmin !== undefined) {
+      options.where.admin = isAdmin;
+    }
+
+    return options;
+  }
+
+  async findAllPublic(
+    fields?: TGetListRequest<TGetRoles>,
+    isAdmin?: boolean,
+  ): Promise<IGetListResponse<RoleModel>> {
+    const options = this.prepareFindAllOptions(fields, isAdmin);
+
+    if (isAdmin !== undefined) {
+      options.where = { ...options.where, admin: isAdmin };
     }
 
     try {
-      return await this.rolesRepository.scope(PUBLIC).findAll(options);
+      if (fields?.reqCount) {
+        return await this.rolesRepository
+          .scope(PUBLIC)
+          .findAndCountAll(options);
+      } else {
+        return {
+          rows: await this.rolesRepository.scope(PUBLIC).findAll(options),
+        };
+      }
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
     }
   }
 
-  async findAndCountAllPublic(
-    getRolesDto?: GetRolesDto,
-  ): Promise<IFindAndCount<Role>> {
-    const options = this.prepareGetOptions(getRolesDto);
-
-    try {
-      return await this.rolesRepository.scope(PUBLIC).findAndCountAll(options);
-    } catch (error) {
-      Logger.error(error);
-      throw new InternalServerErrorException();
-    }
-  }
-
-  async updateFields(
-    id: string,
-    updateRoleDto: UpdateRoleDto,
-  ): Promise<boolean> {
+  async updateFields(id: string, fields: TUpdateRole): Promise<boolean> {
     let affectedCount = 0;
 
     try {
-      [affectedCount] = await this.rolesRepository.update(updateRoleDto, {
-        where: { id, default: { [Op.ne]: true } },
+      [affectedCount] = await this.rolesRepository.update(fields, {
+        where: { id, default: false },
       });
     } catch (error) {
       Logger.error(error);
@@ -170,14 +166,15 @@ export class RolesService {
 
   async updateResources(
     id: string,
-    rolesResourcesDtoArr: RolesResourcesDto[],
+    rights: IRights[],
+    defaultResource?: boolean,
   ): Promise<boolean> {
-    let role: Role | null;
+    let role: RoleModel | null;
 
     try {
-      role = await this.rolesRepository
-        .scope(WITH_RESOURCES)
-        .findOne({ where: { id, admin: { [Op.ne]: true } } });
+      role = await this.rolesRepository.scope(WITH_RESOURCES).findOne({
+        where: { id, default: Boolean(defaultResource) },
+      });
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -187,21 +184,17 @@ export class RolesService {
       throw new NotFoundException();
     }
 
-    const deleteAllows: string[] = [];
-    role.resources?.forEach((resource) => {
-      if (
-        !rolesResourcesDtoArr.some(
-          (value) => value.roleId === resource.get('id'),
-        )
-      ) {
-        deleteAllows.push(resource.id);
+    const deletedResources: string[] = [];
+    role.get('resources')?.forEach((resource) => {
+      if (!rights.some((value) => value.roleId === resource.get('id'))) {
+        deletedResources.push(resource.id);
       }
     });
 
-    if (deleteAllows.length > 0) {
+    if (deletedResources.length > 0) {
       try {
         await this.rolesResourcesRepository.destroy({
-          where: { roleId: id, resourceId: deleteAllows },
+          where: { roleId: id, resourceId: deletedResources },
         });
       } catch (error) {
         Logger.error(error);
@@ -210,25 +203,11 @@ export class RolesService {
     }
 
     try {
-      await Promise.all(
-        rolesResourcesDtoArr.map(async (roleResource) => {
-          const [, created] = await this.rolesResourcesRepository.findOrCreate({
-            where: {
-              roleId: roleResource.roleId,
-              resourceId: roleResource.resourceId,
-            },
-            defaults: roleResource,
-          });
-
-          if (!created) {
-            await this.rolesResourcesRepository.update(roleResource, {
-              where: {
-                roleId: roleResource.roleId,
-                resourceId: roleResource.resourceId,
-              },
-            });
-          }
-        }),
+      await this.rolesResourcesRepository.bulkCreate(
+        rights.filter((value) => value.roleId === role.get('id')),
+        {
+          updateOnDuplicate: ['creating', 'reading', 'updating', 'deleting'],
+        },
       );
     } catch (error) {
       Logger.error(error);
@@ -237,12 +216,12 @@ export class RolesService {
     return true;
   }
 
-  async delete(id: string[]): Promise<boolean> {
+  async delete(ids: string[]): Promise<boolean> {
     let destroyedCount = 0;
 
     try {
       destroyedCount = await this.rolesRepository.destroy({
-        where: { id, default: { [Op.ne]: true } },
+        where: { id: ids, default: false },
       });
     } catch (error) {
       Logger.error(error);

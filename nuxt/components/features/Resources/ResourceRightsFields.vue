@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { IResource, IRolesResources } from '~/api/resources/types'
+import type { IResource } from '~/api/resources/types'
+import type { IRights } from '~/api/types'
 import FormCheckbox from '~/components/shared/ui/Form/FormCheckbox.vue'
 
-const { roleId, resource, rights } = defineProps<{ roleId: string, resource: IResource, rights?: IRolesResources }>()
+const { roleId, resource, rights } = defineProps<{ roleId: string, resource: IResource, rights?: IRights }>()
 const emit = defineEmits<{
-  update: [value: IRolesResources]
+  update: [value: IRights]
 }>()
 
 const newRights = ref(rights || {
@@ -16,7 +17,7 @@ const newRights = ref(rights || {
   deleting: false,
 })
 
-function updateHandler(permisson: keyof Omit<IRolesResources, 'roleId' | 'resourceId'>, value: boolean) {
+function updateHandler(permisson: keyof Omit<IRights, 'roleId' | 'resourceId'>, value: boolean) {
   newRights.value = { ...newRights.value, [permisson]: value }
   emit('update', newRights.value)
 }

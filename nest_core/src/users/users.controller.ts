@@ -18,14 +18,17 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { Roles } from 'src/roles/roles.decorator';
 import { RolesGuard } from 'src/roles/roles.guard';
-import { Rights } from 'libs/constants';
+import { ERights } from 'libs/constants';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { GetUsersDto } from './dto/get-users.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UsersRolesDto } from 'src/database/dto/users-roles.dto';
 import d from 'locales/dictionary';
+import { IGetListResponse } from 'src/database/database.types';
+import { QueryItemsDto } from 'src/database/dto/query-items.dto';
 import { IUser } from './users.types';
-import { IFindAndCount } from 'src/database/database.types';
+import { ExternalUserDto } from './dto/external-user.dto';
+import { UsersListDto } from './dto/users-list.dto';
+import { UsersRolesQueryItemsDto } from 'src/database/dto/users-roles-query-items.dto';
 
 const route = 'users';
 
@@ -35,8 +38,8 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @ApiOperation({ summary: d['en'].entityCreation })
-  @ApiResponse({ status: HttpStatus.CREATED, type: IUser })
-  @Roles({ path: route, action: Rights.Creating })
+  @ApiResponse({ status: HttpStatus.CREATED, type: ExternalUserDto })
+  @Roles({ path: route, action: ERights.Creating })
   @UseGuards(JwtGuard, RolesGuard)
   @Post()
   create(
@@ -48,23 +51,17 @@ export class UsersController {
   }
 
   @ApiOperation({ summary: d['en'].getEntities })
-  @ApiResponse({ status: HttpStatus.OK, type: [IUser] })
-  @Roles({ path: route, action: Rights.Reading })
+  @ApiResponse({ status: HttpStatus.OK, type: UsersListDto })
+  @Roles({ path: route, action: ERights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get()
-  findAll(
-    @Query() getUsersDto: GetUsersDto,
-  ): Promise<IUser[] | IFindAndCount<IUser>> {
-    if (getUsersDto.count) {
-      return this.usersService.findAndCountAllPublic(getUsersDto);
-    } else {
-      return this.usersService.findAllPublic(getUsersDto);
-    }
+  findAll(@Query() getUsersDto: GetUsersDto): Promise<IGetListResponse<IUser>> {
+    return this.usersService.findAllPublic(getUsersDto);
   }
 
   @ApiOperation({ summary: d['en'].getEntity })
-  @ApiResponse({ status: HttpStatus.OK, type: IUser })
-  @Roles({ path: route, action: Rights.Reading })
+  @ApiResponse({ status: HttpStatus.OK, type: ExternalUserDto })
+  @Roles({ path: route, action: ERights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get('/:id')
   findOne(@Param('id') id: string): Promise<IUser> {
@@ -73,7 +70,7 @@ export class UsersController {
 
   @ApiOperation({ summary: d['en'].updateEntity })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Roles({ path: route, action: Rights.Updating })
+  @Roles({ path: route, action: ERights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('/:id')
   update(
@@ -85,22 +82,22 @@ export class UsersController {
 
   @ApiOperation({ summary: d['en'].updateEntity })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Roles({ path: route, action: Rights.Updating })
+  @Roles({ path: route, action: ERights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('/:id/roles')
   updateRoles(
     @Param('id') id: string,
-    @Body() usersRolesDtoArr: UsersRolesDto[],
+    @Body() usersRolesQueryItemsDto: UsersRolesQueryItemsDto,
   ): Promise<boolean> {
-    return this.usersService.updateRoles(id, usersRolesDtoArr);
+    return this.usersService.updateRoles(id, usersRolesQueryItemsDto.items);
   }
 
   @ApiOperation({ summary: d['en'].deleteEntity })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Roles({ path: route, action: Rights.Deleting })
+  @Roles({ path: route, action: ERights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
   @Delete()
-  delete(@Body() ids: string[]): Promise<boolean> {
-    return this.usersService.delete(ids);
+  delete(@Body() QueryItemsDto: QueryItemsDto<IUser['id']>): Promise<boolean> {
+    return this.usersService.delete(QueryItemsDto.items);
   }
 }

@@ -4,9 +4,9 @@ import UAParser from 'ua-parser-js'
 import Form from '~/components/shared/ui/Form/Form.vue'
 import { useMainStore } from '~/store/main/main'
 import profileApi from '~/api/profile/profileApi'
-import type { ISession } from '~/api/profile/types'
+import type { IExternalSession } from '~/api/profile/types'
 
-const { session } = defineProps<{ session: ISession }>()
+const { session } = defineProps<{ session: IExternalSession }>()
 const emit = defineEmits<{
   delete: []
 }>()
@@ -19,7 +19,7 @@ const userAgent = new UAParser(session.userAgent).getResult()
 const updatedAt = makeDateString(session.updatedAt)
 
 async function submitHandler() {
-  execute([session.id])
+  execute({items: [session.id]})
 }
 
 watch(
@@ -36,6 +36,7 @@ watch(
     if (data.value) {
       mainStore.addAlert({ type: 'success', text: t('success') })
       emit('delete')
+
       if (session.current) {
         mainStore.setProfile(null)
       }

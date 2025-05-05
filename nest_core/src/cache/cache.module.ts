@@ -36,6 +36,6 @@ import { REDIS } from 'libs/constants';
     },
     CacheService,
   ],
-  exports: [REDIS, CACHE_MANAGER, CacheService],
+  exports: [CacheService],
 })
 export class CacheModule {}

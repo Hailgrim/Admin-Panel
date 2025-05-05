@@ -7,10 +7,10 @@ import FormCheckbox from '~/components/shared/ui/Form/FormCheckbox.vue'
 import FormButton from '~/components/shared/ui/Form/FormButton.vue'
 import { useMainStore } from '~/store/main/main'
 import rolesApi from '~/api/roles/rolesApi'
-import type { IRoleCreate } from '~/api/roles/types'
+import type { TCreateRole } from '~/api/roles/types'
 
 const { t, locale } = useI18n()
-const newData = ref<IRoleCreate>({
+const newData = ref<TCreateRole>({
   name: '',
   description: '',
   enabled: false

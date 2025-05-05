@@ -5,7 +5,7 @@ import { ResourcesController } from './resources.controller';
 import { ResourcesService } from './resources.service';
 import { UsersModule } from 'src/users/users.module';
 import { RESOURCES_REPOSITORY } from 'libs/constants';
-import { Resource } from './resource.entity';
+import { ResourceModel } from './resource.entity';
 
 @Module({
   imports: [DatabaseModule, UsersModule],
@@ -13,7 +13,7 @@ import { Resource } from './resource.entity';
   providers: [
     {
       provide: RESOURCES_REPOSITORY,
-      useValue: Resource,
+      useValue: ResourceModel,
     },
     ResourcesService,
   ],

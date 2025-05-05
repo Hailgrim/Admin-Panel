@@ -24,7 +24,7 @@ async function submitHandler(event: SubmitEventPromise) {
     if (email.value === mainStore.profile?.email)
       mainStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
     else
-      execute(email.value)
+      execute({newEmail: email.value})
   }
 }
 
@@ -54,7 +54,7 @@ v-model="email" :hint="$t('emailValidation')" :label="$t('email')" name="email" 
       {{ $t('change') }}
     </FormButton>
     <CustomModal v-model="confirmModal" :title="$t('resetPassword')">
-      <ChangeEmailConfirmForm :email="args || ''" @close="confirmModal = false" />
+      <ChangeEmailConfirmForm :email="args?.newEmail || ''" @close="confirmModal = false" />
     </CustomModal>
   </Form>
 </template>

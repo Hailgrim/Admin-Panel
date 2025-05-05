@@ -1,23 +1,36 @@
-import { Injectable } from '@nestjs/common';
-import { FindOptions } from 'sequelize';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { FindOptions, Op, Sequelize } from 'sequelize';
 
-import { GetListDto } from './dto/get-list.dto';
+import { TGetListRequest } from './database.types';
+import { SEQUELIZE } from 'libs/constants';
 
 @Injectable()
-export class DatabaseService {
-  preparePaginationOptions(getListDto?: GetListDto): FindOptions {
-    const options: FindOptions = { offset: 0, limit: 25 };
+export class DatabaseService implements OnModuleInit {
+  constructor(
+    @Inject(SEQUELIZE)
+    private sequelize: Sequelize,
+  ) {}
 
-    if (
-      getListDto?.quantity &&
-      getListDto.quantity > 0 &&
-      getListDto.quantity <= 100
-    ) {
-      options.limit = getListDto.quantity;
+  public iLike: symbol = Op.iLike;
+
+  async onModuleInit() {
+    if (this.sequelize.getDialect() === 'sqlite') {
+      await this.sequelize.query('PRAGMA case_sensitive_like = OFF;');
+      this.iLike = Op.like;
+    }
+  }
+
+  preparePaginationOptions<T = unknown, U = unknown>(
+    fields?: TGetListRequest<U>,
+  ): FindOptions<T> {
+    const options: FindOptions<T> = { offset: 0, limit: 25 };
+
+    if (fields?.reqLimit && fields.reqLimit > 0 && fields.reqLimit <= 100) {
+      options.limit = fields.reqLimit;
     }
 
-    if (getListDto?.page && getListDto.page > 0 && options.limit) {
-      options.offset = (getListDto.page - 1) * options?.limit;
+    if (fields?.reqPage && fields.reqPage > 0 && options.limit) {
+      options.offset = (fields.reqPage - 1) * options.limit;
     }
 
     return options;

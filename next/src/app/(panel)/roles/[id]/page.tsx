@@ -28,7 +28,7 @@ const Page: FC<IAppPage> = async ({ params }) => {
       return (
         <RolePage
           h1={t.role}
-          data={{ role: role.data, resources: resources.data }}
+          data={{ role: role.data, resources: resources.data?.rows }}
         />
       );
     }

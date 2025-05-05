@@ -28,7 +28,10 @@ const Page: FC<IAppPage> = async ({ params }) => {
 
     if (user.data) {
       return (
-        <UserPage h1={t.user} data={{ user: user.data, roles: roles.data }} />
+        <UserPage
+          h1={t.user}
+          data={{ user: user.data, roles: roles.data?.rows }}
+        />
       );
     }
   }

@@ -24,9 +24,9 @@ import theme from '@/shared/lib/theme';
 import { ROUTES } from '@/shared/lib/constants';
 import useRights from '@/shared/hooks/useRights';
 import profileApi from '@/shared/api/profile/profileApi';
-import { ISession } from '@/shared/api/profile/types';
+import { IExternalSession } from '@/shared/api/profile/types';
 
-const SessionForm: FC<{ session: ISession; onDelete?: () => void }> = ({
+const SessionForm: FC<{ session: IExternalSession; onDelete?: () => void }> = ({
   session,
   onDelete,
 }) => {
@@ -39,7 +39,7 @@ const SessionForm: FC<{ session: ISession; onDelete?: () => void }> = ({
 
   const submitHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    remove([session.id]);
+    remove({ items: [session.id] });
   };
 
   useEffect(() => {

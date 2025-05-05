@@ -1,9 +1,16 @@
 import { ROUTES } from '@/shared/lib/constants';
-import { IResetPassword, IUserSignIn, IUserSignUp, IVerifyUser } from './types';
+import {
+  IResetPassword,
+  ISignIn,
+  TSignUp,
+  IVerifyUser,
+  IForgotPassword,
+  ISignInGoogle,
+} from './types';
 import { IReqArgs } from '../types';
 
 class AuthService {
-  signUpArgs(payload: IUserSignUp): IReqArgs {
+  signUpArgs(payload: TSignUp): IReqArgs {
     return {
       url: ROUTES.api.sighUp,
       method: 'POST',
@@ -11,7 +18,7 @@ class AuthService {
     };
   }
 
-  forgotPasswordArgs(payload: string): IReqArgs {
+  forgotPasswordArgs(payload: IForgotPassword): IReqArgs {
     return {
       url: ROUTES.api.forgotPassword,
       method: 'POST',
@@ -27,7 +34,15 @@ class AuthService {
     };
   }
 
-  signInArgs(payload: IUserSignIn): IReqArgs {
+  verifyUserArgs(payload: IVerifyUser): IReqArgs {
+    return {
+      url: ROUTES.api.verify,
+      method: 'POST',
+      body: payload,
+    };
+  }
+
+  signInArgs(payload: ISignIn): IReqArgs {
     return {
       url: ROUTES.api.signIn,
       method: 'POST',
@@ -36,19 +51,11 @@ class AuthService {
     };
   }
 
-  signInGoogleArgs(payload: string): IReqArgs {
+  signInGoogleArgs(payload: ISignInGoogle): IReqArgs {
     return {
       url: ROUTES.api.signInGoogle,
       method: 'POST',
       credentials: 'include',
-      body: payload,
-    };
-  }
-
-  verifyUserArgs(payload: IVerifyUser): IReqArgs {
-    return {
-      url: ROUTES.api.verify,
-      method: 'POST',
       body: payload,
     };
   }

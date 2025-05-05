@@ -5,8 +5,8 @@ import { DatabaseModule } from 'src/database/database.module';
 import { RolesService } from './roles.service';
 import { UsersModule } from 'src/users/users.module';
 import { ROLES_REPOSITORY, ROLES_RESOURCES_REPOSITORY } from 'libs/constants';
-import { RolesResources } from '../database/roles-resources.entity';
-import { Role } from './role.entity';
+import { RightsModel } from '../database/rights.entity';
+import { RoleModel } from './role.entity';
 
 @Module({
   imports: [DatabaseModule, UsersModule],
@@ -14,11 +14,11 @@ import { Role } from './role.entity';
   providers: [
     {
       provide: ROLES_REPOSITORY,
-      useValue: Role,
+      useValue: RoleModel,
     },
     {
       provide: ROLES_RESOURCES_REPOSITORY,
-      useValue: RolesResources,
+      useValue: RightsModel,
     },
     RolesService,
   ],

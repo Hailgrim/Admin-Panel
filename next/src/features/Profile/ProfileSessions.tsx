@@ -9,18 +9,17 @@ import { addAlert } from '@/shared/store/main/main';
 import { useAppDispatch } from '@/shared/store/hooks';
 import useLang from '@/shared/hooks/useLang';
 import profileApi from '@/shared/api/profile/profileApi';
-import { ISession } from '@/shared/api/profile/types';
+import { IExternalSession } from '@/shared/api/profile/types';
 
 const ProfileSessions: FC = () => {
   const dispatch = useAppDispatch();
   const lang = useLang();
   const { data, isLoading, error } = profileApi.useGetSessionsQuery();
-  const [sessions, setSessions] = useState<ISession[]>();
+  const [sessions, setSessions] = useState<IExternalSession[]>();
 
   useEffect(() => {
     setSessions(
-      data &&
-        Array.from(data).sort((a, b) => (!a.current && b.current ? 1 : -1))
+      data && data.sort((a, b) => (!a.current && b.current ? 1 : -1))
     );
   }, [data]);
 

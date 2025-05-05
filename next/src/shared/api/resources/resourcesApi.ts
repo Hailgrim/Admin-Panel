@@ -2,30 +2,35 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import baseQueryWithReauth from '../baseQueryWithReauth';
 import resourcesService from '@/shared/api/resources/resourcesService';
-import { IResource, IResourceCreate } from './types';
-import { IFindAndCountRes, IListReq, IUpdateReq } from '../types';
+import {
+  IResource,
+  TCreateResource,
+  TGetResources,
+  TUpdateResource,
+} from './types';
+import {
+  IGetListResponse,
+  TGetListRequest,
+  IUpdateReq,
+  IQueryItems,
+} from '../types';
 
 const resourcesApi = createApi({
   reducerPath: 'resources',
   baseQuery: baseQueryWithReauth,
   tagTypes: ['CountedEntities', 'Entities', 'Entity'],
   endpoints: (builder) => ({
-    create: builder.mutation<IResource, IResourceCreate>({
+    create: builder.mutation<IResource, TCreateResource>({
       query: resourcesService.createArgs,
       invalidatesTags: ['CountedEntities'],
     }),
 
-    findAll: builder.query<IResource[], IListReq<IResource> | void>({
+    findAll: builder.query<
+      IGetListResponse<IResource>,
+      TGetListRequest<TGetResources> | void
+    >({
       query: resourcesService.findAllArgs,
       providesTags: ['Entities'],
-    }),
-
-    findAndCountAll: builder.query<
-      IFindAndCountRes<IResource>,
-      IListReq<IResource> | void
-    >({
-      query: resourcesService.findAndCountAllArgs,
-      providesTags: ['CountedEntities'],
     }),
 
     findOne: builder.query<IResource, IResource['id']>({
@@ -33,12 +38,15 @@ const resourcesApi = createApi({
       providesTags: ['Entity'],
     }),
 
-    update: builder.mutation<boolean, IUpdateReq<IResource>>({
+    update: builder.mutation<
+      boolean,
+      IUpdateReq<TUpdateResource, IResource['id']>
+    >({
       query: resourcesService.updateArgs,
       invalidatesTags: ['Entity'],
     }),
 
-    delete: builder.mutation<boolean, IResource['id'][]>({
+    delete: builder.mutation<boolean, IQueryItems<IResource['id']>>({
       query: resourcesService.deleteArgs,
       invalidatesTags: ['CountedEntities'],
     }),

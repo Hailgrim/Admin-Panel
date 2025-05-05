@@ -7,10 +7,10 @@ import {
   Table,
 } from 'sequelize-typescript';
 
-import { Role } from '../roles/role.entity';
+import { RoleModel } from '../roles/role.entity';
 import { PUBLIC } from 'libs/constants';
-import { CreateResourceFields, IResource } from './resources.types';
-import { RolesResources } from 'src/database/roles-resources.entity';
+import { TCreateResource, IResource } from './resources.types';
+import { RightsModel } from 'src/database/rights.entity';
 
 @Scopes(() => ({
   [PUBLIC]: {
@@ -20,8 +20,8 @@ import { RolesResources } from 'src/database/roles-resources.entity';
   },
 }))
 @Table({ tableName: 'resources' })
-export class Resource
-  extends Model<Resource, CreateResourceFields>
+export class ResourceModel
+  extends Model<ResourceModel, TCreateResource>
   implements IResource
 {
   @Column({
@@ -32,22 +32,22 @@ export class Resource
   declare id: string;
 
   @Column({ type: DataType.STRING(100), allowNull: false, unique: true })
-  name: string;
+  declare name: string;
 
   @Column({ type: DataType.STRING(100), allowNull: false, unique: true })
-  path: string;
+  declare path: string;
 
   @Column({ type: DataType.STRING(1000), allowNull: true })
-  description?: string | null;
+  declare description?: string | null;
 
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
-  enabled: boolean;
+  declare enabled: boolean;
 
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
-  default: boolean;
+  declare default: boolean;
 
-  @BelongsToMany(() => Role, () => RolesResources)
-  roles?: Role[];
+  @BelongsToMany(() => RoleModel, () => RightsModel)
+  declare roles?: RoleModel[];
 
-  RolesResources?: RolesResources;
+  declare RightsModel?: RightsModel;
 }

@@ -14,23 +14,23 @@ definePageMeta({
 
 const route = useRoute()
 const id = String(route.params.id)
-const { data: urData, execute: urExecute } = usersApi.read(ROUTES.api.user(id))
-await urExecute(id)
+const { data: ufoData, execute: ufoExecute } = usersApi.findOne(ROUTES.api.user(id))
+await ufoExecute(id)
 
-if (urData.value === null) {
+if (ufoData.value === null) {
   showError({
     statusCode: 404,
   })
 }
 
-const { data: rlData, execute: rlExecute } = rolesApi.list()
-await rlExecute(undefined)
+const { data: rfaData, execute: rfaExecute } = rolesApi.findAll()
+await rfaExecute(undefined)
 </script>
 
 <template>
-  <UpdateUserForm v-if="urData" :user="urData" />
-  <v-card-title v-if="urData && rlData" class="px-0 py-3">
+  <UpdateUserForm v-if="ufoData" :user="ufoData" />
+  <v-card-title v-if="ufoData && rfaData" class="px-0 py-3">
     {{ $t('roles') }}
   </v-card-title>
-  <UpdateUserRolesForm v-if="urData && rlData" :roles="rlData" :user="urData" />
+  <UpdateUserRolesForm v-if="ufoData && rfaData" :roles="rfaData.rows" :user="ufoData" />
 </template>

@@ -17,14 +17,17 @@ import { FastifyReply } from 'fastify';
 import { ResourcesService } from './resources.service';
 import { CreateResourceDto } from './dto/create-resource.dto';
 import { RolesGuard } from 'src/roles/roles.guard';
-import { Rights } from 'libs/constants';
+import { ERights } from 'libs/constants';
 import { Roles } from 'src/roles/roles.decorator';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { GetResourcesDto } from './dto/get-resources.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
 import d from 'locales/dictionary';
+import { IGetListResponse } from 'src/database/database.types';
+import { QueryItemsDto } from 'src/database/dto/query-items.dto';
 import { IResource } from './resources.types';
-import { IFindAndCount } from 'src/database/database.types';
+import { ExternalResourceDto } from './dto/external-resource.dto';
+import { ResourcesListDto } from './dto/resources-list.dto';
 
 const route = 'resources';
 
@@ -34,8 +37,8 @@ export class ResourcesController {
   constructor(private resourceService: ResourcesService) {}
 
   @ApiOperation({ summary: d['en'].entityCreation })
-  @ApiResponse({ status: HttpStatus.CREATED, type: IResource })
-  @Roles({ path: route, action: Rights.Creating })
+  @ApiResponse({ status: HttpStatus.CREATED, type: ExternalResourceDto })
+  @Roles({ path: route, action: ERights.Creating })
   @UseGuards(JwtGuard, RolesGuard)
   @Post()
   create(
@@ -47,23 +50,19 @@ export class ResourcesController {
   }
 
   @ApiOperation({ summary: d['en'].getEntities })
-  @ApiResponse({ status: HttpStatus.OK, type: [IResource] })
-  @Roles({ path: route, action: Rights.Reading })
+  @ApiResponse({ status: HttpStatus.OK, type: ResourcesListDto })
+  @Roles({ path: route, action: ERights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get()
   findAll(
     @Query() getResourcesDto: GetResourcesDto,
-  ): Promise<IResource[] | IFindAndCount<IResource>> {
-    if (getResourcesDto.count) {
-      return this.resourceService.findAndCountAllPublic(getResourcesDto);
-    } else {
-      return this.resourceService.findAllPublic(getResourcesDto);
-    }
+  ): Promise<IGetListResponse<IResource>> {
+    return this.resourceService.findAllPublic(getResourcesDto);
   }
 
   @ApiOperation({ summary: d['en'].getEntity })
-  @ApiResponse({ status: HttpStatus.OK, type: IResource })
-  @Roles({ path: route, action: Rights.Reading })
+  @ApiResponse({ status: HttpStatus.OK, type: ExternalResourceDto })
+  @Roles({ path: route, action: ERights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get('/:id')
   findOne(@Param('id') id: string): Promise<IResource> {
@@ -72,7 +71,7 @@ export class ResourcesController {
 
   @ApiOperation({ summary: d['en'].updateEntity })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Roles({ path: route, action: Rights.Updating })
+  @Roles({ path: route, action: ERights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('/:id')
   update(
@@ -84,10 +83,12 @@ export class ResourcesController {
 
   @ApiOperation({ summary: d['en'].deleteEntity })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Roles({ path: route, action: Rights.Deleting })
+  @Roles({ path: route, action: ERights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
   @Delete()
-  delete(@Body() ids: string[]): Promise<boolean> {
-    return this.resourceService.delete(ids);
+  delete(
+    @Body() QueryItemsDto: QueryItemsDto<IResource['id']>,
+  ): Promise<boolean> {
+    return this.resourceService.delete(QueryItemsDto.items);
   }
 }

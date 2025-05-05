@@ -26,7 +26,7 @@ const SignInGoogleForm: FC = () => {
 
   useEffect(() => {
     if (hash.current.has('access_token')) {
-      signInGoogle(hash.current.get('access_token')!);
+      signInGoogle({ googleAccessToken: hash.current.get('access_token')! });
     } else {
       setErrorText(d[lang.current].error);
     }

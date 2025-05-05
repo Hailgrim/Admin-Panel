@@ -1,6 +1,12 @@
 import { useAPI } from '~/composables/useAPI/useAPI'
-import type { ISession, IUpdatePassword } from './types'
-import type { IUser } from '../users/types'
+import type {
+  IChangeEmail,
+  IChangeEmailRequest,
+  IExternalSession,
+  IUpdatePassword,
+} from './types'
+import type { IUser, TUpdateUser } from '../users/types'
+import type { IQueryItems } from '../types'
 
 class ProfileApi {
   getProfile = useAPI<IUser>(() => ({
@@ -8,7 +14,7 @@ class ProfileApi {
     options: { method: 'GET', credentials: 'include' },
   }))
 
-  updateProfile = useAPI<boolean, Partial<IUser>>((payload) => ({
+  updateProfile = useAPI<boolean, TUpdateUser>((payload) => ({
     url: ROUTES.api.profile,
     options: { method: 'PATCH', credentials: 'include', body: payload },
   }))
@@ -18,25 +24,27 @@ class ProfileApi {
     options: { method: 'PATCH', credentials: 'include', body: payload },
   }))
 
-  changeEmailRequest = useAPI<boolean, string>((payload) => ({
+  changeEmailRequest = useAPI<boolean, IChangeEmailRequest>((payload) => ({
     url: ROUTES.api.changeEmail,
     options: { method: 'POST', credentials: 'include', body: payload },
   }))
 
-  changeEmailConfirm = useAPI<boolean, string>((payload) => ({
+  changeEmail = useAPI<boolean, IChangeEmail>((payload) => ({
     url: ROUTES.api.changeEmail,
     options: { method: 'PATCH', credentials: 'include', body: payload },
   }))
 
-  getSessions = useAPI<ISession[]>(() => ({
+  getSessions = useAPI<IExternalSession[]>(() => ({
     url: ROUTES.api.sessions,
     options: { method: 'GET', credentials: 'include' },
   }))
 
-  deleteSessions = useAPI<boolean, string[]>((payload) => ({
-    url: ROUTES.api.sessions,
-    options: { method: 'DELETE', credentials: 'include', body: payload },
-  }))
+  deleteSessions = useAPI<boolean, IQueryItems<IExternalSession['id']>>(
+    (payload) => ({
+      url: ROUTES.api.sessions,
+      options: { method: 'DELETE', credentials: 'include', body: payload },
+    })
+  )
 }
 
 const profileApi = new ProfileApi()

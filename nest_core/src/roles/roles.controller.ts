@@ -18,14 +18,17 @@ import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { Roles } from './roles.decorator';
 import { RolesGuard } from './roles.guard';
-import { Rights } from 'libs/constants';
+import { ERights } from 'libs/constants';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { GetRolesDto } from './dto/get-roles.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import d from 'locales/dictionary';
+import { IGetListResponse } from 'src/database/database.types';
+import { QueryItemsDto } from 'src/database/dto/query-items.dto';
 import { IRole } from './roles.types';
-import { IFindAndCount } from 'src/database/database.types';
-import { RolesResourcesDto } from 'src/database/dto/roles-resources.dto';
+import { ExternalRoleDto } from './dto/external-role.dto';
+import { RolesListDto } from './dto/roles-list.dto';
+import { RightsQueryItemsDto } from 'src/database/dto/rights-query-items.dto';
 
 const route = 'roles';
 
@@ -35,8 +38,8 @@ export class RolesController {
   constructor(private roleService: RolesService) {}
 
   @ApiOperation({ summary: d['en'].entityCreation })
-  @ApiResponse({ status: HttpStatus.CREATED, type: IRole })
-  @Roles({ path: route, action: Rights.Creating })
+  @ApiResponse({ status: HttpStatus.CREATED, type: ExternalRoleDto })
+  @Roles({ path: route, action: ERights.Creating })
   @UseGuards(JwtGuard, RolesGuard)
   @Post()
   create(
@@ -48,23 +51,17 @@ export class RolesController {
   }
 
   @ApiOperation({ summary: d['en'].getEntities })
-  @ApiResponse({ status: HttpStatus.OK, type: [IRole] })
-  @Roles({ path: route, action: Rights.Reading })
+  @ApiResponse({ status: HttpStatus.OK, type: RolesListDto })
+  @Roles({ path: route, action: ERights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get()
-  findAll(
-    @Query() getRolesDto: GetRolesDto,
-  ): Promise<IRole[] | IFindAndCount<IRole>> {
-    if (getRolesDto.count) {
-      return this.roleService.findAndCountAllPublic(getRolesDto);
-    } else {
-      return this.roleService.findAllPublic(getRolesDto);
-    }
+  findAll(@Query() getRolesDto: GetRolesDto): Promise<IGetListResponse<IRole>> {
+    return this.roleService.findAllPublic(getRolesDto);
   }
 
   @ApiOperation({ summary: d['en'].getEntity })
-  @ApiResponse({ status: HttpStatus.OK, type: IRole })
-  @Roles({ path: route, action: Rights.Reading })
+  @ApiResponse({ status: HttpStatus.OK, type: ExternalRoleDto })
+  @Roles({ path: route, action: ERights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get('/:id')
   findOne(@Param('id') id: string): Promise<IRole> {
@@ -73,7 +70,7 @@ export class RolesController {
 
   @ApiOperation({ summary: d['en'].updateEntity })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Roles({ path: route, action: Rights.Updating })
+  @Roles({ path: route, action: ERights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('/:id')
   update(
@@ -85,22 +82,22 @@ export class RolesController {
 
   @ApiOperation({ summary: d['en'].updateEntity })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Roles({ path: route, action: Rights.Updating })
+  @Roles({ path: route, action: ERights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('/:id/resources')
   updateResources(
     @Param('id') id: string,
-    @Body() rolesResourcesDtoArr: RolesResourcesDto[],
+    @Body() rightsQueryItemsDta: RightsQueryItemsDto,
   ): Promise<boolean> {
-    return this.roleService.updateResources(id, rolesResourcesDtoArr);
+    return this.roleService.updateResources(id, rightsQueryItemsDta.items);
   }
 
   @ApiOperation({ summary: d['en'].deleteEntity })
   @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Roles({ path: route, action: Rights.Deleting })
+  @Roles({ path: route, action: ERights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
   @Delete()
-  delete(@Body() ids: string[]): Promise<boolean> {
-    return this.roleService.delete(ids);
+  delete(@Body() QueryItemsDto: QueryItemsDto<IRole['id']>): Promise<boolean> {
+    return this.roleService.delete(QueryItemsDto.items);
   }
 }

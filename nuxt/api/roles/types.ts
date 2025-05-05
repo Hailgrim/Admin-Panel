@@ -1,19 +1,24 @@
 import type { IResource } from '../resources/types'
+import type { IUsersRoles } from '../types'
 
 export interface IRole {
   id: string;
   name: string;
-  description: string | null;
+  description?: string | null;
   enabled: boolean;
   admin: boolean;
   default: boolean;
   resources?: IResource[];
-  UsersRoles?: IUsersRoles;
+  UsersRolesModel?: IUsersRoles;
 }
 
-export type IRoleCreate = Pick<IRole, 'name' | 'description' | 'enabled'>;
+export type TCreateRole = Pick<IRole, 'name' | 'description' | 'enabled'> &
+  Partial<Pick<IRole, 'admin' | 'default'>>;
 
-export interface IUsersRoles {
-  userId: string;
-  roleId: string;
-}
+export type TGetRoles = Partial<
+  Pick<IRole, 'name' | 'description' | 'enabled'>
+>;
+
+export type TUpdateRole = Partial<
+  Pick<IRole, 'name' | 'description' | 'enabled'>
+>;

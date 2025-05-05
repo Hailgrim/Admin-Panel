@@ -21,7 +21,7 @@ async function submitHandler(event: SubmitEventPromise) {
   const results = await event
 
   if (results.valid)
-    execute(email.value)
+    execute({ email: email.value })
 }
 
 watch(
@@ -62,7 +62,7 @@ v-model="email" :hint="$t('emailValidation')" :label="$t('email')" name="email" 
     <FormLink :href="ROUTES.ui.signIn" :text="$t('signInText')" />
     <FormLink :href="ROUTES.ui.signUp" :text="$t('signUpText')" />
     <CustomModal v-model="resetModal" :title="$t('resetPassword')">
-      <ResetPasswordForm :email="args || ''" @close="resetModal = false" />
+      <ResetPasswordForm :email="args?.email || ''" @close="resetModal = false" />
     </CustomModal>
   </Form>
 </template>

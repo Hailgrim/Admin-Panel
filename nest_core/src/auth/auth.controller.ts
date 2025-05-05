@@ -20,11 +20,17 @@ import { SignInDto } from './dto/sign-in.dto';
 import { ACCESS_TOKEN_LIFETIME, REFRESH_TOKEN_LIFETIME } from 'libs/config';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
-import { SignUpDto } from './dto/sign-up.dts';
+import { SignUpDto } from './dto/sign-up.dto';
 import d from 'locales/dictionary';
-import { FastifyRequestWithToken, FastifyRequestWithUser } from './auth.types';
-import { IUser } from 'src/users/users.types';
+import {
+  TFastifyRequestWithToken,
+  TFastifyRequestWithUser,
+} from './auth.types';
 import { createCookieOptions, getIP } from 'libs/utils';
+import { SignInGoogleDto } from './dto/sign-in-google.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { IUser } from 'src/users/users.types';
+import { ExternalUserDto } from 'src/users/dto/external-user.dto';
 
 @ApiTags(d['en'].authorization)
 @Controller('auth')
@@ -32,22 +38,55 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @ApiOperation({ summary: d['en'].signUp })
-  @ApiResponse({ status: HttpStatus.CREATED, type: IUser })
+  @ApiResponse({ status: HttpStatus.CREATED, type: ExternalUserDto })
   @Post('sign-up')
-  signUp(
-    @Res({ passthrough: true }) res: FastifyReply,
-    @Body() signUpDto: SignUpDto,
-  ): Promise<IUser> {
-    res.status(HttpStatus.CREATED);
+  signUp(@Body() signUpDto: SignUpDto): Promise<IUser> {
     return this.authService.signUp(signUpDto);
   }
 
+  @ApiOperation({ summary: d['en'].forgotPassword })
+  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @Post('forgot-password')
+  forgotPassword(
+    @Res({ passthrough: true }) res: FastifyReply,
+    @Body() ForgotPasswordDto: ForgotPasswordDto,
+  ): Promise<boolean> {
+    res.status(HttpStatus.OK);
+    return this.authService.forgotPassword(ForgotPasswordDto.email);
+  }
+
+  @ApiOperation({ summary: d['en'].resetPassword })
+  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @Post('reset-password')
+  resetPassword(
+    @Res({ passthrough: true }) res: FastifyReply,
+    @Body() resetPasswordDto: ResetPasswordDto,
+  ): Promise<boolean> {
+    res.status(HttpStatus.OK);
+    return this.authService.resetPassword(
+      resetPasswordDto.email,
+      resetPasswordDto.code,
+      resetPasswordDto.password,
+    );
+  }
+
+  @ApiOperation({ summary: d['en'].confirmRegistration })
+  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @Post('verify-user')
+  verifyUser(
+    @Res({ passthrough: true }) res: FastifyReply,
+    @Body() verifyUserDto: VerifyUserDto,
+  ): Promise<boolean> {
+    res.status(HttpStatus.OK);
+    return this.authService.verifyUser(verifyUserDto.email, verifyUserDto.code);
+  }
+
   @ApiOperation({ summary: d['en'].signIn })
-  @ApiResponse({ status: HttpStatus.CREATED, type: IUser })
+  @ApiResponse({ status: HttpStatus.CREATED, type: ExternalUserDto })
   @UseGuards(LocalAuthGuard)
   @Post('sign-in')
   async signIn(
-    @Req() req: FastifyRequestWithUser,
+    @Req() req: TFastifyRequestWithUser,
     @Res({ passthrough: true }) res: FastifyReply,
     @Body() signInDto: SignInDto,
   ): Promise<IUser> {
@@ -70,28 +109,20 @@ export class AuthController {
       res.clearCookie('rememberMe', createCookieOptions());
     }
 
-    res.status(HttpStatus.CREATED);
     return req.user;
   }
 
-  @ApiOperation({ summary: d['en'].confirmRegistration })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Post('verify-user')
-  verifyUser(@Body() verifyUserDto: VerifyUserDto): Promise<boolean> {
-    return this.authService.verifyUser(verifyUserDto);
-  }
-
   @ApiOperation({ summary: d['en'].signUp })
-  @ApiResponse({ status: HttpStatus.CREATED, type: IUser })
+  @ApiResponse({ status: HttpStatus.CREATED, type: ExternalUserDto })
   @Post('sign-in/google')
   async signInGoogle(
     @Req() req: FastifyRequest,
     @Res({ passthrough: true }) res: FastifyReply,
-    @Body() googleAccessToken: string,
+    @Body() signInGoogleDto: SignInGoogleDto,
   ): Promise<IUser> {
     const { accessToken, refreshToken, user } =
       await this.authService.signInGoogle(
-        googleAccessToken,
+        signInGoogleDto.googleAccessToken,
         REFRESH_TOKEN_LIFETIME,
         getIP(req),
         req.headers['user-agent'],
@@ -109,22 +140,7 @@ export class AuthController {
       createCookieOptions(REFRESH_TOKEN_LIFETIME),
     );
 
-    res.status(HttpStatus.CREATED);
     return user;
-  }
-
-  @ApiOperation({ summary: d['en'].forgotPassword })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Post('forgot-password')
-  forgotPassword(@Body() email: string): Promise<boolean> {
-    return this.authService.forgotPassword(email);
-  }
-
-  @ApiOperation({ summary: d['en'].resetPassword })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Post('reset-password')
-  resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<boolean> {
-    return this.authService.resetPassword(resetPasswordDto);
   }
 
   @ApiOperation({ summary: d['en'].refreshToken })
@@ -132,7 +148,7 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @Get('refresh')
   async refresh(
-    @Req() req: FastifyRequestWithToken,
+    @Req() req: TFastifyRequestWithToken,
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<boolean> {
     const rememberMe = req.cookies['rememberMe'] !== undefined;
@@ -162,7 +178,7 @@ export class AuthController {
   @UseGuards(JwtGuard)
   @Delete('sign-out')
   async signOut(
-    @Req() req: FastifyRequestWithToken,
+    @Req() req: TFastifyRequestWithToken,
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<boolean> {
     const result = await this.authService.signOut(
@@ -170,9 +186,11 @@ export class AuthController {
       req.user.sessionId,
     );
     const cookieOptions = createCookieOptions();
+
     res.clearCookie('accessToken', cookieOptions);
     res.clearCookie('refreshToken', cookieOptions);
     res.clearCookie('rememberMe', cookieOptions);
+
     return result;
   }
 }

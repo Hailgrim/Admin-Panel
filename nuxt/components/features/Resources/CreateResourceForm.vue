@@ -7,10 +7,10 @@ import FormCheckbox from '~/components/shared/ui/Form/FormCheckbox.vue'
 import FormButton from '~/components/shared/ui/Form/FormButton.vue'
 import { useMainStore } from '~/store/main/main'
 import resourcesApi from '~/api/resources/resourcesApi'
-import type { IResourceCreate } from '~/api/resources/types'
+import type { TCreateResource } from '~/api/resources/types'
 
 const { t, locale } = useI18n()
-const newData = ref<IResourceCreate>({
+const newData = ref<TCreateResource>({
   name: '',
   path: '',
   description: '',

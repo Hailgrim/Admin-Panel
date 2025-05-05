@@ -18,14 +18,14 @@ const { t, locale } = useI18n()
 const mainStore = useMainStore()
 const code = ref('')
 const codeIsValid = (value: string) => value.length > 0 || `${t('codeFromEmail')} (${email})`
-const { data, error, execute, pending } = profileApi.changeEmailConfirm()
+const { data, error, execute, pending } = profileApi.changeEmail()
 const rights = useRights(ROUTES.api.profile)
 
 async function submitHandler(event: SubmitEventPromise) {
   const results = await event
 
   if (results.valid)
-    execute(code.value)
+    execute({code: code.value})
 }
 
 watch(

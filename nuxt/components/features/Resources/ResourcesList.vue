@@ -16,39 +16,54 @@ defineEmits<{
 }>()
 
 const { locale } = useI18n()
-const { data: lData, error: lError, execute: lExecute, pending: lPending } = resourcesApi.list()
-const { data: lcData, error: lcError, execute: lcExecute, pending: lcPending } = resourcesApi.listCounted()
+const { data: faData, error: faError, execute: faExecute, pending: faPending } = resourcesApi.findAll()
 const { data: dData, error: dError, execute: dExecute, pending: dPending } = resourcesApi.delete()
 const page = ref(props.page || 1)
 const quantity = ref(props.quantity || 25)
-const count = computed(() => lcData.value?.count || props.count || page.value * quantity.value)
+const count = computed(() => faData.value?.count || props.count || page.value * quantity.value)
 const items = ref(props.rows)
 const rights = useRights(ROUTES.api.resources)
 const mainStore = useMainStore()
 const selected = ref<string[]>([])
 
 watch(
-  [page, quantity],
-  () => {
-    lExecute({ page: page.value, quantity: quantity.value })
-  },
-)
-
-watch(
   () => props.rows,
   () => {
     if (!props.rows) {
-      lcExecute({ page: page.value, quantity: quantity.value })
+      faExecute({ reqPage: page.value, reqLimit: quantity.value, reqCount: true })
     }
   },
   { immediate: true },
 )
 
 watch(
+  [page, quantity],
+  () => {
+    faExecute({ reqPage: page.value, reqLimit: quantity.value })
+  },
+)
+
+watch(
+  faData,
+  () => {
+    if (faData.value)
+      items.value = faData.value.rows
+  },
+)
+
+watch(
+  faError,
+  () => {
+    if (faError.value)
+      mainStore.addAlert({ type: 'error', text: makeErrorText(faError.value, locale.value) })
+  },
+)
+
+watch(
   dData,
   () => {
     if (dData.value) {
-      lcExecute({ page: page.value, quantity: quantity.value })
+      faExecute({ reqPage: page.value, reqLimit: quantity.value, reqCount: true })
     }
   },
 )
@@ -58,38 +73,6 @@ watch(
   () => {
     if (dError.value)
       mainStore.addAlert({ type: 'error', text: makeErrorText(dError.value, locale.value) })
-  },
-)
-
-watch(
-  lData,
-  () => {
-    if (lData.value)
-      items.value = lData.value
-  },
-)
-
-watch(
-  lError,
-  () => {
-    if (lError.value)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(lError.value, locale.value) })
-  },
-)
-
-watch(
-  lcData,
-  () => {
-    if (lcData.value)
-      items.value = lcData.value.rows
-  },
-)
-
-watch(
-  lcError,
-  () => {
-    if (lcError.value)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(lcError.value, locale.value) })
   },
 )
 </script>
@@ -103,12 +86,12 @@ watch(
     </NuxtLink>
     <v-btn
 color="error" :disabled="!rights.deleting || selected.length === 0" :loading="dPending"
-      prepend-icon="mdi-delete" variant="flat" @click="dExecute(selected)">
+      prepend-icon="mdi-delete" variant="flat" @click="dExecute({items: selected})">
       {{ $t('delete') }}
     </v-btn>
   </div>
   <ResourcesTable
 v-model:page="page" v-model:quantity="quantity" v-model:selected="selected" :count="count"
-    :loading="dPending || lPending || lcPending" :rows="items" @update:page="$emit('update:page', $event)"
+    :loading="dPending || faPending" :rows="items" @update:page="$emit('update:page', $event)"
     @update:quantity="$emit('update:quantity', $event)" />
 </template>

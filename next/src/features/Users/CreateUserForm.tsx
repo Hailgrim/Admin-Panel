@@ -16,7 +16,7 @@ import usersApi from '@/shared/api/users/usersApi';
 import { useAppDispatch } from '@/shared/store/hooks';
 import { addAlert } from '@/shared/store/main/main';
 import { makeErrorText } from '@/shared/lib/utils';
-import { IUserCreate } from '@/shared/api/users/types';
+import { TCreateUser } from '@/shared/api/users/types';
 
 const CreateUserForm: FC = () => {
   const dispatch = useAppDispatch();
@@ -24,7 +24,7 @@ const CreateUserForm: FC = () => {
   const lang = useLang();
   const t = useT();
   const [create, createReq] = usersApi.useCreateMutation();
-  const [data, setData] = useState<IUserCreate>({
+  const [data, setData] = useState<TCreateUser>({
     email: '',
     name: '',
     password: '',

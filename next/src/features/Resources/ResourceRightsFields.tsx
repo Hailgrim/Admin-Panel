@@ -8,16 +8,17 @@ import {
 
 import useT from '@/shared/hooks/useT';
 import FormCheckbox from '@/shared/ui/Form/FormCheckbox';
-import { IResource, IRolesResources } from '@/shared/api/resources/types';
+import { IResource } from '@/shared/api/resources/types';
+import { IRights } from '@/shared/api/types';
 
 const ResourceRightsFields: React.FC<{
   roleId: string;
   resource: IResource;
-  rights?: IRolesResources;
-  setRights: (newRights: IRolesResources) => void;
+  rights?: IRights;
+  setRights: (newRights: IRights) => void;
 }> = ({ roleId, resource, rights, setRights }) => {
   const t = useT();
-  const newRights: IRolesResources = rights || {
+  const newRights: IRights = rights || {
     roleId,
     resourceId: resource.id,
     creating: false,

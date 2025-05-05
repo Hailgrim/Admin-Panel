@@ -22,7 +22,7 @@ const columns = [
   { title: t('description'), key: 'description', width: '50%' },
   { title: t('enabled'), key: 'enabled', width: 150 },
 ]
-const items = computed(() => rows.value?.map(value => ({ ...value, selectable: !(value.default || value.admin) })))
+const items = computed(() => rows.value?.map(value => ({ ...value, selectable: !value.default })))
 </script>
 
 <template>
@@ -32,8 +32,8 @@ class="full-page-table" :headers="columns" hover item-selectable="selectable" :i
     :page="page" show-select @update:items-per-page="$emit('update:quantity', $event)"
     @update:model-value="$emit('update:selected', $event as number[])" @update:page="$emit('update:page', $event)">
     <template #item.edit="{ item }">
-      <NuxtLink :href="item.admin ? undefined : ROUTES.ui.role(item.id)">
-        <v-btn color="white" :disabled="item.admin" icon="mdi-pencil" size="small" variant="text" />
+      <NuxtLink :href="item.default ? undefined : ROUTES.ui.role(item.id)">
+        <v-btn color="white" :disabled="item.default" icon="mdi-pencil" size="small" variant="text" />
       </NuxtLink>
     </template>
     <template #item.enabled="{ item }">

@@ -1,36 +1,33 @@
 import { useAPI } from '~/composables/useAPI/useAPI'
-import type { IUser, IUserCreate } from './types'
-import type { IUsersRoles } from '../roles/types'
-import type { IFindAndCountRes, IListReq, IUpdateReq } from '../types'
+import type { IUser, TCreateUser, TGetUsers, TUpdateUser } from './types'
+import type {
+  IGetListResponse,
+  TGetListRequest,
+  IUpdateReq,
+  IUsersRoles,
+  IQueryItems,
+} from '../types'
 
 class UsersApi {
-  create = useAPI<IUser, IUserCreate>((payload) => ({
+  create = useAPI<IUser, TCreateUser>((payload) => ({
     url: ROUTES.api.users,
     options: { method: 'POST', credentials: 'include', body: payload },
   }))
 
-  list = useAPI<IUser[], IListReq<IUser> | undefined>((payload) => ({
+  findAll = useAPI<
+    IGetListResponse<IUser>,
+    TGetListRequest<TGetUsers> | undefined
+  >((payload) => ({
     url: ROUTES.api.users,
     options: { method: 'GET', credentials: 'include', params: payload },
   }))
 
-  listCounted = useAPI<IFindAndCountRes<IUser>, IListReq<IUser> | undefined>(
-    (payload) => ({
-      url: ROUTES.api.users,
-      options: {
-        method: 'GET',
-        credentials: 'include',
-        params: { ...payload, count: true },
-      },
-    })
-  )
-
-  read = useAPI<IUser, IUser['id']>((payload) => ({
+  findOne = useAPI<IUser, IUser['id']>((payload) => ({
     url: ROUTES.api.user(payload),
     options: { method: 'GET', credentials: 'include' },
   }))
 
-  update = useAPI<boolean, IUpdateReq<IUser>>((payload) => ({
+  update = useAPI<boolean, IUpdateReq<TUpdateUser, IUser['id']>>((payload) => ({
     url: ROUTES.api.user(payload.id),
     options: { method: 'PATCH', credentials: 'include', body: payload.fields },
   }))
@@ -46,7 +43,7 @@ class UsersApi {
     })
   )
 
-  delete = useAPI<boolean, IUser['id'][]>((payload) => ({
+  delete = useAPI<boolean, IQueryItems<IUser['id']>>((payload) => ({
     url: ROUTES.api.users,
     options: { method: 'DELETE', credentials: 'include', body: payload },
   }))

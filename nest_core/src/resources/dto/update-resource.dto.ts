@@ -1,36 +1,15 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsOptional, Length, MaxLength } from 'class-validator';
+import { PartialType, PickType } from '@nestjs/swagger';
 
-import d from 'locales/dictionary';
-import { UpdateResourceFields } from '../resources.types';
+import { TUpdateResource } from '../resources.types';
+import { ResourceDto } from './resource.dto';
 
-export class UpdateResourceDto implements UpdateResourceFields {
-  @ApiPropertyOptional({
-    example: 'Resources',
-    description: d['en'].name,
-  })
-  @IsOptional()
-  @Length(1, 100)
-  name?: string;
-
-  @ApiPropertyOptional({
-    example: 'resources',
-    description: d['en'].path,
-  })
-  @IsOptional()
-  @Length(1, 100)
-  path?: string;
-
-  @ApiPropertyOptional({
-    example: 'Lorem ipsum',
-    description: d['en'].description,
-  })
-  @IsOptional()
-  @MaxLength(1000)
-  description?: string;
-
-  @ApiPropertyOptional({ example: true, description: d['en'].status })
-  @IsOptional()
-  @IsBoolean()
-  enabled?: boolean;
-}
+export class UpdateResourceDto
+  extends PartialType(
+    PickType<ResourceDto, keyof TUpdateResource>(ResourceDto, [
+      'name',
+      'path',
+      'description',
+      'enabled',
+    ]),
+  )
+  implements TUpdateResource {}

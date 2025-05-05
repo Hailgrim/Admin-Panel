@@ -24,8 +24,6 @@ const RolesList: FC<IList<IRole>> = (props) => {
   const t = useT();
   const rights = useRights(ROUTES.api.roles);
   const [findAll, findAllReq] = rolesApi.useLazyFindAllQuery();
-  const [findAndCountAll, findAndCountAllReq] =
-    rolesApi.useLazyFindAndCountAllQuery();
   const [destroy, destroyReq] = rolesApi.useDeleteMutation();
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [items, setItems] = useState(props.rows);
@@ -35,14 +33,14 @@ const RolesList: FC<IList<IRole>> = (props) => {
   });
   const count = useMemo(
     () =>
-      findAndCountAllReq.data?.count ||
+      findAllReq.data?.count ||
       props.count ||
       paginationModel.current.page * paginationModel.current.pageSize,
-    [props.count, findAndCountAllReq.data]
+    [props.count, findAllReq.data]
   );
 
   const paginationHandler = (model: GridPaginationModel) => {
-    findAll({ page: model.page + 1, quantity: model.pageSize });
+    findAll({ reqPage: model.page + 1, reqLimit: model.pageSize });
     paginationModel.current = model;
     props.onPageUpdate?.(model.page + 1);
     props.onQuantityUpdate?.(model.pageSize);
@@ -50,21 +48,21 @@ const RolesList: FC<IList<IRole>> = (props) => {
 
   useEffect(() => {
     if (!props.rows) {
-      findAndCountAll({
-        page: paginationModel.current.page + 1,
-        quantity: paginationModel.current.pageSize,
+      findAll({
+        reqPage: paginationModel.current.page + 1,
+        reqLimit: paginationModel.current.pageSize,
       });
     }
-  }, [props.rows, findAndCountAll]);
+  }, [props.rows, findAll]);
 
   useEffect(() => {
     if (destroyReq.data) {
-      findAndCountAll({
-        page: paginationModel.current.page + 1,
-        quantity: paginationModel.current.pageSize,
+      findAll({
+        reqPage: paginationModel.current.page + 1,
+        reqLimit: paginationModel.current.pageSize,
       });
     }
-  }, [destroyReq.data, findAndCountAll]);
+  }, [destroyReq.data, findAll]);
 
   useEffect(() => {
     if (destroyReq.error) {
@@ -79,7 +77,7 @@ const RolesList: FC<IList<IRole>> = (props) => {
 
   useEffect(() => {
     if (findAllReq.data) {
-      setItems(findAllReq.data);
+      setItems(findAllReq.data.rows);
     }
   }, [findAllReq.data]);
 
@@ -95,21 +93,21 @@ const RolesList: FC<IList<IRole>> = (props) => {
   }, [dispatch, findAllReq.error, lang]);
 
   useEffect(() => {
-    if (findAndCountAllReq.data?.rows) {
-      setItems(findAndCountAllReq.data?.rows);
+    if (findAllReq.data?.rows) {
+      setItems(findAllReq.data?.rows);
     }
-  }, [findAndCountAllReq.data]);
+  }, [findAllReq.data]);
 
   useEffect(() => {
-    if (findAndCountAllReq.error) {
+    if (findAllReq.error) {
       dispatch(
         addAlert({
           type: 'error',
-          text: makeErrorText(findAndCountAllReq.error, lang.current),
+          text: makeErrorText(findAllReq.error, lang.current),
         })
       );
     }
-  }, [dispatch, findAndCountAllReq.error, lang]);
+  }, [dispatch, findAllReq.error, lang]);
 
   return (
     <>
@@ -127,7 +125,7 @@ const RolesList: FC<IList<IRole>> = (props) => {
         disabled={
           !rights.deleting || selectedRows.length === 0 || destroyReq.isLoading
         }
-        onClick={() => destroy(selectedRows)}
+        onClick={() => destroy({ items: selectedRows })}
       >
         {t.delete}
       </FormButton>
@@ -139,11 +137,7 @@ const RolesList: FC<IList<IRole>> = (props) => {
         }}
         rows={items}
         rowCount={count}
-        loading={
-          findAllReq.isLoading ||
-          findAndCountAllReq.isLoading ||
-          destroyReq.isLoading
-        }
+        loading={findAllReq.isLoading || destroyReq.isLoading}
         onRowSelectionModelChange={(rowSelectionModel) =>
           setSelectedRows(rowSelectionModel as string[])
         }

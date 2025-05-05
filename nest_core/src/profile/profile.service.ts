@@ -1,13 +1,12 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 
 import { UsersService } from '../users/users.service';
-import { UpdateProfileDto } from './dto/update-profile.dto';
 import { CacheService } from 'src/cache/cache.service';
-import { IExternalSession, ISession } from 'src/auth/auth.types';
-import { UpdatePasswordDto } from './dto/update-password.dto';
 import { QueueService } from 'src/queue/queue.service';
 import { generateCode, verifyHash } from 'libs/utils';
 import { MAIL_CHANGE_EMAIL } from 'libs/config';
+import { TUpdateUser } from 'src/users/users.types';
+import { IExternalSession, ISession } from './profile.types';
 
 @Injectable()
 export class ProfileService {
@@ -17,33 +16,27 @@ export class ProfileService {
     private cacheService: CacheService,
   ) {}
 
-  updateProfile(
-    userId: string,
-    updateProfileDto: UpdateProfileDto,
-  ): Promise<boolean> {
-    return this.usersService.updateFields(userId, updateProfileDto);
+  updateProfile(userId: string, fields: TUpdateUser): Promise<boolean> {
+    return this.usersService.updateFields(userId, fields);
   }
 
   async updatePassword(
     userId: string,
-    updatePasswordDto: UpdatePasswordDto,
+    newPassword: string,
+    oldPassword?: string,
   ): Promise<boolean> {
-    const user = (await this.usersService.findOneProfile(userId)).get({
-      plain: true,
-    });
+    const user = await this.usersService
+      .findOneProfile(userId)
+      .then((result) => result.get({ plain: true }));
 
     if (
       user.password &&
-      (!updatePasswordDto.oldPassword ||
-        !(await verifyHash(user.password, updatePasswordDto.oldPassword)))
+      (!oldPassword || !(await verifyHash(user.password, oldPassword)))
     ) {
       throw new ConflictException();
     }
 
-    return this.usersService.updatePassword(
-      userId,
-      updatePasswordDto.newPassword,
-    );
+    return this.usersService.updatePassword(userId, newPassword);
   }
 
   async changeEmailRequest(userId: string, newEmail: string): Promise<boolean> {
@@ -59,7 +52,7 @@ export class ProfileService {
     return true;
   }
 
-  changeEmailConfirm(userId: string, code: string): Promise<boolean> {
+  changeEmail(userId: string, code: string): Promise<boolean> {
     return this.usersService.updateEmailWithCode(userId, code);
   }
 
@@ -69,17 +62,21 @@ export class ProfileService {
   ): Promise<IExternalSession[]> {
     const keys = await this.cacheService.keys(`sessions:${userId}:*`);
     const current = `sessions:${userId}:${currentSessionId}`;
-    const sessions = await this.cacheService.mget<ISession>(keys);
-    return sessions.map((session, index) => ({
-      ...session,
-      id: keys[index],
-      current: current === keys[index],
-    }));
+    const sessions = await this.cacheService
+      .mget<ISession>(keys)
+      .then((result) =>
+        result.map((session, index) => ({
+          ...session,
+          id: keys[index],
+          current: current === keys[index],
+        })),
+      );
+    return sessions;
   }
 
-  async deleteSessions(userId: string, remove: string[]): Promise<boolean> {
+  async deleteSessions(userId: string, sessions: string[]): Promise<boolean> {
     const keys = await this.cacheService.keys(`sessions:${userId}:*`);
-    await this.cacheService.mdel(remove.filter((key) => keys.includes(key)));
+    await this.cacheService.mdel(sessions.filter((key) => keys.includes(key)));
     return true;
   }
 }

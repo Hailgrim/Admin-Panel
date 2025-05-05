@@ -5,7 +5,7 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { CacheModule } from 'src/cache/cache.module';
 import { USERS_REPOSITORY } from 'libs/constants';
-import { User } from './user.entity';
+import { UserModel } from './user.entity';
 
 @Module({
   imports: [DatabaseModule, CacheModule],
@@ -13,7 +13,7 @@ import { User } from './user.entity';
   providers: [
     {
       provide: USERS_REPOSITORY,
-      useValue: User,
+      useValue: UserModel,
     },
     UsersService,
   ],

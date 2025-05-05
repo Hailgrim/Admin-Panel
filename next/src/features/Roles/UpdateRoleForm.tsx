@@ -113,7 +113,6 @@ const UpdateRoleForm: FC<{ data: IRole }> = ({ data }) => {
         disabled={
           !rights.updating ||
           data.default ||
-          data.admin ||
           deleteReq.isLoading ||
           deleteReq.data
         }
@@ -124,8 +123,8 @@ const UpdateRoleForm: FC<{ data: IRole }> = ({ data }) => {
       <FormButton
         color="error"
         startIcon={<DeleteIcon />}
-        onClick={() => destroy([data.id])}
-        disabled={!rights.deleting || data.default || data.admin}
+        onClick={() => destroy({ items: [data.id] })}
+        disabled={!rights.deleting || data.default}
         loading={deleteReq.isLoading || deleteReq.data}
       >
         {t.delete}

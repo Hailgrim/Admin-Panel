@@ -19,7 +19,7 @@ export const WITH_RESOURCES = 'withResources';
 export const MAIL_SERVER = 'MAIL_SERVER';
 export const REDIS = 'REDIS';
 
-export enum Rights {
+export enum ERights {
   Creating = 'creating',
   Reading = 'reading',
   Updating = 'updating',

@@ -6,20 +6,22 @@ import {
   Table,
 } from 'sequelize-typescript';
 
-import { User } from '../users/user.entity';
-import { Role } from '../roles/role.entity';
+import { UserModel } from '../users/user.entity';
+import { RoleModel } from '../roles/role.entity';
 import { IUsersRoles } from './database.types';
+import { IUser } from 'src/users/users.types';
+import { IRole } from 'src/roles/roles.types';
 
 @Table({ tableName: 'users_roles' })
-export class UsersRoles
-  extends Model<UsersRoles, IUsersRoles>
+export class UsersRolesModel
+  extends Model<UsersRolesModel, IUsersRoles>
   implements IUsersRoles
 {
-  @ForeignKey(() => User)
+  @ForeignKey(() => UserModel)
   @Column({ type: DataType.UUID })
-  userId: string;
+  declare userId: IUser['id'];
 
-  @ForeignKey(() => Role)
+  @ForeignKey(() => RoleModel)
   @Column({ type: DataType.UUID })
-  roleId: string;
+  declare roleId: IRole['id'];
 }

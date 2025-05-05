@@ -29,7 +29,7 @@ async function bootstrap() {
     .addTag(name)
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
+  SwaggerModule.setup('swagger', app, documentFactory);
 
   app.enableCors({
     origin: [

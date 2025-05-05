@@ -12,8 +12,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { UsersService } from '../users/users.service';
 import { RolesService } from 'src/roles/roles.service';
 import { ResourcesService } from 'src/resources/resources.service';
-import { User } from 'src/users/user.entity';
-import { SignInDto } from './dto/sign-in.dto';
 import {
   ACCESS_TOKEN_LIFETIME,
   ACCESS_TOKEN_SECRET_KEY,
@@ -21,17 +19,15 @@ import {
   MAIL_FORGOT_PASSWORD,
   MAIL_REGISTRATION,
 } from 'libs/config';
-import { Role } from 'src/roles/role.entity';
-import { CreateResourceDto } from 'src/resources/dto/create-resource.dto';
-import { ResetPasswordDto } from './dto/reset-password.dto';
-import { VerifyUserDto } from './dto/verify-user.dto';
-import { SignUpDto } from './dto/sign-up.dts';
+import { RoleModel } from 'src/roles/role.entity';
 import { CacheService } from 'src/cache/cache.service';
 import d from 'locales/dictionary';
-import { ISession, IToken, ITokensPair } from './auth.types';
+import { IToken, ITokensPair, TSignUp } from './auth.types';
 import { IUser } from 'src/users/users.types';
 import { QueueService } from 'src/queue/queue.service';
 import { generateCode, verifyHash } from 'libs/utils';
+import { TCreateResource } from 'src/resources/resources.types';
+import { ISession } from 'src/profile/profile.types';
 
 @Injectable()
 export class AuthService {
@@ -44,14 +40,26 @@ export class AuthService {
     private cacheService: CacheService,
   ) {}
 
-  async checkDefaultData(): Promise<Role> {
-    // Verify the existence of the default resources
-    const defaultResources = await this.resourcesService.findAllPublic(
-      undefined,
+  async checkDefaultData(): Promise<RoleModel> {
+    // Verify the existence of the Administrator Role
+    const adminRole = await this.rolesService.findOrCreateDefault(
+      'Administrator',
+      d['en'].defaultAdminRole,
       true,
     );
 
-    const checkedResources: CreateResourceDto[] = [
+    // Verify the existence of the User Role
+    const userRole = await this.rolesService.findOrCreateDefault(
+      'User',
+      d['en'].defaultUserRole,
+    );
+
+    // Verify the existence of the Default Resources
+    const defaultResources = await this.resourcesService
+      .findAllPublic(undefined, true)
+      .then((result) => result.rows);
+
+    const missingResources: TCreateResource[] = [
       'profile',
       'users',
       'roles',
@@ -70,34 +78,71 @@ export class AuthService {
         };
       });
 
-    if (checkedResources.length > 0) {
-      await this.resourcesService.createManyDefault(checkedResources);
+    const createdResources =
+      await this.resourcesService.createManyDefault(missingResources);
+
+    // Open the Profile Resource for the User Role
+    if (
+      !userRole.resources?.find(
+        (resource) => resource.get('path') === 'profile',
+      )
+    ) {
+      const profileResource = createdResources
+        .concat(defaultResources)
+        .find((resource) => resource.get('path') === 'profile');
+
+      if (profileResource) {
+        await this.rolesService.updateResources(
+          userRole.id,
+          [
+            {
+              roleId: userRole.id,
+              resourceId: profileResource.id,
+              creating: false,
+              reading: true,
+              updating: true,
+              deleting: true,
+            },
+          ],
+          true,
+        );
+      }
     }
 
-    // Verify the existence of the administrator role
-    const adminRole = await this.rolesService.findOrCreateDefault(
-      'Administrator',
-      d['en'].defaultAdminRole,
-      true,
-    );
-
-    // Verify the existence of the user role
-    const userRole = await this.rolesService.findOrCreateDefault(
-      'User',
-      d['en'].defaultUserRole,
-    );
-
-    // Verify the existence of the administrator users
+    // Verify the existence of the Administrator Users
     const adminUsers = await this.usersService.countByRole(adminRole.id);
 
     return adminUsers === 0 ? adminRole : userRole;
   }
 
-  async signUp(signUpDto: SignUpDto): Promise<User> {
+  async signUp(signUpFields: TSignUp): Promise<IUser> {
     const defaultRole = await this.checkDefaultData();
-    return this.usersService.create({ ...signUpDto, enabled: true }, [
-      defaultRole,
-    ]);
+    const user = await this.usersService
+      .create({ ...signUpFields, enabled: true }, [defaultRole])
+      .then((result) => result.get({ plain: true }));
+    delete user.password;
+    return user;
+  }
+
+  async forgotPassword(email: string): Promise<boolean> {
+    const code = generateCode();
+
+    if (await this.usersService.updateResetPasswordCode(email, code)) {
+      this.queueService.sendEmail(
+        { method: MAIL_FORGOT_PASSWORD },
+        { email, code },
+      );
+    }
+
+    return true;
+  }
+
+  resetPassword(
+    email: string,
+    code: string,
+    password: string,
+  ): Promise<boolean> {
+    return this.usersService.updatePasswordWithCode(email, code, password);
   }
 
   async createTokens(
@@ -116,16 +161,13 @@ export class AuthService {
     };
   }
 
-  async validateUser(signInDto: SignInDto): Promise<IUser> {
+  async validateUser(email: string, password: string): Promise<IUser> {
     try {
       const user: IUser = await this.usersService
-        .findOneAuth(signInDto.username)
+        .findOneAuth(email)
         .then((result) => result.get({ plain: true }));
 
-      if (
-        !user.password ||
-        !(await verifyHash(user.password, signInDto.password))
-      ) {
+      if (!user.password || !(await verifyHash(user.password, password))) {
         throw new Error();
       }
 
@@ -175,11 +217,8 @@ export class AuthService {
     return this.createTokens({ userId: user.id, sessionId }, sessionTtl);
   }
 
-  verifyUser(verifyUserDto: VerifyUserDto): Promise<boolean> {
-    return this.usersService.updateVerificationStatus(
-      verifyUserDto.email,
-      verifyUserDto.code,
-    );
+  verifyUser(email: string, code: string): Promise<boolean> {
+    return this.usersService.updateVerificationStatus(email, code);
   }
 
   async signInGoogle(
@@ -214,27 +253,6 @@ export class AuthService {
     };
   }
 
-  async forgotPassword(email: string): Promise<boolean> {
-    const code = generateCode();
-
-    if (await this.usersService.updateResetPasswordCode(email, code)) {
-      this.queueService.sendEmail(
-        { method: MAIL_FORGOT_PASSWORD },
-        { email, code },
-      );
-    }
-
-    return true;
-  }
-
-  resetPassword(resetPasswordDto: ResetPasswordDto): Promise<boolean> {
-    return this.usersService.updatePasswordWithCode(
-      resetPasswordDto.email,
-      resetPasswordDto.code,
-      resetPasswordDto.password,
-    );
-  }
-
   async refresh(
     userId: string,
     sessionId: string,
@@ -265,8 +283,7 @@ export class AuthService {
     return this.createTokens({ userId, sessionId }, sessionTtl);
   }
 
-  async signOut(userId: string, sessionId: string): Promise<boolean> {
-    await this.cacheService.del(`sessions:${userId}:${sessionId}`);
-    return true;
+  signOut(userId: string, sessionId: string): Promise<boolean> {
+    return this.cacheService.del(`sessions:${userId}:${sessionId}`);
   }
 }

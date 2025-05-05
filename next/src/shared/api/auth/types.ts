@@ -1,11 +1,18 @@
+import { WithoutNulls } from '@/shared/lib/types';
 import { IUser } from '../users/types';
 
-export type IUserSignUp = Pick<IUser, 'name' | 'email'> & { password: string };
+export type TSignUp = WithoutNulls<
+  Required<Pick<IUser, 'email' | 'password' | 'name'>>
+>;
 
-export interface IUserSignIn {
-  username: string;
+export interface IForgotPassword {
+  email: string;
+}
+
+export interface IResetPassword {
+  email: string;
+  code: string;
   password: string;
-  rememberMe: boolean;
 }
 
 export interface IVerifyUser {
@@ -13,6 +20,12 @@ export interface IVerifyUser {
   code: string;
 }
 
-export interface IResetPassword extends IVerifyUser {
+export interface ISignIn {
+  username: string;
   password: string;
+  rememberMe?: boolean;
+}
+
+export interface ISignInGoogle {
+  googleAccessToken: string;
 }

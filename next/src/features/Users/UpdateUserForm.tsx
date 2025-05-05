@@ -117,7 +117,7 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
       <FormButton
         color="error"
         startIcon={<DeleteIcon />}
-        onClick={() => destroy([data.id])}
+        onClick={() => destroy({ items: [data.id] })}
         disabled={!rights.deleting || data.roles?.some((role) => role.admin)}
         loading={deleteReq.isLoading || deleteReq.data}
       >

@@ -2,18 +2,18 @@
 import SessionForm from '~/components/features/Profile/SessionForm.vue'
 import { useMainStore } from '~/store/main/main'
 import profileApi from '~/api/profile/profileApi'
-import type { ISession } from '~/api/profile/types'
+import type { IExternalSession } from '~/api/profile/types'
 
 const { locale } = useI18n()
 const { data, error, execute, pending } = profileApi.getSessions()
 const mainStore = useMainStore()
-const sessions = ref<ISession[] | null>(null)
+const sessions = ref<IExternalSession[] | null>(null)
 
 watch(
   data,
   () => {
     sessions.value = data.value &&
-      Array.from(data.value).sort((a, b) => (!a.current && b.current ? 1 : -1))
+    data.value.sort((a, b) => (!a.current && b.current ? 1 : -1))
   },
 )
 

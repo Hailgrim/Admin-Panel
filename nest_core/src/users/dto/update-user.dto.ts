@@ -1,28 +1,10 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsOptional, Matches } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { PartialType, PickType } from '@nestjs/swagger';
 
-import d from 'locales/dictionary';
-import { UpdateUserFields } from '../users.types';
-import { EMAIL_REGEX, NAME_REGEX } from 'libs/constants';
+import { TUpdateUser } from '../users.types';
+import { UserDto } from './user.dto';
 
-export class UpdateUserDto implements UpdateUserFields {
-  @ApiPropertyOptional({
-    example: 'example@mail.com',
-    description: d['en'].email,
-  })
-  @IsOptional()
-  @Matches(EMAIL_REGEX)
-  email?: string;
-
-  @ApiPropertyOptional({ example: 'Linus Torvalds', description: d['en'].name })
-  @IsOptional()
-  @Matches(NAME_REGEX)
-  @Transform(({ value }) => (value as string).trim())
-  name?: string;
-
-  @ApiPropertyOptional({ example: true, description: d['en'].status })
-  @IsOptional()
-  @IsBoolean()
-  enabled?: boolean;
-}
+export class UpdateUserDto
+  extends PartialType(
+    PickType<UserDto, keyof TUpdateUser>(UserDto, ['email', 'name', 'enabled']),
+  )
+  implements TUpdateUser {}

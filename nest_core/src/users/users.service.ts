@@ -8,15 +8,15 @@ import {
 } from '@nestjs/common';
 import { FindOptions, UpdateOptions } from 'sequelize';
 
-import { User } from './user.entity';
+import { UserModel } from './user.entity';
 import { USERS_REPOSITORY, PUBLIC, WITH_ROLES } from 'libs/constants';
-import { CreateUserDto } from './dto/create-user.dto';
-import { Role } from 'src/roles/role.entity';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { GetUsersDto } from './dto/get-users.dto';
-import { UsersRolesDto } from 'src/database/dto/users-roles.dto';
-import { IFindAndCount } from 'src/database/database.types';
-import { UpdateUserFields } from './users.types';
+import { RoleModel } from 'src/roles/role.entity';
+import {
+  IGetListResponse,
+  IUsersRoles,
+  TGetListRequest,
+} from 'src/database/database.types';
+import { TCreateUser, TGetUsers, TUpdateUser } from './users.types';
 import { CacheService } from 'src/cache/cache.service';
 import { DatabaseService } from 'src/database/database.service';
 import { createHash } from 'libs/utils';
@@ -25,42 +25,23 @@ import { createHash } from 'libs/utils';
 export class UsersService {
   constructor(
     @Inject(USERS_REPOSITORY)
-    private usersRepository: typeof User,
+    private usersRepository: typeof UserModel,
     private cacheService: CacheService,
     private databaseService: DatabaseService,
   ) {}
 
-  private prepareSearchOptions(getUsersDto?: GetUsersDto): FindOptions<User> {
-    const options: FindOptions<User> = {
-      ...this.databaseService.preparePaginationOptions(getUsersDto),
-    };
-
-    if (getUsersDto?.enabled !== undefined) {
-      options.where = { ...options.where, enabled: getUsersDto.enabled };
-    }
-
-    return options;
-  }
-
-  private prepareGetOptions(getUsersDto?: GetUsersDto): FindOptions<User> {
-    return {
-      ...this.prepareSearchOptions(getUsersDto),
-      ...this.databaseService.preparePaginationOptions(getUsersDto),
-    };
-  }
-
-  async create(createUserDto: CreateUserDto, roles?: Role[]): Promise<User> {
-    let user: User;
+  async create(fields: TCreateUser, roles?: RoleModel[]): Promise<UserModel> {
+    let user: UserModel;
     let created: boolean;
-    const password = await createHash(createUserDto.password);
 
     try {
-      [user, created] = await this.usersRepository
-        .scope([PUBLIC, WITH_ROLES])
-        .findOrCreate({
-          where: { email: createUserDto.email },
-          defaults: { ...createUserDto, password },
-        });
+      [user, created] = await this.usersRepository.findOrCreate({
+        where: { email: fields.email },
+        defaults: {
+          ...fields,
+          password: fields.password ? await createHash(fields.password) : null,
+        },
+      });
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -73,7 +54,7 @@ export class UsersService {
     try {
       if (roles && roles.length > 0) {
         await user.$set('roles', roles);
-        user.roles = roles;
+        user.setDataValue('roles', roles);
       }
     } catch (error) {
       Logger.error(error);
@@ -86,9 +67,9 @@ export class UsersService {
   async createByGoogle(
     googleId: string,
     name: string,
-    roles?: Role[],
-  ): Promise<User> {
-    let user: User;
+    roles?: RoleModel[],
+  ): Promise<UserModel> {
+    let user: UserModel;
     let created: boolean;
 
     try {
@@ -106,7 +87,7 @@ export class UsersService {
     try {
       if (roles && roles.length > 0 && created) {
         await user.$set('roles', roles);
-        user.roles = roles;
+        user.setDataValue('roles', roles);
       }
     } catch (error) {
       Logger.error(error);
@@ -117,10 +98,10 @@ export class UsersService {
   }
 
   private async findOne(
-    options: FindOptions<User>,
+    options: FindOptions<UserModel>,
     scope?: string | string[],
-  ): Promise<User> {
-    let user: User | null;
+  ): Promise<UserModel> {
+    let user: UserModel | null;
 
     try {
       user = await this.usersRepository.scope(scope).findOne(options);
@@ -136,40 +117,62 @@ export class UsersService {
     return user;
   }
 
-  findOneAuth(email: string): Promise<User> {
+  findOneAuth(email: string): Promise<UserModel> {
     return this.findOne({ where: { email } }, WITH_ROLES);
   }
 
-  findOneProfile(id: string): Promise<Omit<User, 'roles'>> {
+  findOneProfile(id: string): Promise<Omit<UserModel, 'roles'>> {
     return this.findOne({ where: { id } });
   }
 
-  findOnePublic(id: string): Promise<User> {
+  findOnePublic(id: string): Promise<UserModel> {
     return this.findOne({ where: { id } }, [PUBLIC, WITH_ROLES]);
   }
 
-  async findAllPublic(getUsersDto?: GetUsersDto): Promise<User[]> {
-    const options = this.prepareGetOptions(getUsersDto);
+  prepareFindAllOptions(
+    fields?: TGetListRequest<TGetUsers>,
+  ): FindOptions<UserModel> {
+    const options: FindOptions<UserModel> =
+      this.databaseService.preparePaginationOptions<UserModel, TGetUsers>(
+        fields,
+      );
 
-    try {
-      return await this.usersRepository
-        .scope([PUBLIC, WITH_ROLES])
-        .findAll(options);
-    } catch (error) {
-      Logger.error(error);
-      throw new InternalServerErrorException();
+    options.where = {};
+
+    if (fields?.email !== undefined) {
+      options.where.email = {
+        [this.databaseService.iLike]: `%${fields.email}%`,
+      };
     }
+
+    if (fields?.name !== undefined) {
+      options.where.name = { [this.databaseService.iLike]: `%${fields.name}%` };
+    }
+
+    if (fields?.enabled !== undefined) {
+      options.where.enabled = fields.enabled;
+    }
+
+    return options;
   }
 
-  async findAndCountAllPublic(
-    getUsersDto?: GetUsersDto,
-  ): Promise<IFindAndCount<User>> {
-    const options = this.prepareGetOptions(getUsersDto);
+  async findAllPublic(
+    fields?: TGetListRequest<TGetUsers>,
+  ): Promise<IGetListResponse<UserModel>> {
+    const options = this.prepareFindAllOptions(fields);
 
     try {
-      return await this.usersRepository
-        .scope([PUBLIC, WITH_ROLES])
-        .findAndCountAll(options);
+      if (fields?.reqCount) {
+        return await this.usersRepository
+          .scope([PUBLIC, WITH_ROLES])
+          .findAndCountAll(options);
+      } else {
+        return {
+          rows: await this.usersRepository
+            .scope([PUBLIC, WITH_ROLES])
+            .findAll(options),
+        };
+      }
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -180,7 +183,7 @@ export class UsersService {
     try {
       return await this.usersRepository.count({
         include: {
-          model: Role,
+          model: RoleModel,
           where: { id: roleId },
         },
       });
@@ -191,8 +194,8 @@ export class UsersService {
   }
 
   private async update(
-    fields: UpdateUserFields,
-    options: UpdateOptions<User>,
+    fields: TUpdateUser,
+    options: UpdateOptions<UserModel>,
   ): Promise<boolean> {
     let affectedCount = 0;
 
@@ -210,8 +213,8 @@ export class UsersService {
     return true;
   }
 
-  updateFields(id: string, updateUserDto: UpdateUserDto): Promise<boolean> {
-    return this.update(updateUserDto, { where: { id } });
+  updateFields(id: string, fields: TUpdateUser): Promise<boolean> {
+    return this.update(fields, { where: { id } });
   }
 
   updateVerificationCode(
@@ -290,16 +293,15 @@ export class UsersService {
     return true;
   }
 
-  async updateRoles(
-    id: string,
-    usersRolesDtoArr: UsersRolesDto[],
-  ): Promise<boolean> {
+  async updateRoles(id: string, usersRoles: IUsersRoles[]): Promise<boolean> {
     const user = await this.findOne({ where: { id } });
 
     try {
       await user.$set(
         'roles',
-        usersRolesDtoArr.map((value) => value.roleId),
+        usersRoles
+          .filter((value) => value.userId === id)
+          .map((value) => value.roleId),
       );
     } catch (error) {
       Logger.error(error);
@@ -309,11 +311,13 @@ export class UsersService {
     return true;
   }
 
-  async delete(id: string[]): Promise<boolean> {
+  async delete(ids: string[]): Promise<boolean> {
     let destroyedCount = 0;
 
     try {
-      destroyedCount = await this.usersRepository.destroy({ where: { id } });
+      destroyedCount = await this.usersRepository.destroy({
+        where: { id: ids },
+      });
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -323,8 +327,9 @@ export class UsersService {
       throw new NotFoundException();
     }
 
-    for (const userId of id) {
+    for (const userId of ids) {
       const keys = await this.cacheService.keys(`sessions:${userId}:*`);
+
       if (keys.length > 0) {
         await this.cacheService.mdel(keys);
       }

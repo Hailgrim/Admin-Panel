@@ -27,9 +27,7 @@ const ResourcesTable: FC<Omit<DataGridProps<IResource>, 'columns'>> = (
         disableColumnMenu: true,
         renderCell: (params) => (
           <IconButton
-            {...(rights.reading && {
-              href: ROUTES.ui.resource(params.row.id),
-            })}
+            href={ROUTES.ui.resource(params.row.id)}
             LinkComponent={Link}
             disabled={!rights.reading || params.row.default}
           >

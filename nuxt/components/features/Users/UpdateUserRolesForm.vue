@@ -5,11 +5,12 @@ import FormButton from '~/components/shared/ui/Form/FormButton.vue'
 import { useMainStore } from '~/store/main/main'
 import usersApi from '~/api/users/usersApi'
 import type { IUser } from '~/api/users/types'
-import type { IRole, IUsersRoles } from '~/api/roles/types'
+import type { IRole } from '~/api/roles/types'
+import type { IUsersRoles } from '~/api/types'
 
 const { user } = defineProps<{ user: IUser, roles: IRole[] }>()
 
-const updatedRoles = ref(user.roles?.map(role => role.UsersRoles) || [])
+const updatedRoles = ref<IUsersRoles[]>(user.roles?.map(role => ({ roleId: role.id, userId: user.id })) || [])
 const { t, locale } = useI18n()
 const { data, error, execute, pending } = usersApi.updateRoles()
 const mainStore = useMainStore()

@@ -14,7 +14,7 @@ definePageMeta({
 
 const route = useRoute()
 const id = String(route.params.id)
-const { data: roleData, execute: roleExecute } = rolesApi.read(ROUTES.api.role(id))
+const { data: roleData, execute: roleExecute } = rolesApi.findOne(ROUTES.api.role(id))
 await roleExecute(id)
 
 if (roleData.value === null) {
@@ -23,7 +23,7 @@ if (roleData.value === null) {
   })
 }
 
-const { data: resourcesData, execute: resourcesExecute } = resourcesApi.list()
+const { data: resourcesData, execute: resourcesExecute } = resourcesApi.findAll()
 await resourcesExecute(undefined)
 </script>
 
@@ -32,5 +32,5 @@ await resourcesExecute(undefined)
   <v-card-title v-if="roleData && resourcesData" class="px-0 py-3">
     {{ $t('resources') }}
   </v-card-title>
-  <UpdateRoleResourcesForm v-if="roleData && resourcesData" :resources="resourcesData" :role="roleData" />
+  <UpdateRoleResourcesForm v-if="roleData && resourcesData" :resources="resourcesData.rows" :role="roleData" />
 </template>

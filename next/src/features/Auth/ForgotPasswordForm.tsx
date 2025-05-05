@@ -28,7 +28,7 @@ const ForgotPasswordForm: FC = () => {
     event.preventDefault();
 
     if (email) {
-      forgotPassword(email);
+      forgotPassword({ email });
     }
   };
 
@@ -86,7 +86,7 @@ const ForgotPasswordForm: FC = () => {
         onClose={() => setResetModal(false)}
       >
         <ResetPasswordForm
-          email={originalArgs || ''}
+          email={originalArgs?.email || ''}
           onClose={() => setResetModal(false)}
         />
       </CustomModal>

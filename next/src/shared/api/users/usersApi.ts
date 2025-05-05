@@ -2,31 +2,31 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import baseQueryWithReauth from '../baseQueryWithReauth';
 import usersService from '@/shared/api/users/usersService';
-import { IUser, IUserCreate } from './types';
-import { IFindAndCountRes, IListReq, IUpdateReq } from '../types';
-import { IUsersRoles } from '../roles/types';
+import { IUser, TCreateUser, TGetUsers, TUpdateUser } from './types';
+import {
+  IGetListResponse,
+  TGetListRequest,
+  IUpdateReq,
+  IUsersRoles,
+  IQueryItems,
+} from '../types';
 
 const usersApi = createApi({
   reducerPath: 'users',
   baseQuery: baseQueryWithReauth,
   tagTypes: ['CountedEntities', 'Entities', 'Entity'],
   endpoints: (builder) => ({
-    create: builder.mutation<IUser, IUserCreate>({
+    create: builder.mutation<IUser, TCreateUser>({
       query: usersService.createArgs,
       invalidatesTags: ['CountedEntities'],
     }),
 
-    findAll: builder.query<IUser[], IListReq<IUser> | void>({
+    findAll: builder.query<
+      IGetListResponse<IUser>,
+      TGetListRequest<TGetUsers> | void
+    >({
       query: usersService.findAllArgs,
       providesTags: ['Entities'],
-    }),
-
-    findAndCountAll: builder.query<
-      IFindAndCountRes<IUser>,
-      IListReq<IUser> | void
-    >({
-      query: usersService.findAndCountAllArgs,
-      providesTags: ['CountedEntities'],
     }),
 
     findOne: builder.query<IUser, IUser['id']>({
@@ -34,7 +34,7 @@ const usersApi = createApi({
       providesTags: ['Entity'],
     }),
 
-    update: builder.mutation<boolean, IUpdateReq<IUser>>({
+    update: builder.mutation<boolean, IUpdateReq<TUpdateUser, IUser['id']>>({
       query: usersService.updateArgs,
       invalidatesTags: ['Entity'],
     }),
@@ -47,7 +47,7 @@ const usersApi = createApi({
       invalidatesTags: ['Entity'],
     }),
 
-    delete: builder.mutation<boolean, IUser['id'][]>({
+    delete: builder.mutation<boolean, IQueryItems<IUser['id']>>({
       query: usersService.deleteArgs,
       invalidatesTags: ['CountedEntities'],
     }),

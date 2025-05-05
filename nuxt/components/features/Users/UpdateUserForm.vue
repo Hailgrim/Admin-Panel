@@ -100,7 +100,7 @@ color="success" :disabled="!rights.updating || dPending || Boolean(dData)" :load
     </FormButton>
     <FormButton
 color="error" :disabled="!rights.deleting || user.roles?.some((role) => role.admin)"
-      :loading="dPending || Boolean(dData)" prepand-icon="mdi-delete" type="button" @click="dExecute([user.id])">
+      :loading="dPending || Boolean(dData)" prepand-icon="mdi-delete" type="button" @click="dExecute({items: [user.id]})">
       {{ $t('delete') }}
     </FormButton>
   </Form>

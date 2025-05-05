@@ -26,7 +26,7 @@ watch(
 structuredClone
 onMounted(() => {
   if (hash.has('access_token')) {
-    execute(hash.get('access_token')!)
+    execute({ googleAccessToken: hash.get('access_token')! })
   } else {
     errorText.value = t('error')
   }

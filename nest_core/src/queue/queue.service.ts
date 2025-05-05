@@ -15,7 +15,10 @@ export class QueueService {
     private mailClient: ClientProxy,
   ) {}
 
-  sendEmail(options: { method: string }, payload: unknown): void {
+  sendEmail(
+    options: { method: string },
+    payload: Record<string, unknown>,
+  ): void {
     try {
       this.mailClient.send(options, payload).subscribe();
     } catch (error) {

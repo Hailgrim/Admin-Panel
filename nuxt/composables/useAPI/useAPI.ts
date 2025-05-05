@@ -19,10 +19,12 @@ export function useAPI<ResT = unknown, ReqT = void>(
     const pending = ref(false)
     const error = ref<IReqError | null>(null)
     let cache = ref(null) as Ref<ResT | null>
+
     if (cacheKey) {
       const { data: nuxtData } = useNuxtData<ResT | null>(cacheKey)
       cache = nuxtData
     }
+
     const data = ref(cache.value) as Ref<ResT | null>
 
     async function execute(arg: ReqT): Promise<ResT | null> {
@@ -53,6 +55,7 @@ export function useAPI<ResT = unknown, ReqT = void>(
           message: String((fail as Record<string, unknown>).message),
         }
         pending.value = false
+
         if (error.value.status === 401) {
           mainStore.setProfile(null)
         }

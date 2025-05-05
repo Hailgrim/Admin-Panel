@@ -1,19 +1,21 @@
 import { useAPI } from '~/composables/useAPI/useAPI'
 import type {
   IResetPassword,
-  IUserSignIn,
-  IUserSignUp,
+  ISignIn,
+  TSignUp,
   IVerifyUser,
+  IForgotPassword,
+  ISignInGoogle,
 } from './types'
 import type { IUser } from '../users/types'
 
 class AuthApi {
-  signUp = useAPI<IUser, IUserSignUp>((payload) => ({
+  signUp = useAPI<IUser, TSignUp>((payload) => ({
     url: ROUTES.api.sighUp,
     options: { method: 'POST', body: payload },
   }))
 
-  forgotPassword = useAPI<boolean, string>((payload) => ({
+  forgotPassword = useAPI<boolean, IForgotPassword>((payload) => ({
     url: ROUTES.api.forgotPassword,
     options: { method: 'POST', body: payload },
   }))
@@ -23,19 +25,19 @@ class AuthApi {
     options: { method: 'POST', body: payload },
   }))
 
-  signIn = useAPI<IUser, IUserSignIn>((payload) => ({
+  verifyUser = useAPI<boolean, IVerifyUser>((payload) => ({
+    url: ROUTES.api.verify,
+    options: { method: 'POST', body: payload },
+  }))
+
+  signIn = useAPI<IUser, ISignIn>((payload) => ({
     url: ROUTES.api.signIn,
     options: { method: 'POST', credentials: 'include', body: payload },
   }))
 
-  signInGoogle = useAPI<IUser, string>((payload) => ({
+  signInGoogle = useAPI<IUser, ISignInGoogle>((payload) => ({
     url: ROUTES.api.signInGoogle,
     options: { method: 'POST', credentials: 'include', body: payload },
-  }))
-
-  verify = useAPI<boolean, IVerifyUser>((payload) => ({
-    url: ROUTES.api.verify,
-    options: { method: 'POST', body: payload },
   }))
 
   signOut = useAPI<boolean>(() => ({
