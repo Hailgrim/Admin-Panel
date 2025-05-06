@@ -19,7 +19,8 @@ const ProfileSessions: FC = () => {
 
   useEffect(() => {
     setSessions(
-      data && data.sort((a, b) => (!a.current && b.current ? 1 : -1))
+      data &&
+        Array.from(data).sort((a, b) => (!a.current && b.current ? 1 : -1))
     );
   }, [data]);
 

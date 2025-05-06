@@ -13,7 +13,7 @@ watch(
   data,
   () => {
     sessions.value = data.value &&
-    data.value.sort((a, b) => (!a.current && b.current ? 1 : -1))
+    Array.from(data.value).sort((a, b) => (!a.current && b.current ? 1 : -1))
   },
 )
 
