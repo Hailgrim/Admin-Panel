@@ -2,16 +2,13 @@ import { FC, MouseEventHandler, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import FormLink from '@/shared/ui/Form/FormLink';
-import { ROUTES } from '@/shared/lib/constants';
 import { useAppDispatch } from '@/shared/store/hooks';
 import { setProfile } from '@/shared/store/main/main';
-import { getGoogleSignInUrl } from './utils';
-import useT from '@/shared/hooks/useT';
-import { IWindowMessage } from './types';
-import { IUser } from '@/shared/api/users/types';
+import useTranslate from '@/shared/hooks/useTranslate';
+import { getGoogleSignInUrl, IUser, IWindowMessage, ROUTES } from '@ap/shared';
 
 const SignInGoogleLink: FC = () => {
-  const t = useT();
+  const t = useTranslate();
   const router = useRouter();
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
@@ -21,7 +18,11 @@ const SignInGoogleLink: FC = () => {
     event.preventDefault();
     const state = String(Math.random());
     const googleWindow = window.open(
-      getGoogleSignInUrl(state),
+      getGoogleSignInUrl(
+        process.env.GOOGLE_CLIENT_ID!,
+        process.env.HOST!,
+        state
+      ),
       undefined,
       'top=100,left=100,width=500,height=500'
     );

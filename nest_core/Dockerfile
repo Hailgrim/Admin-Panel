@@ -1,7 +1,7 @@
 FROM node:lts-alpine AS base
 ARG HOME=/home/node
 WORKDIR ${HOME}
-COPY ./package*.json .
+COPY ./nest_core/package*.json .
 
 FROM base AS development
 ENV NODE_ENV=development
@@ -35,8 +35,9 @@ ARG ACCESS_TOKEN_SECRET_KEY
 ARG REFRESH_TOKEN_LIFETIME
 ARG REFRESH_TOKEN_SECRET_KEY
 RUN apk add --no-cache libc6-compat
+COPY ./shared ./src/shared
 RUN npm ci
-COPY . .
+COPY ./nest_core .
 RUN npm run build
 RUN npm prune --production
 

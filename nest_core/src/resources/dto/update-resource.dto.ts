@@ -1,6 +1,6 @@
 import { PartialType, PickType } from '@nestjs/swagger';
 
-import { TUpdateResource } from '../resources.types';
+import { TUpdateResource } from '@ap/shared';
 import { ResourceDto } from './resource.dto';
 
 export class UpdateResourceDto

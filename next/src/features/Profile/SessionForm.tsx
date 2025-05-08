@@ -14,25 +14,29 @@ import {
 } from '@mui/material';
 
 import Form from '@/shared/ui/Form/Form';
-import useT from '@/shared/hooks/useT';
-import useLang from '@/shared/hooks/useLang';
-import d from '@/shared/locales/dictionary';
 import { useAppDispatch } from '@/shared/store/hooks';
-import { makeDateString, makeErrorText } from '@/shared/lib/utils';
 import { addAlert, setProfile } from '@/shared/store/main/main';
 import theme from '@/shared/lib/theme';
-import { ROUTES } from '@/shared/lib/constants';
 import useRights from '@/shared/hooks/useRights';
 import profileApi from '@/shared/api/profile/profileApi';
-import { IExternalSession } from '@/shared/api/profile/types';
+import {
+  getDateString,
+  getErrorText,
+  IExternalSession,
+  ROUTES,
+} from '@ap/shared';
+import useTranslate from '@/shared/hooks/useTranslate';
+import useLanguageRef from '@/shared/hooks/useLanguageRef';
+import useTranslateRef from '@/shared/hooks/useTranslateRef';
 
 const SessionForm: FC<{ session: IExternalSession; onDelete?: () => void }> = ({
   session,
   onDelete,
 }) => {
   const dispatch = useAppDispatch();
-  const lang = useLang();
-  const t = useT();
+  const lRef = useLanguageRef();
+  const tRef = useTranslateRef();
+  const t = useTranslate();
   const rights = useRights(ROUTES.api.profile);
   const userAgent = useRef(new UAParser(session.userAgent).getResult());
   const [remove, removeReq] = profileApi.useDeleteSessionsMutation();
@@ -47,21 +51,21 @@ const SessionForm: FC<{ session: IExternalSession; onDelete?: () => void }> = ({
       dispatch(
         addAlert({
           type: 'error',
-          text: makeErrorText(removeReq.error, lang.current),
+          text: getErrorText(removeReq.error, lRef.current),
         })
       );
     }
-  }, [dispatch, removeReq.error, lang]);
+  }, [dispatch, removeReq.error, lRef]);
 
   useEffect(() => {
     if (removeReq.data) {
-      dispatch(addAlert({ type: 'success', text: d[lang.current].success }));
+      dispatch(addAlert({ type: 'success', text: tRef.current.success }));
       onDelete?.();
       if (session.current) {
         dispatch(setProfile(null));
       }
     }
-  }, [removeReq.data, dispatch, session, lang, onDelete]);
+  }, [removeReq.data, dispatch, session, tRef, onDelete]);
 
   return (
     <Form onSubmit={submitHandler}>
@@ -98,7 +102,7 @@ const SessionForm: FC<{ session: IExternalSession; onDelete?: () => void }> = ({
             variant="body2"
             sx={{ mr: 1, opacity: 0.6 }}
           >
-            {makeDateString(session.updatedAt)}
+            {getDateString(session.updatedAt)}
           </Typography>
           {session.current && (
             <Chip

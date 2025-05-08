@@ -17,7 +17,6 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Roles } from 'src/roles/roles.decorator';
 import { ERights } from 'libs/constants';
 import { RolesGuard } from 'src/roles/roles.guard';
-import d from 'locales/dictionary';
 import { TFastifyRequestWithToken } from 'src/auth/auth.types';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { ProfileService } from './profile.service';
@@ -25,12 +24,11 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 import { ChangeEmailRequestDto } from './dto/change-email-request.dto';
 import { ChangeEmailDto } from './dto/change-email.dto';
 import { QueryItemsDto } from 'src/database/dto/query-items.dto';
-import { IExternalSession } from './profile.types';
-import { IUser } from 'src/users/users.types';
+import { d, IExternalSession, IUser, ROUTES } from '@ap/shared';
 import { ExternalUserDto } from 'src/users/dto/external-user.dto';
 import { ExternalSessionDto } from './dto/external-session.dto';
 
-const route = 'profile';
+const route = ROUTES.api.profile.substring(1);
 
 @ApiTags(d['en'].profile)
 @Controller(route)

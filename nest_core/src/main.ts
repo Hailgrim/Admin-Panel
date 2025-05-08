@@ -11,7 +11,7 @@ import fastifyHelmet from '@fastify/helmet';
 import { AppModule } from './app.module';
 import { version, name } from '../package.json';
 import { HOST, NGINX_HOST, PORT } from 'libs/config';
-import d from 'locales/dictionary';
+import { d } from '@ap/shared';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(

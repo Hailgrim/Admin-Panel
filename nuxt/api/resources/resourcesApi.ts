@@ -1,16 +1,5 @@
 import { useAPI } from '~/composables/useAPI/useAPI'
-import type {
-  IResource,
-  TCreateResource,
-  TGetResources,
-  TUpdateResource,
-} from './types'
-import type {
-  IGetListResponse,
-  TGetListRequest,
-  IUpdateReq,
-  IQueryItems,
-} from '../types'
+import type { IUpdateReq } from '../types'
 
 class ResourcesApi {
   create = useAPI<IResource, TCreateResource>((payload) => ({
@@ -18,17 +7,17 @@ class ResourcesApi {
     options: { method: 'POST', credentials: 'include', body: payload },
   }))
 
-  findAll = useAPI<
+  getOne = useAPI<IResource, IResource['id']>((payload) => ({
+    url: ROUTES.api.resource(payload),
+    options: { method: 'GET', credentials: 'include' },
+  }))
+
+  getList = useAPI<
     IGetListResponse<IResource>,
     TGetListRequest<TGetResources> | undefined
   >((payload) => ({
     url: ROUTES.api.resources,
     options: { method: 'GET', credentials: 'include', params: payload },
-  }))
-
-  findOne = useAPI<IResource, IResource['id']>((payload) => ({
-    url: ROUTES.api.resource(payload),
-    options: { method: 'GET', credentials: 'include' },
   }))
 
   update = useAPI<boolean, IUpdateReq<TUpdateResource, IResource['id']>>(

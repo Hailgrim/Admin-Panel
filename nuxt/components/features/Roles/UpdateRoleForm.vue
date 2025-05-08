@@ -7,7 +7,6 @@ import FormCheckbox from '~/components/shared/ui/Form/FormCheckbox.vue'
 import FormButton from '~/components/shared/ui/Form/FormButton.vue'
 import { useMainStore } from '~/store/main/main'
 import rolesApi from '~/api/roles/rolesApi'
-import type { IRole } from '~/api/roles/types'
 
 const { role } = defineProps<{ role: IRole }>()
 
@@ -33,10 +32,7 @@ const rights = useRights(ROUTES.api.roles)
 
 async function submitHandler(event: SubmitEventPromise) {
   const results = await event
-  const updatedValues = getUpdatedValues<IRole>(
-    oldData.value,
-    newData.value,
-  )
+  const updatedValues = getUpdatedValues<IRole>(oldData.value, newData.value)
 
   if (results.valid && Object.keys(updatedValues).length > 0) {
     uExecute({
@@ -48,41 +44,35 @@ async function submitHandler(event: SubmitEventPromise) {
   }
 }
 
-watch(
-  uError,
-  () => {
-    if (uError.value)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(uError.value, locale.value) })
-  },
-)
+watch(uError, () => {
+  if (uError.value)
+    mainStore.addAlert({
+      type: 'error',
+      text: getErrorText(uError.value, locale.value),
+    })
+})
 
-watch(
-  uData,
-  () => {
-    if (uData.value) {
-      oldData.value = newData.value
-      mainStore.addAlert({ type: 'success', text: t('success') })
-    }
-  },
-)
+watch(uData, () => {
+  if (uData.value) {
+    oldData.value = newData.value
+    mainStore.addAlert({ type: 'success', text: t('success') })
+  }
+})
 
-watch(
-  dError,
-  () => {
-    if (dError.value)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(dError.value, locale.value) })
-  },
-)
+watch(dError, () => {
+  if (dError.value)
+    mainStore.addAlert({
+      type: 'error',
+      text: getErrorText(dError.value, locale.value),
+    })
+})
 
-watch(
-  dData,
-  () => {
-    if (dData.value) {
-      mainStore.addAlert({ type: 'success', text: t('success') })
-      router.push(ROUTES.ui.roles)
-    }
-  },
-)
+watch(dData, () => {
+  if (dData.value) {
+    mainStore.addAlert({ type: 'success', text: t('success') })
+    router.push(ROUTES.ui.roles)
+  }
+})
 </script>
 
 <template>
@@ -103,7 +93,7 @@ color="success" :disabled="!rights.updating || role.default || dPending || Boole
     </FormButton>
     <FormButton
 color="error" :disabled="!rights.deleting || role.default" :loading="dPending || Boolean(dData)"
-      prepand-icon="mdi-delete" type="button" @click="dExecute({items: [role.id]})">
+      prepand-icon="mdi-delete" type="button" @click="dExecute({ items: [role.id] })">
       {{ $t('delete') }}
     </FormButton>
   </Form>

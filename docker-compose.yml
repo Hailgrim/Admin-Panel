@@ -62,7 +62,8 @@ services:
 
   nest_core:
     build:
-      context: ./nest_core
+      context: .
+      dockerfile: ./nest_core/Dockerfile
     container_name: ${PROJECT_TAG}_nest_core
     restart: always
     depends_on:
@@ -76,7 +77,8 @@ services:
 
   nest_mailer:
     build:
-      context: ./nest_mailer
+      context: .
+      dockerfile: ./nest_mailer/Dockerfile
     container_name: ${PROJECT_TAG}_nest_mailer
     restart: always
     depends_on:
@@ -88,7 +90,8 @@ services:
 
   next:
     build:
-      context: ./next
+      context: .
+      dockerfile: ./next/Dockerfile
     container_name: ${PROJECT_TAG}_next
     restart: always
     networks:
@@ -101,7 +104,8 @@ services:
 
   nuxt:
     build:
-      context: ./nuxt
+      context: .
+      dockerfile: ./nuxt/Dockerfile
     container_name: ${PROJECT_TAG}_nuxt
     restart: always
     networks:

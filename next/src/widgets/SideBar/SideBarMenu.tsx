@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, ReactNode, useMemo } from 'react';
 import List from '@mui/material/List';
 import HomeIcon from '@mui/icons-material/Home';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
@@ -7,23 +7,22 @@ import GroupIcon from '@mui/icons-material/Group';
 import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 import ApiIcon from '@mui/icons-material/Api';
 
-import useT from '@/shared/hooks/useT';
-import { ROUTES } from '@/shared/lib/constants';
+import useTranslate from '@/shared/hooks/useTranslate';
 import useRights from '@/shared/hooks/useRights';
 import SideBarMenuItem from './SideBarMenuItem';
-import { IMenuItem } from './types';
+import { IMenuItem, ROUTES } from '@ap/shared';
 
 const SideBarMenu: FC = () => {
-  const t = useT();
+  const t = useTranslate();
   const profileRights = useRights(ROUTES.api.profile);
   const usersRights = useRights(ROUTES.api.users);
   const rolesRights = useRights(ROUTES.api.roles);
   const resourcesRights = useRights(ROUTES.api.resources);
 
   const menu = useMemo(() => {
-    const root: IMenuItem[] = [
+    const root: IMenuItem<ReactNode>[] = [
       {
-        text: t.home,
+        title: t.home,
         icon: <HomeIcon />,
         href: ROUTES.ui.home,
       },
@@ -31,21 +30,21 @@ const SideBarMenu: FC = () => {
 
     if (profileRights.reading) {
       root.push({
-        text: t.profile,
+        title: t.profile,
         icon: <AccountBoxIcon />,
         href: ROUTES.ui.profile,
       });
     }
 
-    const mainMenu: IMenuItem = {
-      text: t.main,
+    const mainMenu: IMenuItem<ReactNode> = {
+      title: t.main,
       icon: <WidgetsIcon />,
       childs: [],
     };
 
     if (usersRights.reading) {
       mainMenu.childs!.push({
-        text: t.users,
+        title: t.users,
         icon: <GroupIcon />,
         href: ROUTES.ui.users,
       });
@@ -53,7 +52,7 @@ const SideBarMenu: FC = () => {
 
     if (rolesRights.reading) {
       mainMenu.childs!.push({
-        text: t.roles,
+        title: t.roles,
         icon: <SupervisedUserCircleIcon />,
         href: ROUTES.ui.roles,
       });
@@ -61,7 +60,7 @@ const SideBarMenu: FC = () => {
 
     if (resourcesRights.reading) {
       mainMenu.childs!.push({
-        text: t.resources,
+        title: t.resources,
         icon: <ApiIcon />,
         href: ROUTES.ui.resources,
       });
@@ -76,7 +75,7 @@ const SideBarMenu: FC = () => {
     <List disablePadding component="nav">
       {menu.map((item, index) => (
         <SideBarMenuItem
-          key={`sbmi:${index}:${item.text}:${item.href || ''}`}
+          key={`sbmi:${index}:${item.title}:${item.href}`}
           {...item}
         />
       ))}

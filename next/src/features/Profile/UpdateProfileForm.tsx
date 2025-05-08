@@ -3,25 +3,27 @@ import { FC, FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import Form from '@/shared/ui/Form/Form';
 import FormField from '@/shared/ui/Form/FormField';
 import FormButton from '@/shared/ui/Form/FormButton';
-import { NAME_REGEX, ROUTES } from '@/shared/lib/constants';
-import useT from '@/shared/hooks/useT';
-import useLang from '@/shared/hooks/useLang';
-import d from '@/shared/locales/dictionary';
 import useRights from '@/shared/hooks/useRights';
 import { useAppDispatch, useAppSelector } from '@/shared/store/hooks';
-import {
-  getUpdatedValues,
-  makeErrorText,
-  testString,
-} from '@/shared/lib/utils';
 import { addAlert, setProfile } from '@/shared/store/main/main';
-import { IUser } from '@/shared/api/users/types';
 import profileApi from '@/shared/api/profile/profileApi';
+import {
+  getErrorText,
+  getUpdatedValues,
+  IUser,
+  NAME_REGEX,
+  ROUTES,
+  testString,
+} from '@ap/shared';
+import useTranslate from '@/shared/hooks/useTranslate';
+import useLanguageRef from '@/shared/hooks/useLanguageRef';
+import useTranslateRef from '@/shared/hooks/useTranslateRef';
 
 const UpdateProfileForm: FC = () => {
   const dispatch = useAppDispatch();
-  const lang = useLang();
-  const t = useT();
+  const lRef = useLanguageRef();
+  const tRef = useTranslateRef();
+  const t = useTranslate();
   const [update, { data, isLoading, error }] =
     profileApi.useUpdateProfileMutation();
   const rights = useRights(ROUTES.api.profile);
@@ -65,18 +67,18 @@ const UpdateProfileForm: FC = () => {
       dispatch(
         addAlert({
           type: 'error',
-          text: makeErrorText(error, lang.current),
+          text: getErrorText(error, lRef.current),
         })
       );
     }
-  }, [dispatch, error, lang]);
+  }, [dispatch, error, lRef]);
 
   useEffect(() => {
     if (data) {
       dispatch(setProfile(newProfile.current));
-      dispatch(addAlert({ type: 'success', text: d[lang.current].success }));
+      dispatch(addAlert({ type: 'success', text: tRef.current.success }));
     }
-  }, [data, dispatch, lang]);
+  }, [data, dispatch, tRef]);
 
   return (
     <Form onSubmit={submitHandler}>

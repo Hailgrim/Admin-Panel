@@ -4,16 +4,15 @@ import { FC, useEffect, useState } from 'react';
 import Skeleton from '@mui/material/Skeleton';
 
 import SessionForm from '@/features/Profile/SessionForm';
-import { makeErrorText } from '@/shared/lib/utils';
 import { addAlert } from '@/shared/store/main/main';
 import { useAppDispatch } from '@/shared/store/hooks';
-import useLang from '@/shared/hooks/useLang';
 import profileApi from '@/shared/api/profile/profileApi';
-import { IExternalSession } from '@/shared/api/profile/types';
+import useLanguageRef from '@/shared/hooks/useLanguageRef';
+import { getErrorText, IExternalSession } from '@ap/shared';
 
 const ProfileSessions: FC = () => {
   const dispatch = useAppDispatch();
-  const lang = useLang();
+  const lRef = useLanguageRef();
   const { data, isLoading, error } = profileApi.useGetSessionsQuery();
   const [sessions, setSessions] = useState<IExternalSession[]>();
 
@@ -29,11 +28,11 @@ const ProfileSessions: FC = () => {
       dispatch(
         addAlert({
           type: 'error',
-          text: makeErrorText(error, lang.current),
+          text: getErrorText(error, lRef.current),
         })
       );
     }
-  }, [dispatch, error, lang]);
+  }, [dispatch, error, lRef]);
 
   return (
     <>

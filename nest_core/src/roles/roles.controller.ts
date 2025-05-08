@@ -22,15 +22,13 @@ import { ERights } from 'libs/constants';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { GetRolesDto } from './dto/get-roles.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import d from 'locales/dictionary';
-import { IGetListResponse } from 'src/database/database.types';
+import { d, IGetListResponse, IRole, ROUTES } from '@ap/shared';
 import { QueryItemsDto } from 'src/database/dto/query-items.dto';
-import { IRole } from './roles.types';
 import { ExternalRoleDto } from './dto/external-role.dto';
 import { RolesListDto } from './dto/roles-list.dto';
 import { RightsQueryItemsDto } from 'src/database/dto/rights-query-items.dto';
 
-const route = 'roles';
+const route = ROUTES.api.roles.substring(1);
 
 @ApiTags(d['en'].roles)
 @Controller(route)
@@ -50,22 +48,22 @@ export class RolesController {
     return this.roleService.create(createRoleDto);
   }
 
-  @ApiOperation({ summary: d['en'].getEntities })
-  @ApiResponse({ status: HttpStatus.OK, type: RolesListDto })
-  @Roles({ path: route, action: ERights.Reading })
-  @UseGuards(JwtGuard, RolesGuard)
-  @Get()
-  findAll(@Query() getRolesDto: GetRolesDto): Promise<IGetListResponse<IRole>> {
-    return this.roleService.findAllPublic(getRolesDto);
-  }
-
   @ApiOperation({ summary: d['en'].getEntity })
   @ApiResponse({ status: HttpStatus.OK, type: ExternalRoleDto })
   @Roles({ path: route, action: ERights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get('/:id')
-  findOne(@Param('id') id: string): Promise<IRole> {
-    return this.roleService.findOnePublic(id);
+  getOne(@Param('id') id: string): Promise<IRole> {
+    return this.roleService.getOnePublic(id);
+  }
+
+  @ApiOperation({ summary: d['en'].getEntities })
+  @ApiResponse({ status: HttpStatus.OK, type: RolesListDto })
+  @Roles({ path: route, action: ERights.Reading })
+  @UseGuards(JwtGuard, RolesGuard)
+  @Get()
+  getList(@Query() getRolesDto: GetRolesDto): Promise<IGetListResponse<IRole>> {
+    return this.roleService.getListPublic(getRolesDto);
   }
 
   @ApiOperation({ summary: d['en'].updateEntity })

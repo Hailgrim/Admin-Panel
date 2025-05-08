@@ -2,14 +2,17 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import baseQueryWithReauth from '../baseQueryWithReauth';
 import usersService from '@/shared/api/users/usersService';
-import { IUser, TCreateUser, TGetUsers, TUpdateUser } from './types';
+import { IUpdateReq } from '../types';
 import {
   IGetListResponse,
-  TGetListRequest,
-  IUpdateReq,
-  IUsersRoles,
   IQueryItems,
-} from '../types';
+  IUser,
+  IUsersRoles,
+  TCreateUser,
+  TGetListRequest,
+  TGetUsers,
+  TUpdateUser,
+} from '@ap/shared';
 
 const usersApi = createApi({
   reducerPath: 'users',
@@ -21,17 +24,17 @@ const usersApi = createApi({
       invalidatesTags: ['CountedEntities'],
     }),
 
-    findAll: builder.query<
+    getOne: builder.query<IUser, IUser['id']>({
+      query: usersService.getOneArgs,
+      providesTags: ['Entity'],
+    }),
+
+    getList: builder.query<
       IGetListResponse<IUser>,
       TGetListRequest<TGetUsers> | void
     >({
-      query: usersService.findAllArgs,
+      query: usersService.getListArgs,
       providesTags: ['Entities'],
-    }),
-
-    findOne: builder.query<IUser, IUser['id']>({
-      query: usersService.findOneArgs,
-      providesTags: ['Entity'],
     }),
 
     update: builder.mutation<boolean, IUpdateReq<TUpdateUser, IUser['id']>>({

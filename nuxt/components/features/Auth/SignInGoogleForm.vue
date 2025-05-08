@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import Form from '~/components/shared/ui/Form/Form.vue'
-import type { IWindowMessage } from './types'
-import type { IUser } from '~/api/users/types'
 import authApi from '~/api/auth/authApi'
 import FormAlert from '~/components/shared/ui/Form/FormAlert.vue'
 
@@ -10,19 +8,16 @@ const errorText = ref<string | null>(null)
 const hash = new URLSearchParams(location?.hash.slice(1) || '')
 const { data, error, execute } = authApi.signInGoogle()
 
-watch(
-  error,
-  () => {
-    if (error.value)
-      switch (error.value?.status) {
-        case 410:
-          errorText.value = t('userDeleted')
-          break
-        default:
-          errorText.value = makeErrorText(error.value, locale.value)
-      }
-  },
-)
+watch(error, () => {
+  if (error.value)
+    switch (error.value?.status) {
+      case 410:
+        errorText.value = t('userDeleted')
+        break
+      default:
+        errorText.value = getErrorText(error.value, locale.value)
+    }
+})
 structuredClone
 onMounted(() => {
   if (hash.has('access_token')) {

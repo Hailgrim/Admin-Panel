@@ -4,8 +4,8 @@ import { FC } from 'react';
 
 import PanelLayout from '../../PanelLayout';
 import UpdateResourceForm from '@/features/Resources/UpdateResourceForm';
-import { IResource } from '@/shared/api/resources/types';
 import { IPage } from '@/views/types';
+import { IResource } from '@ap/shared';
 
 const ResourcePage: FC<IPage<IResource>> = ({ h1, data }) => {
   return (

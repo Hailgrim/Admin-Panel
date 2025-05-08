@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { IResource } from '~/api/resources/types'
-
 defineProps<{
   count: number
   page?: number

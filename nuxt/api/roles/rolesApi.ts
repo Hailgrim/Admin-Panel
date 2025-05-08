@@ -1,12 +1,5 @@
 import { useAPI } from '~/composables/useAPI/useAPI'
-import type { IRole, TCreateRole, TGetRoles, TUpdateRole } from './types'
-import type {
-  IGetListResponse,
-  TGetListRequest,
-  IUpdateReq,
-  IRights,
-  IQueryItems,
-} from '../types'
+import type { IUpdateReq } from '../types'
 
 class RolesApi {
   create = useAPI<IRole, TCreateRole>((payload) => ({
@@ -14,17 +7,17 @@ class RolesApi {
     options: { method: 'POST', credentials: 'include', body: payload },
   }))
 
-  findAll = useAPI<
+  getOne = useAPI<IRole, IRole['id']>((payload) => ({
+    url: ROUTES.api.role(payload),
+    options: { method: 'GET', credentials: 'include' },
+  }))
+
+  getList = useAPI<
     IGetListResponse<IRole>,
     TGetListRequest<TGetRoles> | undefined
   >((payload) => ({
     url: ROUTES.api.roles,
     options: { method: 'GET', credentials: 'include', params: payload },
-  }))
-
-  findOne = useAPI<IRole, IRole['id']>((payload) => ({
-    url: ROUTES.api.role(payload),
-    options: { method: 'GET', credentials: 'include' },
   }))
 
   update = useAPI<boolean, IUpdateReq<TUpdateRole, IRole['id']>>((payload) => ({

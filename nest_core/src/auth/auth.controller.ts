@@ -21,7 +21,6 @@ import { ACCESS_TOKEN_LIFETIME, REFRESH_TOKEN_LIFETIME } from 'libs/config';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
 import { SignUpDto } from './dto/sign-up.dto';
-import d from 'locales/dictionary';
 import {
   TFastifyRequestWithToken,
   TFastifyRequestWithUser,
@@ -29,11 +28,11 @@ import {
 import { createCookieOptions, getIP } from 'libs/utils';
 import { SignInGoogleDto } from './dto/sign-in-google.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
-import { IUser } from 'src/users/users.types';
+import { d, IUser, ROUTES } from '@ap/shared';
 import { ExternalUserDto } from 'src/users/dto/external-user.dto';
 
 @ApiTags(d['en'].authorization)
-@Controller('auth')
+@Controller(ROUTES.api.auth.substring(1))
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -70,17 +69,6 @@ export class AuthController {
     );
   }
 
-  @ApiOperation({ summary: d['en'].confirmRegistration })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
-  @Post('verify-user')
-  verifyUser(
-    @Res({ passthrough: true }) res: FastifyReply,
-    @Body() verifyUserDto: VerifyUserDto,
-  ): Promise<boolean> {
-    res.status(HttpStatus.OK);
-    return this.authService.verifyUser(verifyUserDto.email, verifyUserDto.code);
-  }
-
   @ApiOperation({ summary: d['en'].signIn })
   @ApiResponse({ status: HttpStatus.CREATED, type: ExternalUserDto })
   @UseGuards(LocalAuthGuard)
@@ -110,6 +98,17 @@ export class AuthController {
     }
 
     return req.user;
+  }
+
+  @ApiOperation({ summary: d['en'].confirmRegistration })
+  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @Post('verify-user')
+  verifyUser(
+    @Res({ passthrough: true }) res: FastifyReply,
+    @Body() verifyUserDto: VerifyUserDto,
+  ): Promise<boolean> {
+    res.status(HttpStatus.OK);
+    return this.authService.verifyUser(verifyUserDto.email, verifyUserDto.code);
   }
 
   @ApiOperation({ summary: d['en'].signUp })

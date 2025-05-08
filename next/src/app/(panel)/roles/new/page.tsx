@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { Metadata } from 'next/types';
 
 import NewRolePage from '@/views/Panel/Roles/NewRolePage';
-import { getT } from '@/shared/locales/utils';
+import { getT } from '@ap/shared';
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const t = getT();

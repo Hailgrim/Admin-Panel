@@ -11,7 +11,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
     to.path === ROUTES.ui.signIn ||
     to.path === ROUTES.ui.signInGoogle ||
     to.path === ROUTES.ui.signUp ||
-    to.path === ROUTES.ui.forget
+    to.path === ROUTES.ui.forgotPassword
 
   if (accessToken.value || refreshToken.value) {
     // Attempt to authorize the user

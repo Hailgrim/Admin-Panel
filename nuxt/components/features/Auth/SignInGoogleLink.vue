@@ -1,20 +1,18 @@
 <script setup lang="ts">
 import { useMainStore } from '~/store/main/main'
 import FormLink from '~/components/shared/ui/Form/FormLink.vue'
-import { getGoogleSignInUrl } from './utils'
-import type { IWindowMessage } from './types'
-import type { IUser } from '~/api/users/types'
 
 const route = useRoute()
 const router = useRouter()
 const mainStore = useMainStore()
+const config = useRuntimeConfig()
 const timeout = ref<NodeJS.Timeout>()
 
 const googleHandler = (event: MouseEvent) => {
   event.preventDefault()
   const state = String(Math.random())
   const googleWindow = window.open(
-    getGoogleSignInUrl(state),
+    getGoogleSignInUrl(config.public.GOOGLE_CLIENT_ID, config.public.HOST, state),
     undefined,
     'top=100,left=100,width=500,height=500'
   )

@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import type { IRole } from '~/api/roles/types'
-import type { IUser } from '~/api/users/types'
-
 defineProps<{
   count: number
   page?: number
@@ -40,7 +37,7 @@ class="full-page-table" :headers="columns" hover item-selectable="selectable" :i
       </NuxtLink>
     </template>
     <template #item.roles="{ item }">
-      {{ item.roles?.map((role: IRole) => role.name).join(', ') }}
+      {{item.roles?.map((role: IRole) => role.name).join(', ')}}
     </template>
     <template #item.verified="{ item }">
       <v-icon :icon="item.verified ? 'mdi-check' : 'mdi-close'" />

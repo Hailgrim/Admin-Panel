@@ -6,9 +6,9 @@ import { useSearchParams } from 'next/navigation';
 import PanelLayout from '../../PanelLayout';
 import { IPage } from '@/views/types';
 import { IList } from '@/shared/lib/types';
-import { IRole } from '@/shared/api/roles/types';
 import RolesList from '@/features/Roles/RolesList';
 import { setPage, setQuantity } from '@/views/utils';
+import { IRole } from '@ap/shared';
 
 const RolesPage: FC<IPage<IList<IRole>>> = ({ h1, data }) => {
   const searchParams = useSearchParams();

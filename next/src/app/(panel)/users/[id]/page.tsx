@@ -7,8 +7,8 @@ import { notFound } from 'next/navigation';
 import usersService from '@/shared/api/users/usersService';
 import rolesService from '@/shared/api/roles/rolesService';
 import UserPage from '@/views/Panel/Users/UserPage';
-import { getT } from '@/shared/locales/utils';
 import { IAppPage } from '@/app/types';
+import { getT } from '@ap/shared';
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const t = getT();
@@ -23,8 +23,8 @@ const Page: FC<IAppPage> = async ({ params }) => {
   const id = params.id;
 
   if (id) {
-    const user = await usersService.findOne(id);
-    const roles = await rolesService.findAll();
+    const user = await usersService.getOne(id);
+    const roles = await rolesService.getList();
 
     if (user.data) {
       return (

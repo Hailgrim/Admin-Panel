@@ -2,14 +2,17 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import rolesService from '@/shared/api/roles/rolesService';
 import baseQueryWithReauth from '../baseQueryWithReauth';
-import { IRole, TCreateRole, TGetRoles, TUpdateRole } from './types';
+import { IUpdateReq } from '../types';
 import {
   IGetListResponse,
-  TGetListRequest,
-  IUpdateReq,
   IQueryItems,
   IRights,
-} from '../types';
+  IRole,
+  TCreateRole,
+  TGetListRequest,
+  TGetRoles,
+  TUpdateRole,
+} from '@ap/shared';
 
 const rolesApi = createApi({
   reducerPath: 'roles',
@@ -21,17 +24,17 @@ const rolesApi = createApi({
       invalidatesTags: ['CountedEntities'],
     }),
 
-    findAll: builder.query<
+    getOne: builder.query<IRole, IRole['id']>({
+      query: rolesService.getOneArgs,
+      providesTags: ['Entity'],
+    }),
+
+    getList: builder.query<
       IGetListResponse<IRole>,
       TGetListRequest<TGetRoles> | void
     >({
-      query: rolesService.findAllArgs,
+      query: rolesService.getListArgs,
       providesTags: ['Entities'],
-    }),
-
-    findOne: builder.query<IRole, IRole['id']>({
-      query: rolesService.findOneArgs,
-      providesTags: ['Entity'],
     }),
 
     update: builder.mutation<boolean, IUpdateReq<TUpdateRole, IRole['id']>>({

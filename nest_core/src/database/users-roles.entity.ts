@@ -8,9 +8,7 @@ import {
 
 import { UserModel } from '../users/user.entity';
 import { RoleModel } from '../roles/role.entity';
-import { IUsersRoles } from './database.types';
-import { IUser } from 'src/users/users.types';
-import { IRole } from 'src/roles/roles.types';
+import { IRole, IUser, IUsersRoles } from '@ap/shared';
 
 @Table({ tableName: 'users_roles' })
 export class UsersRolesModel

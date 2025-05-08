@@ -6,23 +6,22 @@ import { useRouter } from 'next/navigation';
 import Form from '@/shared/ui/Form/Form';
 import FormField from '@/shared/ui/Form/FormField';
 import FormButton from '@/shared/ui/Form/FormButton';
-import { ROUTES } from '@/shared/lib/constants';
-import useT from '@/shared/hooks/useT';
-import useLang from '@/shared/hooks/useLang';
-import d from '@/shared/locales/dictionary';
+import useTranslate from '@/shared/hooks/useTranslate';
+import useTranslateRef from '@/shared/hooks/useTranslateRef';
 import useRights from '@/shared/hooks/useRights';
 import FormCheckbox from '@/shared/ui/Form/FormCheckbox';
 import { useAppDispatch } from '@/shared/store/hooks';
 import usersApi from '@/shared/api/users/usersApi';
-import { getUpdatedValues, makeErrorText } from '@/shared/lib/utils';
 import { addAlert } from '@/shared/store/main/main';
-import { IUser } from '@/shared/api/users/types';
+import { getErrorText, getUpdatedValues, IUser, ROUTES } from '@ap/shared';
+import useLanguageRef from '@/shared/hooks/useLanguageRef';
 
 const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const lang = useLang();
-  const t = useT();
+  const lRef = useLanguageRef();
+  const tRef = useTranslateRef();
+  const t = useTranslate();
   const [update, updateReq] = usersApi.useUpdateMutation();
   const [destroy, deleteReq] = usersApi.useDeleteMutation();
   const [oldData, setOldData] = useState<IUser>(data);
@@ -43,39 +42,39 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
 
   useEffect(() => {
     if (updateReq.data) {
-      dispatch(addAlert({ type: 'success', text: d[lang.current].success }));
+      dispatch(addAlert({ type: 'success', text: tRef.current.success }));
       setOldData((prev) => ({ ...prev, ...updateReq.originalArgs?.fields }));
     }
-  }, [updateReq.data, updateReq.originalArgs, dispatch, lang]);
+  }, [updateReq.data, updateReq.originalArgs, dispatch, tRef]);
 
   useEffect(() => {
     if (updateReq.error) {
       dispatch(
         addAlert({
           type: 'error',
-          text: makeErrorText(updateReq.error, lang.current),
+          text: getErrorText(updateReq.error, lRef.current),
         })
       );
     }
-  }, [updateReq.error, dispatch, lang]);
+  }, [updateReq.error, dispatch, lRef]);
 
   useEffect(() => {
     if (deleteReq.data) {
-      dispatch(addAlert({ type: 'success', text: d[lang.current].success }));
+      dispatch(addAlert({ type: 'success', text: tRef.current.success }));
       router.push(ROUTES.ui.users);
     }
-  }, [deleteReq.data, dispatch, router, lang]);
+  }, [deleteReq.data, dispatch, router, tRef]);
 
   useEffect(() => {
     if (deleteReq.error) {
       dispatch(
         addAlert({
           type: 'error',
-          text: makeErrorText(deleteReq.error, lang.current),
+          text: getErrorText(deleteReq.error, lRef.current),
         })
       );
     }
-  }, [deleteReq.error, dispatch, lang]);
+  }, [deleteReq.error, dispatch, lRef]);
 
   return (
     <Form onSubmit={submitHandler}>

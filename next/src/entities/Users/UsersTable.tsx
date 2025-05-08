@@ -5,14 +5,12 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import Link from 'next/link';
 
-import useT from '@/shared/hooks/useT';
+import useTranslate from '@/shared/hooks/useTranslate';
 import useRights from '@/shared/hooks/useRights';
-import { ROUTES } from '@/shared/lib/constants';
-import { IRole } from '@/shared/api/roles/types';
-import { IUser } from '@/shared/api/users/types';
+import { IRole, IUser, ROUTES } from '@ap/shared';
 
 const UsersTable: FC<Omit<DataGridProps<IUser>, 'columns'>> = (props) => {
-  const t = useT();
+  const t = useTranslate();
   const rights = useRights(ROUTES.api.users);
 
   const сolumns: GridColDef<IUser>[] = useMemo(

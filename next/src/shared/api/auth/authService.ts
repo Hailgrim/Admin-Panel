@@ -1,12 +1,12 @@
-import { ROUTES } from '@/shared/lib/constants';
 import {
+  IForgotPassword,
   IResetPassword,
   ISignIn,
-  TSignUp,
-  IVerifyUser,
-  IForgotPassword,
   ISignInGoogle,
-} from './types';
+  IVerifyUser,
+  ROUTES,
+  TSignUp,
+} from '@ap/shared';
 import { IReqArgs } from '../types';
 
 class AuthService {
@@ -34,19 +34,19 @@ class AuthService {
     };
   }
 
-  verifyUserArgs(payload: IVerifyUser): IReqArgs {
-    return {
-      url: ROUTES.api.verify,
-      method: 'POST',
-      body: payload,
-    };
-  }
-
   signInArgs(payload: ISignIn): IReqArgs {
     return {
       url: ROUTES.api.signIn,
       method: 'POST',
       credentials: 'include',
+      body: payload,
+    };
+  }
+
+  verifyUserArgs(payload: IVerifyUser): IReqArgs {
+    return {
+      url: ROUTES.api.verifyUser,
+      method: 'POST',
       body: payload,
     };
   }

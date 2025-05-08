@@ -1,36 +1,4 @@
 import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
-import { IResource } from './resources/types';
-import { IRole } from './roles/types';
-import { IUser } from './users/types';
-
-export type TGetListRequest<T = unknown> = {
-  reqLimit?: number;
-  reqPage?: number;
-  reqCount?: boolean;
-} & T;
-
-export interface IGetListResponse<T = unknown> {
-  rows: T[];
-  count?: number;
-}
-
-export interface IQueryItems<T> {
-  items: T[];
-}
-
-export interface IRights {
-  roleId: IRole['id'];
-  resourceId: IResource['id'];
-  creating: boolean;
-  reading: boolean;
-  updating: boolean;
-  deleting: boolean;
-}
-
-export interface IUsersRoles {
-  userId: IUser['id'];
-  roleId: IRole['id'];
-}
 
 export interface IUpdateReq<
   T = unknown,

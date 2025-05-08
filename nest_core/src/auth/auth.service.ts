@@ -21,13 +21,10 @@ import {
 } from 'libs/config';
 import { RoleModel } from 'src/roles/role.entity';
 import { CacheService } from 'src/cache/cache.service';
-import d from 'locales/dictionary';
-import { IToken, ITokensPair, TSignUp } from './auth.types';
-import { IUser } from 'src/users/users.types';
+import { IToken, ITokensPair } from './auth.types';
 import { QueueService } from 'src/queue/queue.service';
 import { generateCode, verifyHash } from 'libs/utils';
-import { TCreateResource } from 'src/resources/resources.types';
-import { ISession } from 'src/profile/profile.types';
+import { d, ISession, IUser, TCreateResource, TSignUp } from '@ap/shared';
 
 @Injectable()
 export class AuthService {
@@ -56,7 +53,7 @@ export class AuthService {
 
     // Verify the existence of the Default Resources
     const defaultResources = await this.resourcesService
-      .findAllPublic(undefined, true)
+      .getListPublic(undefined, true)
       .then((result) => result.rows);
 
     const missingResources: TCreateResource[] = [
@@ -164,7 +161,7 @@ export class AuthService {
   async validateUser(email: string, password: string): Promise<IUser> {
     try {
       const user: IUser = await this.usersService
-        .findOneAuth(email)
+        .getOneAuth(email)
         .then((result) => result.get({ plain: true }));
 
       if (!user.password || !(await verifyHash(user.password, password))) {

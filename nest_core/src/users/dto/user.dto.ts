@@ -9,8 +9,7 @@ import {
 } from 'class-validator';
 import { Exclude, Type } from 'class-transformer';
 
-import { IUser } from '../users.types';
-import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX } from 'libs/constants';
+import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX, IUser } from '@ap/shared';
 import { ExternalRoleDto } from 'src/roles/dto/external-role.dto';
 
 export class UserDto implements IUser {

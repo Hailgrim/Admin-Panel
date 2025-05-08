@@ -4,20 +4,21 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import Form from '@/shared/ui/Form/Form';
 import FormField from '@/shared/ui/Form/FormField';
 import FormButton from '@/shared/ui/Form/FormButton';
-import useT from '@/shared/hooks/useT';
 import FormAlert from '@/shared/ui/Form/FormAlert';
-import useLang from '@/shared/hooks/useLang';
-import d from '@/shared/locales/dictionary';
 import authApi from '@/shared/api/auth/authApi';
-import { makeErrorText } from '@/shared/lib/utils';
+import { getErrorText } from '@ap/shared';
+import useTranslate from '@/shared/hooks/useTranslate';
+import useTranslateRef from '@/shared/hooks/useTranslateRef';
+import useLanguageRef from '@/shared/hooks/useLanguageRef';
 
 const VerifyUserForm: FC<{
   email: string;
   onClose?: () => void;
   onSuccess?: () => void;
 }> = ({ email, onClose, onSuccess }) => {
-  const t = useT();
-  const lang = useLang();
+  const lRef = useLanguageRef();
+  const tRef = useTranslateRef();
+  const t = useTranslate();
   const [verifyUser, { data, error, isFetching }] =
     authApi.useLazyVerifyUserQuery();
   const [errorText, setErrorText] = useState<string | null>(null);
@@ -38,14 +39,14 @@ const VerifyUserForm: FC<{
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 404:
-          setErrorText(d[lang.current].wrongCode);
+          setErrorText(tRef.current.wrongCode);
           break;
         default:
-          setErrorText(makeErrorText(error, lang.current));
+          setErrorText(getErrorText(error, lRef.current));
           break;
       }
     }
-  }, [error, lang]);
+  }, [error, lRef, tRef]);
 
   useEffect(() => {
     if (data) {

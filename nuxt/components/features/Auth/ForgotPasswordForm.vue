@@ -12,7 +12,8 @@ import authApi from '~/api/auth/authApi'
 
 const { t, locale } = useI18n()
 const email = ref('')
-const emailIsValid = (value: string) => value.length > 0 || t('emailValidation')
+const emailIsValid = (value: string) =>
+  value.length > 0 || t('emailValidationI18N')
 const { data, error, execute, pending, args } = authApi.forgotPassword()
 const errorText = ref<string | null>(null)
 const resetModal = ref(false)
@@ -20,41 +21,33 @@ const resetModal = ref(false)
 async function submitHandler(event: SubmitEventPromise) {
   const results = await event
 
-  if (results.valid)
-    execute({ email: email.value })
+  if (results.valid) execute({ email: email.value })
 }
 
-watch(
-  error,
-  () => {
-    if (error.value)
-      switch (error.value?.status) {
-        case 404:
-          errorText.value = t('wrongEmail')
-          break
-        case undefined:
-          errorText.value = null
-          break
-        default:
-          errorText.value = makeErrorText(error.value, locale.value)
-      }
-  },
-)
+watch(error, () => {
+  if (error.value)
+    switch (error.value?.status) {
+      case 404:
+        errorText.value = t('wrongEmail')
+        break
+      case undefined:
+        errorText.value = null
+        break
+      default:
+        errorText.value = getErrorText(error.value, locale.value)
+    }
+})
 
-watch(
-  data,
-  () => {
-    if (data.value)
-      resetModal.value = true
-  },
-)
+watch(data, () => {
+  if (data.value) resetModal.value = true
+})
 </script>
 
 <template>
   <Form @submit="submitHandler">
     <FormAlert v-if="errorText" :text="errorText" type="error" />
     <FormField
-v-model="email" :hint="$t('emailValidation')" :label="$t('email')" name="email" required
+v-model="email" :hint="$t('emailValidationI18N')" :label="$t('email')" name="email" required
       :rules="[emailIsValid]" type="email" />
     <FormButton block color="success" :loading="pending" type="submit">
       {{ $t('confirm') }}

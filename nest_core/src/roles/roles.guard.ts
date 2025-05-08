@@ -31,7 +31,7 @@ export class RolesGuard implements CanActivate {
     const token = request.user;
 
     if (token?.userId) {
-      user = await this.usersService.findOnePublic(token.userId);
+      user = await this.usersService.getOnePublic(token.userId);
     }
 
     if (user === null) {

@@ -7,23 +7,21 @@ import { GridPaginationModel } from '@mui/x-data-grid/models';
 
 import FormButton from '@/shared/ui/Form/FormButton';
 import useRights from '@/shared/hooks/useRights';
-import { ROUTES } from '@/shared/lib/constants';
-import useT from '@/shared/hooks/useT';
 import { IList } from '@/shared/lib/types';
-import { IUser } from '@/shared/api/users/types';
 import usersApi from '@/shared/api/users/usersApi';
 import UsersTable from '@/entities/Users/UsersTable';
 import { useAppDispatch } from '@/shared/store/hooks';
-import useLang from '@/shared/hooks/useLang';
 import { addAlert } from '@/shared/store/main/main';
-import { makeErrorText } from '@/shared/lib/utils';
+import { getErrorText, IUser, ROUTES } from '@ap/shared';
+import useTranslate from '@/shared/hooks/useTranslate';
+import useLanguageRef from '@/shared/hooks/useLanguageRef';
 
 const UsersList: FC<IList<IUser>> = (props) => {
   const dispatch = useAppDispatch();
-  const lang = useLang();
-  const t = useT();
+  const lRef = useLanguageRef();
+  const t = useTranslate();
   const rights = useRights(ROUTES.api.users);
-  const [findAll, findAllReq] = usersApi.useLazyFindAllQuery();
+  const [getList, getListReq] = usersApi.useLazyGetListQuery();
   const [destroy, destroyReq] = usersApi.useDeleteMutation();
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [items, setItems] = useState(props.rows);
@@ -33,14 +31,14 @@ const UsersList: FC<IList<IUser>> = (props) => {
   });
   const count = useMemo(
     () =>
-      findAllReq.data?.count ||
+      getListReq.data?.count ||
       props.count ||
       paginationModel.current.page * paginationModel.current.pageSize,
-    [props.count, findAllReq.data]
+    [props.count, getListReq.data]
   );
 
   const paginationHandler = (model: GridPaginationModel) => {
-    findAll({ reqPage: model.page + 1, reqLimit: model.pageSize });
+    getList({ reqPage: model.page + 1, reqLimit: model.pageSize });
     paginationModel.current = model;
     props.onPageUpdate?.(model.page + 1);
     props.onQuantityUpdate?.(model.pageSize);
@@ -48,66 +46,66 @@ const UsersList: FC<IList<IUser>> = (props) => {
 
   useEffect(() => {
     if (!props.rows) {
-      findAll({
+      getList({
         reqPage: paginationModel.current.page + 1,
         reqLimit: paginationModel.current.pageSize,
       });
     }
-  }, [props.rows, findAll]);
+  }, [props.rows, getList]);
 
   useEffect(() => {
     if (destroyReq.data) {
-      findAll({
+      getList({
         reqPage: paginationModel.current.page + 1,
         reqLimit: paginationModel.current.pageSize,
       });
     }
-  }, [destroyReq.data, findAll]);
+  }, [destroyReq.data, getList]);
 
   useEffect(() => {
     if (destroyReq.error) {
       dispatch(
         addAlert({
           type: 'error',
-          text: makeErrorText(destroyReq.error, lang.current),
+          text: getErrorText(destroyReq.error, lRef.current),
         })
       );
     }
-  }, [dispatch, destroyReq.error, lang]);
+  }, [dispatch, destroyReq.error, lRef]);
 
   useEffect(() => {
-    if (findAllReq.data) {
-      setItems(findAllReq.data.rows);
+    if (getListReq.data) {
+      setItems(getListReq.data.rows);
     }
-  }, [findAllReq.data]);
+  }, [getListReq.data]);
 
   useEffect(() => {
-    if (findAllReq.error) {
+    if (getListReq.error) {
       dispatch(
         addAlert({
           type: 'error',
-          text: makeErrorText(findAllReq.error, lang.current),
+          text: getErrorText(getListReq.error, lRef.current),
         })
       );
     }
-  }, [dispatch, findAllReq.error, lang]);
+  }, [dispatch, getListReq.error, lRef]);
 
   useEffect(() => {
-    if (findAllReq.data?.rows) {
-      setItems(findAllReq.data?.rows);
+    if (getListReq.data?.rows) {
+      setItems(getListReq.data?.rows);
     }
-  }, [findAllReq.data]);
+  }, [getListReq.data]);
 
   useEffect(() => {
-    if (findAllReq.error) {
+    if (getListReq.error) {
       dispatch(
         addAlert({
           type: 'error',
-          text: makeErrorText(findAllReq.error, lang.current),
+          text: getErrorText(getListReq.error, lRef.current),
         })
       );
     }
-  }, [dispatch, findAllReq.error, lang]);
+  }, [dispatch, getListReq.error, lRef]);
 
   return (
     <>
@@ -137,7 +135,7 @@ const UsersList: FC<IList<IUser>> = (props) => {
         }}
         rows={items}
         rowCount={count}
-        loading={findAllReq.isLoading || destroyReq.isLoading}
+        loading={getListReq.isLoading || destroyReq.isLoading}
         onRowSelectionModelChange={(rowSelectionModel) =>
           setSelectedRows(rowSelectionModel as string[])
         }

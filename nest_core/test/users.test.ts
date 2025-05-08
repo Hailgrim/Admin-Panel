@@ -7,14 +7,14 @@ import {
   TCreateUser,
   TGetUsers,
   TUpdateUser,
-} from 'src/users/users.types';
-import {
   IGetListResponse,
   IQueryItems,
   IUsersRoles,
   TGetListRequest,
-} from 'src/database/database.types';
-import { IRole, TGetRoles } from 'src/roles/roles.types';
+  IRole,
+  TGetRoles,
+  ROUTES,
+} from '@ap/shared';
 
 const runUsersTests = () => {
   describe('Users', () => {
@@ -30,16 +30,16 @@ const runUsersTests = () => {
 
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .post('/users')
+          .post(ROUTES.api.users)
           .expect(HttpStatus.UNAUTHORIZED);
 
         await request(app.getHttpServer())
-          .post('/users')
+          .post(ROUTES.api.users)
           .set('Cookie', adminCookies)
           .expect(HttpStatus.BAD_REQUEST);
 
         await request(app.getHttpServer())
-          .post('/users')
+          .post(ROUTES.api.users)
           .set('Cookie', adminCookies)
           .send({ ...createEntity, enabled: wrongValue })
           .expect(HttpStatus.BAD_REQUEST);
@@ -47,7 +47,7 @@ const runUsersTests = () => {
 
       it('Correct (admin)', async () => {
         const createResBody = await request(app.getHttpServer())
-          .post('/users')
+          .post(ROUTES.api.users)
           .set('Cookie', adminCookies)
           .send(createEntity)
           .expect(HttpStatus.CREATED)
@@ -63,7 +63,7 @@ const runUsersTests = () => {
 
       it('Correct (user)', async () => {
         await request(app.getHttpServer())
-          .post('/users')
+          .post(ROUTES.api.users)
           .set('Cookie', userCookies)
           .send(createEntity)
           .expect(HttpStatus.FORBIDDEN);
@@ -73,13 +73,13 @@ const runUsersTests = () => {
     describe('Find All', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .get('/users')
+          .get(ROUTES.api.users)
           .expect(HttpStatus.UNAUTHORIZED);
       });
 
       it('Correct (admin)', async () => {
         let findAllResBody = await request(app.getHttpServer())
-          .get('/users')
+          .get(ROUTES.api.users)
           .set('Cookie', adminCookies)
           .query({
             reqLimit: 1,
@@ -92,7 +92,7 @@ const runUsersTests = () => {
         expect(findAllResBody).toHaveProperty('count', 3);
 
         findAllResBody = await request(app.getHttpServer())
-          .get('/users')
+          .get(ROUTES.api.users)
           .set('Cookie', adminCookies)
           .query({
             reqLimit: 1,
@@ -108,7 +108,7 @@ const runUsersTests = () => {
 
       it('Correct (user)', async () => {
         await request(app.getHttpServer())
-          .get('/users')
+          .get(ROUTES.api.users)
           .set('Cookie', userCookies)
           .expect(HttpStatus.FORBIDDEN);
       });
@@ -117,18 +117,18 @@ const runUsersTests = () => {
     describe('Find One', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .get(`/users/${entity.id}`)
+          .get(ROUTES.api.user(entity.id))
           .expect(HttpStatus.UNAUTHORIZED);
 
         await request(app.getHttpServer())
-          .get(`/users/${wrongValue}`)
+          .get(ROUTES.api.user(wrongValue))
           .set('Cookie', adminCookies)
           .expect(HttpStatus.NOT_FOUND);
       });
 
       it('Correct (admin)', async () => {
         const findOneResBody = await request(app.getHttpServer())
-          .get(`/users/${entity.id}`)
+          .get(ROUTES.api.user(entity.id))
           .set('Cookie', adminCookies)
           .expect(HttpStatus.OK)
           .then((res) => res.body as IUser);
@@ -141,7 +141,7 @@ const runUsersTests = () => {
 
       it('Correct (user)', async () => {
         await request(app.getHttpServer())
-          .get(`/users/${entity.id}`)
+          .get(ROUTES.api.user(entity.id))
           .set('Cookie', userCookies)
           .expect(HttpStatus.FORBIDDEN);
       });
@@ -150,16 +150,16 @@ const runUsersTests = () => {
     describe('Update', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .patch(`/users/${entity.id}`)
+          .patch(ROUTES.api.user(entity.id))
           .expect(HttpStatus.UNAUTHORIZED);
 
         await request(app.getHttpServer())
-          .patch(`/users/${wrongValue}`)
+          .patch(ROUTES.api.user(wrongValue))
           .set('Cookie', adminCookies)
           .expect(HttpStatus.NOT_FOUND);
 
         await request(app.getHttpServer())
-          .patch(`/users/${wrongValue}`)
+          .patch(ROUTES.api.user(wrongValue))
           .set('Cookie', adminCookies)
           .send({ enabled: wrongValue })
           .expect(HttpStatus.BAD_REQUEST);
@@ -167,7 +167,7 @@ const runUsersTests = () => {
 
       it('Correct (admin)', async () => {
         await request(app.getHttpServer())
-          .patch(`/users/${entity.id}`)
+          .patch(ROUTES.api.user(entity.id))
           .set('Cookie', adminCookies)
           .send({
             name: entity.name + entity.name,
@@ -177,7 +177,7 @@ const runUsersTests = () => {
         entity.name = entity.name + entity.name;
 
         const findOneResBody = await request(app.getHttpServer())
-          .get(`/users/${entity.id}`)
+          .get(ROUTES.api.user(entity.id))
           .set('Cookie', adminCookies)
           .expect(HttpStatus.OK)
           .then((res) => res.body as IUser);
@@ -187,7 +187,7 @@ const runUsersTests = () => {
 
       it('Correct (user)', async () => {
         await request(app.getHttpServer())
-          .patch(`/users/${entity.id}`)
+          .patch(ROUTES.api.user(entity.id))
           .set('Cookie', userCookies)
           .expect(HttpStatus.FORBIDDEN);
       });
@@ -196,16 +196,16 @@ const runUsersTests = () => {
     describe('Update Roles', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .patch(`/users/${entity.id}/roles`)
+          .patch(ROUTES.api.userRoles(entity.id))
           .expect(HttpStatus.UNAUTHORIZED);
 
         await request(app.getHttpServer())
-          .patch(`/users/${wrongValue}/roles`)
+          .patch(ROUTES.api.userRoles(wrongValue))
           .set('Cookie', adminCookies)
           .expect(HttpStatus.NOT_FOUND);
 
         await request(app.getHttpServer())
-          .patch(`/users/${entity.id}/roles`)
+          .patch(ROUTES.api.userRoles(entity.id))
           .set('Cookie', adminCookies)
           .send([{ test: wrongValue }])
           .expect(HttpStatus.BAD_REQUEST);
@@ -213,7 +213,7 @@ const runUsersTests = () => {
 
       it('Correct (admin)', async () => {
         const findAllResBody = await request(app.getHttpServer())
-          .get('/roles')
+          .get(ROUTES.api.roles)
           .set('Cookie', adminCookies)
           .query({
             reqLimit: 1,
@@ -226,7 +226,7 @@ const runUsersTests = () => {
         const role = findAllResBody.rows[0];
 
         await request(app.getHttpServer())
-          .patch(`/users/${entity.id}/roles`)
+          .patch(ROUTES.api.userRoles(entity.id))
           .set('Cookie', adminCookies)
           .send({
             items: [{ roleId: role.id, userId: entity.id }],
@@ -236,7 +236,7 @@ const runUsersTests = () => {
         entity.name = entity.name + entity.name;
 
         const findOneResBody = await request(app.getHttpServer())
-          .get(`/users/${entity.id}`)
+          .get(ROUTES.api.user(entity.id))
           .set('Cookie', adminCookies)
           .expect(HttpStatus.OK)
           .then((res) => res.body as IUser);
@@ -248,7 +248,7 @@ const runUsersTests = () => {
 
       it('Correct (user)', async () => {
         await request(app.getHttpServer())
-          .patch(`/users/${entity.id}/roles`)
+          .patch(ROUTES.api.userRoles(entity.id))
           .set('Cookie', userCookies)
           .expect(HttpStatus.FORBIDDEN);
       });
@@ -257,12 +257,12 @@ const runUsersTests = () => {
     describe('Delete', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .delete('/users')
+          .delete(ROUTES.api.users)
           .send({ items: [entity.id] } satisfies IQueryItems<IUser['id']>)
           .expect(HttpStatus.UNAUTHORIZED);
 
         await request(app.getHttpServer())
-          .delete('/users')
+          .delete(ROUTES.api.users)
           .set('Cookie', adminCookies)
           .send({ items: [wrongValue] } satisfies IQueryItems<IUser['id']>)
           .expect(HttpStatus.NOT_FOUND);
@@ -270,20 +270,20 @@ const runUsersTests = () => {
 
       it('Correct (admin)', async () => {
         await request(app.getHttpServer())
-          .delete('/users')
+          .delete(ROUTES.api.users)
           .set('Cookie', adminCookies)
           .send({ items: [entity.id] } satisfies IQueryItems<IUser['id']>)
           .expect(HttpStatus.OK);
 
         await request(app.getHttpServer())
-          .get(`/users/${entity.id}`)
+          .get(ROUTES.api.user(entity.id))
           .set('Cookie', adminCookies)
           .expect(HttpStatus.NOT_FOUND);
       });
 
       it('Correct (user)', async () => {
         await request(app.getHttpServer())
-          .patch(`/users/${entity.id}`)
+          .patch(ROUTES.api.user(entity.id))
           .set('Cookie', userCookies)
           .expect(HttpStatus.FORBIDDEN);
       });

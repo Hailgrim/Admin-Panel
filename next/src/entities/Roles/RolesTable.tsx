@@ -5,13 +5,12 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import Link from 'next/link';
 
-import useT from '@/shared/hooks/useT';
+import useTranslate from '@/shared/hooks/useTranslate';
 import useRights from '@/shared/hooks/useRights';
-import { ROUTES } from '@/shared/lib/constants';
-import { IRole } from '@/shared/api/roles/types';
+import { IRole, ROUTES } from '@ap/shared';
 
 const RolesTable: FC<Omit<DataGridProps<IRole>, 'columns'>> = (props) => {
-  const t = useT();
+  const t = useTranslate();
   const rights = useRights(ROUTES.api.roles);
 
   const сolumns: GridColDef<IRole>[] = useMemo(

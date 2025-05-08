@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
-import { IVerifyUser } from '../auth.types';
+import { IVerifyUser } from '@ap/shared';
 
 export class VerifyUserDto implements IVerifyUser {
   @ApiProperty({ type: String, example: 'example@mail.com' })

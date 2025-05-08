@@ -2,21 +2,21 @@ import { FC, FormEvent, useEffect, useMemo, useState } from 'react';
 
 import Form from '@/shared/ui/Form/Form';
 import FormButton from '@/shared/ui/Form/FormButton';
-import { PASSWORD_REGEX, ROUTES } from '@/shared/lib/constants';
-import useT from '@/shared/hooks/useT';
-import useLang from '@/shared/hooks/useLang';
-import d from '@/shared/locales/dictionary';
 import useRights from '@/shared/hooks/useRights';
 import { useAppDispatch } from '@/shared/store/hooks';
-import { makeErrorText, testString } from '@/shared/lib/utils';
 import { addAlert } from '@/shared/store/main/main';
 import FormPassword from '@/shared/ui/Form/FormPassword';
 import profileApi from '@/shared/api/profile/profileApi';
+import { getErrorText, PASSWORD_REGEX, ROUTES, testString } from '@ap/shared';
+import useTranslate from '@/shared/hooks/useTranslate';
+import useTranslateRef from '@/shared/hooks/useTranslateRef';
+import useLanguageRef from '@/shared/hooks/useLanguageRef';
 
 const UpdatePasswordForm: FC = () => {
   const dispatch = useAppDispatch();
-  const lang = useLang();
-  const t = useT();
+  const lRef = useLanguageRef();
+  const tRef = useTranslateRef();
+  const t = useTranslate();
   const [update, { data, isLoading, error }] =
     profileApi.useUpdatePasswordMutation();
   const rights = useRights(ROUTES.api.profile);
@@ -46,17 +46,17 @@ const UpdatePasswordForm: FC = () => {
       dispatch(
         addAlert({
           type: 'error',
-          text: makeErrorText(error, lang.current),
+          text: getErrorText(error, lRef.current),
         })
       );
     }
-  }, [dispatch, error, lang]);
+  }, [dispatch, error, lRef]);
 
   useEffect(() => {
     if (data) {
-      dispatch(addAlert({ type: 'success', text: d[lang.current].success }));
+      dispatch(addAlert({ type: 'success', text: tRef.current.success }));
     }
-  }, [data, dispatch, lang]);
+  }, [data, dispatch, tRef]);
 
   return (
     <Form onSubmit={submitHandler}>

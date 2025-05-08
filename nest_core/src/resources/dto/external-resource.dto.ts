@@ -1,6 +1,6 @@
 import { IntersectionType, PartialType, PickType } from '@nestjs/swagger';
 
-import { IResource } from '../resources.types';
+import { IResource } from '@ap/shared';
 import { ResourceDto } from './resource.dto';
 
 export class ExternalResourceDto

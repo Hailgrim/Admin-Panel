@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { IRole } from '../roles.types';
+import { IRole } from '@ap/shared';
 import { UsersRolesDto } from 'src/database/dto/users-roles.dto';
 import { ExternalResourceDto } from 'src/resources/dto/external-resource.dto';
 

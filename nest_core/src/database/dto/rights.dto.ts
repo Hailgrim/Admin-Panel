@@ -1,9 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsUUID } from 'class-validator';
 
-import { IRights } from '../database.types';
-import { IRole } from 'src/roles/roles.types';
-import { IResource } from 'src/resources/resources.types';
+import { IResource, IRole, IRights } from '@ap/shared';
 
 export class RightsDto implements IRights {
   @ApiProperty({

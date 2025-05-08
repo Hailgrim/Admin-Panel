@@ -14,7 +14,7 @@ const router = useRouter()
 const route = useRoute()
 const page = ref(Number(route.query.page) || 1)
 const quantity = ref(Number(route.query.quantity) || 25)
-const { data, execute } = resourcesApi.findAll(ROUTES.api.resources)
+const { data, execute } = resourcesApi.getList(ROUTES.api.resources)
 if (import.meta.server)
   await execute({ reqPage: page.value, reqLimit: quantity.value, reqCount: true })
 

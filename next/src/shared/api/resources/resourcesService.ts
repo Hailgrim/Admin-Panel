@@ -1,19 +1,15 @@
-import { ROUTES } from '@/shared/lib/constants';
+import { IFetchRes, IReqArgs, IUpdateReq } from '../types';
+import serverFetch from '../serverFetch';
 import {
-  IFetchRes,
   IGetListResponse,
-  TGetListRequest,
-  IReqArgs,
   IQueryItems,
-  IUpdateReq,
-} from '../types';
-import {
   IResource,
+  ROUTES,
   TCreateResource,
+  TGetListRequest,
   TGetResources,
   TUpdateResource,
-} from './types';
-import serverFetch from '../serverFetch';
+} from '@ap/shared';
 
 class ResourcesService {
   createArgs(payload: TCreateResource): IReqArgs {
@@ -25,7 +21,19 @@ class ResourcesService {
     };
   }
 
-  findAllArgs(payload?: TGetListRequest<TGetResources>): IReqArgs {
+  getOneArgs(payload: IResource['id']): IReqArgs {
+    return {
+      url: ROUTES.api.resource(payload),
+      method: 'GET',
+      credentials: 'include',
+    };
+  }
+
+  async getOne(payload: IResource['id']): Promise<IFetchRes<IResource>> {
+    return serverFetch<IResource>(this.getOneArgs(payload));
+  }
+
+  getListArgs(payload?: TGetListRequest<TGetResources>): IReqArgs {
     return {
       url: ROUTES.api.resources,
       method: 'GET',
@@ -34,22 +42,10 @@ class ResourcesService {
     };
   }
 
-  async findAll(
+  async getList(
     payload?: TGetListRequest<TGetResources>
   ): Promise<IFetchRes<IGetListResponse<IResource>>> {
-    return serverFetch<IGetListResponse<IResource>>(this.findAllArgs(payload));
-  }
-
-  findOneArgs(payload: IResource['id']): IReqArgs {
-    return {
-      url: ROUTES.api.resource(payload),
-      method: 'GET',
-      credentials: 'include',
-    };
-  }
-
-  async findOne(payload: IResource['id']): Promise<IFetchRes<IResource>> {
-    return serverFetch<IResource>(this.findOneArgs(payload));
+    return serverFetch<IGetListResponse<IResource>>(this.getListArgs(payload));
   }
 
   updateArgs(payload: IUpdateReq<TUpdateResource, IResource['id']>): IReqArgs {

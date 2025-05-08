@@ -1,4 +1,4 @@
-import { DEV } from './constants';
+import { DEV } from '@ap/shared';
 
 export const MODE = process.env.NODE_ENV || DEV;
 

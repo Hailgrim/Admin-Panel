@@ -1,26 +1,37 @@
 <script setup lang="ts">
-import type { IResource } from '~/api/resources/types'
 import resourcesApi from '~/api/resources/resourcesApi'
 import ResourcesTable from '~/components/entities/Resource/ResourcesTable.vue'
 import { useMainStore } from '~/store/main/main'
 
 const props = defineProps<{
-  rows?: IResource[]
-  count?: number
-  page?: number
-  quantity?: number
+  rows?: IResource[];
+  count?: number;
+  page?: number;
+  quantity?: number;
 }>()
 defineEmits<{
-  'update:page': [value: number]
-  'update:quantity': [value: number]
+  'update:page': [value: number];
+  'update:quantity': [value: number];
 }>()
 
 const { locale } = useI18n()
-const { data: faData, error: faError, execute: faExecute, pending: faPending } = resourcesApi.findAll()
-const { data: dData, error: dError, execute: dExecute, pending: dPending } = resourcesApi.delete()
+const {
+  data: faData,
+  error: faError,
+  execute: faExecute,
+  pending: faPending,
+} = resourcesApi.getList()
+const {
+  data: dData,
+  error: dError,
+  execute: dExecute,
+  pending: dPending,
+} = resourcesApi.delete()
 const page = ref(props.page || 1)
 const quantity = ref(props.quantity || 25)
-const count = computed(() => faData.value?.count || props.count || page.value * quantity.value)
+const count = computed(
+  () => faData.value?.count || props.count || page.value * quantity.value
+)
 const items = ref(props.rows)
 const rights = useRights(ROUTES.api.resources)
 const mainStore = useMainStore()
@@ -30,51 +41,49 @@ watch(
   () => props.rows,
   () => {
     if (!props.rows) {
-      faExecute({ reqPage: page.value, reqLimit: quantity.value, reqCount: true })
+      faExecute({
+        reqPage: page.value,
+        reqLimit: quantity.value,
+        reqCount: true,
+      })
     }
   },
-  { immediate: true },
+  { immediate: true }
 )
 
-watch(
-  [page, quantity],
-  () => {
-    faExecute({ reqPage: page.value, reqLimit: quantity.value })
-  },
-)
+watch([page, quantity], () => {
+  faExecute({ reqPage: page.value, reqLimit: quantity.value })
+})
 
-watch(
-  faData,
-  () => {
-    if (faData.value)
-      items.value = faData.value.rows
-  },
-)
+watch(faData, () => {
+  if (faData.value) items.value = faData.value.rows
+})
 
-watch(
-  faError,
-  () => {
-    if (faError.value)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(faError.value, locale.value) })
-  },
-)
+watch(faError, () => {
+  if (faError.value)
+    mainStore.addAlert({
+      type: 'error',
+      text: getErrorText(faError.value, locale.value),
+    })
+})
 
-watch(
-  dData,
-  () => {
-    if (dData.value) {
-      faExecute({ reqPage: page.value, reqLimit: quantity.value, reqCount: true })
-    }
-  },
-)
+watch(dData, () => {
+  if (dData.value) {
+    faExecute({
+      reqPage: page.value,
+      reqLimit: quantity.value,
+      reqCount: true,
+    })
+  }
+})
 
-watch(
-  dError,
-  () => {
-    if (dError.value)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(dError.value, locale.value) })
-  },
-)
+watch(dError, () => {
+  if (dError.value)
+    mainStore.addAlert({
+      type: 'error',
+      text: getErrorText(dError.value, locale.value),
+    })
+})
 </script>
 
 <template>
@@ -86,7 +95,7 @@ watch(
     </NuxtLink>
     <v-btn
 color="error" :disabled="!rights.deleting || selected.length === 0" :loading="dPending"
-      prepend-icon="mdi-delete" variant="flat" @click="dExecute({items: selected})">
+      prepend-icon="mdi-delete" variant="flat" @click="dExecute({ items: selected })">
       {{ $t('delete') }}
     </v-btn>
   </div>

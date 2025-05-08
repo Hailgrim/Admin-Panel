@@ -1,13 +1,4 @@
 import { useAPI } from '~/composables/useAPI/useAPI'
-import type {
-  IResetPassword,
-  ISignIn,
-  TSignUp,
-  IVerifyUser,
-  IForgotPassword,
-  ISignInGoogle,
-} from './types'
-import type { IUser } from '../users/types'
 
 class AuthApi {
   signUp = useAPI<IUser, TSignUp>((payload) => ({
@@ -26,7 +17,7 @@ class AuthApi {
   }))
 
   verifyUser = useAPI<boolean, IVerifyUser>((payload) => ({
-    url: ROUTES.api.verify,
+    url: ROUTES.api.verifyUser,
     options: { method: 'POST', body: payload },
   }))
 

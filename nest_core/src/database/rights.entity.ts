@@ -8,9 +8,7 @@ import {
 
 import { RoleModel } from '../roles/role.entity';
 import { ResourceModel } from '../resources/resource.entity';
-import { IRights } from './database.types';
-import { IRole } from 'src/roles/roles.types';
-import { IResource } from 'src/resources/resources.types';
+import { IResource, IRole, IRights } from '@ap/shared';
 
 @Table({ tableName: 'rights' })
 export class RightsModel

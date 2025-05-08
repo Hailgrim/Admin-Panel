@@ -4,13 +4,12 @@ import FormCheckbox from '~/components/shared/ui/Form/FormCheckbox.vue'
 import FormButton from '~/components/shared/ui/Form/FormButton.vue'
 import { useMainStore } from '~/store/main/main'
 import usersApi from '~/api/users/usersApi'
-import type { IUser } from '~/api/users/types'
-import type { IRole } from '~/api/roles/types'
-import type { IUsersRoles } from '~/api/types'
 
-const { user } = defineProps<{ user: IUser, roles: IRole[] }>()
+const { user } = defineProps<{ user: IUser; roles: IRole[] }>()
 
-const updatedRoles = ref<IUsersRoles[]>(user.roles?.map(role => ({ roleId: role.id, userId: user.id })) || [])
+const updatedRoles = ref<IUsersRoles[]>(
+  user.roles?.map((role) => ({ roleId: role.id, userId: user.id })) || []
+)
 const { t, locale } = useI18n()
 const { data, error, execute, pending } = usersApi.updateRoles()
 const mainStore = useMainStore()
@@ -27,39 +26,30 @@ function setRoles(newRole: IUsersRoles) {
   let find = false
 
   const filtered = updatedRoles.value.filter((value) => {
-    if (
-      newRole.userId === value?.userId
-      && newRole.roleId === value?.roleId
-    ) {
+    if (newRole.userId === value?.userId && newRole.roleId === value?.roleId) {
       find = true
       return false
-    }
-    else {
+    } else {
       return true
     }
   })
 
-  if (!find)
-    filtered.push(newRole)
+  if (!find) filtered.push(newRole)
 
   updatedRoles.value = filtered
 }
 
-watch(
-  error,
-  () => {
-    if (error.value)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(error.value, locale.value) })
-  },
-)
+watch(error, () => {
+  if (error.value)
+    mainStore.addAlert({
+      type: 'error',
+      text: getErrorText(error.value, locale.value),
+    })
+})
 
-watch(
-  data,
-  () => {
-    if (data.value)
-      mainStore.addAlert({ type: 'success', text: t('success') })
-  },
-)
+watch(data, () => {
+  if (data.value) mainStore.addAlert({ type: 'success', text: t('success') })
+})
 </script>
 
 <template>
@@ -67,7 +57,7 @@ watch(
     <div class="d-flex flex-row">
       <span v-for="role of roles" :key="`userRole.${role.id}`" class="mr-6">
         <FormCheckbox
-:label="role.name" :model-value="updatedRoles.some(value => value?.roleId === role.id)"
+:label="role.name" :model-value="updatedRoles.some((value) => value?.roleId === role.id)"
           :name="`${role.name}.${role.id}`" @update:model-value="setRoles({ roleId: role.id, userId: user.id })" />
       </span>
     </div>

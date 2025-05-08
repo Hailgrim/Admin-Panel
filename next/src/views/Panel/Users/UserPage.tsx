@@ -6,10 +6,9 @@ import Typography from '@mui/material/Typography';
 import PanelLayout from '../../PanelLayout';
 import UpdateUserForm from '@/features/Users/UpdateUserForm';
 import UpdateUserRolesForm from '@/features/Users/UpdateUserRolesForm';
-import useT from '@/shared/hooks/useT';
+import useTranslate from '@/shared/hooks/useTranslate';
 import { IPage } from '@/views/types';
-import { IUser } from '@/shared/api/users/types';
-import { IRole } from '@/shared/api/roles/types';
+import { IRole, IUser } from '@ap/shared';
 
 const UserPage: FC<
   IPage<{
@@ -17,7 +16,7 @@ const UserPage: FC<
     roles?: IRole[] | null;
   }>
 > = ({ h1, data }) => {
-  const t = useT();
+  const t = useTranslate();
 
   return (
     <PanelLayout h1={h1}>

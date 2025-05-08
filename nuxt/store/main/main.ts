@@ -1,8 +1,5 @@
 import { defineStore } from 'pinia'
 
-import type { IAlert } from './types'
-import type { IUser } from '~/api/users/types'
-
 export const useMainStore = defineStore('main', () => {
   const isSideBarOpened = ref(true)
   function toggleSideBar(value: boolean) {

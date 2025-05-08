@@ -2,15 +2,15 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import authService from '@/shared/api/auth/authService';
 import baseQueryWithReauth from '../baseQueryWithReauth';
-import { IUser } from '../users/types';
 import {
+  IForgotPassword,
   IResetPassword,
   ISignIn,
-  TSignUp,
-  IVerifyUser,
-  IForgotPassword,
   ISignInGoogle,
-} from './types';
+  IUser,
+  IVerifyUser,
+  TSignUp,
+} from '@ap/shared';
 
 const authApi = createApi({
   reducerPath: 'auth',

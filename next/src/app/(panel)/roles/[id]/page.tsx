@@ -6,7 +6,7 @@ import rolesService from '@/shared/api/roles/rolesService';
 import resourcesService from '@/shared/api/resources/resourcesService';
 import RolePage from '@/views/Panel/Roles/RolePage';
 import { IAppPage } from '@/app/types';
-import { getT } from '@/shared/locales/utils';
+import { getT } from '@ap/shared';
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const t = getT();
@@ -21,8 +21,8 @@ const Page: FC<IAppPage> = async ({ params }) => {
   const id = params.id;
 
   if (id) {
-    const role = await rolesService.findOne(id);
-    const resources = await resourcesService.findAll();
+    const role = await rolesService.getOne(id);
+    const resources = await resourcesService.getList();
 
     if (role.data) {
       return (

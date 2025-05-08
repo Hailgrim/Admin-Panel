@@ -2,18 +2,16 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import baseQueryWithReauth from '../baseQueryWithReauth';
 import resourcesService from '@/shared/api/resources/resourcesService';
-import {
-  IResource,
-  TCreateResource,
-  TGetResources,
-  TUpdateResource,
-} from './types';
+import { IUpdateReq } from '../types';
 import {
   IGetListResponse,
-  TGetListRequest,
-  IUpdateReq,
   IQueryItems,
-} from '../types';
+  IResource,
+  TCreateResource,
+  TGetListRequest,
+  TGetResources,
+  TUpdateResource,
+} from '@ap/shared';
 
 const resourcesApi = createApi({
   reducerPath: 'resources',
@@ -25,17 +23,17 @@ const resourcesApi = createApi({
       invalidatesTags: ['CountedEntities'],
     }),
 
-    findAll: builder.query<
+    getOne: builder.query<IResource, IResource['id']>({
+      query: resourcesService.getOneArgs,
+      providesTags: ['Entity'],
+    }),
+
+    getList: builder.query<
       IGetListResponse<IResource>,
       TGetListRequest<TGetResources> | void
     >({
-      query: resourcesService.findAllArgs,
+      query: resourcesService.getListArgs,
       providesTags: ['Entities'],
-    }),
-
-    findOne: builder.query<IResource, IResource['id']>({
-      query: resourcesService.findOneArgs,
-      providesTags: ['Entity'],
     }),
 
     update: builder.mutation<

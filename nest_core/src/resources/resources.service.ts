@@ -9,13 +9,14 @@ import { FindOptions } from 'sequelize';
 
 import { ResourceModel } from './resource.entity';
 import { PUBLIC, RESOURCES_REPOSITORY } from 'libs/constants';
-import { TGetListRequest, IGetListResponse } from 'src/database/database.types';
-import { DatabaseService } from 'src/database/database.service';
 import {
   TCreateResource,
   TGetResources,
   TUpdateResource,
-} from './resources.types';
+  TGetListRequest,
+  IGetListResponse,
+} from '@ap/shared';
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class ResourcesService {
@@ -47,7 +48,7 @@ export class ResourcesService {
     }
   }
 
-  async findOnePublic(id: string): Promise<ResourceModel> {
+  async getOnePublic(id: string): Promise<ResourceModel> {
     let resource: ResourceModel | null;
 
     try {
@@ -66,7 +67,7 @@ export class ResourcesService {
     return resource;
   }
 
-  prepareFindAllOptions(
+  prepareGetListOptions(
     fields?: TGetListRequest<TGetResources>,
     isDefault?: boolean,
   ): FindOptions<ResourceModel> {
@@ -99,11 +100,11 @@ export class ResourcesService {
     return options;
   }
 
-  async findAllPublic(
+  async getListPublic(
     fields?: TGetListRequest<TGetResources>,
     isDefault?: boolean,
   ): Promise<IGetListResponse<ResourceModel>> {
-    const options = this.prepareFindAllOptions(fields, isDefault);
+    const options = this.prepareGetListOptions(fields, isDefault);
 
     try {
       if (fields?.reqCount) {

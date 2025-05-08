@@ -10,28 +10,30 @@ import {
   userCookies,
   wrongValue,
 } from './app.setup';
-import { IUser, TUpdateUser } from 'src/users/users.types';
 import {
+  ISignIn,
+  IQueryItems,
   IChangeEmail,
   IChangeEmailRequest,
   IExternalSession,
   IUpdatePassword,
-} from 'src/profile/profile.types';
-import { IQueryItems } from 'src/database/database.types';
-import { ISignIn } from 'src/auth/auth.types';
+  IUser,
+  TUpdateUser,
+  ROUTES,
+} from '@ap/shared';
 
 const runProfileTests = () => {
   describe('Profile', () => {
     describe('Get Profile', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .get('/profile')
+          .get(ROUTES.api.profile)
           .expect(HttpStatus.UNAUTHORIZED);
       });
 
       it('Correct (admin)', async () => {
         const getProfileResBody = await request(app.getHttpServer())
-          .get('/profile')
+          .get(ROUTES.api.profile)
           .set('Cookie', adminCookies)
           .expect(HttpStatus.OK)
           .then((res) => res.body as IUser);
@@ -44,7 +46,7 @@ const runProfileTests = () => {
 
       it('Correct (user)', async () => {
         const getProfileResBody = await request(app.getHttpServer())
-          .get('/profile')
+          .get(ROUTES.api.profile)
           .set('Cookie', userCookies)
           .expect(HttpStatus.OK)
           .then((res) => res.body as IUser);
@@ -59,17 +61,17 @@ const runProfileTests = () => {
     describe('Update Profile', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .patch('/profile')
+          .patch(ROUTES.api.profile)
           .expect(HttpStatus.UNAUTHORIZED);
 
         await request(app.getHttpServer())
-          .patch('/profile')
+          .patch(ROUTES.api.profile)
           .set('Cookie', adminCookies)
           .send({ password: admin.password })
           .expect(HttpStatus.NOT_FOUND);
 
         await request(app.getHttpServer())
-          .patch('/profile')
+          .patch(ROUTES.api.profile)
           .set('Cookie', adminCookies)
           .send({ name: wrongValue } satisfies TUpdateUser)
           .expect(HttpStatus.BAD_REQUEST);
@@ -77,7 +79,7 @@ const runProfileTests = () => {
 
       it('Correct (admin)', async () => {
         await request(app.getHttpServer())
-          .patch('/profile')
+          .patch(ROUTES.api.profile)
           .set('Cookie', adminCookies)
           .send({ name: admin.name } satisfies TUpdateUser)
           .expect(HttpStatus.OK);
@@ -85,7 +87,7 @@ const runProfileTests = () => {
 
       it('Correct (user)', async () => {
         await request(app.getHttpServer())
-          .patch('/profile')
+          .patch(ROUTES.api.profile)
           .set('Cookie', userCookies)
           .send({ name: user.name } satisfies TUpdateUser)
           .expect(HttpStatus.OK);
@@ -95,11 +97,11 @@ const runProfileTests = () => {
     describe('Update Password', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .patch('/profile/update-password')
+          .patch(ROUTES.api.updatePassword)
           .expect(HttpStatus.UNAUTHORIZED);
 
         await request(app.getHttpServer())
-          .patch('/profile/update-password')
+          .patch(ROUTES.api.updatePassword)
           .set('Cookie', adminCookies)
           .send({
             oldPassword: wrongValue,
@@ -108,7 +110,7 @@ const runProfileTests = () => {
           .expect(HttpStatus.CONFLICT);
 
         await request(app.getHttpServer())
-          .patch('/profile/update-password')
+          .patch(ROUTES.api.updatePassword)
           .set('Cookie', adminCookies)
           .send({
             oldPassword: admin.password,
@@ -119,7 +121,7 @@ const runProfileTests = () => {
 
       it('Correct (admin)', async () => {
         await request(app.getHttpServer())
-          .patch('/profile/update-password')
+          .patch(ROUTES.api.updatePassword)
           .set('Cookie', adminCookies)
           .send({
             oldPassword: admin.password,
@@ -132,7 +134,7 @@ const runProfileTests = () => {
 
       it('Correct (user)', async () => {
         await request(app.getHttpServer())
-          .patch('/profile/update-password')
+          .patch(ROUTES.api.updatePassword)
           .set('Cookie', userCookies)
           .send({
             oldPassword: user.password,
@@ -150,12 +152,12 @@ const runProfileTests = () => {
 
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .post('/profile/change-email')
+          .post(ROUTES.api.changeEmail)
           .send({ newEmail: newAdminEmail } satisfies IChangeEmailRequest)
           .expect(HttpStatus.UNAUTHORIZED);
 
         await request(app.getHttpServer())
-          .post('/profile/change-email')
+          .post(ROUTES.api.changeEmail)
           .set('Cookie', adminCookies)
           .send({ newEmail: wrongValue } satisfies IChangeEmailRequest)
           .expect(HttpStatus.BAD_REQUEST);
@@ -163,7 +165,7 @@ const runProfileTests = () => {
 
       it('Correct (admin)', async () => {
         await request(app.getHttpServer())
-          .post('/profile/change-email')
+          .post(ROUTES.api.changeEmail)
           .set('Cookie', adminCookies)
           .send({ newEmail: newAdminEmail } satisfies IChangeEmailRequest)
           .expect(HttpStatus.OK);
@@ -175,7 +177,7 @@ const runProfileTests = () => {
 
       it('Correct (user)', async () => {
         await request(app.getHttpServer())
-          .post('/profile/change-email')
+          .post(ROUTES.api.changeEmail)
           .set('Cookie', userCookies)
           .send({ newEmail: newUserEmail } satisfies IChangeEmailRequest)
           .expect(HttpStatus.OK);
@@ -189,20 +191,20 @@ const runProfileTests = () => {
     describe('Change Email', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .patch('/profile/change-email')
+          .patch(ROUTES.api.changeEmail)
           .set('Cookie', adminCookies)
           .expect(HttpStatus.BAD_REQUEST);
       });
 
       it('Correct (admin)', async () => {
         await request(app.getHttpServer())
-          .patch('/profile/change-email')
+          .patch(ROUTES.api.changeEmail)
           .set('Cookie', adminCookies)
           .send({ code: queue.at(-2)!.code } satisfies IChangeEmail)
           .expect(HttpStatus.OK);
 
         const getProfileResBody = await request(app.getHttpServer())
-          .get('/profile')
+          .get(ROUTES.api.profile)
           .set('Cookie', adminCookies)
           .expect(HttpStatus.OK)
           .then((res) => res.body as IUser);
@@ -212,13 +214,13 @@ const runProfileTests = () => {
 
       it('Correct (user)', async () => {
         await request(app.getHttpServer())
-          .patch('/profile/change-email')
+          .patch(ROUTES.api.changeEmail)
           .set('Cookie', userCookies)
           .send({ code: queue.at(-1)!.code } satisfies IChangeEmail)
           .expect(HttpStatus.OK);
 
         const getProfileResBody = await request(app.getHttpServer())
-          .get('/profile')
+          .get(ROUTES.api.profile)
           .set('Cookie', userCookies)
           .expect(HttpStatus.OK)
           .then((res) => res.body as IUser);
@@ -233,13 +235,13 @@ const runProfileTests = () => {
     describe('Get Sessions', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .get('/profile/sessions')
+          .get(ROUTES.api.sessions)
           .expect(HttpStatus.UNAUTHORIZED);
       });
 
       it('Correct (admin)', async () => {
         const getSessionsResBody = await request(app.getHttpServer())
-          .get('/profile/sessions')
+          .get(ROUTES.api.sessions)
           .set('Cookie', adminCookies)
           .expect(HttpStatus.OK)
           .then((res) => res.body as IExternalSession[]);
@@ -253,7 +255,7 @@ const runProfileTests = () => {
 
       it('Correct (user)', async () => {
         const getSessionsResBody = await request(app.getHttpServer())
-          .get('/profile/sessions')
+          .get(ROUTES.api.sessions)
           .set('Cookie', userCookies)
           .expect(HttpStatus.OK)
           .then((res) => res.body as IExternalSession[]);
@@ -269,11 +271,11 @@ const runProfileTests = () => {
     describe('Delete Sessions', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .delete('/profile/sessions')
+          .delete(ROUTES.api.sessions)
           .expect(HttpStatus.UNAUTHORIZED);
 
         await request(app.getHttpServer())
-          .delete('/profile/sessions')
+          .delete(ROUTES.api.sessions)
           .set('Cookie', adminCookies)
           .send({})
           .expect(HttpStatus.BAD_REQUEST);
@@ -281,7 +283,7 @@ const runProfileTests = () => {
 
       it('Correct (admin)', async () => {
         await request(app.getHttpServer())
-          .delete('/profile/sessions')
+          .delete(ROUTES.api.sessions)
           .set('Cookie', adminCookies)
           .send({ items: [adminSession.id] } satisfies IQueryItems<
             IExternalSession['id']
@@ -291,12 +293,12 @@ const runProfileTests = () => {
         adminCookies.shift();
 
         await request(app.getHttpServer())
-          .get('/profile')
+          .get(ROUTES.api.profile)
           .set('Cookie', adminCookies)
           .expect(HttpStatus.UNAUTHORIZED);
 
         const signInRes = await request(app.getHttpServer())
-          .post('/auth/sign-in')
+          .post(ROUTES.api.signIn)
           .send({
             username: admin.email,
             password: admin.password,
@@ -309,7 +311,7 @@ const runProfileTests = () => {
 
       it('Correct (user)', async () => {
         await request(app.getHttpServer())
-          .delete('/profile/sessions')
+          .delete(ROUTES.api.sessions)
           .set('Cookie', userCookies)
           .send({ items: [userSession.id] } satisfies IQueryItems<
             IExternalSession['id']
@@ -319,12 +321,12 @@ const runProfileTests = () => {
         userCookies.shift();
 
         await request(app.getHttpServer())
-          .get('/profile')
+          .get(ROUTES.api.profile)
           .set('Cookie', userCookies)
           .expect(HttpStatus.UNAUTHORIZED);
 
         const signInRes = await request(app.getHttpServer())
-          .post('/auth/sign-in')
+          .post(ROUTES.api.signIn)
           .send({
             username: user.email,
             password: user.password,

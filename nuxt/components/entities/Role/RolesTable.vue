@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { IRole } from '~/api/roles/types'
-
 defineProps<{
   count: number
   page?: number

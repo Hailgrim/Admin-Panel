@@ -22,14 +22,12 @@ import { Roles } from 'src/roles/roles.decorator';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { GetResourcesDto } from './dto/get-resources.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
-import d from 'locales/dictionary';
-import { IGetListResponse } from 'src/database/database.types';
 import { QueryItemsDto } from 'src/database/dto/query-items.dto';
-import { IResource } from './resources.types';
+import { IResource, IGetListResponse, d, ROUTES } from '@ap/shared';
 import { ExternalResourceDto } from './dto/external-resource.dto';
 import { ResourcesListDto } from './dto/resources-list.dto';
 
-const route = 'resources';
+const route = ROUTES.api.resources.substring(1);
 
 @ApiTags(d['en'].resources)
 @Controller(route)
@@ -49,24 +47,24 @@ export class ResourcesController {
     return this.resourceService.create(createResourceDto);
   }
 
-  @ApiOperation({ summary: d['en'].getEntities })
-  @ApiResponse({ status: HttpStatus.OK, type: ResourcesListDto })
-  @Roles({ path: route, action: ERights.Reading })
-  @UseGuards(JwtGuard, RolesGuard)
-  @Get()
-  findAll(
-    @Query() getResourcesDto: GetResourcesDto,
-  ): Promise<IGetListResponse<IResource>> {
-    return this.resourceService.findAllPublic(getResourcesDto);
-  }
-
   @ApiOperation({ summary: d['en'].getEntity })
   @ApiResponse({ status: HttpStatus.OK, type: ExternalResourceDto })
   @Roles({ path: route, action: ERights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get('/:id')
-  findOne(@Param('id') id: string): Promise<IResource> {
-    return this.resourceService.findOnePublic(id);
+  getOne(@Param('id') id: string): Promise<IResource> {
+    return this.resourceService.getOnePublic(id);
+  }
+
+  @ApiOperation({ summary: d['en'].getEntities })
+  @ApiResponse({ status: HttpStatus.OK, type: ResourcesListDto })
+  @Roles({ path: route, action: ERights.Reading })
+  @UseGuards(JwtGuard, RolesGuard)
+  @Get()
+  getList(
+    @Query() getResourcesDto: GetResourcesDto,
+  ): Promise<IGetListResponse<IResource>> {
+    return this.resourceService.getListPublic(getResourcesDto);
   }
 
   @ApiOperation({ summary: d['en'].updateEntity })

@@ -1,12 +1,4 @@
 import { useAPI } from '~/composables/useAPI/useAPI'
-import type {
-  IChangeEmail,
-  IChangeEmailRequest,
-  IExternalSession,
-  IUpdatePassword,
-} from './types'
-import type { IUser, TUpdateUser } from '../users/types'
-import type { IQueryItems } from '../types'
 
 class ProfileApi {
   getProfile = useAPI<IUser>(() => ({

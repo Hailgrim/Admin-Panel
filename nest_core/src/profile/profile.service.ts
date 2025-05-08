@@ -5,8 +5,7 @@ import { CacheService } from 'src/cache/cache.service';
 import { QueueService } from 'src/queue/queue.service';
 import { generateCode, verifyHash } from 'libs/utils';
 import { MAIL_CHANGE_EMAIL } from 'libs/config';
-import { TUpdateUser } from 'src/users/users.types';
-import { IExternalSession, ISession } from './profile.types';
+import { TUpdateUser, IExternalSession, ISession } from '@ap/shared';
 
 @Injectable()
 export class ProfileService {
@@ -26,7 +25,7 @@ export class ProfileService {
     oldPassword?: string,
   ): Promise<boolean> {
     const user = await this.usersService
-      .findOneProfile(userId)
+      .getOneProfile(userId)
       .then((result) => result.get({ plain: true }));
 
     if (

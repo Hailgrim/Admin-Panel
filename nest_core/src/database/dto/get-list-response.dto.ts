@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsArray, IsNumber, IsOptional } from 'class-validator';
 
-import { IGetListResponse } from '../database.types';
+import { IGetListResponse } from '@ap/shared';
 
 export class GetListResponseDto<T> implements IGetListResponse<T> {
   @ApiProperty({ type: Array })

@@ -1,7 +1,7 @@
 FROM node:lts-alpine AS base
 ARG HOME=/home/node
 WORKDIR ${HOME}
-COPY ./package*.json .
+COPY ./nest_mailer/package*.json .
 
 FROM base AS development
 ENV NODE_ENV=development
@@ -25,8 +25,9 @@ ARG NEST_MAILER_MAIL_PORT
 ARG NEST_MAILER_MAIL_USER
 ARG NEST_MAILER_MAIL_PASSWORD
 RUN apk add --no-cache libc6-compat
+COPY ./shared ./src/shared
 RUN npm ci
-COPY . .
+COPY ./nest_mailer .
 RUN npm run build
 RUN npm prune --production
 

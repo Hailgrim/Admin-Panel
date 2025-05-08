@@ -22,15 +22,13 @@ import { ERights } from 'libs/constants';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { GetUsersDto } from './dto/get-users.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import d from 'locales/dictionary';
-import { IGetListResponse } from 'src/database/database.types';
+import { d, IGetListResponse, IUser, ROUTES } from '@ap/shared';
 import { QueryItemsDto } from 'src/database/dto/query-items.dto';
-import { IUser } from './users.types';
 import { ExternalUserDto } from './dto/external-user.dto';
 import { UsersListDto } from './dto/users-list.dto';
 import { UsersRolesQueryItemsDto } from 'src/database/dto/users-roles-query-items.dto';
 
-const route = 'users';
+const route = ROUTES.api.users.substring(1);
 
 @ApiTags(d['en'].users)
 @Controller(route)
@@ -50,22 +48,22 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @ApiOperation({ summary: d['en'].getEntities })
-  @ApiResponse({ status: HttpStatus.OK, type: UsersListDto })
-  @Roles({ path: route, action: ERights.Reading })
-  @UseGuards(JwtGuard, RolesGuard)
-  @Get()
-  findAll(@Query() getUsersDto: GetUsersDto): Promise<IGetListResponse<IUser>> {
-    return this.usersService.findAllPublic(getUsersDto);
-  }
-
   @ApiOperation({ summary: d['en'].getEntity })
   @ApiResponse({ status: HttpStatus.OK, type: ExternalUserDto })
   @Roles({ path: route, action: ERights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get('/:id')
-  findOne(@Param('id') id: string): Promise<IUser> {
-    return this.usersService.findOnePublic(id);
+  getOne(@Param('id') id: string): Promise<IUser> {
+    return this.usersService.getOnePublic(id);
+  }
+
+  @ApiOperation({ summary: d['en'].getEntities })
+  @ApiResponse({ status: HttpStatus.OK, type: UsersListDto })
+  @Roles({ path: route, action: ERights.Reading })
+  @UseGuards(JwtGuard, RolesGuard)
+  @Get()
+  getList(@Query() getUsersDto: GetUsersDto): Promise<IGetListResponse<IUser>> {
+    return this.usersService.getListPublic(getUsersDto);
   }
 
   @ApiOperation({ summary: d['en'].updateEntity })

@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
-import { ISignIn } from '../auth.types';
+import { ISignIn } from '@ap/shared';
 
 export class SignInDto implements ISignIn {
   @ApiProperty({ type: String, example: 'example@mail.com' })

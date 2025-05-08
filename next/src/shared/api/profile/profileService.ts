@@ -1,13 +1,15 @@
-import { ROUTES } from '@/shared/lib/constants';
-import { IFetchRes, IQueryItems, IReqArgs } from '../types';
-import { IUser, TUpdateUser } from '../users/types';
+import { IFetchRes, IReqArgs } from '../types';
 import serverFetch from '../serverFetch';
 import {
   IChangeEmail,
   IChangeEmailRequest,
   IExternalSession,
+  IQueryItems,
   IUpdatePassword,
-} from './types';
+  IUser,
+  ROUTES,
+  TUpdateUser,
+} from '@ap/shared';
 
 class ProfileService {
   getProfileArgs(): IReqArgs {

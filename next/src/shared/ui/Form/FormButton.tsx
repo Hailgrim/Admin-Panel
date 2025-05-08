@@ -1,4 +1,4 @@
-import useT from '@/shared/hooks/useT';
+import useTranslate from '@/shared/hooks/useTranslate';
 import Button, { ButtonProps } from '@mui/material/Button';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -7,7 +7,7 @@ const FormButton: FC<ButtonProps & { loading?: boolean }> = ({
   loading,
   ...props
 }) => {
-  const t = useT();
+  const t = useTranslate();
 
   return (
     <Button

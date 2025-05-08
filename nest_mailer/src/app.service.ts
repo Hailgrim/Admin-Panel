@@ -17,8 +17,8 @@ import {
 } from 'libs/config';
 import { RegistrationDto } from './dto/registration.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
-import d from 'locales/dictionary';
 import { ChangeEmailDto } from './dto/change-email.dto';
+import { d } from '@ap/shared';
 
 @Injectable()
 export class AppService {

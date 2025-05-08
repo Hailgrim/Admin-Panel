@@ -7,14 +7,13 @@ import FormCheckbox from '~/components/shared/ui/Form/FormCheckbox.vue'
 import FormButton from '~/components/shared/ui/Form/FormButton.vue'
 import { useMainStore } from '~/store/main/main'
 import resourcesApi from '~/api/resources/resourcesApi'
-import type { TCreateResource } from '~/api/resources/types'
 
 const { t, locale } = useI18n()
 const newData = ref<TCreateResource>({
   name: '',
   path: '',
   description: '',
-  enabled: false
+  enabled: false,
 })
 const nameIsValid = (value: string) => value.length > 0
 const pathIsValid = (value: string) => value.length > 0
@@ -26,27 +25,23 @@ const rights = useRights(ROUTES.api.resources)
 async function submitHandler(event: SubmitEventPromise) {
   const results = await event
 
-  if (results.valid)
-    execute(newData.value)
+  if (results.valid) execute(newData.value)
 }
 
-watch(
-  error,
-  () => {
-    if (error.value)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(error.value, locale.value) })
-  },
-)
+watch(error, () => {
+  if (error.value)
+    mainStore.addAlert({
+      type: 'error',
+      text: getErrorText(error.value, locale.value),
+    })
+})
 
-watch(
-  data,
-  () => {
-    if (data.value) {
-      mainStore.addAlert({ type: 'success', text: t('success') })
-      router.push(ROUTES.ui.resource(data.value.id))
-    }
-  },
-)
+watch(data, () => {
+  if (data.value) {
+    mainStore.addAlert({ type: 'success', text: t('success') })
+    router.push(ROUTES.ui.resource(data.value.id))
+  }
+})
 </script>
 
 <template>

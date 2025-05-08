@@ -12,7 +12,8 @@ const mainStore = useMainStore()
 const { data, error, execute, pending } = profileApi.updatePassword()
 const oldPassword = ref('')
 const newPassword = ref('')
-const passwordIsValid = (value: string) => testString(PASSWORD_REGEX, value) || t('passwordValidation')
+const passwordIsValid = (value: string) =>
+  testString(PASSWORD_REGEX, value) || t('passwordValidation')
 const rights = useRights(ROUTES.api.profile)
 
 async function submitHandler(event: SubmitEventPromise) {
@@ -22,36 +23,48 @@ async function submitHandler(event: SubmitEventPromise) {
     if (oldPassword.value === newPassword.value)
       mainStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
     else
-      execute({ oldPassword: oldPassword.value, newPassword: newPassword.value })
+      execute({
+        oldPassword: oldPassword.value,
+        newPassword: newPassword.value,
+      })
   }
 }
 
-watch(
-  error,
-  () => {
-    if (error.value)
-      mainStore.addAlert({ type: 'error', text: makeErrorText(error.value, locale.value) })
-  },
-)
+watch(error, () => {
+  if (error.value)
+    mainStore.addAlert({
+      type: 'error',
+      text: getErrorText(error.value, locale.value),
+    })
+})
 
-watch(
-  data,
-  () => {
-    if (data.value)
-      mainStore.addAlert({ type: 'success', text: t('success') })
-  },
-)
+watch(data, () => {
+  if (data.value) mainStore.addAlert({ type: 'success', text: t('success') })
+})
 </script>
 
 <template>
   <Form @submit="submitHandler">
-    <FormPassword v-model="oldPassword" :label="$t('newPassword')" name="old-password" />
     <FormPassword
-v-model="newPassword" :hint="$t('passwordValidation')" :label="$t('oldPassword')" name="new-password"
-      required :rules="[passwordIsValid]" />
+      v-model="oldPassword"
+      :label="$t('newPassword')"
+      name="old-password"
+    />
+    <FormPassword
+      v-model="newPassword"
+      :hint="$t('passwordValidation')"
+      :label="$t('oldPassword')"
+      name="new-password"
+      required
+      :rules="[passwordIsValid]"
+    />
     <FormButton
-color="success" :disabled="!rights.updating" :loading="pending" prepand-icon="mdi-content-save"
-      type="submit">
+      color="success"
+      :disabled="!rights.updating"
+      :loading="pending"
+      prepand-icon="mdi-content-save"
+      type="submit"
+    >
       {{ $t('update') }}
     </FormButton>
   </Form>

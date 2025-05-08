@@ -4,8 +4,8 @@ import { notFound } from 'next/navigation';
 
 import resourcesService from '@/shared/api/resources/resourcesService';
 import ResourcePage from '@/views/Panel/Resources/ResourcePage';
-import { getT } from '@/shared/locales/utils';
 import { IAppPage } from '@/app/types';
+import { getT } from '@ap/shared';
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const t = getT();
@@ -20,7 +20,7 @@ const Page: FC<IAppPage> = async ({ params }) => {
   const id = params.id;
 
   if (id) {
-    const { data } = await resourcesService.findOne(id);
+    const { data } = await resourcesService.getOne(id);
     return <ResourcePage h1={t.resource} data={data} />;
   }
 

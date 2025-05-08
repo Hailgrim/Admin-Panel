@@ -18,22 +18,21 @@ import Divider from '@mui/material/Divider';
 import { styled } from '@mui/material/styles';
 
 import { useAppSelector } from '@/shared/store/hooks';
-import useT from '@/shared/hooks/useT';
-import { ROUTES } from '@/shared/lib/constants';
-import useLang from '@/shared/hooks/useLang';
+import useTranslate from '@/shared/hooks/useTranslate';
 import theme, { sideBarOpenedWidth, sideBarWidth } from '@/shared/lib/theme';
 import { useAppDispatch } from '@/shared/store/hooks';
 import authApi from '@/shared/api/auth/authApi';
 import { addAlert, setProfile } from '@/shared/store/main/main';
-import { makeErrorText } from '@/shared/lib/utils';
 import SideBar from '@/widgets/SideBar/SideBar';
 import Alerts from '@/widgets/Alerts/Alerts';
+import { getErrorText, ROUTES } from '@ap/shared';
+import useLanguageRef from '@/shared/hooks/useLanguageRef';
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const lang = useLang();
-  const t = useT();
+  const lRef = useLanguageRef();
+  const t = useTranslate();
   const [open, setOpen] = useState(true);
   const [signOut, { data, error, isLoading }] = authApi.useSignOutMutation();
   const profile = useAppSelector((store) => store.main.profile);
@@ -53,11 +52,11 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
       dispatch(
         addAlert({
           type: 'error',
-          text: makeErrorText(error, lang.current),
+          text: getErrorText(error, lRef.current),
         })
       );
     }
-  }, [dispatch, error, lang]);
+  }, [dispatch, error, lRef]);
 
   return (
     <ThemeProvider theme={theme}>

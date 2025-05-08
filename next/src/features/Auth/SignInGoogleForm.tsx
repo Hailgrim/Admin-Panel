@@ -3,19 +3,17 @@ import { Typography } from '@mui/material';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 import Form from '@/shared/ui/Form/Form';
-import useT from '@/shared/hooks/useT';
 import FormAlert from '@/shared/ui/Form/FormAlert';
-import useLang from '@/shared/hooks/useLang';
-import d from '@/shared/locales/dictionary';
-import { IWindowMessage } from './types';
-import { ROUTES } from '@/shared/lib/constants';
 import authApi from '@/shared/api/auth/authApi';
-import { makeErrorText } from '@/shared/lib/utils';
-import { IUser } from '@/shared/api/users/types';
+import { getErrorText, IUser, IWindowMessage, ROUTES } from '@ap/shared';
+import useTranslate from '@/shared/hooks/useTranslate';
+import useTranslateRef from '@/shared/hooks/useTranslateRef';
+import useLanguageRef from '@/shared/hooks/useLanguageRef';
 
 const SignInGoogleForm: FC = () => {
-  const t = useT();
-  const lang = useLang();
+  const lRef = useLanguageRef();
+  const tRef = useTranslateRef();
+  const t = useTranslate();
   const hash = useRef(
     new URLSearchParams(
       typeof location === 'object' ? location.hash.slice(1) : ''
@@ -28,22 +26,22 @@ const SignInGoogleForm: FC = () => {
     if (hash.current.has('access_token')) {
       signInGoogle({ googleAccessToken: hash.current.get('access_token')! });
     } else {
-      setErrorText(d[lang.current].error);
+      setErrorText(tRef.current.error);
     }
-  }, [signInGoogle, lang]);
+  }, [signInGoogle, tRef]);
 
   useEffect(() => {
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 410:
-          setErrorText(d[lang.current].userDeleted);
+          setErrorText(tRef.current.userDeleted);
           break;
         default:
-          setErrorText(makeErrorText(error, lang.current));
+          setErrorText(getErrorText(error, lRef.current));
           break;
       }
     }
-  }, [error, lang]);
+  }, [error, tRef, lRef]);
 
   useEffect(() => {
     if (!data) return;

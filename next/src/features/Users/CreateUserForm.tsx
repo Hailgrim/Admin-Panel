@@ -5,24 +5,23 @@ import { useRouter } from 'next/navigation';
 import Form from '@/shared/ui/Form/Form';
 import FormField from '@/shared/ui/Form/FormField';
 import FormButton from '@/shared/ui/Form/FormButton';
-import { ROUTES } from '@/shared/lib/constants';
-import useT from '@/shared/hooks/useT';
-import useLang from '@/shared/hooks/useLang';
-import d from '@/shared/locales/dictionary';
 import useRights from '@/shared/hooks/useRights';
 import FormCheckbox from '@/shared/ui/Form/FormCheckbox';
 import FormPassword from '@/shared/ui/Form/FormPassword';
 import usersApi from '@/shared/api/users/usersApi';
 import { useAppDispatch } from '@/shared/store/hooks';
 import { addAlert } from '@/shared/store/main/main';
-import { makeErrorText } from '@/shared/lib/utils';
-import { TCreateUser } from '@/shared/api/users/types';
+import { d, getErrorText, ROUTES, TCreateUser } from '@ap/shared';
+import useTranslate from '@/shared/hooks/useTranslate';
+import useLanguageRef from '@/shared/hooks/useLanguageRef';
+import useTranslateRef from '@/shared/hooks/useTranslateRef';
 
 const CreateUserForm: FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const lang = useLang();
-  const t = useT();
+  const tRef = useTranslateRef();
+  const lRef = useLanguageRef();
+  const t = useTranslate();
   const [create, createReq] = usersApi.useCreateMutation();
   const [data, setData] = useState<TCreateUser>({
     email: '',
@@ -39,21 +38,21 @@ const CreateUserForm: FC = () => {
 
   useEffect(() => {
     if (createReq.data) {
-      dispatch(addAlert({ type: 'success', text: d[lang.current].success }));
+      dispatch(addAlert({ type: 'success', text: tRef.current.success }));
       router.push(ROUTES.ui.user(createReq.data.id));
     }
-  }, [createReq.data, dispatch, router, lang]);
+  }, [createReq.data, dispatch, router, tRef]);
 
   useEffect(() => {
     if (createReq.error) {
       dispatch(
         addAlert({
           type: 'error',
-          text: makeErrorText(createReq.error, lang.current),
+          text: getErrorText(createReq.error, lRef.current),
         })
       );
     }
-  }, [createReq.error, dispatch, lang]);
+  }, [createReq.error, dispatch, lRef]);
 
   return (
     <Form onSubmit={submitHandler}>

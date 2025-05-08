@@ -1,15 +1,16 @@
-import { ROUTES } from '@/shared/lib/constants';
-import { IRole, TCreateRole, TGetRoles, TUpdateRole } from './types';
+import { IFetchRes, IReqArgs, IUpdateReq } from '../types';
+import serverFetch from '../serverFetch';
 import {
-  IFetchRes,
   IGetListResponse,
-  TGetListRequest,
-  IReqArgs,
-  IUpdateReq,
   IQueryItems,
   IRights,
-} from '../types';
-import serverFetch from '../serverFetch';
+  IRole,
+  ROUTES,
+  TCreateRole,
+  TGetListRequest,
+  TGetRoles,
+  TUpdateRole,
+} from '@ap/shared';
 
 class RolesService {
   createArgs(payload: TCreateRole): IReqArgs {
@@ -21,7 +22,19 @@ class RolesService {
     };
   }
 
-  findAllArgs(payload?: TGetListRequest<TGetRoles>): IReqArgs {
+  getOneArgs(payload: IRole['id']): IReqArgs {
+    return {
+      url: ROUTES.api.role(payload),
+      method: 'GET',
+      credentials: 'include',
+    };
+  }
+
+  async getOne(payload: IRole['id']): Promise<IFetchRes<IRole>> {
+    return serverFetch<IRole>(this.getOneArgs(payload));
+  }
+
+  getListArgs(payload?: TGetListRequest<TGetRoles>): IReqArgs {
     return {
       url: ROUTES.api.roles,
       method: 'GET',
@@ -30,22 +43,10 @@ class RolesService {
     };
   }
 
-  async findAll(
+  async getList(
     payload?: TGetListRequest<TGetRoles>
   ): Promise<IFetchRes<IGetListResponse<IRole>>> {
-    return serverFetch<IGetListResponse<IRole>>(this.findAllArgs(payload));
-  }
-
-  findOneArgs(payload: IRole['id']): IReqArgs {
-    return {
-      url: ROUTES.api.role(payload),
-      method: 'GET',
-      credentials: 'include',
-    };
-  }
-
-  async findOne(payload: IRole['id']): Promise<IFetchRes<IRole>> {
-    return serverFetch<IRole>(this.findOneArgs(payload));
+    return serverFetch<IGetListResponse<IRole>>(this.getListArgs(payload));
   }
 
   updateArgs(payload: IUpdateReq<TUpdateRole, IRole['id']>): IReqArgs {

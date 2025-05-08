@@ -8,25 +8,25 @@ import FormCheckbox from '@/shared/ui/Form/FormCheckbox';
 import FormPassword from '@/shared/ui/Form/FormPassword';
 import FormButton from '@/shared/ui/Form/FormButton';
 import FormLink from '@/shared/ui/Form/FormLink';
-import { ROUTES } from '@/shared/lib/constants';
-import useT from '@/shared/hooks/useT';
 import FormAlert from '@/shared/ui/Form/FormAlert';
-import useLang from '@/shared/hooks/useLang';
-import d from '@/shared/locales/dictionary';
 import CustomModal from '@/shared/ui/CustomModal/CustomModal';
 import VerifyUserForm from './VerifyUserForm';
 import { useAppDispatch } from '@/shared/store/hooks';
 import authApi from '@/shared/api/auth/authApi';
-import { makeErrorText } from '@/shared/lib/utils';
 import { setProfile } from '@/shared/store/main/main';
 import SignInGoogleLink from './SignInGoogleLink';
+import { getErrorText, ROUTES } from '@ap/shared';
+import useLanguageRef from '@/shared/hooks/useLanguageRef';
+import useTranslateRef from '@/shared/hooks/useTranslateRef';
+import useTranslate from '@/shared/hooks/useTranslate';
 
 const SignInForm: FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
-  const t = useT();
-  const lang = useLang();
+  const lRef = useLanguageRef();
+  const tRef = useTranslateRef();
+  const t = useTranslate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -54,20 +54,20 @@ const SignInForm: FC = () => {
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 410:
-          setErrorText(d[lang.current].userDeleted);
+          setErrorText(tRef.current.userDeleted);
           break;
         case 403:
           setVerifyModal(true);
           break;
         case 401:
-          setErrorText(d[lang.current].wrongEmailOrPassword);
+          setErrorText(tRef.current.wrongEmailOrPassword);
           break;
         default:
-          setErrorText(makeErrorText(error, lang.current));
+          setErrorText(getErrorText(error, lRef.current));
           break;
       }
     }
-  }, [error, lang]);
+  }, [error, tRef, lRef]);
 
   useEffect(() => {
     if (data) {
@@ -121,7 +121,7 @@ const SignInForm: FC = () => {
         <FormLink href={ROUTES.ui.signUp} mui={{ align: 'center' }}>
           {t.signUpText}
         </FormLink>
-        <FormLink href={ROUTES.ui.forget} mui={{ align: 'center' }}>
+        <FormLink href={ROUTES.ui.forgotPassword} mui={{ align: 'center' }}>
           {t.forgotPasswordText}
         </FormLink>
         <SignInGoogleLink />

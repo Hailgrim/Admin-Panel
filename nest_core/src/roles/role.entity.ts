@@ -11,7 +11,7 @@ import { UserModel } from '../users/user.entity';
 import { UsersRolesModel } from '../database/users-roles.entity';
 import { ResourceModel } from '../resources/resource.entity';
 import { PUBLIC, WITH_RESOURCES } from 'libs/constants';
-import { TCreateRole, IRole } from './roles.types';
+import { TCreateRole, IRole } from '@ap/shared';
 import { RightsModel } from '../database/rights.entity';
 
 @Scopes(() => ({

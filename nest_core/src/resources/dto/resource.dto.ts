@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { IResource } from '../resources.types';
+import { IResource } from '@ap/shared';
 import { RightsDto } from 'src/database/dto/rights.dto';
 
 export class ResourceDto implements IResource {

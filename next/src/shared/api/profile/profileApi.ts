@@ -2,14 +2,15 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import profileService from '@/shared/api/profile/profileService';
 import baseQueryWithReprofile from '../baseQueryWithReauth';
-import { IUser, TUpdateUser } from '../users/types';
 import {
   IChangeEmail,
   IChangeEmailRequest,
   IExternalSession,
+  IQueryItems,
   IUpdatePassword,
-} from './types';
-import { IQueryItems } from '../types';
+  IUser,
+  TUpdateUser,
+} from '@ap/shared';
 
 const profileApi = createApi({
   reducerPath: 'profile',

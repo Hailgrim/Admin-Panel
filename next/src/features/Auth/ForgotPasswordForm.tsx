@@ -5,19 +5,19 @@ import Form from '@/shared/ui/Form/Form';
 import FormField from '@/shared/ui/Form/FormField';
 import FormButton from '@/shared/ui/Form/FormButton';
 import FormLink from '@/shared/ui/Form/FormLink';
-import { ROUTES } from '@/shared/lib/constants';
-import useT from '@/shared/hooks/useT';
 import FormAlert from '@/shared/ui/Form/FormAlert';
-import useLang from '@/shared/hooks/useLang';
-import d from '@/shared/locales/dictionary';
 import CustomModal from '@/shared/ui/CustomModal/CustomModal';
 import ResetPasswordForm from './ResetPasswordForm';
 import authApi from '@/shared/api/auth/authApi';
-import { makeErrorText } from '@/shared/lib/utils';
+import { getErrorText, ROUTES } from '@ap/shared';
+import useTranslate from '@/shared/hooks/useTranslate';
+import useTranslateRef from '@/shared/hooks/useTranslateRef';
+import useLanguageRef from '@/shared/hooks/useLanguageRef';
 
 const ForgotPasswordForm: FC = () => {
-  const t = useT();
-  const lang = useLang();
+  const lRef = useLanguageRef();
+  const tRef = useTranslateRef();
+  const t = useTranslate();
   const [email, setEmail] = useState('');
   const [resetModal, setResetModal] = useState(false);
   const [errorText, setErrorText] = useState<string | null>(null);
@@ -42,14 +42,14 @@ const ForgotPasswordForm: FC = () => {
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 404:
-          setErrorText(d[lang.current].wrongEmail);
+          setErrorText(tRef.current.wrongEmail);
           break;
         default:
-          setErrorText(makeErrorText(error, lang.current));
+          setErrorText(getErrorText(error, lRef.current));
           break;
       }
     }
-  }, [error, lang]);
+  }, [error, tRef, lRef]);
 
   useEffect(() => {
     if (data) {

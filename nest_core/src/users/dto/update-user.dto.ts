@@ -1,6 +1,6 @@
 import { PartialType, PickType } from '@nestjs/swagger';
 
-import { TUpdateUser } from '../users.types';
+import { TUpdateUser } from '@ap/shared';
 import { UserDto } from './user.dto';
 
 export class UpdateUserDto

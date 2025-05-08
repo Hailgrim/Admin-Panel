@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import type { IMenuItem } from './types'
-
-const { href } = defineProps<IMenuItem>()
+const { href } = defineProps<{
+  title?: string;
+  href?: string;
+  icon?: string;
+  childs?: IMenuItem<string>[];
+}>()
 const route = useRoute()
 const router = useRouter()
 const selected = ref(false)

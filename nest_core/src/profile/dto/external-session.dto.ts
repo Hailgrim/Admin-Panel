@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator';
 
-import { IExternalSession } from '../profile.types';
+import { IExternalSession } from '@ap/shared';
 
 export class ExternalSessionDto implements IExternalSession {
   @ApiProperty({

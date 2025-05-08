@@ -1,7 +1,7 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { FindOptions, Op, Sequelize } from 'sequelize';
 
-import { TGetListRequest } from './database.types';
+import { TGetListRequest } from '@ap/shared';
 import { SEQUELIZE } from 'libs/constants';
 
 @Injectable()

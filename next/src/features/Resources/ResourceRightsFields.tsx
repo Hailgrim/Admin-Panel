@@ -6,10 +6,9 @@ import {
   FormLabel,
 } from '@mui/material';
 
-import useT from '@/shared/hooks/useT';
+import useTranslate from '@/shared/hooks/useTranslate';
 import FormCheckbox from '@/shared/ui/Form/FormCheckbox';
-import { IResource } from '@/shared/api/resources/types';
-import { IRights } from '@/shared/api/types';
+import { IResource, IRights } from '@ap/shared';
 
 const ResourceRightsFields: React.FC<{
   roleId: string;
@@ -17,7 +16,7 @@ const ResourceRightsFields: React.FC<{
   rights?: IRights;
   setRights: (newRights: IRights) => void;
 }> = ({ roleId, resource, rights, setRights }) => {
-  const t = useT();
+  const t = useTranslate();
   const newRights: IRights = rights || {
     roleId,
     resourceId: resource.id,

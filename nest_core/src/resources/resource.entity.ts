@@ -9,7 +9,7 @@ import {
 
 import { RoleModel } from '../roles/role.entity';
 import { PUBLIC } from 'libs/constants';
-import { TCreateResource, IResource } from './resources.types';
+import { TCreateResource, IResource } from '@ap/shared';
 import { RightsModel } from 'src/database/rights.entity';
 
 @Scopes(() => ({

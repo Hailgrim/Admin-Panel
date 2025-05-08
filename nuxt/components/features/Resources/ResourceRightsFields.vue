@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { IResource } from '~/api/resources/types'
-import type { IRights } from '~/api/types'
 import FormCheckbox from '~/components/shared/ui/Form/FormCheckbox.vue'
 
 const { roleId, resource, rights } = defineProps<{ roleId: string, resource: IResource, rights?: IRights }>()

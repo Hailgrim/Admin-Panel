@@ -4,11 +4,11 @@ import { FC } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import PanelLayout from '../../PanelLayout';
-import { IResource } from '@/shared/api/resources/types';
 import { IPage } from '@/views/types';
 import ResourcesList from '@/features/Resources/ResourcesList';
 import { IList } from '@/shared/lib/types';
 import { setPage, setQuantity } from '@/views/utils';
+import { IResource } from '@ap/shared';
 
 const ResourcesPage: FC<IPage<IList<IResource>>> = ({ h1, data }) => {
   const searchParams = useSearchParams();

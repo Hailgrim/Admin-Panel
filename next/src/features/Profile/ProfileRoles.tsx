@@ -2,10 +2,10 @@ import { FC } from 'react';
 import Typography from '@mui/material/Typography';
 
 import { useAppSelector } from '@/shared/store/hooks';
-import useT from '@/shared/hooks/useT';
+import useTranslate from '@/shared/hooks/useTranslate';
 
 const ProfileRoles: FC = () => {
-  const t = useT();
+  const t = useTranslate();
   const profile = useAppSelector((store) => store.main.profile);
 
   return (

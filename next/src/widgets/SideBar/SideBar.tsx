@@ -9,7 +9,7 @@ import Divider from '@mui/material/Divider';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { styled } from '@mui/material/styles';
 
-import useT from '@/shared/hooks/useT';
+import useTranslate from '@/shared/hooks/useTranslate';
 import SideBarMenu from './SideBarMenu';
 import theme, { sideBarOpenedWidth, sideBarWidth } from '@/shared/lib/theme';
 
@@ -17,7 +17,7 @@ const SideBar: FC<{ open?: boolean; setOpen?: () => void }> = ({
   open,
   setOpen,
 }) => {
-  const t = useT();
+  const t = useTranslate();
 
   return (
     <DrawerStyled openStyled={open} openMdStyled={!open}>

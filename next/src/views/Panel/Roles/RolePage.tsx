@@ -5,11 +5,10 @@ import Typography from '@mui/material/Typography';
 
 import PanelLayout from '../../PanelLayout';
 import UpdateRoleForm from '@/features/Roles/UpdateRoleForm';
-import useT from '@/shared/hooks/useT';
+import useTranslate from '@/shared/hooks/useTranslate';
 import UpdateRoleResourcesForm from '@/features/Roles/UpdateRoleResourcesForm';
-import { IRole } from '@/shared/api/roles/types';
 import { IPage } from '@/views/types';
-import { IResource } from '@/shared/api/resources/types';
+import { IResource, IRole } from '@ap/shared';
 
 const RolePage: FC<
   IPage<{
@@ -17,7 +16,7 @@ const RolePage: FC<
     resources?: IResource[] | null;
   }>
 > = ({ h1, data }) => {
-  const t = useT();
+  const t = useTranslate();
 
   return (
     <PanelLayout h1={h1}>

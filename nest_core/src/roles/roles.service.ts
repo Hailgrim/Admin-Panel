@@ -19,9 +19,11 @@ import {
   IGetListResponse,
   IRights,
   TGetListRequest,
-} from 'src/database/database.types';
+  TCreateRole,
+  TGetRoles,
+  TUpdateRole,
+} from '@ap/shared';
 import { DatabaseService } from 'src/database/database.service';
-import { TCreateRole, TGetRoles, TUpdateRole } from './roles.types';
 
 @Injectable()
 export class RolesService {
@@ -68,7 +70,7 @@ export class RolesService {
     return role;
   }
 
-  async findOnePublic(id: string): Promise<RoleModel> {
+  async getOnePublic(id: string): Promise<RoleModel> {
     let role: RoleModel | null;
 
     try {
@@ -87,7 +89,7 @@ export class RolesService {
     return role;
   }
 
-  prepareFindAllOptions(
+  prepareGetListOptions(
     fields?: TGetListRequest<TGetRoles>,
     isAdmin?: boolean,
   ): FindOptions<RoleModel> {
@@ -119,11 +121,11 @@ export class RolesService {
     return options;
   }
 
-  async findAllPublic(
+  async getListPublic(
     fields?: TGetListRequest<TGetRoles>,
     isAdmin?: boolean,
   ): Promise<IGetListResponse<RoleModel>> {
-    const options = this.prepareFindAllOptions(fields, isAdmin);
+    const options = this.prepareGetListOptions(fields, isAdmin);
 
     if (isAdmin !== undefined) {
       options.where = { ...options.where, admin: isAdmin };

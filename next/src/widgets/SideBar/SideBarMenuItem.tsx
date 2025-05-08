@@ -1,4 +1,4 @@
-import { FC, MouseEventHandler, useMemo, useState } from 'react';
+import { FC, MouseEventHandler, ReactNode, useMemo, useState } from 'react';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -9,10 +9,14 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { IMenuItem } from './types';
-import { checkActiveLink } from './utils';
+import { checkActiveLink, IMenuItem } from '@ap/shared';
 
-const SideBarMenuItem: FC<IMenuItem> = ({ href, text, icon, childs }) => {
+const SideBarMenuItem: FC<IMenuItem<ReactNode>> = ({
+  href,
+  title,
+  icon,
+  childs,
+}) => {
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(() =>
@@ -54,7 +58,7 @@ const SideBarMenuItem: FC<IMenuItem> = ({ href, text, icon, childs }) => {
           onClick={linkHandler}
         >
           {icon && <ListItemIcon>{icon}</ListItemIcon>}
-          <ListItemText primary={text} />
+          <ListItemText primary={title} />
           {childs && (open ? <ExpandLess /> : <ExpandMore />)}
         </ListItemButton>
       </ListItem>
@@ -63,7 +67,7 @@ const SideBarMenuItem: FC<IMenuItem> = ({ href, text, icon, childs }) => {
           <Divider />
           {childs.map((item, index) => (
             <SideBarMenuItem
-              key={`sbmi:${index}:${item.text}:${item.href || ''}`}
+              key={`sbmi:${index}:${item.title}:${item.href}`}
               {...item}
             />
           ))}

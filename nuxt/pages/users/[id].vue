@@ -14,7 +14,7 @@ definePageMeta({
 
 const route = useRoute()
 const id = String(route.params.id)
-const { data: ufoData, execute: ufoExecute } = usersApi.findOne(ROUTES.api.user(id))
+const { data: ufoData, execute: ufoExecute } = usersApi.getOne(ROUTES.api.user(id))
 await ufoExecute(id)
 
 if (ufoData.value === null) {
@@ -23,7 +23,7 @@ if (ufoData.value === null) {
   })
 }
 
-const { data: rfaData, execute: rfaExecute } = rolesApi.findAll()
+const { data: rfaData, execute: rfaExecute } = rolesApi.getList()
 await rfaExecute(undefined)
 </script>
 

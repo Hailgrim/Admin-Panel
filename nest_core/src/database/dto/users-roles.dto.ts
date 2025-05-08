@@ -1,9 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsUUID } from 'class-validator';
 
-import { IUsersRoles } from '../database.types';
-import { IUser } from 'src/users/users.types';
-import { IRole } from 'src/roles/roles.types';
+import { IRole, IUser, IUsersRoles } from '@ap/shared';
 
 export class UsersRolesDto implements IUsersRoles {
   @ApiProperty({

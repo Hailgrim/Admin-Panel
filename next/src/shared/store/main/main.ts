@@ -1,14 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { LangList } from '@/shared/locales/types';
-import { IAlert } from './types';
-import { IUser } from '@/shared/api/users/types';
+import { IAlert, IUser, TLangList } from '@ap/shared';
 
 export const mainSliceName = 'main';
 
 const initialState = {
   profile: null as IUser | null,
-  language: 'en' as LangList,
+  language: 'en' as TLangList,
   alerts: [] as IAlert[],
   alertCounter: 0,
 };
@@ -21,7 +19,7 @@ export const mainSlice = createSlice({
       state.profile = action.payload;
     },
 
-    setUserLang: (state, action: PayloadAction<LangList>) => {
+    setUserLang: (state, action: PayloadAction<TLangList>) => {
       state.language = action.payload;
     },
 

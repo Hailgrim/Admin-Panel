@@ -1,9 +1,8 @@
 import { NextMiddleware, NextResponse } from 'next/server';
 import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 
-import { ROUTES } from './shared/lib/constants';
-import { IUser } from './shared/api/users/types';
 import profileService from './shared/api/profile/profileService';
+import { IUser, ROUTES } from '@ap/shared';
 
 export const config = {
   matcher: [
@@ -47,7 +46,7 @@ export const middleware: NextMiddleware = async (request) => {
     request.nextUrl.pathname === ROUTES.ui.signIn ||
     request.nextUrl.pathname === ROUTES.ui.signInGoogle ||
     request.nextUrl.pathname === ROUTES.ui.signUp ||
-    request.nextUrl.pathname === ROUTES.ui.forget;
+    request.nextUrl.pathname === ROUTES.ui.forgotPassword;
 
   if (accessToken || refreshToken) {
     const { data, newCookies } = await profileService.getProfile();

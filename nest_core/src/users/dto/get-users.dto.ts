@@ -5,9 +5,8 @@ import {
   PickType,
 } from '@nestjs/swagger';
 
-import { TGetUsers } from '../users.types';
 import { GetListRequestDto } from 'src/database/dto/get-list-request.dto';
-import { TGetListRequest } from 'src/database/database.types';
+import { TGetListRequest, TGetUsers } from '@ap/shared';
 import { UserDto } from './user.dto';
 import { IsOptional, IsString } from 'class-validator';
 

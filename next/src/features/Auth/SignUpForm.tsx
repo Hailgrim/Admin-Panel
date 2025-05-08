@@ -7,25 +7,27 @@ import FormField from '@/shared/ui/Form/FormField';
 import FormPassword from '@/shared/ui/Form/FormPassword';
 import FormButton from '@/shared/ui/Form/FormButton';
 import FormLink from '@/shared/ui/Form/FormLink';
+import FormAlert from '@/shared/ui/Form/FormAlert';
+import CustomModal from '@/shared/ui/CustomModal/CustomModal';
+import SignUpSuccessForm from './SignUpSuccessForm';
+import authApi from '@/shared/api/auth/authApi';
 import {
   EMAIL_REGEX,
+  getErrorText,
   NAME_REGEX,
   PASSWORD_REGEX,
   ROUTES,
-} from '@/shared/lib/constants';
-import useT from '@/shared/hooks/useT';
-import FormAlert from '@/shared/ui/Form/FormAlert';
-import useLang from '@/shared/hooks/useLang';
-import d from '@/shared/locales/dictionary';
-import CustomModal from '@/shared/ui/CustomModal/CustomModal';
-import SignUpSuccessForm from './SignUpSuccessForm';
-import { makeErrorText, testString } from '@/shared/lib/utils';
-import authApi from '@/shared/api/auth/authApi';
+  testString,
+} from '@ap/shared';
+import useTranslate from '@/shared/hooks/useTranslate';
+import useTranslateRef from '@/shared/hooks/useTranslateRef';
+import useLanguageRef from '@/shared/hooks/useLanguageRef';
 
 const SignUpForm: FC = () => {
   const router = useRouter();
-  const t = useT();
-  const lang = useLang();
+  const lRef = useLanguageRef();
+  const tRef = useTranslateRef();
+  const t = useTranslate();
   const [name, setName] = useState('');
   const nameIsValid = useMemo(() => testString(NAME_REGEX, name), [name]);
   const [email, setEmail] = useState('');
@@ -66,14 +68,14 @@ const SignUpForm: FC = () => {
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 409:
-          setErrorText(d[lang.current].userAlreadyExist);
+          setErrorText(tRef.current.userAlreadyExist);
           break;
         default:
-          setErrorText(makeErrorText(error, lang.current));
+          setErrorText(getErrorText(error, lRef.current));
           break;
       }
     }
-  }, [error, lang]);
+  }, [error, tRef, lRef]);
 
   useEffect(() => {
     if (data) {
@@ -123,7 +125,7 @@ const SignUpForm: FC = () => {
         <FormLink href={ROUTES.ui.signIn} mui={{ align: 'center' }}>
           {t.signInText}
         </FormLink>
-        <FormLink href={ROUTES.ui.forget} mui={{ align: 'center' }}>
+        <FormLink href={ROUTES.ui.forgotPassword} mui={{ align: 'center' }}>
           {t.forgotPasswordText}
         </FormLink>
       </Form>

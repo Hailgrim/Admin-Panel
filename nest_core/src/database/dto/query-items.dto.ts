@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsNumber, IsString, ValidateIf } from 'class-validator';
 
-import { IQueryItems } from '../database.types';
+import { IQueryItems } from '@ap/shared';
 
 export class QueryItemsDto<T> implements IQueryItems<T> {
   @ApiProperty({

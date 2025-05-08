@@ -31,58 +31,89 @@ async function submitHandler(event?: SubmitEventPromise) {
   const results = await event
   if (results?.valid === false) return
 
-  execute({ username: email.value, password: password.value, rememberMe: rememberMe.value })
+  execute({
+    username: email.value,
+    password: password.value,
+    rememberMe: rememberMe.value,
+  })
 }
 
-watch(
-  error,
-  () => {
-    if (error.value)
-      switch (error.value?.status) {
-        case 410:
-          errorText.value = t('userDeleted')
-          break
-        case 403:
-          errorText.value = null
-          verifyModal.value = true
-          break
-        case 401:
-          errorText.value = t('wrongEmailOrPassword')
-          break
-        case undefined:
-          errorText.value = null
-          break
-        default:
-          errorText.value = makeErrorText(error.value, locale.value)
-      }
-  },
-)
-
-watch(
-  data,
-  () => {
-    if (data.value) {
-      mainStore.setProfile(data.value)
-      router.push(route.query.return ? decodeURIComponent(String(route.query.return)) : ROUTES.ui.home)
+watch(error, () => {
+  if (error.value)
+    switch (error.value?.status) {
+      case 410:
+        errorText.value = t('userDeleted')
+        break
+      case 403:
+        errorText.value = null
+        verifyModal.value = true
+        break
+      case 401:
+        errorText.value = t('wrongEmailOrPassword')
+        break
+      case undefined:
+        errorText.value = null
+        break
+      default:
+        errorText.value = getErrorText(error.value, locale.value)
     }
-  },
-)
+})
+
+watch(data, () => {
+  if (data.value) {
+    mainStore.setProfile(data.value)
+    router.push(
+      route.query.return
+        ? decodeURIComponent(String(route.query.return))
+        : ROUTES.ui.home
+    )
+  }
+})
 </script>
 
 <template>
   <Form @submit="submitHandler">
     <FormAlert v-if="errorText" :text="errorText" type="error" />
-    <FormField v-model="email" :label="$t('email')" name="email" required :rules="[emailIsValid]" type="email" />
-    <FormPassword v-model="password" :label="$t('password')" name="password" required :rules="[passwordIsValid]" />
-    <FormCheckbox v-model="rememberMe" :label="$t('rememberMe')" name="rememberMe" />
-    <FormButton block color="info" :loading="pending || Boolean(data)" type="submit">
+    <FormField
+      v-model="email"
+      :label="$t('email')"
+      name="email"
+      required
+      :rules="[emailIsValid]"
+      type="email"
+    />
+    <FormPassword
+      v-model="password"
+      :label="$t('password')"
+      name="password"
+      required
+      :rules="[passwordIsValid]"
+    />
+    <FormCheckbox
+      v-model="rememberMe"
+      :label="$t('rememberMe')"
+      name="rememberMe"
+    />
+    <FormButton
+      block
+      color="info"
+      :loading="pending || Boolean(data)"
+      type="submit"
+    >
       {{ $t('signIn') }}
     </FormButton>
     <FormLink :href="ROUTES.ui.signUp" :text="$t('signUpText')" />
-    <FormLink :href="ROUTES.ui.forget" :text="$t('forgotPasswordText')" />
+    <FormLink
+      :href="ROUTES.ui.forgotPassword"
+      :text="$t('forgotPasswordText')"
+    />
     <SignInGoogleLink />
   </Form>
   <CustomModal v-model="verifyModal" :title="$t('verification')">
-    <VerifyUserForm :email="email" @close="verifyModal = false" @success="submitHandler" />
+    <VerifyUserForm
+      :email="email"
+      @close="verifyModal = false"
+      @success="submitHandler"
+    />
   </CustomModal>
 </template>

@@ -6,9 +6,9 @@ import { useSearchParams } from 'next/navigation';
 import PanelLayout from '../../PanelLayout';
 import { IPage } from '@/views/types';
 import { IList } from '@/shared/lib/types';
-import { IUser } from '@/shared/api/users/types';
 import UsersList from '@/features/Users/UsersList';
 import { setPage, setQuantity } from '@/views/utils';
+import { IUser } from '@ap/shared';
 
 const UsersPage: FC<IPage<IList<IUser>>> = ({ h1, data }) => {
   const searchParams = useSearchParams();

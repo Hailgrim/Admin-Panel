@@ -11,7 +11,8 @@ import { UsersRolesModel } from 'src/database/users-roles.entity';
 import { RoleModel } from 'src/roles/role.entity';
 import { ResourceModel } from 'src/resources/resource.entity';
 import { PUBLIC, WITH_ROLES } from 'libs/constants';
-import { TCreateGoogleUser, TCreateUser, IUser } from './users.types';
+import { TCreateGoogleUser, TCreateUser } from '@ap/shared';
+import { IUser } from '@ap/shared';
 
 @Scopes(() => ({
   [PUBLIC]: {

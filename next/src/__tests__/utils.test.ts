@@ -1,46 +1,44 @@
 import {
+  checkActiveLink,
   EMAIL_REGEX,
+  getErrorText,
+  getT,
+  getUpdatedValues,
+  IMenuItem,
   NAME_REGEX,
   PASSWORD_REGEX,
-} from '@/shared/lib/constants';
-import {
-  getUpdatedValues,
-  makeErrorText,
   testString,
-} from '@/shared/lib/utils';
-import d from '@/shared/locales/dictionary';
-import { LangList } from '@/shared/locales/types';
-import { IMenuItem } from '@/widgets/SideBar/types';
-import { checkActiveLink } from '@/widgets/SideBar/utils';
+  TLangList,
+} from '@ap/shared';
 
 describe('checkActiveLink function', () => {
   test('checkActiveLink should return true if link found in the navigation tree', () => {
     const tree1: IMenuItem = {
-      text: 'link1',
+      title: 'link1',
       href: '/test',
-      childs: [{ text: 'link2', href: '/bad' }],
+      childs: [{ title: 'link2', href: '/bad' }],
     };
     expect(checkActiveLink('/test?some=param', tree1)).toBe(true);
     expect(checkActiveLink('/', tree1)).toBe(false);
 
     const tree2: IMenuItem = {
-      text: 'link1',
+      title: 'link1',
       href: '/bad',
-      childs: [{ text: 'link2', href: '/test' }],
+      childs: [{ title: 'link2', href: '/test' }],
     };
     expect(checkActiveLink('/test/item', tree2)).toBe(true);
 
     const tree4: IMenuItem = {
-      text: 'link1',
+      title: 'link1',
       href: '/bad',
-      childs: [{ text: 'link2', href: '/bad/item' }],
+      childs: [{ title: 'link2', href: '/bad/item' }],
     };
     expect(checkActiveLink('/test', tree4)).toBe(false);
 
     const tree5: IMenuItem = {
-      text: 'link1',
+      title: 'link1',
       href: '/bad',
-      childs: [{ text: 'link2', href: '/item/test' }],
+      childs: [{ title: 'link2', href: '/item/test' }],
     };
     expect(checkActiveLink('/test', tree5)).toBe(false);
   });
@@ -104,23 +102,23 @@ describe('getUpdatedValues function', () => {
   });
 });
 
-describe('makeErrorText function', () => {
-  test('makeErrorText should return valid error message', () => {
-    const lang: LangList = 'en';
-    expect(makeErrorText(undefined, lang)).toBe(d[lang].unknownError);
-    expect(makeErrorText('error', lang)).toBe(d[lang].unknownError);
-    expect(makeErrorText(404, lang)).toBe(d[lang].unknownError);
-    expect(makeErrorText({ status: 429, data: 'error' }, lang)).toBe(
-      d[lang].tooManyRequests
+describe('getErrorText function', () => {
+  test('getErrorText should return valid error message', () => {
+    const lang: TLangList = 'en';
+    expect(getErrorText(undefined, lang)).toBe(getT().unknownError);
+    expect(getErrorText('error', lang)).toBe(getT().unknownError);
+    expect(getErrorText(404, lang)).toBe(getT().unknownError);
+    expect(getErrorText({ status: 429, data: 'error' }, lang)).toBe(
+      getT().tooManyRequests
     );
-    expect(makeErrorText({ status: 100, data: 'error' }, lang)).toBe(
-      d[lang].unknownError
+    expect(getErrorText({ status: 100, data: 'error' }, lang)).toBe(
+      getT().unknownError
     );
     expect(
-      makeErrorText({ status: 100, data: { message: 'error' } }, lang)
+      getErrorText({ status: 100, data: { message: 'error' } }, lang)
     ).toBe('error');
     expect(
-      makeErrorText(
+      getErrorText(
         { status: 100, data: { message: ['error1', 'error2', 'error3'] } },
         lang
       )

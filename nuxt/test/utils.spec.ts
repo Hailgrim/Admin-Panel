@@ -1,12 +1,5 @@
 import { describe, expect, it } from 'vitest'
 
-import { getUpdatedValues, makeErrorText, testString } from '../utils/utils'
-import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX } from '../utils/constants'
-import d from '../locales/dictionary'
-import type { IMenuItem } from '~/components/widgets/SideBar/types'
-import type { LangList } from '~/locales/types'
-import { checkActiveLink } from '~/components/widgets/SideBar/utils'
-
 describe('checkActiveLink function', () => {
   it('checkActiveLink should return true if link found in the navigation tree', () => {
     const tree1: IMenuItem = {
@@ -104,23 +97,21 @@ describe('getUpdatedValues function', () => {
   })
 })
 
-describe('makeErrorText function', async () => {
-  it('makeErrorText should return valid error message', () => {
-    const lang: LangList = 'en'
-    expect(makeErrorText(undefined, lang)).toBe(d[lang].unknownError)
-    expect(makeErrorText('error', lang)).toBe(d[lang].unknownError)
-    expect(makeErrorText(404, lang)).toBe(d[lang].unknownError)
-    expect(makeErrorText({ status: 429, data: 'error' }, lang)).toBe(
-      d[lang].tooManyRequests
+describe('getErrorText function', async () => {
+  it('getErrorText should return valid error message', () => {
+    const lang: TLangList = 'en'
+    expect(getErrorText(undefined, lang)).toBe(getT().unknownError)
+    expect(getErrorText('error', lang)).toBe(getT().unknownError)
+    expect(getErrorText(404, lang)).toBe(getT().unknownError)
+    expect(getErrorText({ status: 429, data: 'error' }, lang)).toBe(
+      getT().tooManyRequests
     )
-    expect(makeErrorText({ status: 100, data: 'error' }, lang)).toBe(
-      d[lang].unknownError
+    expect(getErrorText({ status: 100, data: 'error' }, lang)).toBe(
+      getT().unknownError
     )
-    expect(makeErrorText({ status: 100, message: 'error' }, lang)).toBe(
-      'error'
-    )
+    expect(getErrorText({ status: 100, message: 'error' }, lang)).toBe('error')
     expect(
-      makeErrorText(
+      getErrorText(
         { status: 100, message: ['error1', 'error2', 'error3'] },
         lang
       )

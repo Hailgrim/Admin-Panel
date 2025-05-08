@@ -5,23 +5,22 @@ import { useRouter } from 'next/navigation';
 import Form from '@/shared/ui/Form/Form';
 import FormField from '@/shared/ui/Form/FormField';
 import FormButton from '@/shared/ui/Form/FormButton';
-import { ROUTES } from '@/shared/lib/constants';
-import useT from '@/shared/hooks/useT';
-import useLang from '@/shared/hooks/useLang';
-import d from '@/shared/locales/dictionary';
+import useTranslate from '@/shared/hooks/useTranslate';
 import useRights from '@/shared/hooks/useRights';
 import FormCheckbox from '@/shared/ui/Form/FormCheckbox';
 import rolesApi from '@/shared/api/roles/rolesApi';
 import { useAppDispatch } from '@/shared/store/hooks';
 import { addAlert } from '@/shared/store/main/main';
-import { makeErrorText } from '@/shared/lib/utils';
-import { TCreateRole } from '@/shared/api/roles/types';
+import { getErrorText, ROUTES, TCreateRole } from '@ap/shared';
+import useTranslateRef from '@/shared/hooks/useTranslateRef';
+import useLanguageRef from '@/shared/hooks/useLanguageRef';
 
 const CreateRoleForm: FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const lang = useLang();
-  const t = useT();
+  const lRef = useLanguageRef();
+  const tRef = useTranslateRef();
+  const t = useTranslate();
   const [create, createReq] = rolesApi.useCreateMutation();
   const [data, setData] = useState<TCreateRole>({
     name: '',
@@ -37,21 +36,21 @@ const CreateRoleForm: FC = () => {
 
   useEffect(() => {
     if (createReq.data) {
-      dispatch(addAlert({ type: 'success', text: d[lang.current].success }));
+      dispatch(addAlert({ type: 'success', text: tRef.current.success }));
       router.push(ROUTES.ui.role(createReq.data.id));
     }
-  }, [createReq.data, dispatch, router, lang]);
+  }, [createReq.data, dispatch, router, tRef]);
 
   useEffect(() => {
     if (createReq.error) {
       dispatch(
         addAlert({
           type: 'error',
-          text: makeErrorText(createReq.error, lang.current),
+          text: getErrorText(createReq.error, lRef.current),
         })
       );
     }
-  }, [createReq.error, dispatch, lang]);
+  }, [createReq.error, dispatch, lRef]);
 
   return (
     <Form onSubmit={submitHandler}>

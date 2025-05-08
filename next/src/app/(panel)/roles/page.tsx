@@ -3,8 +3,8 @@ import { Metadata } from 'next/types';
 
 import rolesService from '@/shared/api/roles/rolesService';
 import RolesPage from '@/views/Panel/Roles/RolesPage';
-import { getT } from '@/shared/locales/utils';
 import { IAppPage } from '@/app/types';
+import { getT } from '@ap/shared';
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const t = getT();
@@ -18,7 +18,7 @@ const Page: FC<IAppPage> = async (props) => {
   const t = getT();
   const page = Number(props.searchParams.page) || 1;
   const quantity = Number(props.searchParams.quantity) || 25;
-  const { data } = await rolesService.findAll({
+  const { data } = await rolesService.getList({
     reqPage: page,
     reqLimit: quantity,
     reqCount: true,

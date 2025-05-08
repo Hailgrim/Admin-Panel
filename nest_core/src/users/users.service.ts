@@ -15,8 +15,10 @@ import {
   IGetListResponse,
   IUsersRoles,
   TGetListRequest,
-} from 'src/database/database.types';
-import { TCreateUser, TGetUsers, TUpdateUser } from './users.types';
+  TCreateUser,
+  TGetUsers,
+  TUpdateUser,
+} from '@ap/shared';
 import { CacheService } from 'src/cache/cache.service';
 import { DatabaseService } from 'src/database/database.service';
 import { createHash } from 'libs/utils';
@@ -97,7 +99,7 @@ export class UsersService {
     return user;
   }
 
-  private async findOne(
+  private async getOne(
     options: FindOptions<UserModel>,
     scope?: string | string[],
   ): Promise<UserModel> {
@@ -117,19 +119,19 @@ export class UsersService {
     return user;
   }
 
-  findOneAuth(email: string): Promise<UserModel> {
-    return this.findOne({ where: { email } }, WITH_ROLES);
+  getOneAuth(email: string): Promise<UserModel> {
+    return this.getOne({ where: { email } }, WITH_ROLES);
   }
 
-  findOneProfile(id: string): Promise<Omit<UserModel, 'roles'>> {
-    return this.findOne({ where: { id } });
+  getOneProfile(id: string): Promise<Omit<UserModel, 'roles'>> {
+    return this.getOne({ where: { id } });
   }
 
-  findOnePublic(id: string): Promise<UserModel> {
-    return this.findOne({ where: { id } }, [PUBLIC, WITH_ROLES]);
+  getOnePublic(id: string): Promise<UserModel> {
+    return this.getOne({ where: { id } }, [PUBLIC, WITH_ROLES]);
   }
 
-  prepareFindAllOptions(
+  prepareGetListOptions(
     fields?: TGetListRequest<TGetUsers>,
   ): FindOptions<UserModel> {
     const options: FindOptions<UserModel> =
@@ -156,10 +158,10 @@ export class UsersService {
     return options;
   }
 
-  async findAllPublic(
+  async getListPublic(
     fields?: TGetListRequest<TGetUsers>,
   ): Promise<IGetListResponse<UserModel>> {
-    const options = this.prepareFindAllOptions(fields);
+    const options = this.prepareGetListOptions(fields);
 
     try {
       if (fields?.reqCount) {
@@ -277,7 +279,7 @@ export class UsersService {
     id: string,
     changeEmailCode: string,
   ): Promise<boolean> {
-    const user = await this.findOne({ where: { id, changeEmailCode } });
+    const user = await this.getOne({ where: { id, changeEmailCode } });
 
     try {
       await user.update({
@@ -294,7 +296,7 @@ export class UsersService {
   }
 
   async updateRoles(id: string, usersRoles: IUsersRoles[]): Promise<boolean> {
-    const user = await this.findOne({ where: { id } });
+    const user = await this.getOne({ where: { id } });
 
     try {
       await user.$set(

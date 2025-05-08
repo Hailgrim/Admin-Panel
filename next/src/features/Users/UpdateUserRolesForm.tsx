@@ -3,27 +3,24 @@ import SaveIcon from '@mui/icons-material/Save';
 
 import Form from '@/shared/ui/Form/Form';
 import FormButton from '@/shared/ui/Form/FormButton';
-import { ROUTES } from '@/shared/lib/constants';
-import useT from '@/shared/hooks/useT';
-import useLang from '@/shared/hooks/useLang';
-import d from '@/shared/locales/dictionary';
+import useTranslate from '@/shared/hooks/useTranslate';
 import useRights from '@/shared/hooks/useRights';
 import FormCheckbox from '@/shared/ui/Form/FormCheckbox';
 import { useAppDispatch } from '@/shared/store/hooks';
 import usersApi from '@/shared/api/users/usersApi';
-import { IRole } from '@/shared/api/roles/types';
 import { addAlert } from '@/shared/store/main/main';
-import { makeErrorText } from '@/shared/lib/utils';
-import { IUser } from '@/shared/api/users/types';
-import { IUsersRoles } from '@/shared/api/types';
+import { getErrorText, IRole, IUser, IUsersRoles, ROUTES } from '@ap/shared';
+import useTranslateRef from '@/shared/hooks/useTranslateRef';
+import useLanguageRef from '@/shared/hooks/useLanguageRef';
 
 const UpdateUserRolesForm: FC<{
   user: IUser;
   roles: IRole[];
 }> = ({ user, roles }) => {
   const dispatch = useAppDispatch();
-  const lang = useLang();
-  const t = useT();
+  const lRef = useLanguageRef();
+  const tRef = useTranslateRef();
+  const t = useTranslate();
   const [update, updateReq] = usersApi.useUpdateRolesMutation();
   const [updatedRoles, setUpdatedRoles] = useState<IUsersRoles[]>(
     user.roles?.map((value) => ({ roleId: value.id, userId: user.id })) || []
@@ -59,20 +56,20 @@ const UpdateUserRolesForm: FC<{
 
   useEffect(() => {
     if (updateReq.data) {
-      dispatch(addAlert({ type: 'success', text: d[lang.current].success }));
+      dispatch(addAlert({ type: 'success', text: tRef.current.success }));
     }
-  }, [updateReq.data, dispatch, lang]);
+  }, [updateReq.data, dispatch, tRef]);
 
   useEffect(() => {
     if (updateReq.error) {
       dispatch(
         addAlert({
           type: 'error',
-          text: makeErrorText(updateReq.error, lang.current),
+          text: getErrorText(updateReq.error, lRef.current),
         })
       );
     }
-  }, [updateReq.error, dispatch, lang]);
+  }, [updateReq.error, dispatch, lRef]);
 
   return (
     <Form onSubmit={submitHandler}>

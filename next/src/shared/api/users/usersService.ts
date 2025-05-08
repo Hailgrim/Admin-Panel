@@ -1,15 +1,16 @@
-import { ROUTES } from '@/shared/lib/constants';
-import { IUser, TCreateUser, TGetUsers, TUpdateUser } from './types';
-import {
-  IFetchRes,
-  IGetListResponse,
-  TGetListRequest,
-  IReqArgs,
-  IUpdateReq,
-  IQueryItems,
-  IUsersRoles,
-} from '../types';
+import { IFetchRes, IReqArgs, IUpdateReq } from '../types';
 import serverFetch from '../serverFetch';
+import {
+  IGetListResponse,
+  IQueryItems,
+  IUser,
+  IUsersRoles,
+  ROUTES,
+  TCreateUser,
+  TGetListRequest,
+  TGetUsers,
+  TUpdateUser,
+} from '@ap/shared';
 
 class UsersService {
   createArgs(payload: TCreateUser): IReqArgs {
@@ -21,7 +22,19 @@ class UsersService {
     };
   }
 
-  findAllArgs(payload?: TGetListRequest<TGetUsers>): IReqArgs {
+  getOneArgs(payload: IUser['id']): IReqArgs {
+    return {
+      url: ROUTES.api.user(payload),
+      method: 'GET',
+      credentials: 'include',
+    };
+  }
+
+  async getOne(payload: IUser['id']): Promise<IFetchRes<IUser>> {
+    return serverFetch<IUser>(this.getOneArgs(payload));
+  }
+
+  getListArgs(payload?: TGetListRequest<TGetUsers>): IReqArgs {
     return {
       url: ROUTES.api.users,
       method: 'GET',
@@ -30,22 +43,10 @@ class UsersService {
     };
   }
 
-  async findAll(
+  async getList(
     payload?: TGetListRequest<TGetUsers>
   ): Promise<IFetchRes<IGetListResponse<IUser>>> {
-    return serverFetch<IGetListResponse<IUser>>(this.findAllArgs(payload));
-  }
-
-  findOneArgs(payload: IUser['id']): IReqArgs {
-    return {
-      url: ROUTES.api.user(payload),
-      method: 'GET',
-      credentials: 'include',
-    };
-  }
-
-  async findOne(payload: IUser['id']): Promise<IFetchRes<IUser>> {
-    return serverFetch<IUser>(this.findOneArgs(payload));
+    return serverFetch<IGetListResponse<IUser>>(this.getListArgs(payload));
   }
 
   updateArgs(payload: IUpdateReq<TUpdateUser, IUser['id']>): IReqArgs {

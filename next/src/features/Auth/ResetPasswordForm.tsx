@@ -3,24 +3,24 @@ import { useRouter } from 'next/navigation';
 
 import Form from '@/shared/ui/Form/Form';
 import FormButton from '@/shared/ui/Form/FormButton';
-import useT from '@/shared/hooks/useT';
 import FormAlert from '@/shared/ui/Form/FormAlert';
-import { PASSWORD_REGEX, ROUTES } from '@/shared/lib/constants';
 import FormField from '@/shared/ui/Form/FormField';
 import FormPassword from '@/shared/ui/Form/FormPassword';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import useLang from '@/shared/hooks/useLang';
-import d from '@/shared/locales/dictionary';
 import authApi from '@/shared/api/auth/authApi';
-import { makeErrorText, testString } from '@/shared/lib/utils';
+import { getErrorText, PASSWORD_REGEX, ROUTES, testString } from '@ap/shared';
+import useTranslateRef from '@/shared/hooks/useTranslateRef';
+import useLanguageRef from '@/shared/hooks/useLanguageRef';
+import useTranslate from '@/shared/hooks/useTranslate';
 
 const ResetPasswordForm: FC<{
   email: string;
   onClose?: () => void;
 }> = ({ email, onClose }) => {
   const router = useRouter();
-  const t = useT();
-  const lang = useLang();
+  const lRef = useLanguageRef();
+  const tRef = useTranslateRef();
+  const t = useTranslate();
   const [resetPassword, { data, error, isLoading }] =
     authApi.useLazyResetPasswordQuery();
   const [errorText, setErrorText] = useState<string | null>(null);
@@ -49,14 +49,14 @@ const ResetPasswordForm: FC<{
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 404:
-          setErrorText(d[lang.current].wrongEmailOrCode);
+          setErrorText(tRef.current.wrongEmailOrCode);
           break;
         default:
-          setErrorText(makeErrorText(error, lang.current));
+          setErrorText(getErrorText(error, lRef.current));
           break;
       }
     }
-  }, [error, lang]);
+  }, [error, tRef, lRef]);
 
   useEffect(() => {
     if (data) {

@@ -3,21 +3,20 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import Form from '@/shared/ui/Form/Form';
 import FormField from '@/shared/ui/Form/FormField';
 import FormButton from '@/shared/ui/Form/FormButton';
-import useT from '@/shared/hooks/useT';
-import useLang from '@/shared/hooks/useLang';
 import CustomModal from '@/shared/ui/CustomModal/CustomModal';
-import { makeErrorText, testString } from '@/shared/lib/utils';
 import profileApi from '@/shared/api/profile/profileApi';
 import useRights from '@/shared/hooks/useRights';
-import { EMAIL_REGEX, ROUTES } from '@/shared/lib/constants';
 import { useAppDispatch, useAppSelector } from '@/shared/store/hooks';
 import { addAlert } from '@/shared/store/main/main';
 import ChangeEmailConfirmForm from './ChangeEmailConfirmForm';
+import { EMAIL_REGEX, getErrorText, ROUTES, testString } from '@ap/shared';
+import useTranslate from '@/shared/hooks/useTranslate';
+import useLanguageRef from '@/shared/hooks/useLanguageRef';
 
 const ChangeEmailRequestForm: FC = () => {
   const dispatch = useAppDispatch();
-  const t = useT();
-  const lang = useLang();
+  const lRef = useLanguageRef();
+  const t = useTranslate();
   const [confirmModal, setConfirmModal] = useState(false);
   const [changeEmailRequest, { data, error, isLoading, originalArgs }] =
     profileApi.useChangeEmailRequestMutation();
@@ -46,11 +45,11 @@ const ChangeEmailRequestForm: FC = () => {
       dispatch(
         addAlert({
           type: 'error',
-          text: makeErrorText(error, lang.current),
+          text: getErrorText(error, lRef.current),
         })
       );
     }
-  }, [dispatch, error, lang]);
+  }, [dispatch, error, lRef]);
 
   useEffect(() => {
     if (data) {

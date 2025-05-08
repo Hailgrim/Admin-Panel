@@ -65,6 +65,7 @@ services:
       - .env
     volumes:
       - ./nest_core:/home/node
+      - ./shared:/home/node/src/shared
       - nest_core_node_modules:/home/node/node_modules
 
   nest_mailer:
@@ -74,6 +75,7 @@ services:
       - .env
     volumes:
       - ./nest_mailer:/home/node
+      - ./shared:/home/node/src/shared
       - nest_mailer_node_modules:/home/node/node_modules
 
   next:
@@ -83,6 +85,7 @@ services:
       - .env
     volumes:
       - ./next:/home/node
+      - ./shared:/home/shared
       - next_node_modules:/home/node/node_modules
 
   nuxt:
@@ -92,4 +95,5 @@ services:
       - .env
     volumes:
       - ./nuxt:/home/bun
+      - ./shared:/home/shared
       - nuxt_node_modules:/home/bun/node_modules

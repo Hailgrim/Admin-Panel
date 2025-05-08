@@ -9,6 +9,6 @@
   "moduleNameMapper": {
     "^src/(.*)$": "<rootDir>/../src/$1",
     "^libs/(.*)$": "<rootDir>/../libs/$1",
-    "^locales/(.*)$": "<rootDir>/../locales/$1"
+    "@ap/shared": "<rootDir>/../../shared/$1"
   }
 }

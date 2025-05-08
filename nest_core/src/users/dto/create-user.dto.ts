@@ -1,6 +1,6 @@
 import { PickType } from '@nestjs/swagger';
 
-import { TCreateUser } from '../users.types';
+import { TCreateUser } from '@ap/shared';
 import { UserDto } from './user.dto';
 
 export class CreateUserDto

@@ -1,8 +1,7 @@
 import { IntersectionType, PartialType, PickType } from '@nestjs/swagger';
 
-import { TGetRoles } from '../roles.types';
 import { GetListRequestDto } from 'src/database/dto/get-list-request.dto';
-import { TGetListRequest } from 'src/database/database.types';
+import { TGetListRequest, TGetRoles } from '@ap/shared';
 import { RoleDto } from './role.dto';
 
 export class GetRolesDto
