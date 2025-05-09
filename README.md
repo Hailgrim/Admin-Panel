@@ -18,7 +18,9 @@ For a local proxy, add this to hosts:
 127.0.0.1 api.localhost.com
 ```
 
-After that, you must add the self-signed certificate to your browser as a certificate authority (in this case, it is the `./nginx/ssl/myCA.pem` file).
+After that, you must add the self-signed certificate to your browser as a certificate authority
+(in this case, it is the `./nginx/ssl/myCA.pem` file).
+Or just use your own purchased domain and certificate for it.
 
 Some startup parameters can be edited in the `./.env` file.
 
@@ -30,7 +32,10 @@ Some startup parameters can be edited in the `./.env` file.
 docker compose -f docker-compose.yml -f dev.yml up -d
 ```
 
-This startup option allows you to link microservices folders to containers and adds utilities for viewing the contents of PostgreSQL ([Adminer](https://github.com/vrana/adminer)), Redis ([RedisInsight](https://github.com/RedisInsight/RedisInsight)) and RabbitMQ ([RabbitMQ Management Plugin](https://github.com/rabbitmq/rabbitmq-management)).
+This startup option allows you to link microservices folders to containers and adds utilities
+for viewing the contents of PostgreSQL ([Adminer](https://github.com/vrana/adminer)),
+Redis ([RedisInsight](https://github.com/RedisInsight/RedisInsight))
+and RabbitMQ ([RabbitMQ Management Plugin](https://github.com/rabbitmq/rabbitmq-management)).
 
 ### Production
 
@@ -58,7 +63,8 @@ docker compose down --remove-orphans
 
 This microservice provides a graphical interface for administration.
 In it, you can set a list of protected links, create roles with rights for links, manage registered users.
-The service is written in [React](https://github.com/facebook/react) and [TypeScript](https://github.com/microsoft/TypeScript) with **FSD**-like structure.
+The service is written in [React](https://github.com/facebook/react)
+and [TypeScript](https://github.com/microsoft/TypeScript) with **FSD**-like structure.
 [Material UI](https://github.com/mui/material-ui) is used as the UI kit.
 [Redux Toolkit](https://github.com/reduxjs/redux-toolkit) is used as the application state manager.
 [RTK Query](https://github.com/rtk-incubator/rtk-query) is used for API requests.
@@ -73,8 +79,10 @@ UI kit - [Vuetify](https://github.com/vuetifyjs/vuetify).
 
 ### Main server `./nest_core`
 
-The main server that provides the client's interaction with databases, authorization (JWT), creation of requests for sending emails.
-When registering the first user, creates standard API-endpoints, roles and assigns administrator role to the first registered user.
+The main server that provides the client's interaction with databases,
+authorization (JWT), creation of requests for sending emails.
+When registering the first user, creates standard API-endpoints,
+roles and assigns administrator role to the first registered user.
 Written in [NestJS](https://github.com/nestjs/nest).
 The `./nest_core/libs/config.ts` file contains the settings received from Docker during project startup.
 
@@ -82,7 +90,8 @@ The `./nest_core/libs/config.ts` file contains the settings received from Docker
 
 This service is engaged in sending emails.
 It is built using the same technologies as the main server.
-If the mailer is running in testing mode, then links to view the contents of sent emails are available in the container console.
+If the mailer is running in testing mode, then links to view the contents
+of sent emails are available in the container console.
 This behavior is changed in the file `./nest_mailer/libs/config.ts` using the variable `MAIL_TEST`.
 
 ### [nginx](https://github.com/nginx/agent) `./nginx`
@@ -110,7 +119,8 @@ In the file `./rabbitmq/conf.d/rabbitmq.conf` you can set the parameters of Rabb
 ## SSL update
 
 Without a certificate, the project will not function normally (CORS policy).
-The standard certificate is registered for addresses _localhost.com_ (Next.js), _nuxt.localhost.com_ (Nuxt.js) and _api.localhost.com_ (main server).
+The standard certificate is registered for addresses _localhost.com_ (Next.js),
+_nuxt.localhost.com_ (Nuxt.js) and _api.localhost.com_ (main server).
 It has a limited duration.
 To create a new certificate, you can use the following commands:
 
