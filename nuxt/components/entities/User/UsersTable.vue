@@ -27,17 +27,33 @@ const items = computed(() => rows.value?.map(value => ({ ...value, selectable: !
 
 <template>
   <v-data-table-server
-class="full-page-table" :headers="columns" hover item-selectable="selectable" :items="items"
-    :items-length="count" :items-per-page="quantity" :items-per-page-options="[25, 50, 100]" :loading="loading"
-    :page="page" show-select @update:items-per-page="$emit('update:quantity', $event)"
-    @update:model-value="$emit('update:selected', $event as string[])" @update:page="$emit('update:page', $event)">
+    class="full-page-table"
+    :headers="columns"
+    hover
+    item-selectable="selectable"
+    :items="items"
+    :items-length="count"
+    :items-per-page="quantity"
+    :items-per-page-options="[25, 50, 100]"
+    :loading="loading"
+    :page="page"
+    show-select
+    @update:items-per-page="$emit('update:quantity', $event)"
+    @update:model-value="$emit('update:selected', $event as string[])"
+    @update:page="$emit('update:page', $event)"
+  >
     <template #item.edit="{ item }">
       <NuxtLink :href="ROUTES.ui.user(item.id)">
-        <v-btn color="white" icon="mdi-pencil" size="small" variant="text" />
+        <v-btn
+          color="white"
+          icon="mdi-pencil"
+          size="small"
+          variant="text"
+        />
       </NuxtLink>
     </template>
     <template #item.roles="{ item }">
-      {{item.roles?.map((role: IRole) => role.name).join(', ')}}
+      {{ item.roles?.map((role: IRole) => role.name).join(', ') }}
     </template>
     <template #item.verified="{ item }">
       <v-icon :icon="item.verified ? 'mdi-check' : 'mdi-close'" />

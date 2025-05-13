@@ -2,10 +2,10 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import baseQueryWithReauth from '../baseQueryWithReauth';
 import usersService from '@/shared/api/users/usersService';
-import { IUpdateReq } from '../types';
 import {
   IGetListResponse,
   IQueryItems,
+  IUpdateReq,
   IUser,
   IUsersRoles,
   TCreateUser,

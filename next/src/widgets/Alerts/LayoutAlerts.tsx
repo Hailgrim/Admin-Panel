@@ -8,7 +8,7 @@ import theme from '@/shared/lib/theme';
 import { deleteAlert } from '@/shared/store/main/main';
 import { useAppDispatch, useAppSelector } from '@/shared/store/hooks';
 
-const Alerts: FC = () => {
+const LayoutAlerts: FC = () => {
   const dispatch = useAppDispatch();
   const alerts = useAppSelector((state) => state.main.alerts);
 
@@ -45,7 +45,7 @@ const Alerts: FC = () => {
     </AlertsContainer>
   );
 };
-export default Alerts;
+export default LayoutAlerts;
 
 const AlertsContainer = styled(Box)`
   position: fixed;

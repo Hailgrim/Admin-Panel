@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import Form from '@/shared/ui/Form/Form';
+import FormBase from '@/shared/ui/Form/FormBase';
 import FormField from '@/shared/ui/Form/FormField';
 import FormButton from '@/shared/ui/Form/FormButton';
 import CustomModal from '@/shared/ui/CustomModal/CustomModal';
@@ -59,7 +59,7 @@ const ChangeEmailRequestForm: FC = () => {
 
   return (
     <>
-      <Form onSubmit={submitHandler}>
+      <FormBase onSubmit={submitHandler}>
         <FormField
           required
           name="email"
@@ -79,7 +79,7 @@ const ChangeEmailRequestForm: FC = () => {
         >
           {t.change}
         </FormButton>
-      </Form>
+      </FormBase>
       <CustomModal open={confirmModal} title={t.changeEmail} onClose={onClose}>
         <ChangeEmailConfirmForm
           email={originalArgs?.newEmail || ''}

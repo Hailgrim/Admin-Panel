@@ -43,8 +43,8 @@ describe('testString function', () => {
     expect(
       testString(
         NAME_REGEX,
-        Array.from({ length: 8 }).fill('valid string').join(' ')
-      )
+        Array.from({ length: 8 }).fill('valid string').join(' '),
+      ),
     ).toBe(false)
   })
   it('testString should return true for valid string with email pattern', () => {
@@ -68,8 +68,8 @@ describe('testString function', () => {
     expect(
       testString(
         PASSWORD_REGEX,
-        Array.from({ length: 10 }).fill('!Q1q2w3e4r').join(' ')
-      )
+        Array.from({ length: 10 }).fill('!Q1q2w3e4r').join(' '),
+      ),
     ).toBe(false)
   })
 })
@@ -104,17 +104,17 @@ describe('getErrorText function', async () => {
     expect(getErrorText('error', lang)).toBe(getT().unknownError)
     expect(getErrorText(404, lang)).toBe(getT().unknownError)
     expect(getErrorText({ status: 429, data: 'error' }, lang)).toBe(
-      getT().tooManyRequests
+      getT().tooManyRequests,
     )
     expect(getErrorText({ status: 100, data: 'error' }, lang)).toBe(
-      getT().unknownError
+      getT().unknownError,
     )
     expect(getErrorText({ status: 100, message: 'error' }, lang)).toBe('error')
     expect(
       getErrorText(
         { status: 100, message: ['error1', 'error2', 'error3'] },
-        lang
-      )
+        lang,
+      ),
     ).toBe('error1.\r\nerror2.\r\nerror3.')
   })
 })

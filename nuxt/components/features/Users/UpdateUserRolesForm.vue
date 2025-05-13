@@ -1,14 +1,8 @@
 <script setup lang="ts">
-import Form from '~/components/shared/ui/Form/Form.vue'
-import FormCheckbox from '~/components/shared/ui/Form/FormCheckbox.vue'
-import FormButton from '~/components/shared/ui/Form/FormButton.vue'
-import { useMainStore } from '~/store/main/main'
-import usersApi from '~/api/users/usersApi'
-
-const { user } = defineProps<{ user: IUser; roles: IRole[] }>()
+const { user } = defineProps<{ user: IUser, roles: IRole[] }>()
 
 const updatedRoles = ref<IUsersRoles[]>(
-  user.roles?.map((role) => ({ roleId: role.id, userId: user.id })) || []
+  user.roles?.map(role => ({ roleId: role.id, userId: user.id })) || [],
 )
 const { t, locale } = useI18n()
 const { data, error, execute, pending } = usersApi.updateRoles()
@@ -29,7 +23,8 @@ function setRoles(newRole: IUsersRoles) {
     if (newRole.userId === value?.userId && newRole.roleId === value?.roleId) {
       find = true
       return false
-    } else {
+    }
+    else {
       return true
     }
   })
@@ -53,18 +48,29 @@ watch(data, () => {
 </script>
 
 <template>
-  <Form @submit="submitHandler">
+  <FormBase @submit="submitHandler">
     <div class="d-flex flex-row">
-      <span v-for="role of roles" :key="`userRole.${role.id}`" class="mr-6">
+      <span
+        v-for="role of roles"
+        :key="`userRole.${role.id}`"
+        class="mr-6"
+      >
         <FormCheckbox
-:label="role.name" :model-value="updatedRoles.some((value) => value?.roleId === role.id)"
-          :name="`${role.name}.${role.id}`" @update:model-value="setRoles({ roleId: role.id, userId: user.id })" />
+          :label="role.name"
+          :model-value="updatedRoles.some((value) => value?.roleId === role.id)"
+          :name="`${role.name}.${role.id}`"
+          @update:model-value="setRoles({ roleId: role.id, userId: user.id })"
+        />
       </span>
     </div>
     <FormButton
-color="success" :disabled="!rights.updating" :loading="pending" prepand-icon="mdi-content-save"
-      type="submit">
+      color="success"
+      :disabled="!rights.updating"
+      :loading="pending"
+      prepand-icon="mdi-content-save"
+      type="submit"
+    >
       {{ $t('update') }}
     </FormButton>
-  </Form>
+  </FormBase>
 </template>

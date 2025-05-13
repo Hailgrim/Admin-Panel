@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import rolesApi from '~/api/roles/rolesApi'
-import RolesList from '~/components/features/Roles/RolesList.vue'
-
 definePageMeta({
   middleware: ['auth'],
   layout: 'panel',
@@ -34,5 +31,10 @@ watch(
 </script>
 
 <template>
-  <RolesList v-model:page="page" v-model:quantity="quantity" :count="data?.count" :rows="data?.rows" />
+  <RolesList
+    v-model:page="page"
+    v-model:quantity="quantity"
+    :count="data?.count"
+    :rows="data?.rows"
+  />
 </template>

@@ -1,7 +1,7 @@
 import { FC, FormEvent, useEffect, useState } from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 
-import Form from '@/shared/ui/Form/Form';
+import FormBase from '@/shared/ui/Form/FormBase';
 import FormButton from '@/shared/ui/Form/FormButton';
 import useRights from '@/shared/hooks/useRights';
 import ResourceRightsFields from '../Resources/ResourceRightsFields';
@@ -80,7 +80,7 @@ const UpdateRoleResourcesForm: FC<{
   }, [updateReq.error, dispatch, lRef]);
 
   return (
-    <Form onSubmit={submitHandler}>
+    <FormBase onSubmit={submitHandler}>
       {resources.map((resource) => (
         <ResourceRightsFields
           key={`ResourceRights.${resource.id}`}
@@ -102,7 +102,7 @@ const UpdateRoleResourcesForm: FC<{
       >
         {t.update}
       </FormButton>
-    </Form>
+    </FormBase>
   );
 };
 export default UpdateRoleResourcesForm;

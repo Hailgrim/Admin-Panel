@@ -1,19 +1,6 @@
 <script setup lang="ts">
 import type { SubmitEventPromise } from 'vuetify'
 
-import Form from '~/components/shared/ui/Form/Form.vue'
-import FormAlert from '~/components/shared/ui/Form/FormAlert.vue'
-import FormField from '~/components/shared/ui/Form/FormField.vue'
-import FormPassword from '~/components/shared/ui/Form/FormPassword.vue'
-import FormCheckbox from '~/components/shared/ui/Form/FormCheckbox.vue'
-import FormButton from '~/components/shared/ui/Form/FormButton.vue'
-import FormLink from '~/components/shared/ui/Form/FormLink.vue'
-import CustomModal from '~/components/shared/ui/CustomModal/CustomModal.vue'
-import VerifyUserForm from '~/components/features/Auth/VerifyUserForm.vue'
-import SignInGoogleLink from '~/components/features/Auth/SignInGoogleLink.vue'
-import { useMainStore } from '~/store/main/main'
-import authApi from '~/api/auth/authApi'
-
 const { t, locale } = useI18n()
 const route = useRoute()
 const router = useRouter()
@@ -65,15 +52,19 @@ watch(data, () => {
     router.push(
       route.query.return
         ? decodeURIComponent(String(route.query.return))
-        : ROUTES.ui.home
+        : ROUTES.ui.home,
     )
   }
 })
 </script>
 
 <template>
-  <Form @submit="submitHandler">
-    <FormAlert v-if="errorText" :text="errorText" type="error" />
+  <FormBase @submit="submitHandler">
+    <FormAlert
+      v-if="errorText"
+      :text="errorText"
+      type="error"
+    />
     <FormField
       v-model="email"
       :label="$t('email')"
@@ -102,14 +93,20 @@ watch(data, () => {
     >
       {{ $t('signIn') }}
     </FormButton>
-    <FormLink :href="ROUTES.ui.signUp" :text="$t('signUpText')" />
+    <FormLink
+      :href="ROUTES.ui.signUp"
+      :text="$t('signUpText')"
+    />
     <FormLink
       :href="ROUTES.ui.forgotPassword"
       :text="$t('forgotPasswordText')"
     />
     <SignInGoogleLink />
-  </Form>
-  <CustomModal v-model="verifyModal" :title="$t('verification')">
+  </FormBase>
+  <CustomModal
+    v-model="verifyModal"
+    :title="$t('verification')"
+  >
     <VerifyUserForm
       :email="email"
       @close="verifyModal = false"

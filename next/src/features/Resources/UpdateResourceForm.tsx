@@ -3,7 +3,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useRouter } from 'next/navigation';
 
-import Form from '@/shared/ui/Form/Form';
+import FormBase from '@/shared/ui/Form/FormBase';
 import FormField from '@/shared/ui/Form/FormField';
 import FormButton from '@/shared/ui/Form/FormButton';
 import useRights from '@/shared/hooks/useRights';
@@ -77,7 +77,7 @@ const UpdateResourceForm: FC<{ data: IResource }> = ({ data }) => {
   }, [deleteReq.error, dispatch, lRef]);
 
   return (
-    <Form onSubmit={submitHandler}>
+    <FormBase onSubmit={submitHandler}>
       <FormField
         required
         name="name"
@@ -141,7 +141,7 @@ const UpdateResourceForm: FC<{ data: IResource }> = ({ data }) => {
       >
         {t.delete}
       </FormButton>
-    </Form>
+    </FormBase>
   );
 };
 export default UpdateResourceForm;

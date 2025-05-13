@@ -1,18 +1,12 @@
 <script setup lang="ts">
 import type { SubmitEventPromise } from 'vuetify'
 
-import Form from '~/components/shared/ui/Form/Form.vue'
-import FormAlert from '~/components/shared/ui/Form/FormAlert.vue'
-import FormField from '~/components/shared/ui/Form/FormField.vue'
-import FormButton from '~/components/shared/ui/Form/FormButton.vue'
-import authApi from '~/api/auth/authApi'
-
 const { email } = defineProps<{
-  email: string;
+  email: string
 }>()
 const emit = defineEmits<{
-  close: [];
-  success: [];
+  close: []
+  success: []
 }>()
 
 const { t, locale } = useI18n()
@@ -52,8 +46,12 @@ watch(data, () => {
 </script>
 
 <template>
-  <Form @submit="submitHandler">
-    <FormAlert v-if="errorText" :text="errorText" type="error" />
+  <FormBase @submit="submitHandler">
+    <FormAlert
+      v-if="errorText"
+      :text="errorText"
+      type="error"
+    />
     <FormField
       v-model="code"
       :hint="`${$t('codeFromEmail')} (${email})`"
@@ -70,8 +68,13 @@ watch(data, () => {
     >
       {{ $t('confirm') }}
     </FormButton>
-    <FormButton block color="error" type="button" @click="$emit('close')">
+    <FormButton
+      block
+      color="error"
+      type="button"
+      @click="$emit('close')"
+    >
       {{ $t('close') }}
     </FormButton>
-  </Form>
+  </FormBase>
 </template>

@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/main/main'
-import FormLink from '~/components/shared/ui/Form/FormLink.vue'
-
 const route = useRoute()
 const router = useRouter()
 const mainStore = useMainStore()
@@ -14,7 +11,7 @@ const googleHandler = (event: MouseEvent) => {
   const googleWindow = window.open(
     getGoogleSignInUrl(config.public.GOOGLE_CLIENT_ID, config.public.HOST, state),
     undefined,
-    'top=100,left=100,width=500,height=500'
+    'top=100,left=100,width=500,height=500',
   )
   clearTimeout(timeout.value)
   timeout.value = setInterval(() => {
@@ -39,5 +36,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <FormLink event="" :href="ROUTES.ui.signInGoogle" :text="$t('signInWithGoogle')" @click="googleHandler" />
+  <FormLink
+    event=""
+    :href="ROUTES.ui.signInGoogle"
+    :text="$t('signInWithGoogle')"
+    @click="googleHandler"
+  />
 </template>

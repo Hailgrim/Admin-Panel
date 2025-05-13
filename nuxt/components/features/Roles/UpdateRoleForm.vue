@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import type { SubmitEventPromise } from 'vuetify'
 
-import Form from '~/components/shared/ui/Form/Form.vue'
-import FormField from '~/components/shared/ui/Form/FormField.vue'
-import FormCheckbox from '~/components/shared/ui/Form/FormCheckbox.vue'
-import FormButton from '~/components/shared/ui/Form/FormButton.vue'
-import { useMainStore } from '~/store/main/main'
-import rolesApi from '~/api/roles/rolesApi'
-
 const { role } = defineProps<{ role: IRole }>()
 
 const { t, locale } = useI18n()
@@ -39,7 +32,8 @@ async function submitHandler(event: SubmitEventPromise) {
       id: role.id,
       fields: updatedValues,
     })
-  } else {
+  }
+  else {
     mainStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
   }
 }
@@ -76,25 +70,45 @@ watch(dData, () => {
 </script>
 
 <template>
-  <Form @submit="submitHandler">
+  <FormBase @submit="submitHandler">
     <FormField
-:label="$t('name')" :model-value="newData.name" name="name" required :rules="[nameIsValid]"
-      @update:model-value="newData = { ...newData, name: $event }" />
+      :label="$t('name')"
+      :model-value="newData.name"
+      name="name"
+      required
+      :rules="[nameIsValid]"
+      @update:model-value="newData = { ...newData, name: $event }"
+    />
     <FormField
-:label="$t('description')" :model-value="newData.description" name="description"
-      @update:model-value="newData = { ...newData, description: $event }" />
+      :label="$t('description')"
+      :model-value="newData.description"
+      name="description"
+      @update:model-value="newData = { ...newData, description: $event }"
+    />
     <FormCheckbox
-:label="$t('enabled')" :model-value="newData.enabled" name="enabled"
-      @update:model-value="newData = { ...newData, enabled: $event }" />
+      :label="$t('enabled')"
+      :model-value="newData.enabled"
+      name="enabled"
+      @update:model-value="newData = { ...newData, enabled: $event }"
+    />
     <FormButton
-color="success" :disabled="!rights.updating || role.default || dPending || Boolean(dData)"
-      :loading="uPending" prepand-icon="mdi-content-save" type="submit">
+      color="success"
+      :disabled="!rights.updating || role.default || dPending || Boolean(dData)"
+      :loading="uPending"
+      prepand-icon="mdi-content-save"
+      type="submit"
+    >
       {{ $t('update') }}
     </FormButton>
     <FormButton
-color="error" :disabled="!rights.deleting || role.default" :loading="dPending || Boolean(dData)"
-      prepand-icon="mdi-delete" type="button" @click="dExecute({ items: [role.id] })">
+      color="error"
+      :disabled="!rights.deleting || role.default"
+      :loading="dPending || Boolean(dData)"
+      prepand-icon="mdi-delete"
+      type="button"
+      @click="dExecute({ items: [role.id] })"
+    >
       {{ $t('delete') }}
     </FormButton>
-  </Form>
+  </FormBase>
 </template>

@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import Form from '@/shared/ui/Form/Form';
+import FormBase from '@/shared/ui/Form/FormBase';
 import FormButton from '@/shared/ui/Form/FormButton';
 import useTranslate from '@/shared/hooks/useTranslate';
 import FormAlert from '@/shared/ui/Form/FormAlert';
@@ -16,12 +16,12 @@ const SignUpSuccessForm: FC<{
   };
 
   return (
-    <Form onSubmit={submitHandler}>
+    <FormBase onSubmit={submitHandler}>
       <FormAlert severity="success">{t.registrationSuccessText}</FormAlert>
       <FormButton type="submit" fullWidth>
         {t.signIn}
       </FormButton>
-    </Form>
+    </FormBase>
   );
 };
 export default SignUpSuccessForm;

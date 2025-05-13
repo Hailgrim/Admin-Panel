@@ -3,7 +3,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useRouter } from 'next/navigation';
 
-import Form from '@/shared/ui/Form/Form';
+import FormBase from '@/shared/ui/Form/FormBase';
 import FormField from '@/shared/ui/Form/FormField';
 import FormButton from '@/shared/ui/Form/FormButton';
 import useRights from '@/shared/hooks/useRights';
@@ -77,7 +77,7 @@ const UpdateRoleForm: FC<{ data: IRole }> = ({ data }) => {
   }, [deleteReq.error, dispatch, lRef]);
 
   return (
-    <Form onSubmit={submitHandler}>
+    <FormBase onSubmit={submitHandler}>
       <FormField
         required
         name="name"
@@ -128,7 +128,7 @@ const UpdateRoleForm: FC<{ data: IRole }> = ({ data }) => {
       >
         {t.delete}
       </FormButton>
-    </Form>
+    </FormBase>
   );
 };
 export default UpdateRoleForm;

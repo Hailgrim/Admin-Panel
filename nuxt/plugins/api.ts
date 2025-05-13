@@ -16,29 +16,16 @@ export default defineNuxtPlugin((nuxtApp) => {
     retryDelay: 0,
     retryStatusCodes: [401],
     onRequest({ options }) {
-      const newHeaders: Map<string, string> = new Map()
-
-      if (import.meta.server && cookie) {
-        newHeaders.set('cookie', cookie)
+      if (import.meta.client) {
+        return
       }
 
-      if (typeof options.body === 'object') {
-        newHeaders.set('content-type', 'application/json')
-      } else {
-        newHeaders.set('content-type', 'text/plain;charset=UTF-8')
+      if (cookie) {
+        options.headers.set('cookie', cookie)
       }
 
       if (userAgent) {
-        newHeaders.set('user-agent', userAgent)
-      }
-
-      const headers = (options.headers ||= {})
-      if (Array.isArray(headers)) {
-        newHeaders.forEach((value, key) => headers.push([key, value]))
-      } else if (headers instanceof Headers) {
-        newHeaders.forEach((value, key) => headers.set(key, value))
-      } else {
-        newHeaders.forEach((value, key) => (headers[key] = value))
+        options.headers.set('user-agent', userAgent)
       }
     },
     async onResponseError({ response, options }) {
@@ -54,35 +41,36 @@ export default defineNuxtPlugin((nuxtApp) => {
           })
           const newCookies = refresh.headers.get('set-cookie')
 
-          if (newCookies) {
-            if (import.meta.server && event) {
-              newCookies
-                .split(', ')
-                .map((cookie) =>
-                  event.node.res.appendHeader('set-cookie', cookie)
-                )
-            }
+          if (import.meta.server && event && newCookies) {
+            newCookies
+              .split(', ')
+              .map(cookie =>
+                event.node.res.appendHeader('set-cookie', cookie),
+              )
           }
-        } catch {
-          if (!Object.values(ROUTES.ui).includes(nuxtApp._route.path)) {
+        }
+        catch {
+          if (
+            !Object.values(ROUTES.ui).some(
+              route => typeof route === 'string' && route.includes(nuxtApp._route.path),
+            )
+          ) {
             await nuxtApp.runWithContext(() =>
               navigateTo(
                 {
                   path: ROUTES.ui.signIn,
                   query: { return: encodeURIComponent(nuxtApp._route.path) },
                 },
-                { redirectCode: 302 }
-              )
+                { redirectCode: 302 },
+              ),
             )
           }
         }
-      } else {
-        throw response._data
       }
     },
   })
 
-  // Expose to useNuxtApp().$api
+  // NOTE: Expose to useNuxtApp().$api
   return {
     provide: {
       api,

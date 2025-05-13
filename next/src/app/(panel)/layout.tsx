@@ -24,7 +24,7 @@ import { useAppDispatch } from '@/shared/store/hooks';
 import authApi from '@/shared/api/auth/authApi';
 import { addAlert, setProfile } from '@/shared/store/main/main';
 import SideBar from '@/widgets/SideBar/SideBar';
-import Alerts from '@/widgets/Alerts/Alerts';
+import LayoutAlerts from '@/widgets/Alerts/LayoutAlerts';
 import { getErrorText, ROUTES } from '@ap/shared';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
 
@@ -97,7 +97,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
             {children}
           </Box>
         </Box>
-        <Alerts />
+        <LayoutAlerts />
       </Box>
     </ThemeProvider>
   );

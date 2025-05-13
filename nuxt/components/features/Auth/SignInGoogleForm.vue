@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import Form from '~/components/shared/ui/Form/Form.vue'
-import authApi from '~/api/auth/authApi'
-import FormAlert from '~/components/shared/ui/Form/FormAlert.vue'
-
 const { t, locale } = useI18n()
 const errorText = ref<string | null>(null)
 const hash = new URLSearchParams(location?.hash.slice(1) || '')
@@ -18,11 +14,12 @@ watch(error, () => {
         errorText.value = getErrorText(error.value, locale.value)
     }
 })
-structuredClone
+
 onMounted(() => {
   if (hash.has('access_token')) {
     execute({ googleAccessToken: hash.get('access_token')! })
-  } else {
+  }
+  else {
     errorText.value = t('error')
   }
 
@@ -44,10 +41,17 @@ onMounted(() => {
 </script>
 
 <template>
-  <Form>
-    <FormAlert v-if="errorText" :text="errorText" type="error" />
-    <v-card-text v-else class="text-center py-3">
+  <FormBase>
+    <FormAlert
+      v-if="errorText"
+      :text="errorText"
+      type="error"
+    />
+    <v-card-text
+      v-else
+      class="text-center py-3"
+    >
       {{ $t('loading') }}...
     </v-card-text>
-  </Form>
+  </formbase>
 </template>

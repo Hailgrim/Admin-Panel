@@ -1,5 +1,3 @@
-import { useMainStore } from '~/store/main/main'
-
 const defaultRights = {
   creating: false,
   reading: false,
@@ -45,18 +43,19 @@ export function useRights(path: string) {
         }
 
         if (
-          rights.value.creating !== newRights.creating ||
-          rights.value.reading !== newRights.reading ||
-          rights.value.updating !== newRights.updating ||
-          rights.value.deleting !== newRights.deleting
+          rights.value.creating !== newRights.creating
+          || rights.value.reading !== newRights.reading
+          || rights.value.updating !== newRights.updating
+          || rights.value.deleting !== newRights.deleting
         ) {
           rights.value = newRights
         }
-      } else {
+      }
+      else {
         rights.value = defaultRights
       }
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   return rights

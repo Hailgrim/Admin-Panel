@@ -1,17 +1,13 @@
 <script setup lang="ts">
-import resourcesApi from '~/api/resources/resourcesApi'
-import ResourcesTable from '~/components/entities/Resource/ResourcesTable.vue'
-import { useMainStore } from '~/store/main/main'
-
 const props = defineProps<{
-  rows?: IResource[];
-  count?: number;
-  page?: number;
-  quantity?: number;
+  rows?: IResource[]
+  count?: number
+  page?: number
+  quantity?: number
 }>()
 defineEmits<{
-  'update:page': [value: number];
-  'update:quantity': [value: number];
+  'update:page': [value: number]
+  'update:quantity': [value: number]
 }>()
 
 const { locale } = useI18n()
@@ -30,7 +26,7 @@ const {
 const page = ref(props.page || 1)
 const quantity = ref(props.quantity || 25)
 const count = computed(
-  () => faData.value?.count || props.count || page.value * quantity.value
+  () => faData.value?.count || props.count || page.value * quantity.value,
 )
 const items = ref(props.rows)
 const rights = useRights(ROUTES.api.resources)
@@ -48,7 +44,7 @@ watch(
       })
     }
   },
-  { immediate: true }
+  { immediate: true },
 )
 
 watch([page, quantity], () => {
@@ -89,18 +85,35 @@ watch(dError, () => {
 <template>
   <div class="mb-3">
     <NuxtLink :href="rights.creating ? ROUTES.ui.newResource : undefined">
-      <v-btn class="me-2" color="info" :disabled="!rights.creating" prepend-icon="mdi-plus" variant="flat">
+      <v-btn
+        class="me-2"
+        color="info"
+        :disabled="!rights.creating"
+        prepend-icon="mdi-plus"
+        variant="flat"
+      >
         {{ $t('create') }}
       </v-btn>
     </NuxtLink>
     <v-btn
-color="error" :disabled="!rights.deleting || selected.length === 0" :loading="dPending"
-      prepend-icon="mdi-delete" variant="flat" @click="dExecute({ items: selected })">
+      color="error"
+      :disabled="!rights.deleting || selected.length === 0"
+      :loading="dPending"
+      prepend-icon="mdi-delete"
+      variant="flat"
+      @click="dExecute({ items: selected })"
+    >
       {{ $t('delete') }}
     </v-btn>
   </div>
   <ResourcesTable
-v-model:page="page" v-model:quantity="quantity" v-model:selected="selected" :count="count"
-    :loading="dPending || faPending" :rows="items" @update:page="$emit('update:page', $event)"
-    @update:quantity="$emit('update:quantity', $event)" />
+    v-model:page="page"
+    v-model:quantity="quantity"
+    v-model:selected="selected"
+    :count="count"
+    :loading="dPending || faPending"
+    :rows="items"
+    @update:page="$emit('update:page', $event)"
+    @update:quantity="$emit('update:quantity', $event)"
+  />
 </template>

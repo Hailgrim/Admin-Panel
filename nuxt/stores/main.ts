@@ -1,5 +1,3 @@
-import { defineStore } from 'pinia'
-
 export const useMainStore = defineStore('main', () => {
   const isSideBarOpened = ref(true)
   function toggleSideBar(value: boolean) {
@@ -24,11 +22,12 @@ export const useMainStore = defineStore('main', () => {
       })
 
       setTimeout(
-        () => (alerts.value = alerts.value.filter((alert) => alert.id !== id)),
-        delay
+        () => (alerts.value = alerts.value.filter(alert => alert.id !== id)),
+        delay,
       )
-    } else {
-      alerts.value = alerts.value.filter((alert) => alert.id !== id)
+    }
+    else {
+      alerts.value = alerts.value.filter(alert => alert.id !== id)
     }
   }
 

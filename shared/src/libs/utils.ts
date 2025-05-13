@@ -82,7 +82,6 @@ export const getErrorText = (error?: unknown, lang: string = 'en'): string => {
   }
 
   if ('message' in obj) {
-    console.log(obj.message);
     if (obj.message instanceof Array) {
       return obj.message.join('.\r\n').concat('.');
     } else if (typeof obj.message === 'string') {

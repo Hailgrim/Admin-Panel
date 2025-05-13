@@ -1,6 +1,6 @@
 import { FC, FormEvent, useEffect, useMemo, useState } from 'react';
 
-import Form from '@/shared/ui/Form/Form';
+import FormBase from '@/shared/ui/Form/FormBase';
 import FormButton from '@/shared/ui/Form/FormButton';
 import useRights from '@/shared/hooks/useRights';
 import { useAppDispatch } from '@/shared/store/hooks';
@@ -59,7 +59,7 @@ const UpdatePasswordForm: FC = () => {
   }, [data, dispatch, tRef]);
 
   return (
-    <Form onSubmit={submitHandler}>
+    <FormBase onSubmit={submitHandler}>
       <FormPassword
         name="old-password"
         label={t.oldPassword}
@@ -84,7 +84,7 @@ const UpdatePasswordForm: FC = () => {
       >
         {t.update}
       </FormButton>
-    </Form>
+    </FormBase>
   );
 };
 export default UpdatePasswordForm;

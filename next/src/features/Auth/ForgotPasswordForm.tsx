@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
-import Form from '@/shared/ui/Form/Form';
+import FormBase from '@/shared/ui/Form/FormBase';
 import FormField from '@/shared/ui/Form/FormField';
 import FormButton from '@/shared/ui/Form/FormButton';
 import FormLink from '@/shared/ui/Form/FormLink';
@@ -59,7 +59,7 @@ const ForgotPasswordForm: FC = () => {
 
   return (
     <>
-      <Form onSubmit={submitHandler}>
+      <FormBase onSubmit={submitHandler}>
         {errorText && <FormAlert severity="error">{errorText}</FormAlert>}
         <FormField
           required
@@ -79,7 +79,7 @@ const ForgotPasswordForm: FC = () => {
         <FormLink href={ROUTES.ui.signUp} mui={{ align: 'center' }}>
           {t.signUpText}
         </FormLink>
-      </Form>
+      </FormBase>
       <CustomModal
         open={resetModal}
         title={t.resetPassword}

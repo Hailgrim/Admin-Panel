@@ -1,4 +1,4 @@
 export interface IReqError {
-  status?: number;
-  message?: string;
+  status?: number
+  message?: string
 }

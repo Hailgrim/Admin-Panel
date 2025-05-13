@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useMainStore } from '~/store/main/main'
-
 const mainStore = useMainStore()
 </script>
 

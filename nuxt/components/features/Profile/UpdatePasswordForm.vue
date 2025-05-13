@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import type { SubmitEventPromise } from 'vuetify'
 
-import Form from '~/components/shared/ui/Form/Form.vue'
-import FormPassword from '~/components/shared/ui/Form/FormPassword.vue'
-import FormButton from '~/components/shared/ui/Form/FormButton.vue'
-import { useMainStore } from '~/store/main/main'
-import profileApi from '~/api/profile/profileApi'
-
 const { t, locale } = useI18n()
 const mainStore = useMainStore()
 const { data, error, execute, pending } = profileApi.updatePassword()
@@ -44,7 +38,7 @@ watch(data, () => {
 </script>
 
 <template>
-  <Form @submit="submitHandler">
+  <FormBase @submit="submitHandler">
     <FormPassword
       v-model="oldPassword"
       :label="$t('newPassword')"
@@ -67,5 +61,5 @@ watch(data, () => {
     >
       {{ $t('update') }}
     </FormButton>
-  </Form>
+  </FormBase>
 </template>

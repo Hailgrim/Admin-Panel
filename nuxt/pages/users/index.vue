@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import usersApi from '~/api/users/usersApi'
-import UsersList from '~/components/features/Users/UsersList.vue'
-
 definePageMeta({
   middleware: ['auth'],
   layout: 'panel',
@@ -34,5 +31,10 @@ watch(
 </script>
 
 <template>
-  <UsersList v-model:page="page" v-model:quantity="quantity" :count="data?.count" :rows="data?.rows" />
+  <UsersList
+    v-model:page="page"
+    v-model:quantity="quantity"
+    :count="data?.count"
+    :rows="data?.rows"
+  />
 </template>

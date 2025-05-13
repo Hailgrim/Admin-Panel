@@ -1,13 +1,5 @@
 import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 
-export interface IUpdateReq<
-  T = unknown,
-  U = T extends { id: infer P } ? P : string | number
-> {
-  id: U;
-  fields: T;
-}
-
 export interface IFetchRes<T = unknown> {
   data: T | null;
   error: number | null;

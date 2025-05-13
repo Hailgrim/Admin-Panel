@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import type { SubmitEventPromise } from 'vuetify'
 
-import Form from '~/components/shared/ui/Form/Form.vue'
-import FormField from '~/components/shared/ui/Form/FormField.vue'
-import FormButton from '~/components/shared/ui/Form/FormButton.vue'
-import { useMainStore } from '~/store/main/main'
-import profileApi from '~/api/profile/profileApi'
-
 const { t, locale } = useI18n()
 const mainStore = useMainStore()
 const { email, ...profile } = mainStore.profile || ({} as Partial<IUser>)
@@ -22,7 +16,7 @@ async function submitHandler(event: SubmitEventPromise) {
   if (newData.value && mainStore.profile && results.valid) {
     const updatedValues = getUpdatedValues<IUser>(
       mainStore.profile,
-      newData.value
+      newData.value,
     )
 
     if (Object.keys(updatedValues).length > 0) execute(updatedValues)
@@ -48,17 +42,30 @@ watch(data, () => {
 </script>
 
 <template>
-  <Form @submit="submitHandler">
+  <FormBase @submit="submitHandler">
     <FormField
-v-if="mainStore.profile?.googleId" disabled :label="$t('googleId')"
-      :model-value="mainStore.profile.googleId" name="googleId" />
+      v-if="mainStore.profile?.googleId"
+      disabled
+      :label="$t('googleId')"
+      :model-value="mainStore.profile.googleId"
+      name="googleId"
+    />
     <FormField
-:label="$t('name')" :model-value="newData.name" name="name" required :rules="[nameIsValid]"
-      @update:model-value="newData && (newData = { ...newData, name: $event })" />
+      :label="$t('name')"
+      :model-value="newData.name"
+      name="name"
+      required
+      :rules="[nameIsValid]"
+      @update:model-value="newData && (newData = { ...newData, name: $event })"
+    />
     <FormButton
-color="success" :disabled="!rights.updating" :loading="pending" prepand-icon="mdi-content-save"
-      type="submit">
+      color="success"
+      :disabled="!rights.updating"
+      :loading="pending"
+      prepand-icon="mdi-content-save"
+      type="submit"
+    >
       {{ $t('update') }}
     </FormButton>
-  </Form>
+  </FormBase>
 </template>

@@ -1,7 +1,7 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import Form from '@/shared/ui/Form/Form';
+import FormBase from '@/shared/ui/Form/FormBase';
 import FormButton from '@/shared/ui/Form/FormButton';
 import FormAlert from '@/shared/ui/Form/FormAlert';
 import FormField from '@/shared/ui/Form/FormField';
@@ -66,7 +66,7 @@ const ResetPasswordForm: FC<{
   }, [data, onClose, router]);
 
   return (
-    <Form onSubmit={submitHandler}>
+    <FormBase onSubmit={submitHandler}>
       {errorText && <FormAlert severity="error">{errorText}</FormAlert>}
       <FormField
         required
@@ -94,7 +94,7 @@ const ResetPasswordForm: FC<{
       <FormButton fullWidth color="error" onClick={onClose}>
         {t.close}
       </FormButton>
-    </Form>
+    </FormBase>
   );
 };
 export default ResetPasswordForm;

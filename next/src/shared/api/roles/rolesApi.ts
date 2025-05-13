@@ -2,12 +2,12 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import rolesService from '@/shared/api/roles/rolesService';
 import baseQueryWithReauth from '../baseQueryWithReauth';
-import { IUpdateReq } from '../types';
 import {
   IGetListResponse,
   IQueryItems,
   IRights,
   IRole,
+  IUpdateReq,
   TCreateRole,
   TGetListRequest,
   TGetRoles,

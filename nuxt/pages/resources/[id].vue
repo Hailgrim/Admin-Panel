@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import resourcesApi from '~/api/resources/resourcesApi'
-import UpdateResourceForm from '~/components/features/Resources/UpdateResourceForm.vue'
-
 definePageMeta({
   middleware: ['auth'],
   layout: 'panel',
@@ -23,5 +20,8 @@ if (data.value === null) {
 </script>
 
 <template>
-  <UpdateResourceForm v-if="data" :resource="data" />
+  <UpdateResourceForm
+    v-if="data"
+    :resource="data"
+  />
 </template>

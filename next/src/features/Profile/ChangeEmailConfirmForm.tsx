@@ -1,9 +1,9 @@
 import { FC, useEffect, useRef, useState } from 'react';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
-import Form from '@/shared/ui/Form/Form';
+import FormBase from '@/shared/ui/Form/FormBase';
 import FormButton from '@/shared/ui/Form/FormButton';
 import FormField from '@/shared/ui/Form/FormField';
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { useAppDispatch, useAppSelector } from '@/shared/store/hooks';
 import { addAlert, setProfile } from '@/shared/store/main/main';
 import useRights from '@/shared/hooks/useRights';
@@ -73,7 +73,7 @@ const ChangeEmailConfirmForm: FC<{
   }, [profile]);
 
   return (
-    <Form onSubmit={submitHandler}>
+    <FormBase onSubmit={submitHandler}>
       <FormField
         required
         autoComplete="off"
@@ -94,7 +94,7 @@ const ChangeEmailConfirmForm: FC<{
       <FormButton fullWidth color="error" onClick={onClose}>
         {t.close}
       </FormButton>
-    </Form>
+    </FormBase>
   );
 };
 export default ChangeEmailConfirmForm;

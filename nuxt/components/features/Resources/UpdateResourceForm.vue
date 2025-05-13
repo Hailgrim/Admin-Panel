@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import type { SubmitEventPromise } from 'vuetify'
 
-import Form from '~/components/shared/ui/Form/Form.vue'
-import FormField from '~/components/shared/ui/Form/FormField.vue'
-import FormCheckbox from '~/components/shared/ui/Form/FormCheckbox.vue'
-import FormButton from '~/components/shared/ui/Form/FormButton.vue'
-import { useMainStore } from '~/store/main/main'
-import resourcesApi from '~/api/resources/resourcesApi'
-
 const { resource } = defineProps<{ resource: IResource }>()
 
 const { t, locale } = useI18n()
@@ -35,7 +28,7 @@ async function submitHandler(event: SubmitEventPromise) {
   const results = await event
   const updatedValues = getUpdatedValues<IResource>(
     oldData.value,
-    newData.value
+    newData.value,
   )
 
   if (results.valid && Object.keys(updatedValues).length > 0) {
@@ -43,7 +36,8 @@ async function submitHandler(event: SubmitEventPromise) {
       id: resource.id,
       fields: updatedValues,
     })
-  } else {
+  }
+  else {
     mainStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
   }
 }
@@ -80,28 +74,54 @@ watch(dData, () => {
 </script>
 
 <template>
-  <Form @submit="submitHandler">
+  <FormBase @submit="submitHandler">
     <FormField
-:label="$t('name')" :model-value="newData.name" name="name" required :rules="[nameIsValid]"
-      @update:model-value="newData = { ...newData, name: $event }" />
+      :label="$t('name')"
+      :model-value="newData.name"
+      name="name"
+      required
+      :rules="[nameIsValid]"
+      @update:model-value="newData = { ...newData, name: $event }"
+    />
     <FormField
-:label="$t('path')" :model-value="newData.path" name="path" required :rules="[pathIsValid]"
-      @update:model-value="newData = { ...newData, path: $event }" />
+      :label="$t('path')"
+      :model-value="newData.path"
+      name="path"
+      required
+      :rules="[pathIsValid]"
+      @update:model-value="newData = { ...newData, path: $event }"
+    />
     <FormField
-:label="$t('description')" :model-value="newData.description" name="description"
-      @update:model-value="newData = { ...newData, description: $event }" />
+      :label="$t('description')"
+      :model-value="newData.description"
+      name="description"
+      @update:model-value="newData = { ...newData, description: $event }"
+    />
     <FormCheckbox
-:label="$t('enabled')" :model-value="newData.enabled" name="enabled"
-      @update:model-value="newData = { ...newData, enabled: $event }" />
+      :label="$t('enabled')"
+      :model-value="newData.enabled"
+      name="enabled"
+      @update:model-value="newData = { ...newData, enabled: $event }"
+    />
     <FormButton
-color="success" :disabled="!rights.updating || resource.default || dPending || Boolean(dData)
-      " :loading="uPending" prepand-icon="mdi-content-save" type="submit">
+      color="success"
+      :disabled="!rights.updating || resource.default || dPending || Boolean(dData)
+      "
+      :loading="uPending"
+      prepand-icon="mdi-content-save"
+      type="submit"
+    >
       {{ $t('update') }}
     </FormButton>
     <FormButton
-color="error" :disabled="!rights.deleting || resource.default" :loading="dPending || Boolean(dData)"
-      prepand-icon="mdi-delete" type="button" @click="dExecute({ items: [resource.id] })">
+      color="error"
+      :disabled="!rights.deleting || resource.default"
+      :loading="dPending || Boolean(dData)"
+      prepand-icon="mdi-delete"
+      type="button"
+      @click="dExecute({ items: [resource.id] })"
+    >
       {{ $t('delete') }}
     </FormButton>
-  </Form>
+  </FormBase>
 </template>

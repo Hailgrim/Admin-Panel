@@ -2,7 +2,7 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { Typography } from '@mui/material';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
-import Form from '@/shared/ui/Form/Form';
+import FormBase from '@/shared/ui/Form/FormBase';
 import FormAlert from '@/shared/ui/Form/FormAlert';
 import authApi from '@/shared/api/auth/authApi';
 import { getErrorText, IUser, IWindowMessage, ROUTES } from '@ap/shared';
@@ -62,7 +62,7 @@ const SignInGoogleForm: FC = () => {
   }, [data]);
 
   return (
-    <Form>
+    <FormBase>
       {errorText ? (
         <FormAlert severity="error">{errorText}</FormAlert>
       ) : (
@@ -74,7 +74,7 @@ const SignInGoogleForm: FC = () => {
           {t.loading}...
         </Typography>
       )}
-    </Form>
+    </FormBase>
   );
 };
 export default SignInGoogleForm;

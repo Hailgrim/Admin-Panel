@@ -13,8 +13,16 @@ defineEmits<{
 </script>
 
 <template>
-  <v-btn v-bind="props" class="btn mb-6 mr-3" variant="flat" @click="$emit('click')">
-    <template v-if="props.prepandIcon" #prepend>
+  <v-btn
+    v-bind="props"
+    class="btn mb-6 mr-3"
+    variant="flat"
+    @click="$emit('click')"
+  >
+    <template
+      v-if="props.prepandIcon"
+      #prepend
+    >
       <v-icon :icon="props.prepandIcon" />
     </template>
     <slot />

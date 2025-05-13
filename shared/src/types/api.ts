@@ -12,3 +12,11 @@ export interface IGetListResponse<T = unknown> {
 export interface IQueryItems<T> {
   items: T[];
 }
+
+export interface IUpdateReq<
+  T = unknown,
+  U = T extends { id: infer P } ? P : string | number
+> {
+  id: U;
+  fields: T;
+}

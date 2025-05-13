@@ -10,8 +10,10 @@ defineEmits<{
 
 <template>
   <NuxtLink
-class="link d-block mb-6 text-center text-decoration-none" :href="href"
-    @click.capture="$emit('click', $event)">
+    class="link d-block mb-6 text-center text-decoration-none"
+    :href="href"
+    @click.capture="$emit('click', $event)"
+  >
     {{ text }}
   </NuxtLink>
 </template>

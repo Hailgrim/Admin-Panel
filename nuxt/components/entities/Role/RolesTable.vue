@@ -25,13 +25,30 @@ const items = computed(() => rows.value?.map(value => ({ ...value, selectable: !
 
 <template>
   <v-data-table-server
-class="full-page-table" :headers="columns" hover item-selectable="selectable" :items="items"
-    :items-length="count" :items-per-page="quantity" :items-per-page-options="[25, 50, 100]" :loading="loading"
-    :page="page" show-select @update:items-per-page="$emit('update:quantity', $event)"
-    @update:model-value="$emit('update:selected', $event as number[])" @update:page="$emit('update:page', $event)">
+    class="full-page-table"
+    :headers="columns"
+    hover
+    item-selectable="selectable"
+    :items="items"
+    :items-length="count"
+    :items-per-page="quantity"
+    :items-per-page-options="[25, 50, 100]"
+    :loading="loading"
+    :page="page"
+    show-select
+    @update:items-per-page="$emit('update:quantity', $event)"
+    @update:model-value="$emit('update:selected', $event as number[])"
+    @update:page="$emit('update:page', $event)"
+  >
     <template #item.edit="{ item }">
       <NuxtLink :href="item.default ? undefined : ROUTES.ui.role(item.id)">
-        <v-btn color="white" :disabled="item.default" icon="mdi-pencil" size="small" variant="text" />
+        <v-btn
+          color="white"
+          :disabled="item.default"
+          icon="mdi-pencil"
+          size="small"
+          variant="text"
+        />
       </NuxtLink>
     </template>
     <template #item.enabled="{ item }">

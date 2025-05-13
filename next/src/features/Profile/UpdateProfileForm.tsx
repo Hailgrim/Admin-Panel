@@ -1,6 +1,6 @@
 import { FC, FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 
-import Form from '@/shared/ui/Form/Form';
+import FormBase from '@/shared/ui/Form/FormBase';
 import FormField from '@/shared/ui/Form/FormField';
 import FormButton from '@/shared/ui/Form/FormButton';
 import useRights from '@/shared/hooks/useRights';
@@ -81,7 +81,7 @@ const UpdateProfileForm: FC = () => {
   }, [data, dispatch, tRef]);
 
   return (
-    <Form onSubmit={submitHandler}>
+    <FormBase onSubmit={submitHandler}>
       {profile?.googleId && (
         <FormField
           name="googleId"
@@ -110,7 +110,7 @@ const UpdateProfileForm: FC = () => {
       >
         {t.update}
       </FormButton>
-    </Form>
+    </FormBase>
   );
 };
 export default UpdateProfileForm;

@@ -1,10 +1,4 @@
 <script setup lang="ts">
-import UpdateProfileForm from '~/components/features/Profile/UpdateProfileForm.vue'
-import ProfileSessions from '~/components/features/Profile/ProfileSessions.vue'
-import ProfileRoles from '~/components/features/Profile/ProfileRoles.vue'
-import UpdatePasswordForm from '~/components/features/Profile/UpdatePasswordForm.vue'
-import ChangeEmailRequestForm from '~/components/features/Profile/ChangeEmailRequestForm.vue'
-
 definePageMeta({
   middleware: ['auth'],
   layout: 'panel',

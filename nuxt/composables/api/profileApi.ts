@@ -1,27 +1,25 @@
-import { useAPI } from '~/composables/useAPI/useAPI'
-
 class ProfileApi {
   getProfile = useAPI<IUser>(() => ({
     url: ROUTES.api.profile,
     options: { method: 'GET', credentials: 'include' },
   }))
 
-  updateProfile = useAPI<boolean, TUpdateUser>((payload) => ({
+  updateProfile = useAPI<boolean, TUpdateUser>(payload => ({
     url: ROUTES.api.profile,
     options: { method: 'PATCH', credentials: 'include', body: payload },
   }))
 
-  updatePassword = useAPI<boolean, IUpdatePassword>((payload) => ({
+  updatePassword = useAPI<boolean, IUpdatePassword>(payload => ({
     url: ROUTES.api.updatePassword,
     options: { method: 'PATCH', credentials: 'include', body: payload },
   }))
 
-  changeEmailRequest = useAPI<boolean, IChangeEmailRequest>((payload) => ({
+  changeEmailRequest = useAPI<boolean, IChangeEmailRequest>(payload => ({
     url: ROUTES.api.changeEmail,
     options: { method: 'POST', credentials: 'include', body: payload },
   }))
 
-  changeEmail = useAPI<boolean, IChangeEmail>((payload) => ({
+  changeEmail = useAPI<boolean, IChangeEmail>(payload => ({
     url: ROUTES.api.changeEmail,
     options: { method: 'PATCH', credentials: 'include', body: payload },
   }))
@@ -32,10 +30,10 @@ class ProfileApi {
   }))
 
   deleteSessions = useAPI<boolean, IQueryItems<IExternalSession['id']>>(
-    (payload) => ({
+    payload => ({
       url: ROUTES.api.sessions,
       options: { method: 'DELETE', credentials: 'include', body: payload },
-    })
+    }),
   )
 }
 

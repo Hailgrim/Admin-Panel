@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import resourcesApi from '~/api/resources/resourcesApi'
-import ResourcesList from '~/components/features/Resources/ResourcesList.vue'
-
 definePageMeta({
   middleware: ['auth'],
   layout: 'panel',
@@ -34,5 +31,10 @@ watch(
 </script>
 
 <template>
-  <ResourcesList v-model:page="page" v-model:quantity="quantity" :count="data?.count" :rows="data?.rows" />
+  <ResourcesList
+    v-model:page="page"
+    v-model:quantity="quantity"
+    :count="data?.count"
+    :rows="data?.rows"
+  />
 </template>

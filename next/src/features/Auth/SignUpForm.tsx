@@ -2,7 +2,7 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { useRouter } from 'next/navigation';
 
-import Form from '@/shared/ui/Form/Form';
+import FormBase from '@/shared/ui/Form/FormBase';
 import FormField from '@/shared/ui/Form/FormField';
 import FormPassword from '@/shared/ui/Form/FormPassword';
 import FormButton from '@/shared/ui/Form/FormButton';
@@ -85,7 +85,7 @@ const SignUpForm: FC = () => {
 
   return (
     <>
-      <Form onSubmit={submitHandler}>
+      <FormBase onSubmit={submitHandler}>
         {errorText && <FormAlert severity="error">{errorText}</FormAlert>}
         <FormField
           required
@@ -128,7 +128,7 @@ const SignUpForm: FC = () => {
         <FormLink href={ROUTES.ui.forgotPassword} mui={{ align: 'center' }}>
           {t.forgotPasswordText}
         </FormLink>
-      </Form>
+      </FormBase>
       <CustomModal
         open={successModal}
         title={t.registration}

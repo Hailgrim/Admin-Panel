@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import CreateUserForm from '~/components/features/Users/CreateUserForm.vue'
-
 definePageMeta({
   middleware: ['auth'],
   layout: 'panel',

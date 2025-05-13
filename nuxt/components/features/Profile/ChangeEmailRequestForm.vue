@@ -1,14 +1,6 @@
 <script setup lang="ts">
 import type { SubmitEventPromise } from 'vuetify'
 
-import Form from '~/components/shared/ui/Form/Form.vue'
-import FormField from '~/components/shared/ui/Form/FormField.vue'
-import FormButton from '~/components/shared/ui/Form/FormButton.vue'
-import CustomModal from '~/components/shared/ui/CustomModal/CustomModal.vue'
-import ChangeEmailConfirmForm from '~/components/features/Profile/ChangeEmailConfirmForm.vue'
-import profileApi from '~/api/profile/profileApi'
-import { useMainStore } from '~/store/main/main'
-
 const { t, locale } = useI18n()
 const mainStore = useMainStore()
 const email = ref(mainStore.profile?.email || '')
@@ -42,15 +34,32 @@ watch(data, () => {
 </script>
 
 <template>
-  <Form @submit="submitHandler">
+  <FormBase @submit="submitHandler">
     <FormField
-v-model="email" :hint="$t('emailValidationI18N')" :label="$t('email')" name="email" required
-      :rules="[emailIsValid]" type="email" />
-    <FormButton color="success" :disabled="!rights.updating" :loading="pending" type="submit">
+      v-model="email"
+      :hint="$t('emailValidationI18N')"
+      :label="$t('email')"
+      name="email"
+      required
+      :rules="[emailIsValid]"
+      type="email"
+    />
+    <FormButton
+      color="success"
+      :disabled="!rights.updating"
+      :loading="pending"
+      type="submit"
+    >
       {{ $t('change') }}
     </FormButton>
-    <CustomModal v-model="confirmModal" :title="$t('resetPassword')">
-      <ChangeEmailConfirmForm :email="args?.newEmail || ''" @close="confirmModal = false" />
+    <CustomModal
+      v-model="confirmModal"
+      :title="$t('resetPassword')"
+    >
+      <ChangeEmailConfirmForm
+        :email="args?.newEmail || ''"
+        @close="confirmModal = false"
+      />
     </CustomModal>
-  </Form>
+  </FormBase>
 </template>

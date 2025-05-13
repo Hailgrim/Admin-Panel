@@ -1,17 +1,14 @@
-import profileApi from '~/api/profile/profileApi'
-import { useMainStore } from '~/store/main/main'
-
 export default defineNuxtRouteMiddleware(async (to) => {
   if (import.meta.client) return
 
   const accessToken = useCookie('accessToken')
   const refreshToken = useCookie('refreshToken')
   const mainStore = useMainStore()
-  const isAuthRoute =
-    to.path === ROUTES.ui.signIn ||
-    to.path === ROUTES.ui.signInGoogle ||
-    to.path === ROUTES.ui.signUp ||
-    to.path === ROUTES.ui.forgotPassword
+  const isAuthRoute
+    = to.path === ROUTES.ui.signIn
+      || to.path === ROUTES.ui.signInGoogle
+      || to.path === ROUTES.ui.signUp
+      || to.path === ROUTES.ui.forgotPassword
 
   if (accessToken.value || refreshToken.value) {
     // Attempt to authorize the user
@@ -28,17 +25,18 @@ export default defineNuxtRouteMiddleware(async (to) => {
             ? decodeURIComponent(String(to.query.return))
             : ROUTES.ui.home,
         },
-        { redirectCode: 302 }
+        { redirectCode: 302 },
       )
     }
-  } else {
+  }
+  else {
     if (!isAuthRoute) {
       return navigateTo(
         {
           path: ROUTES.ui.signIn,
           query: { return: encodeURIComponent(to.path) },
         },
-        { redirectCode: 302 }
+        { redirectCode: 302 },
       )
     }
   }

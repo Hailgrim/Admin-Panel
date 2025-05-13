@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const modelValue = defineModel<string>()
 const props = defineProps<{
   name: string
   label?: string
@@ -8,17 +9,18 @@ const props = defineProps<{
   rules?: ((value: string) => boolean | string)[]
   hint?: string
   type?: string
-  modelValue?: string | null
-}>()
-defineEmits<{
-  'update:modelValue': [value: string]
 }>()
 </script>
 
 <template>
   <v-text-field
-v-bind="props" :class="props.hint && 'mb-6'" density="compact" persistent-hint variant="outlined"
-    @input="$emit('update:modelValue', $event.target.value)" />
+    v-bind="props"
+    v-model="modelValue"
+    :class="props.hint && 'mb-6'"
+    density="compact"
+    persistent-hint
+    variant="outlined"
+  />
 </template>
 
 <style scoped lang="scss">

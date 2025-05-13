@@ -2,11 +2,11 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import baseQueryWithReauth from '../baseQueryWithReauth';
 import resourcesService from '@/shared/api/resources/resourcesService';
-import { IUpdateReq } from '../types';
 import {
   IGetListResponse,
   IQueryItems,
   IResource,
+  IUpdateReq,
   TCreateResource,
   TGetListRequest,
   TGetResources,

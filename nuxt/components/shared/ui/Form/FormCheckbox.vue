@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const modelValue = defineModel<boolean>()
 const props = defineProps<{
   name: string
   label?: string
@@ -6,17 +7,17 @@ const props = defineProps<{
   color?: string
   rules?: ((value: string) => boolean | string)[]
   hint?: string
-  modelValue?: boolean
-}>()
-defineEmits<{
-  'update:modelValue': [value: boolean]
 }>()
 </script>
 
 <template>
   <v-checkbox
-v-bind="props" class="checkbox" density="compact" persistent-hint
-    @change="$emit('update:modelValue', $event.target.checked)" />
+    v-bind="props"
+    v-model="modelValue"
+    class="checkbox"
+    density="compact"
+    persistent-hint
+  />
 </template>
 
 <style scoped lang="scss">

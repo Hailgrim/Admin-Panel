@@ -2,7 +2,7 @@ import { FC, FormEvent, useEffect, useRef, useState } from 'react';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import Form from '@/shared/ui/Form/Form';
+import FormBase from '@/shared/ui/Form/FormBase';
 import FormField from '@/shared/ui/Form/FormField';
 import FormCheckbox from '@/shared/ui/Form/FormCheckbox';
 import FormPassword from '@/shared/ui/Form/FormPassword';
@@ -86,7 +86,7 @@ const SignInForm: FC = () => {
 
   return (
     <>
-      <Form onSubmit={submitHandler}>
+      <FormBase onSubmit={submitHandler}>
         {errorText && <FormAlert severity="error">{errorText}</FormAlert>}
         <FormField
           required
@@ -125,7 +125,7 @@ const SignInForm: FC = () => {
           {t.forgotPasswordText}
         </FormLink>
         <SignInGoogleLink />
-      </Form>
+      </FormBase>
       <CustomModal
         open={verifyModal}
         title={t.verification}

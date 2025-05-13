@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import SideBarMenuItem from './SideBarMenuItem.vue'
-
 const route = useRoute()
 const { t } = useI18n()
 const profileRights = useRights(ROUTES.api.profile)
@@ -60,8 +58,15 @@ const opened = computed(() => menu.find(value => checkActiveLink(route.path, { h
 
 <template>
   <v-list
-:aria-label="$t('mainMenu')" density="compact" nav
-    :opened="[opened ? `${opened.title}: ${opened.href}` : '']">
-    <SideBarMenuItem v-for="item of menu" :key="`sbmi:${item.title}:${item.href}`" v-bind="item" />
+    :aria-label="$t('mainMenu')"
+    density="compact"
+    nav
+    :opened="[opened ? `${opened.title}: ${opened.href}` : '']"
+  >
+    <SideBarMenuItem
+      v-for="item of menu"
+      :key="`sbmi:${item.title}:${item.href}`"
+      v-bind="item"
+    />
   </v-list>
 </template>

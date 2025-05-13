@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import CreateRoleForm from '~/components/features/Roles/CreateRoleForm.vue'
-
 definePageMeta({
   middleware: ['auth'],
   layout: 'panel',

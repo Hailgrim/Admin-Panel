@@ -1,9 +1,4 @@
 <script setup lang="ts">
-import rolesApi from '~/api/roles/rolesApi'
-import usersApi from '~/api/users/usersApi'
-import UpdateUserForm from '~/components/features/Users/UpdateUserForm.vue'
-import UpdateUserRolesForm from '~/components/features/Users/UpdateUserRolesForm.vue'
-
 definePageMeta({
   middleware: ['auth'],
   layout: 'panel',
@@ -28,9 +23,19 @@ await rfaExecute(undefined)
 </script>
 
 <template>
-  <UpdateUserForm v-if="ufoData" :user="ufoData" />
-  <v-card-title v-if="ufoData && rfaData" class="px-0 py-3">
+  <UpdateUserForm
+    v-if="ufoData"
+    :user="ufoData"
+  />
+  <v-card-title
+    v-if="ufoData && rfaData"
+    class="px-0 py-3"
+  >
     {{ $t('roles') }}
   </v-card-title>
-  <UpdateUserRolesForm v-if="ufoData && rfaData" :roles="rfaData.rows" :user="ufoData" />
+  <UpdateUserRolesForm
+    v-if="ufoData && rfaData"
+    :roles="rfaData.rows"
+    :user="ufoData"
+  />
 </template>

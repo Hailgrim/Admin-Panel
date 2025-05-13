@@ -13,7 +13,7 @@ import {
   Typography,
 } from '@mui/material';
 
-import Form from '@/shared/ui/Form/Form';
+import FormBase from '@/shared/ui/Form/FormBase';
 import { useAppDispatch } from '@/shared/store/hooks';
 import { addAlert, setProfile } from '@/shared/store/main/main';
 import theme from '@/shared/lib/theme';
@@ -68,7 +68,7 @@ const SessionForm: FC<{ session: IExternalSession; onDelete?: () => void }> = ({
   }, [removeReq.data, dispatch, session, tRef, onDelete]);
 
   return (
-    <Form onSubmit={submitHandler}>
+    <FormBase onSubmit={submitHandler}>
       <Session>
         <SessionContent>
           {userAgent.current.device.vendor ? (
@@ -126,7 +126,7 @@ const SessionForm: FC<{ session: IExternalSession; onDelete?: () => void }> = ({
           </IconButton>
         </CardActions>
       </Session>
-    </Form>
+    </FormBase>
   );
 };
 export default SessionForm;

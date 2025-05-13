@@ -1,10 +1,11 @@
-import { IFetchRes, IReqArgs, IUpdateReq } from '../types';
+import { IFetchRes, IReqArgs } from '../types';
 import serverFetch from '../serverFetch';
 import {
   IGetListResponse,
   IQueryItems,
   IRights,
   IRole,
+  IUpdateReq,
   ROUTES,
   TCreateRole,
   TGetListRequest,

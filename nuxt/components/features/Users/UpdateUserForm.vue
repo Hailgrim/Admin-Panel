@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import type { SubmitEventPromise } from 'vuetify'
 
-import Form from '~/components/shared/ui/Form/Form.vue'
-import FormField from '~/components/shared/ui/Form/FormField.vue'
-import FormCheckbox from '~/components/shared/ui/Form/FormCheckbox.vue'
-import FormButton from '~/components/shared/ui/Form/FormButton.vue'
-import { useMainStore } from '~/store/main/main'
-import usersApi from '~/api/users/usersApi'
-
 const { user } = defineProps<{ user: IUser }>()
 
 const { t, locale } = useI18n()
@@ -74,26 +67,50 @@ watch(dData, () => {
 </script>
 
 <template>
-  <Form @submit="submitHandler">
+  <FormBase @submit="submitHandler">
     <FormField
-:hint="$t('emailValidationI18N')" :label="$t('email')" :model-value="newData.email" name="email" required
-      :rules="[emailIsValid]" type="email" @update:model-value="newData = { ...newData, email: $event }" />
+      :hint="$t('emailValidationI18N')"
+      :label="$t('email')"
+      :model-value="newData.email"
+      name="email"
+      required
+      :rules="[emailIsValid]"
+      type="email"
+      @update:model-value="newData = { ...newData, email: $event }"
+    />
     <FormField
-:hint="$t('nameValidation')" :label="$t('name')" :model-value="newData.name" name="name" required
-      :rules="[nameIsValid]" @update:model-value="newData = { ...newData, name: $event }" />
+      :hint="$t('nameValidation')"
+      :label="$t('name')"
+      :model-value="newData.name"
+      name="name"
+      required
+      :rules="[nameIsValid]"
+      @update:model-value="newData = { ...newData, name: $event }"
+    />
     <FormCheckbox
-:label="$t('enabled')" :model-value="newData.enabled" name="enabled"
-      @update:model-value="newData = { ...newData, enabled: $event }" />
+      :label="$t('enabled')"
+      :model-value="newData.enabled"
+      name="enabled"
+      @update:model-value="newData = { ...newData, enabled: $event }"
+    />
     <FormButton
-color="success" :disabled="!rights.updating || dPending || Boolean(dData)" :loading="uPending"
-      prepand-icon="mdi-content-save" type="submit">
+      color="success"
+      :disabled="!rights.updating || dPending || Boolean(dData)"
+      :loading="uPending"
+      prepand-icon="mdi-content-save"
+      type="submit"
+    >
       {{ $t('update') }}
     </FormButton>
     <FormButton
-color="error" :disabled="!rights.deleting || user.roles?.some((role) => role.admin)"
-      :loading="dPending || Boolean(dData)" prepand-icon="mdi-delete" type="button"
-      @click="dExecute({ items: [user.id] })">
+      color="error"
+      :disabled="!rights.deleting || user.roles?.some((role) => role.admin)"
+      :loading="dPending || Boolean(dData)"
+      prepand-icon="mdi-delete"
+      type="button"
+      @click="dExecute({ items: [user.id] })"
+    >
       {{ $t('delete') }}
     </FormButton>
-  </Form>
+  </FormBase>
 </template>

@@ -2,7 +2,7 @@ import { FC, FormEvent, useEffect, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import { useRouter } from 'next/navigation';
 
-import Form from '@/shared/ui/Form/Form';
+import FormBase from '@/shared/ui/Form/FormBase';
 import FormField from '@/shared/ui/Form/FormField';
 import FormButton from '@/shared/ui/Form/FormButton';
 import useRights from '@/shared/hooks/useRights';
@@ -55,7 +55,7 @@ const CreateUserForm: FC = () => {
   }, [createReq.error, dispatch, lRef]);
 
   return (
-    <Form onSubmit={submitHandler}>
+    <FormBase onSubmit={submitHandler}>
       <FormField
         required
         name="email"
@@ -101,7 +101,7 @@ const CreateUserForm: FC = () => {
       >
         {t.create}
       </FormButton>
-    </Form>
+    </FormBase>
   );
 };
 export default CreateUserForm;

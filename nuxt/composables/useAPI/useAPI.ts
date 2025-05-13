@@ -1,20 +1,19 @@
-import { useMainStore } from '~/store/main/main'
 import type { IReqError } from './types'
 
 export function useAPI<ResT = unknown, ReqT = void>(
   initQuery: (payload: ReqT) => {
-    url: string;
+    url: string
     options: {
-      method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-      params?: Record<string, unknown>;
-      body?: unknown;
-      credentials?: RequestCredentials;
-    };
-  }
+      method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
+      params?: Record<string, unknown>
+      body?: unknown
+      credentials?: RequestCredentials
+    }
+  },
 ) {
   return (cacheKey?: string) => {
     const mainStore = useMainStore()
-    const customFetch = useNuxtApp().$api
+    const customFetch = useNuxtApp().$api as typeof $fetch
     const args = ref(null) as Ref<ReqT | null>
     const pending = ref(false)
     const error = ref<IReqError | null>(null)
@@ -39,17 +38,18 @@ export function useAPI<ResT = unknown, ReqT = void>(
         const result = await customFetch<ResT>(query.url, {
           ...query.options,
           body: query.options.body as
-            | BodyInit
-            | Record<string, unknown>
-            | null
-            | undefined,
+          | BodyInit
+          | Record<string, unknown>
+          | null
+          | undefined,
           headers,
         })
 
         cache.value = result
         data.value = result
         pending.value = false
-      } catch (fail) {
+      }
+      catch (fail) {
         error.value = {
           status: Number((fail as Record<string, unknown>).statusCode) || 400,
           message: String((fail as Record<string, unknown>).message),
