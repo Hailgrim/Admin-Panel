@@ -5,14 +5,14 @@ const updatedRoles = ref<IUsersRoles[]>(
   user.roles?.map(role => ({ roleId: role.id, userId: user.id })) || [],
 )
 const { t, locale } = useI18n()
-const { data, error, execute, pending } = usersApi.updateRoles()
+const { status, error, execute } = usersApi.updateRoles()
 const mainStore = useMainStore()
 const rights = useRights(ROUTES.api.users)
 
 function submitHandler() {
   execute({
     id: user.id,
-    fields: updatedRoles.value,
+    fields: { items: updatedRoles.value },
   })
 }
 
@@ -20,7 +20,7 @@ function setRoles(newRole: IUsersRoles) {
   let find = false
 
   const filtered = updatedRoles.value.filter((value) => {
-    if (newRole.userId === value?.userId && newRole.roleId === value?.roleId) {
+    if (newRole.userId === value.userId && newRole.roleId === value.roleId) {
       find = true
       return false
     }
@@ -42,8 +42,8 @@ watch(error, () => {
     })
 })
 
-watch(data, () => {
-  if (data.value) mainStore.addAlert({ type: 'success', text: t('success') })
+watch(status, () => {
+  if (status.value === 'success') mainStore.addAlert({ type: 'success', text: t('success') })
 })
 </script>
 
@@ -57,7 +57,7 @@ watch(data, () => {
       >
         <FormCheckbox
           :label="role.name"
-          :model-value="updatedRoles.some((value) => value?.roleId === role.id)"
+          :model-value="updatedRoles.some((value) => value.roleId === role.id)"
           :name="`${role.name}.${role.id}`"
           @update:model-value="setRoles({ roleId: role.id, userId: user.id })"
         />
@@ -66,7 +66,7 @@ watch(data, () => {
     <FormButton
       color="success"
       :disabled="!rights.updating"
-      :loading="pending"
+      :loading="status === 'pending'"
       prepand-icon="mdi-content-save"
       type="submit"
     >

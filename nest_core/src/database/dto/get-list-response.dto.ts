@@ -12,4 +12,14 @@ export class GetListResponseDto<T> implements IGetListResponse<T> {
   @IsOptional()
   @IsNumber({ allowNaN: false })
   count?: number;
+
+  @ApiPropertyOptional({ type: Number, example: 1 })
+  @IsOptional()
+  @IsNumber({ allowNaN: false })
+  page?: number;
+
+  @ApiPropertyOptional({ type: Number, example: 10 })
+  @IsOptional()
+  @IsNumber({ allowNaN: false })
+  limit?: number;
 }

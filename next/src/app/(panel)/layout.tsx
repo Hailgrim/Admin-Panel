@@ -34,7 +34,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   const lRef = useLanguageRef();
   const t = useTranslate();
   const [open, setOpen] = useState(true);
-  const [signOut, { data, error, isLoading }] = authApi.useSignOutMutation();
+  const [signOut, { isSuccess, error, isLoading }] =
+    authApi.useSignOutMutation();
   const profile = useAppSelector((store) => store.main.profile);
   const pathname = usePathname();
 
@@ -43,9 +44,9 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   }, [profile, signOut]);
 
   useEffect(() => {
-    if (data || (error && 'status' in error && error.status === 401))
+    if (isSuccess || (error && 'status' in error && error.status === 401))
       router.push(`${ROUTES.ui.signIn}?return=${encodeURIComponent(pathname)}`);
-  }, [data, router, pathname, error]);
+  }, [isSuccess, router, pathname, error]);
 
   useEffect(() => {
     if (error) {
@@ -85,7 +86,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 color="error"
                 aria-label="sign out"
                 title={t.signOut}
-                disabled={isLoading || data}
+                disabled={isLoading || isSuccess}
                 onClick={() => dispatch(setProfile(null))}
               >
                 <LogoutIcon />

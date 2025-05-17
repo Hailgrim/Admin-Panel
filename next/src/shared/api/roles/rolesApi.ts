@@ -37,20 +37,20 @@ const rolesApi = createApi({
       providesTags: ['Entities'],
     }),
 
-    update: builder.mutation<boolean, IUpdateReq<TUpdateRole, IRole['id']>>({
+    update: builder.mutation<undefined, IUpdateReq<TUpdateRole, IRole['id']>>({
       query: rolesService.updateArgs,
       invalidatesTags: ['Entity'],
     }),
 
-    updateResources: builder.mutation<
-      boolean,
-      IUpdateReq<IRights[], IRole['id']>
+    updateRights: builder.mutation<
+      undefined,
+      IUpdateReq<IQueryItems<IRights>, IRole['id']>
     >({
-      query: rolesService.updateResourcesArgs,
+      query: rolesService.updateRightsArgs,
       invalidatesTags: ['Entity'],
     }),
 
-    delete: builder.mutation<boolean, IQueryItems<IRole['id']>>({
+    delete: builder.mutation<undefined, IQueryItems<IRole['id']>>({
       query: rolesService.deleteArgs,
       invalidatesTags: ['CountedEntities'],
     }),

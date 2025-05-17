@@ -14,8 +14,7 @@ export function useAPI<ResT = unknown, ReqT = void>(
   return (cacheKey?: string) => {
     const mainStore = useMainStore()
     const customFetch = useNuxtApp().$api as typeof $fetch
-    const args = ref(null) as Ref<ReqT | null>
-    const pending = ref(false)
+    const status = ref<'idle' | 'pending' | 'success' | 'error'>('idle')
     const error = ref<IReqError | null>(null)
     let cache = ref(null) as Ref<ResT | null>
 
@@ -24,15 +23,14 @@ export function useAPI<ResT = unknown, ReqT = void>(
       cache = nuxtData
     }
 
-    const data = ref(cache.value) as Ref<ResT | null>
+    const data = ref(cache.value)
 
     async function execute(arg: ReqT): Promise<ResT | null> {
       const query = initQuery(arg)
       const headers: HeadersInit = {}
       error.value = null
       data.value = null
-      pending.value = true
-      args.value = arg
+      status.value = 'pending'
 
       try {
         const result = await customFetch<ResT>(query.url, {
@@ -47,14 +45,14 @@ export function useAPI<ResT = unknown, ReqT = void>(
 
         cache.value = result
         data.value = result
-        pending.value = false
+        status.value = 'success'
       }
       catch (fail) {
         error.value = {
           status: Number((fail as Record<string, unknown>).statusCode) || 400,
           message: String((fail as Record<string, unknown>).message),
         }
-        pending.value = false
+        status.value = 'error'
 
         if (error.value.status === 401) {
           mainStore.setProfile(null)
@@ -64,6 +62,6 @@ export function useAPI<ResT = unknown, ReqT = void>(
       return data.value
     }
 
-    return { data, error, pending, execute, args }
+    return { data, error, status, execute }
   }
 }

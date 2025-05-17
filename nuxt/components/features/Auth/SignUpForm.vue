@@ -11,7 +11,7 @@ const emailIsValid = (value: string) =>
 const password = ref('')
 const passwordIsValid = (value: string) =>
   testString(PASSWORD_REGEX, value) || t('passwordValidation')
-const { data, error, execute, pending } = authApi.signUp()
+const { data, error, execute, status } = authApi.signUp()
 const errorText = ref<string | null>(null)
 const successModal = ref(false)
 const router = useRouter()
@@ -82,7 +82,7 @@ watch(data, () => {
     <FormButton
       block
       color="success"
-      :loading="pending"
+      :loading="status === 'pending'"
       type="submit"
     >
       {{ $t('signUp') }}

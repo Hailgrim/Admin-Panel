@@ -1,20 +1,22 @@
 import {
-  Inject,
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { FindOptions } from 'sequelize';
-
 import {
-  PUBLIC,
-  ROLES_REPOSITORY,
-  ROLES_RESOURCES_REPOSITORY,
-  WITH_RESOURCES,
-} from 'libs/constants';
-import { RoleModel } from './role.entity';
-import { RightsModel } from '../database/rights.entity';
+  DataSource,
+  DeleteResult,
+  FindManyOptions,
+  In,
+  Repository,
+  UpdateResult,
+} from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { RoleEntity } from './role.entity';
+import { RightsEntity } from '../database/rights.entity';
 import {
   IGetListResponse,
   IRights,
@@ -28,16 +30,16 @@ import { DatabaseService } from 'src/database/database.service';
 @Injectable()
 export class RolesService {
   constructor(
-    @Inject(ROLES_REPOSITORY)
-    private rolesRepository: typeof RoleModel,
-    @Inject(ROLES_RESOURCES_REPOSITORY)
-    private rolesResourcesRepository: typeof RightsModel,
+    @InjectRepository(RoleEntity)
+    private rolesRepository: Repository<RoleEntity>,
+    private dataSource: DataSource,
     private databaseService: DatabaseService,
   ) {}
 
-  async create(fields: TCreateRole): Promise<RoleModel> {
+  async create(fields: TCreateRole): Promise<RoleEntity> {
     try {
-      return await this.rolesRepository.create(fields);
+      const role = this.rolesRepository.create(fields);
+      return await this.rolesRepository.save(role);
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -48,20 +50,27 @@ export class RolesService {
     name: string,
     description?: string,
     isAdmin?: boolean,
-  ): Promise<RoleModel> {
-    let role: RoleModel;
+  ): Promise<RoleEntity> {
+    let role: RoleEntity;
 
     try {
-      [role] = await this.rolesRepository.scope(WITH_RESOURCES).findOrCreate({
+      const result = await this.rolesRepository.findOne({
         where: { name, default: true, admin: Boolean(isAdmin) },
-        defaults: {
+        relations: { rights: { resource: true } },
+      });
+
+      if (result) {
+        role = result;
+      } else {
+        role = this.rolesRepository.create({
           name,
           description,
           default: true,
           admin: Boolean(isAdmin),
           enabled: true,
-        },
-      });
+        });
+        await this.rolesRepository.save(role);
+      }
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -70,13 +79,14 @@ export class RolesService {
     return role;
   }
 
-  async getOnePublic(id: string): Promise<RoleModel> {
-    let role: RoleModel | null;
+  async getOne(id: string): Promise<RoleEntity> {
+    let role: RoleEntity | null;
 
     try {
-      role = await this.rolesRepository
-        .scope([PUBLIC, WITH_RESOURCES])
-        .findOne({ where: { id } });
+      role = await this.rolesRepository.findOne({
+        where: { id },
+        relations: { rights: { resource: true } },
+      });
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -92,22 +102,22 @@ export class RolesService {
   prepareGetListOptions(
     fields?: TGetListRequest<TGetRoles>,
     isAdmin?: boolean,
-  ): FindOptions<RoleModel> {
-    const options: FindOptions<RoleModel> =
-      this.databaseService.preparePaginationOptions<RoleModel, TGetRoles>(
+  ): FindManyOptions<RoleEntity> {
+    const options: FindManyOptions<RoleEntity> =
+      this.databaseService.preparePaginationOptions<RoleEntity, TGetRoles>(
         fields,
       );
 
     options.where = {};
 
     if (fields?.name !== undefined) {
-      options.where.name = { [this.databaseService.iLike]: `%${fields.name}%` };
+      options.where.name = this.databaseService.iLike(`%${fields.name}%`);
     }
 
     if (fields?.description !== undefined) {
-      options.where.description = {
-        [this.databaseService.iLike]: `%${fields.description}%`,
-      };
+      options.where.description = this.databaseService.iLike(
+        `%${fields.description}%`,
+      );
     }
 
     if (fields?.enabled !== undefined) {
@@ -121,24 +131,26 @@ export class RolesService {
     return options;
   }
 
-  async getListPublic(
+  async getList(
     fields?: TGetListRequest<TGetRoles>,
     isAdmin?: boolean,
-  ): Promise<IGetListResponse<RoleModel>> {
+  ): Promise<IGetListResponse<RoleEntity>> {
     const options = this.prepareGetListOptions(fields, isAdmin);
-
-    if (isAdmin !== undefined) {
-      options.where = { ...options.where, admin: isAdmin };
-    }
 
     try {
       if (fields?.reqCount) {
-        return await this.rolesRepository
-          .scope(PUBLIC)
-          .findAndCountAll(options);
+        const result = await this.rolesRepository.findAndCount(options);
+        return {
+          rows: result[0],
+          count: result[1],
+          page: options.skip! / options.take! + 1,
+          limit: options.take,
+        };
       } else {
         return {
-          rows: await this.rolesRepository.scope(PUBLIC).findAll(options),
+          rows: await this.rolesRepository.find(options),
+          page: options.skip! / options.take! + 1,
+          limit: options.take,
         };
       }
     } catch (error) {
@@ -147,34 +159,39 @@ export class RolesService {
     }
   }
 
-  async updateFields(id: string, fields: TUpdateRole): Promise<boolean> {
-    let affectedCount = 0;
+  async update(id: string, fields: TUpdateRole): Promise<boolean> {
+    let result: UpdateResult;
+
+    if (Object.keys(fields).length === 0) {
+      throw new BadRequestException();
+    }
 
     try {
-      [affectedCount] = await this.rolesRepository.update(fields, {
-        where: { id, default: false },
-      });
+      result = await this.rolesRepository.update(
+        { id, default: false },
+        fields,
+      );
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
     }
 
-    if (affectedCount === 0) {
+    if (result.affected === 0) {
       throw new NotFoundException();
     }
 
     return true;
   }
 
-  async updateResources(
+  async updateRights(
     id: string,
     rights: IRights[],
     defaultResource?: boolean,
-  ): Promise<boolean> {
-    let role: RoleModel | null;
+  ): Promise<void> {
+    let role: RoleEntity | null;
 
     try {
-      role = await this.rolesRepository.scope(WITH_RESOURCES).findOne({
+      role = await this.rolesRepository.findOne({
         where: { id, default: Boolean(defaultResource) },
       });
     } catch (error) {
@@ -186,51 +203,43 @@ export class RolesService {
       throw new NotFoundException();
     }
 
-    const deletedResources: string[] = [];
-    role.get('resources')?.forEach((resource) => {
-      if (!rights.some((value) => value.roleId === resource.get('id'))) {
-        deletedResources.push(resource.id);
-      }
-    });
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    if (deletedResources.length > 0) {
-      try {
-        await this.rolesResourcesRepository.destroy({
-          where: { roleId: id, resourceId: deletedResources },
-        });
-      } catch (error) {
-        Logger.error(error);
-        throw new InternalServerErrorException();
-      }
-    }
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
     try {
-      await this.rolesResourcesRepository.bulkCreate(
-        rights.filter((value) => value.roleId === role.get('id')),
-        {
-          updateOnDuplicate: ['creating', 'reading', 'updating', 'deleting'],
-        },
+      await queryRunner.manager.delete(RightsEntity, { roleId: id });
+      await queryRunner.manager.insert(
+        RightsEntity,
+        rights
+          .filter((value) => value.roleId === id)
+          .map((value) => ({ ...value, roleId: id })),
       );
+      await queryRunner.commitTransaction();
     } catch (error) {
+      await queryRunner.rollbackTransaction();
       Logger.error(error);
+      throw new InternalServerErrorException();
+    } finally {
+      await queryRunner.release();
     }
-
-    return true;
   }
 
   async delete(ids: string[]): Promise<boolean> {
-    let destroyedCount = 0;
+    let result: DeleteResult;
 
     try {
-      destroyedCount = await this.rolesRepository.destroy({
-        where: { id: ids, default: false },
+      result = await this.rolesRepository.delete({
+        id: In(ids),
+        default: false,
       });
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
     }
 
-    if (destroyedCount === 0) {
+    if (result.affected === 0) {
       throw new NotFoundException();
     }
 

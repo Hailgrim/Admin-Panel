@@ -70,7 +70,7 @@ const runUsersTests = () => {
       });
     });
 
-    describe('Find All', () => {
+    describe('Get List', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
           .get(ROUTES.api.users)
@@ -90,6 +90,8 @@ const runUsersTests = () => {
           .then((res) => res.body as IGetListResponse<IUser>);
 
         expect(findAllResBody).toHaveProperty('count', 3);
+        expect(findAllResBody).toHaveProperty('page', 1);
+        expect(findAllResBody).toHaveProperty('limit', 1);
 
         findAllResBody = await request(app.getHttpServer())
           .get(ROUTES.api.users)
@@ -114,7 +116,7 @@ const runUsersTests = () => {
       });
     });
 
-    describe('Find One', () => {
+    describe('Get One', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
           .get(ROUTES.api.user(entity.id))
@@ -154,15 +156,21 @@ const runUsersTests = () => {
           .expect(HttpStatus.UNAUTHORIZED);
 
         await request(app.getHttpServer())
-          .patch(ROUTES.api.user(wrongValue))
+          .patch(ROUTES.api.user(entity.id))
           .set('Cookie', adminCookies)
-          .expect(HttpStatus.NOT_FOUND);
+          .expect(HttpStatus.BAD_REQUEST);
+
+        await request(app.getHttpServer())
+          .patch(ROUTES.api.user(entity.id))
+          .set('Cookie', adminCookies)
+          .send({ enabled: wrongValue })
+          .expect(HttpStatus.BAD_REQUEST);
 
         await request(app.getHttpServer())
           .patch(ROUTES.api.user(wrongValue))
           .set('Cookie', adminCookies)
-          .send({ enabled: wrongValue })
-          .expect(HttpStatus.BAD_REQUEST);
+          .send({ enabled: true } satisfies TUpdateUser)
+          .expect(HttpStatus.NOT_FOUND);
       });
 
       it('Correct (admin)', async () => {
@@ -172,7 +180,7 @@ const runUsersTests = () => {
           .send({
             name: entity.name + entity.name,
           } satisfies TUpdateUser)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         entity.name = entity.name + entity.name;
 
@@ -200,15 +208,16 @@ const runUsersTests = () => {
           .expect(HttpStatus.UNAUTHORIZED);
 
         await request(app.getHttpServer())
-          .patch(ROUTES.api.userRoles(wrongValue))
-          .set('Cookie', adminCookies)
-          .expect(HttpStatus.NOT_FOUND);
-
-        await request(app.getHttpServer())
           .patch(ROUTES.api.userRoles(entity.id))
           .set('Cookie', adminCookies)
-          .send([{ test: wrongValue }])
+          .send({ test: wrongValue })
           .expect(HttpStatus.BAD_REQUEST);
+
+        await request(app.getHttpServer())
+          .patch(ROUTES.api.userRoles(wrongValue))
+          .set('Cookie', adminCookies)
+          .send({ items: [] } satisfies IQueryItems<IUsersRoles>)
+          .expect(HttpStatus.NOT_FOUND);
       });
 
       it('Correct (admin)', async () => {
@@ -231,7 +240,7 @@ const runUsersTests = () => {
           .send({
             items: [{ roleId: role.id, userId: entity.id }],
           } satisfies IQueryItems<IUsersRoles>)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         entity.name = entity.name + entity.name;
 
@@ -273,7 +282,7 @@ const runUsersTests = () => {
           .delete(ROUTES.api.users)
           .set('Cookie', adminCookies)
           .send({ items: [entity.id] } satisfies IQueryItems<IUser['id']>)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         await request(app.getHttpServer())
           .get(ROUTES.api.user(entity.id))

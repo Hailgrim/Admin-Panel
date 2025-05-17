@@ -8,7 +8,7 @@ const emit = defineEmits<{
 
 const { t, locale } = useI18n()
 const mainStore = useMainStore()
-const { data, error, execute, pending } = profileApi.deleteSessions()
+const { status, error, execute } = profileApi.deleteSessions()
 const rights = useRights(ROUTES.api.profile)
 const userAgent = new UAParser(session.userAgent).getResult()
 const updatedAt = getDateString(session.updatedAt)
@@ -25,8 +25,8 @@ watch(error, () => {
     })
 })
 
-watch(data, () => {
-  if (data.value) {
+watch(status, () => {
+  if (status.value === 'success') {
     mainStore.addAlert({ type: 'success', text: t('success') })
     emit('delete')
 
@@ -83,7 +83,7 @@ watch(data, () => {
       <v-card-actions>
         <v-btn
           color="error"
-          :disabled="!rights.updating || pending || Boolean(data)"
+          :disabled="!rights.updating || status === 'pending' || status === 'success'"
           icon="mdi-delete"
           type="submit"
           variant="text"

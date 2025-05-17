@@ -22,5 +22,5 @@ export class GetUsersDto
   @ApiPropertyOptional({ type: String, example: 'example@mail.com' })
   @IsOptional()
   @IsString()
-  email: string;
+  email?: string;
 }

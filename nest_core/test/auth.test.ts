@@ -149,7 +149,7 @@ const runAuthTests = () => {
             code: queue.at(-2)!.code,
             email: queue.at(-2)!.email,
           } satisfies IVerifyUser)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
       });
 
       it('Correct (user)', async () => {
@@ -159,7 +159,7 @@ const runAuthTests = () => {
             code: queue.at(-1)!.code,
             email: queue.at(-1)!.email,
           } satisfies IVerifyUser)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
       });
     });
 
@@ -175,7 +175,7 @@ const runAuthTests = () => {
         await request(app.getHttpServer())
           .post(ROUTES.api.forgotPassword)
           .send({ email: admin.email } satisfies IForgotPassword)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         expect(queue.at(-1)).toHaveProperty('email', admin.email);
       });
@@ -184,7 +184,7 @@ const runAuthTests = () => {
         await request(app.getHttpServer())
           .post(ROUTES.api.forgotPassword)
           .send({ email: user.email } satisfies IForgotPassword)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         expect(queue.at(-1)).toHaveProperty('email', user.email);
       });
@@ -230,7 +230,7 @@ const runAuthTests = () => {
             email: queue.at(-2)!.email,
             password: admin.password,
           } satisfies IResetPassword)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
       });
 
       it('Correct (user)', async () => {
@@ -243,7 +243,7 @@ const runAuthTests = () => {
             email: queue.at(-1)!.email,
             password: user.password,
           } satisfies IResetPassword)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
       });
     });
 
@@ -319,7 +319,7 @@ const runAuthTests = () => {
         const refreshRes = await request(app.getHttpServer())
           .get(ROUTES.api.refresh)
           .set('Cookie', adminCookies)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         expect(refreshRes.headers).toHaveProperty('set-cookie');
 
@@ -331,7 +331,7 @@ const runAuthTests = () => {
         const refreshRes = await request(app.getHttpServer())
           .get(ROUTES.api.refresh)
           .set('Cookie', userCookies)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         expect(refreshRes.headers).toHaveProperty('set-cookie');
 

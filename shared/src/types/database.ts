@@ -4,7 +4,9 @@ import { IUser } from './user';
 
 export interface IRights {
   roleId: IRole['id'];
+  role?: IRole;
   resourceId: IResource['id'];
+  resource?: IResource;
   creating: boolean;
   reading: boolean;
   updating: boolean;

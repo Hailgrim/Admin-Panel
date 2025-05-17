@@ -21,8 +21,8 @@ const ChangeEmailConfirmForm: FC<{
   const lRef = useLanguageRef();
   const tRef = useTranslateRef();
   const t = useTranslate();
-  const [changeEmail, { data, error, isLoading }] =
-    profileApi.useChangeEmailMutation();
+  const [changeEmailConfirm, { isSuccess, error, isLoading }] =
+    profileApi.useChangeEmailConfirmMutation();
   const rights = useRights(ROUTES.api.profile);
   const profile = useAppSelector((store) => store.main.profile);
   const emailRef = useRef(email);
@@ -31,7 +31,7 @@ const ChangeEmailConfirmForm: FC<{
 
   const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    changeEmail({ code });
+    changeEmailConfirm({ code });
   };
 
   useEffect(() => {
@@ -58,15 +58,16 @@ const ChangeEmailConfirmForm: FC<{
   }, [error, tRef, lRef, dispatch]);
 
   useEffect(() => {
-    if (data) {
+    if (isSuccess) {
       onClose?.();
+
       if (profileRef.current) {
         dispatch(
           setProfile({ ...profileRef.current, email: emailRef.current })
         );
       }
     }
-  }, [data, onClose, dispatch]);
+  }, [isSuccess, onClose, dispatch]);
 
   useEffect(() => {
     profileRef.current = profile;
@@ -87,7 +88,7 @@ const ChangeEmailConfirmForm: FC<{
         type="submit"
         fullWidth
         disabled={!rights.updating}
-        loading={isLoading || data}
+        loading={isLoading || isSuccess}
       >
         {t.confirm}
       </FormButton>

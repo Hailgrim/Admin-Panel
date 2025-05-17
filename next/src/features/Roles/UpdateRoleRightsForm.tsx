@@ -13,7 +13,7 @@ import { getErrorText, IResource, IRights, IRole, ROUTES } from '@ap/shared';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
 import useTranslateRef from '@/shared/hooks/useTranslateRef';
 
-const UpdateRoleResourcesForm: FC<{
+const UpdateRoleRightsForm: FC<{
   role: IRole;
   resources: IResource[];
 }> = ({ role, resources }) => {
@@ -21,27 +21,23 @@ const UpdateRoleResourcesForm: FC<{
   const lRef = useLanguageRef();
   const tRef = useTranslateRef();
   const t = useTranslate();
-  const [update, updateReq] = rolesApi.useUpdateResourcesMutation();
-  const [updatedRights, setUpdatedRights] = useState(
-    role.resources
-      ?.map((value) => value.RightsModel)
-      .filter((value) => value !== undefined) || []
-  );
+  const [update, updateReq] = rolesApi.useUpdateRightsMutation();
+  const [updatedRights, setUpdatedRights] = useState(role.rights || []);
   const rights = useRights(ROUTES.api.roles);
 
   const submitHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     update({
       id: role.id,
-      fields: updatedRights,
+      fields: { items: updatedRights },
     });
   };
 
   const updateRights = (newRights: IRights) => {
-    const filtered = updatedRights.filter((value) => {
+    const filteredRights = updatedRights.filter((value) => {
       if (
-        newRights.roleId == value?.roleId &&
-        newRights.resourceId == value?.resourceId
+        newRights.roleId === value.roleId &&
+        newRights.resourceId === value.resourceId
       ) {
         return false;
       } else {
@@ -50,23 +46,22 @@ const UpdateRoleResourcesForm: FC<{
     });
 
     if (
-      !(
-        newRights.creating == false &&
-        newRights.reading == false &&
-        newRights.updating == false &&
-        newRights.deleting == false
-      )
+      newRights.creating ||
+      newRights.reading ||
+      newRights.updating ||
+      newRights.deleting
     ) {
-      filtered.push(newRights);
+      filteredRights.push(newRights);
     }
-    setUpdatedRights(filtered);
+
+    setUpdatedRights(filteredRights);
   };
 
   useEffect(() => {
-    if (updateReq.data) {
+    if (updateReq.isSuccess) {
       dispatch(addAlert({ type: 'success', text: tRef.current.success }));
     }
-  }, [updateReq.data, dispatch, tRef]);
+  }, [updateReq.isSuccess, dispatch, tRef]);
 
   useEffect(() => {
     if (updateReq.error) {
@@ -86,9 +81,9 @@ const UpdateRoleResourcesForm: FC<{
           key={`ResourceRights.${resource.id}`}
           roleId={role.id}
           resource={resource}
-          rights={
-            updatedRights.filter((value) => value?.resourceId == resource.id)[0]
-          }
+          rights={updatedRights.find(
+            (value) => value.resourceId === resource.id
+          )}
           setRights={updateRights}
         />
       ))}
@@ -105,4 +100,4 @@ const UpdateRoleResourcesForm: FC<{
     </FormBase>
   );
 };
-export default UpdateRoleResourcesForm;
+export default UpdateRoleRightsForm;

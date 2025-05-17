@@ -16,25 +16,31 @@ const SignInGoogleLink: FC = () => {
 
   const googleHandler: MouseEventHandler<HTMLAnchorElement> = (event) => {
     event.preventDefault();
-    const state = String(Math.random());
+
+    const message: IWindowMessage<string> = {
+      type: ROUTES.ui.signInGoogle,
+      payload: String(Math.random()),
+    };
     const googleWindow = window.open(
       getGoogleSignInUrl(
         process.env.GOOGLE_CLIENT_ID!,
         process.env.HOST!,
-        state
+        message.payload
       ),
       undefined,
       'top=100,left=100,width=500,height=500'
     );
+
     clearTimeout(timeout.current);
     timeout.current = setInterval(() => {
-      googleWindow?.postMessage(state);
+      googleWindow?.postMessage(message);
     }, 1000);
   };
 
   useEffect(() => {
     const messageHandler = (event: MessageEvent<IWindowMessage<IUser>>) => {
       if (event.data.type !== ROUTES.ui.signInGoogle) return;
+
       dispatch(setProfile(event.data.payload));
       router.push(
         decodeURIComponent(searchParams.get('return') || ROUTES.ui.home)

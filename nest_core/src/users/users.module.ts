@@ -1,22 +1,16 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { DatabaseModule } from '../database/database.module';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { CacheModule } from 'src/cache/cache.module';
-import { USERS_REPOSITORY } from 'libs/constants';
-import { UserModel } from './user.entity';
+import { UserEntity } from './user.entity';
+import { DatabaseService } from 'src/database/database.service';
 
 @Module({
-  imports: [DatabaseModule, CacheModule],
+  imports: [TypeOrmModule.forFeature([UserEntity]), CacheModule],
   controllers: [UsersController],
-  providers: [
-    {
-      provide: USERS_REPOSITORY,
-      useValue: UserModel,
-    },
-    UsersService,
-  ],
+  providers: [UsersService, DatabaseService],
   exports: [UsersService],
 })
 export class UsersModule {}

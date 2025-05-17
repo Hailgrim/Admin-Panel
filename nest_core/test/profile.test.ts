@@ -68,7 +68,12 @@ const runProfileTests = () => {
           .patch(ROUTES.api.profile)
           .set('Cookie', adminCookies)
           .send({ password: admin.password })
-          .expect(HttpStatus.NOT_FOUND);
+          .expect(HttpStatus.BAD_REQUEST);
+
+        await request(app.getHttpServer())
+          .patch(ROUTES.api.profile)
+          .set('Cookie', adminCookies)
+          .expect(HttpStatus.BAD_REQUEST);
 
         await request(app.getHttpServer())
           .patch(ROUTES.api.profile)
@@ -82,7 +87,7 @@ const runProfileTests = () => {
           .patch(ROUTES.api.profile)
           .set('Cookie', adminCookies)
           .send({ name: admin.name } satisfies TUpdateUser)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
       });
 
       it('Correct (user)', async () => {
@@ -90,7 +95,7 @@ const runProfileTests = () => {
           .patch(ROUTES.api.profile)
           .set('Cookie', userCookies)
           .send({ name: user.name } satisfies TUpdateUser)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
       });
     });
 
@@ -127,7 +132,7 @@ const runProfileTests = () => {
             oldPassword: admin.password,
             newPassword: admin.password + admin.password,
           } satisfies IUpdatePassword)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         admin.password = admin.password + admin.password;
       });
@@ -140,7 +145,7 @@ const runProfileTests = () => {
             oldPassword: user.password,
             newPassword: user.password + user.password,
           } satisfies IUpdatePassword)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         user.password = user.password + user.password;
       });
@@ -168,7 +173,7 @@ const runProfileTests = () => {
           .post(ROUTES.api.changeEmail)
           .set('Cookie', adminCookies)
           .send({ newEmail: newAdminEmail } satisfies IChangeEmailRequest)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         expect(queue.at(-1)).toHaveProperty('code');
         expect(queue.at(-1)).toHaveProperty('email', newAdminEmail);
@@ -180,7 +185,7 @@ const runProfileTests = () => {
           .post(ROUTES.api.changeEmail)
           .set('Cookie', userCookies)
           .send({ newEmail: newUserEmail } satisfies IChangeEmailRequest)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         expect(queue.at(-1)).toHaveProperty('code');
         expect(queue.at(-1)).toHaveProperty('email', newUserEmail);
@@ -201,7 +206,7 @@ const runProfileTests = () => {
           .patch(ROUTES.api.changeEmail)
           .set('Cookie', adminCookies)
           .send({ code: queue.at(-2)!.code } satisfies IChangeEmail)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         const getProfileResBody = await request(app.getHttpServer())
           .get(ROUTES.api.profile)
@@ -217,7 +222,7 @@ const runProfileTests = () => {
           .patch(ROUTES.api.changeEmail)
           .set('Cookie', userCookies)
           .send({ code: queue.at(-1)!.code } satisfies IChangeEmail)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         const getProfileResBody = await request(app.getHttpServer())
           .get(ROUTES.api.profile)
@@ -288,7 +293,7 @@ const runProfileTests = () => {
           .send({ items: [adminSession.id] } satisfies IQueryItems<
             IExternalSession['id']
           >)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         adminCookies.shift();
 
@@ -316,7 +321,7 @@ const runProfileTests = () => {
           .send({ items: [userSession.id] } satisfies IQueryItems<
             IExternalSession['id']
           >)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         userCookies.shift();
 

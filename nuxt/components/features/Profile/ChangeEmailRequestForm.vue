@@ -6,7 +6,7 @@ const mainStore = useMainStore()
 const email = ref(mainStore.profile?.email || '')
 const emailIsValid = (value: string) =>
   value.length > 0 || t('emailValidationI18N')
-const { data, error, execute, pending, args } = profileApi.changeEmailRequest()
+const { status, error, execute } = profileApi.changeEmailRequest()
 const confirmModal = ref(false)
 const rights = useRights(ROUTES.api.profile)
 
@@ -28,8 +28,8 @@ watch(error, () => {
     })
 })
 
-watch(data, () => {
-  if (data.value) confirmModal.value = true
+watch(status, () => {
+  if (status.value === 'success') confirmModal.value = true
 })
 </script>
 
@@ -43,11 +43,12 @@ watch(data, () => {
       required
       :rules="[emailIsValid]"
       type="email"
+      :disabled="status === 'pending'"
     />
     <FormButton
       color="success"
       :disabled="!rights.updating"
-      :loading="pending"
+      :loading="status === 'pending'"
       type="submit"
     >
       {{ $t('change') }}
@@ -57,7 +58,7 @@ watch(data, () => {
       :title="$t('resetPassword')"
     >
       <ChangeEmailConfirmForm
-        :email="args?.newEmail || ''"
+        :email="email"
         @close="confirmModal = false"
       />
     </CustomModal>

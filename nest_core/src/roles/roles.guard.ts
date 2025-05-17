@@ -2,7 +2,7 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
 import { ROLES_KEY } from 'libs/constants';
-import { UserModel } from 'src/users/user.entity';
+import { UserEntity } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { IRoleConditions } from './roles.types';
 import { TFastifyRequestWithToken } from 'src/auth/auth.types';
@@ -24,31 +24,30 @@ export class RolesGuard implements CanActivate {
       return true;
     }
 
-    let user: UserModel | null = null;
+    let user: UserEntity | null = null;
     const request = context
       .switchToHttp()
       .getRequest<Partial<TFastifyRequestWithToken>>();
     const token = request.user;
 
     if (token?.userId) {
-      user = await this.usersService.getOnePublic(token.userId);
+      user = await this.usersService.getOneProfile(token.userId);
     }
 
     if (user === null) {
       return false;
     }
 
-    user = user.get({ plain: true });
     request.originalUser = user;
 
     return Boolean(
       user.roles?.some(
         (role) =>
           role.admin ||
-          role.resources?.some(
-            (resource) =>
-              resource.path === roleConditions.path &&
-              resource.RightsModel?.[roleConditions.action] === true,
+          role.rights?.some(
+            (right) =>
+              right.resource?.path === roleConditions.path &&
+              right[roleConditions.action] === true,
           ),
       ),
     );

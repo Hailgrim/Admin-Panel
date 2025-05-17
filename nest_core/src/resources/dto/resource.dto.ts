@@ -39,8 +39,8 @@ export class ResourceDto implements IResource {
   @IsBoolean()
   default: boolean;
 
-  @ApiProperty({ type: RightsDto })
-  @ValidateNested()
+  @ApiProperty({ type: [RightsDto] })
+  @ValidateNested({ each: true })
   @Type(() => RightsDto)
-  RightsModel: RightsDto;
+  rights: RightsDto[];
 }

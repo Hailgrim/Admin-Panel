@@ -1,94 +1,61 @@
 import {
-  Table,
   Column,
-  Model,
-  BelongsToMany,
-  DataType,
-  Scopes,
-} from 'sequelize-typescript';
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-import { UsersRolesModel } from 'src/database/users-roles.entity';
-import { RoleModel } from 'src/roles/role.entity';
-import { ResourceModel } from 'src/resources/resource.entity';
-import { PUBLIC, WITH_ROLES } from 'libs/constants';
-import { TCreateGoogleUser, TCreateUser } from '@ap/shared';
-import { IUser } from '@ap/shared';
+import { RoleEntity } from 'src/roles/role.entity';
+import { IRole, IUser, IUsersRoles } from '@ap/shared';
+import { USERS_ROLES_TABLE } from 'libs/constants';
 
-@Scopes(() => ({
-  [PUBLIC]: {
-    attributes: {
-      exclude: [
-        'password',
-        'verificationCode',
-        'resetPasswordCode',
-        'changeEmailCode',
-        'temporaryEmail',
-        'updatedAt',
-      ],
+@Entity('users')
+export class UserEntity implements IUser {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ type: 'varchar', length: 100, unique: true, nullable: true })
+  email?: string | null;
+
+  @Column({ type: 'varchar', length: 1000, nullable: true })
+  password?: string | null;
+
+  @Column({ type: 'varchar', length: 100 })
+  name: string;
+
+  @Column({ type: 'varchar', length: 100, unique: true, nullable: true })
+  googleId?: string | null;
+
+  @Column({ type: 'boolean', default: false })
+  enabled: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  verified: boolean;
+
+  @Column({ type: 'varchar', length: 4, nullable: true })
+  verificationCode?: string | null;
+
+  @Column({ type: 'varchar', length: 4, nullable: true })
+  resetPasswordCode?: string | null;
+
+  @Column({ type: 'varchar', length: 4, nullable: true })
+  changeEmailCode?: string | null;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  temporaryEmail?: string | null;
+
+  @ManyToMany(() => RoleEntity, (role) => role.users)
+  @JoinTable({
+    name: USERS_ROLES_TABLE,
+    joinColumn: {
+      name: 'userId' satisfies keyof IUsersRoles,
+      referencedColumnName: 'id' satisfies keyof IUser,
     },
-  },
-  [WITH_ROLES]: {
-    include: [
-      {
-        model: RoleModel,
-        attributes: {
-          exclude: ['createdAt', 'updatedAt'],
-        },
-        through: { attributes: [] },
-        include: [
-          {
-            model: ResourceModel,
-            attributes: {
-              exclude: ['createdAt', 'updatedAt'],
-            },
-          },
-        ],
-      },
-    ],
-  },
-}))
-@Table({ tableName: 'users' })
-export class UserModel
-  extends Model<UserModel, TCreateUser | TCreateGoogleUser>
-  implements IUser
-{
-  @Column({
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV4,
-    primaryKey: true,
+    inverseJoinColumn: {
+      name: 'roleId' satisfies keyof IUsersRoles,
+      referencedColumnName: 'id' satisfies keyof IRole,
+    },
   })
-  declare id: string;
-
-  @Column({ type: DataType.STRING(100), allowNull: true, unique: true })
-  declare email?: string | null;
-
-  @Column({ type: DataType.STRING(100), allowNull: true })
-  declare password?: string | null;
-
-  @Column({ type: DataType.STRING(100), allowNull: false })
-  declare name: string;
-
-  @Column({ type: DataType.STRING(100), allowNull: true, unique: true })
-  declare googleId?: string | null;
-
-  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
-  declare enabled: boolean;
-
-  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
-  declare verified: boolean;
-
-  @Column({ type: DataType.CHAR(4), allowNull: true })
-  declare verificationCode?: string | null;
-
-  @Column({ type: DataType.CHAR(4), allowNull: true })
-  declare resetPasswordCode?: string | null;
-
-  @Column({ type: DataType.CHAR(4), allowNull: true })
-  declare changeEmailCode?: string | null;
-
-  @Column({ type: DataType.STRING(100), allowNull: true })
-  declare temporaryEmail?: string | null;
-
-  @BelongsToMany(() => RoleModel, () => UsersRolesModel)
-  declare roles?: RoleModel[];
+  roles?: RoleEntity[];
 }

@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import PanelLayout from '../../PanelLayout';
 import UpdateRoleForm from '@/features/Roles/UpdateRoleForm';
 import useTranslate from '@/shared/hooks/useTranslate';
-import UpdateRoleResourcesForm from '@/features/Roles/UpdateRoleResourcesForm';
+import UpdateRoleRightsForm from '@/features/Roles/UpdateRoleRightsForm';
 import { IPage } from '@/views/types';
 import { IResource, IRole } from '@ap/shared';
 
@@ -28,7 +28,7 @@ const RolePage: FC<
               <Typography component="h2" variant="h6" sx={{ mt: 3, mb: 1 }}>
                 {t.resources}
               </Typography>
-              <UpdateRoleResourcesForm
+              <UpdateRoleRightsForm
                 role={data.role}
                 resources={data.resources}
               />

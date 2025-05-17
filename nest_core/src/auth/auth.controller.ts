@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { plainToInstance } from 'class-transformer';
 
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
@@ -39,30 +40,35 @@ export class AuthController {
   @ApiOperation({ summary: d['en'].signUp })
   @ApiResponse({ status: HttpStatus.CREATED, type: ExternalUserDto })
   @Post('sign-up')
-  signUp(@Body() signUpDto: SignUpDto): Promise<IUser> {
-    return this.authService.signUp(signUpDto);
+  async signUp(
+    @Body() signUpDto: SignUpDto,
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<IUser> {
+    res.status(HttpStatus.CREATED);
+    const user = await this.authService.signUp(signUpDto);
+    return plainToInstance(ExternalUserDto, user);
   }
 
   @ApiOperation({ summary: d['en'].forgotPassword })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @Post('forgot-password')
-  forgotPassword(
-    @Res({ passthrough: true }) res: FastifyReply,
+  async forgotPassword(
     @Body() ForgotPasswordDto: ForgotPasswordDto,
-  ): Promise<boolean> {
-    res.status(HttpStatus.OK);
-    return this.authService.forgotPassword(ForgotPasswordDto.email);
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<void> {
+    res.status(HttpStatus.NO_CONTENT);
+    await this.authService.forgotPassword(ForgotPasswordDto.email);
   }
 
   @ApiOperation({ summary: d['en'].resetPassword })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @Post('reset-password')
-  resetPassword(
-    @Res({ passthrough: true }) res: FastifyReply,
+  async resetPassword(
     @Body() resetPasswordDto: ResetPasswordDto,
-  ): Promise<boolean> {
-    res.status(HttpStatus.OK);
-    return this.authService.resetPassword(
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<void> {
+    res.status(HttpStatus.NO_CONTENT);
+    await this.authService.resetPassword(
       resetPasswordDto.email,
       resetPasswordDto.code,
       resetPasswordDto.password,
@@ -75,8 +81,8 @@ export class AuthController {
   @Post('sign-in')
   async signIn(
     @Req() req: TFastifyRequestWithUser,
-    @Res({ passthrough: true }) res: FastifyReply,
     @Body() signInDto: SignInDto,
+    @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<IUser> {
     const sessionTtl = signInDto.rememberMe
       ? REFRESH_TOKEN_LIFETIME
@@ -97,18 +103,20 @@ export class AuthController {
       res.clearCookie('rememberMe', createCookieOptions());
     }
 
-    return req.user;
+    res.status(HttpStatus.CREATED);
+
+    return plainToInstance(ExternalUserDto, req.user);
   }
 
   @ApiOperation({ summary: d['en'].confirmRegistration })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @Post('verify-user')
-  verifyUser(
-    @Res({ passthrough: true }) res: FastifyReply,
+  async verifyUser(
     @Body() verifyUserDto: VerifyUserDto,
-  ): Promise<boolean> {
-    res.status(HttpStatus.OK);
-    return this.authService.verifyUser(verifyUserDto.email, verifyUserDto.code);
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<void> {
+    res.status(HttpStatus.NO_CONTENT);
+    await this.authService.verifyUser(verifyUserDto.email, verifyUserDto.code);
   }
 
   @ApiOperation({ summary: d['en'].signUp })
@@ -116,8 +124,8 @@ export class AuthController {
   @Post('sign-in/google')
   async signInGoogle(
     @Req() req: FastifyRequest,
-    @Res({ passthrough: true }) res: FastifyReply,
     @Body() signInGoogleDto: SignInGoogleDto,
+    @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<IUser> {
     const { accessToken, refreshToken, user } =
       await this.authService.signInGoogle(
@@ -138,18 +146,19 @@ export class AuthController {
       'true',
       createCookieOptions(REFRESH_TOKEN_LIFETIME),
     );
+    res.status(HttpStatus.CREATED);
 
-    return user;
+    return plainToInstance(ExternalUserDto, user);
   }
 
   @ApiOperation({ summary: d['en'].refreshToken })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @UseGuards(JwtRefreshGuard)
   @Get('refresh')
   async refresh(
     @Req() req: TFastifyRequestWithToken,
     @Res({ passthrough: true }) res: FastifyReply,
-  ): Promise<boolean> {
+  ): Promise<void> {
     const rememberMe = req.cookies['rememberMe'] !== undefined;
     const sessionTtl = rememberMe
       ? REFRESH_TOKEN_LIFETIME
@@ -169,27 +178,23 @@ export class AuthController {
       res.cookie('rememberMe', 'true', createCookieOptions(sessionTtl));
     }
 
-    return true;
+    res.status(HttpStatus.NO_CONTENT);
   }
 
   @ApiOperation({ summary: d['en'].signOut })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @UseGuards(JwtGuard)
   @Delete('sign-out')
   async signOut(
     @Req() req: TFastifyRequestWithToken,
     @Res({ passthrough: true }) res: FastifyReply,
-  ): Promise<boolean> {
-    const result = await this.authService.signOut(
-      req.user.userId,
-      req.user.sessionId,
-    );
+  ): Promise<void> {
+    await this.authService.signOut(req.user.userId, req.user.sessionId);
     const cookieOptions = createCookieOptions();
 
     res.clearCookie('accessToken', cookieOptions);
     res.clearCookie('refreshToken', cookieOptions);
     res.clearCookie('rememberMe', cookieOptions);
-
-    return result;
+    res.status(HttpStatus.NO_CONTENT);
   }
 }

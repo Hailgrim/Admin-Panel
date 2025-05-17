@@ -1,37 +1,36 @@
-import {
-  Column,
-  DataType,
-  ForeignKey,
-  Model,
-  Table,
-} from 'sequelize-typescript';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
-import { RoleModel } from '../roles/role.entity';
-import { ResourceModel } from '../resources/resource.entity';
 import { IResource, IRole, IRights } from '@ap/shared';
+import { RoleEntity } from 'src/roles/role.entity';
+import { ResourceEntity } from 'src/resources/resource.entity';
 
-@Table({ tableName: 'rights' })
-export class RightsModel
-  extends Model<RightsModel, IRights>
-  implements IRights
-{
-  @ForeignKey(() => RoleModel)
-  @Column({ type: DataType.UUID })
-  declare roleId: IRole['id'];
+@Entity('rights')
+export class RightsEntity implements IRights {
+  @PrimaryColumn('uuid')
+  roleId: IRole['id'];
 
-  @ForeignKey(() => ResourceModel)
-  @Column({ type: DataType.UUID })
-  declare resourceId: IResource['id'];
+  @ManyToOne(() => RoleEntity, (role) => role.rights, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'roleId' })
+  role?: RoleEntity;
 
-  @Column({ type: DataType.BOOLEAN })
-  declare creating: boolean;
+  @PrimaryColumn('uuid')
+  resourceId: IResource['id'];
 
-  @Column({ type: DataType.BOOLEAN })
-  declare reading: boolean;
+  @ManyToOne(() => ResourceEntity, (resource) => resource.rights, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'resourceId' })
+  resource?: ResourceEntity;
 
-  @Column({ type: DataType.BOOLEAN })
-  declare updating: boolean;
+  @Column({ type: 'boolean', default: false })
+  creating: boolean;
 
-  @Column({ type: DataType.BOOLEAN })
-  declare deleting: boolean;
+  @Column({ type: 'boolean', default: false })
+  reading: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  updating: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  deleting: boolean;
 }

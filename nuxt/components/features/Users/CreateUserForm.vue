@@ -14,7 +14,7 @@ const nameIsValid = (value: string) =>
   testString(NAME_REGEX, value) || t('nameValidation')
 const passwordIsValid = (value: string) =>
   testString(PASSWORD_REGEX, value) || t('passwordValidation')
-const { data, error, execute, pending } = usersApi.create()
+const { data, error, execute, status } = usersApi.create()
 const mainStore = useMainStore()
 const router = useRouter()
 const rights = useRights(ROUTES.api.users)
@@ -46,12 +46,12 @@ watch(data, () => {
     <FormField
       :hint="$t('emailValidationI18N')"
       :label="$t('email')"
-      :model-value="newData.email"
+      :model-value="newData.email || undefined"
       name="email"
       required
       :rules="[emailIsValid]"
       type="email"
-      @update:model-value="newData = { ...newData, email: $event }"
+      @update:model-value="newData = { ...newData, email: $event || '' }"
     />
     <FormField
       :hint="$t('nameValidation')"
@@ -60,27 +60,27 @@ watch(data, () => {
       name="name"
       required
       :rules="[nameIsValid]"
-      @update:model-value="newData = { ...newData, name: $event }"
+      @update:model-value="newData = { ...newData, name: $event || '' }"
     />
     <FormPassword
       :hint="$t('passwordValidation')"
       :label="$t('password')"
-      :model-value="newData.password"
+      :model-value="newData.password || undefined"
       name="password"
       required
       :rules="[passwordIsValid]"
-      @update:model-value="newData = { ...newData, password: $event }"
+      @update:model-value="newData = { ...newData, password: $event || '' }"
     />
     <FormCheckbox
       :label="$t('enabled')"
       :model-value="newData.enabled"
       name="enabled"
-      @update:model-value="newData = { ...newData, enabled: $event }"
+      @update:model-value="newData = { ...newData, enabled: Boolean($event) }"
     />
     <FormButton
       color="info"
       :disabled="!rights.creating"
-      :loading="pending || Boolean(data)"
+      :loading="status === 'pending' || Boolean(data)"
       prepand-icon="mdi-plus"
       type="submit"
     >

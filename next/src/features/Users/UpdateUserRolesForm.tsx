@@ -31,7 +31,7 @@ const UpdateUserRolesForm: FC<{
     event.preventDefault();
     update({
       id: user.id,
-      fields: updatedRoles,
+      fields: { items: updatedRoles },
     });
   };
 
@@ -39,7 +39,7 @@ const UpdateUserRolesForm: FC<{
     let find = false;
 
     const filtered = updatedRoles.filter((value) => {
-      if (newRole.userId == value?.userId && newRole.roleId == value?.roleId) {
+      if (newRole.userId === value.userId && newRole.roleId === value.roleId) {
         find = true;
         return false;
       } else {
@@ -55,10 +55,10 @@ const UpdateUserRolesForm: FC<{
   };
 
   useEffect(() => {
-    if (updateReq.data) {
+    if (updateReq.isSuccess) {
       dispatch(addAlert({ type: 'success', text: tRef.current.success }));
     }
-  }, [updateReq.data, dispatch, tRef]);
+  }, [updateReq.isSuccess, dispatch, tRef]);
 
   useEffect(() => {
     if (updateReq.error) {
@@ -79,7 +79,7 @@ const UpdateUserRolesForm: FC<{
           labelProps={{ label: role.name, sx: { display: 'inline-flex' } }}
           name="role[]"
           value="allowed"
-          checked={updatedRoles.some((value) => value?.roleId == role.id)}
+          checked={updatedRoles.some((value) => value.roleId === role.id)}
           onChange={() => updateRoles({ roleId: role.id, userId: user.id })}
         />
       ))}

@@ -1,16 +1,24 @@
 import {
   Injectable,
-  Inject,
   InternalServerErrorException,
   NotFoundException,
   ConflictException,
   Logger,
+  BadRequestException,
 } from '@nestjs/common';
-import { FindOptions, UpdateOptions } from 'sequelize';
+import { InjectRepository } from '@nestjs/typeorm';
+import {
+  DataSource,
+  DeleteResult,
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
+  In,
+  Repository,
+  UpdateResult,
+} from 'typeorm';
 
-import { UserModel } from './user.entity';
-import { USERS_REPOSITORY, PUBLIC, WITH_ROLES } from 'libs/constants';
-import { RoleModel } from 'src/roles/role.entity';
+import { UserEntity } from './user.entity';
 import {
   IGetListResponse,
   IUsersRoles,
@@ -18,46 +26,50 @@ import {
   TCreateUser,
   TGetUsers,
   TUpdateUser,
+  WithoutNulls,
 } from '@ap/shared';
 import { CacheService } from 'src/cache/cache.service';
 import { DatabaseService } from 'src/database/database.service';
 import { createHash } from 'libs/utils';
+import { RoleEntity } from 'src/roles/role.entity';
+import { UsersRolesEntity } from 'src/database/users-roles.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @Inject(USERS_REPOSITORY)
-    private usersRepository: typeof UserModel,
-    private cacheService: CacheService,
+    @InjectRepository(UserEntity)
+    private usersRepository: Repository<UserEntity>,
+    private dataSource: DataSource,
     private databaseService: DatabaseService,
+    private cacheService: CacheService,
   ) {}
 
-  async create(fields: TCreateUser, roles?: RoleModel[]): Promise<UserModel> {
-    let user: UserModel;
-    let created: boolean;
+  async create(
+    fields: WithoutNulls<TCreateUser>,
+    roles?: RoleEntity[],
+  ): Promise<UserEntity> {
+    let user: UserEntity | null;
 
     try {
-      [user, created] = await this.usersRepository.findOrCreate({
+      user = await this.usersRepository.findOne({
         where: { email: fields.email },
-        defaults: {
-          ...fields,
-          password: fields.password ? await createHash(fields.password) : null,
-        },
       });
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
     }
 
-    if (!created) {
+    if (user) {
       throw new ConflictException();
     }
 
     try {
-      if (roles && roles.length > 0) {
-        await user.$set('roles', roles);
-        user.setDataValue('roles', roles);
-      }
+      user = this.usersRepository.create({
+        ...fields,
+        password: await createHash(fields.password),
+        roles,
+      });
+      await this.usersRepository.save(user);
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -69,44 +81,46 @@ export class UsersService {
   async createByGoogle(
     googleId: string,
     name: string,
-    roles?: RoleModel[],
-  ): Promise<UserModel> {
-    let user: UserModel;
-    let created: boolean;
+    roles?: RoleEntity[],
+  ): Promise<UserEntity> {
+    let user: UserEntity | null;
 
     try {
-      [user, created] = await this.usersRepository
-        .scope([WITH_ROLES])
-        .findOrCreate({
-          where: { googleId },
-          defaults: { googleId, name, enabled: true, verified: true },
-        });
+      user = await this.usersRepository.findOne({
+        where: { googleId },
+        relations: { roles: { rights: { resource: true } } },
+      });
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
     }
 
-    try {
-      if (roles && roles.length > 0 && created) {
-        await user.$set('roles', roles);
-        user.setDataValue('roles', roles);
+    if (!user) {
+      try {
+        user = this.usersRepository.create({
+          googleId,
+          name,
+          enabled: true,
+          verified: true,
+          roles,
+        });
+        await this.usersRepository.save(user);
+      } catch (error) {
+        Logger.error(error);
+        throw new InternalServerErrorException();
       }
-    } catch (error) {
-      Logger.error(error);
-      throw new InternalServerErrorException();
     }
 
     return user;
   }
 
   private async getOne(
-    options: FindOptions<UserModel>,
-    scope?: string | string[],
-  ): Promise<UserModel> {
-    let user: UserModel | null;
+    options: FindOneOptions<UserEntity>,
+  ): Promise<UserEntity> {
+    let user: UserEntity | null;
 
     try {
-      user = await this.usersRepository.scope(scope).findOne(options);
+      user = await this.usersRepository.findOne(options);
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -119,36 +133,47 @@ export class UsersService {
     return user;
   }
 
-  getOneAuth(email: string): Promise<UserModel> {
-    return this.getOne({ where: { email } }, WITH_ROLES);
+  getOneAuth(email: string): Promise<UserEntity> {
+    return this.getOne({
+      where: { email },
+      relations: { roles: { rights: { resource: true } } },
+    });
   }
 
-  getOneProfile(id: string): Promise<Omit<UserModel, 'roles'>> {
+  getOneProfile(id: string): Promise<UserEntity> {
+    return this.getOne({
+      where: { id },
+      relations: { roles: { rights: { resource: true } } },
+    });
+  }
+
+  getOnePublic(id: string): Promise<UserEntity> {
+    return this.getOne({
+      where: { id },
+      relations: { roles: true },
+    });
+  }
+
+  getOneFlat(id: string): Promise<UserEntity> {
     return this.getOne({ where: { id } });
-  }
-
-  getOnePublic(id: string): Promise<UserModel> {
-    return this.getOne({ where: { id } }, [PUBLIC, WITH_ROLES]);
   }
 
   prepareGetListOptions(
     fields?: TGetListRequest<TGetUsers>,
-  ): FindOptions<UserModel> {
-    const options: FindOptions<UserModel> =
-      this.databaseService.preparePaginationOptions<UserModel, TGetUsers>(
+  ): FindManyOptions<UserEntity> {
+    const options: FindManyOptions<UserEntity> =
+      this.databaseService.preparePaginationOptions<UserEntity, TGetUsers>(
         fields,
       );
 
     options.where = {};
 
     if (fields?.email !== undefined) {
-      options.where.email = {
-        [this.databaseService.iLike]: `%${fields.email}%`,
-      };
+      options.where.email = this.databaseService.iLike(`%${fields.email}%`);
     }
 
     if (fields?.name !== undefined) {
-      options.where.name = { [this.databaseService.iLike]: `%${fields.name}%` };
+      options.where.name = this.databaseService.iLike(`%${fields.name}%`);
     }
 
     if (fields?.enabled !== undefined) {
@@ -158,21 +183,28 @@ export class UsersService {
     return options;
   }
 
-  async getListPublic(
+  async getList(
     fields?: TGetListRequest<TGetUsers>,
-  ): Promise<IGetListResponse<UserModel>> {
-    const options = this.prepareGetListOptions(fields);
+  ): Promise<IGetListResponse<UserEntity>> {
+    const options: FindManyOptions<UserEntity> = {
+      ...this.prepareGetListOptions(fields),
+      relations: { roles: true },
+    };
 
     try {
       if (fields?.reqCount) {
-        return await this.usersRepository
-          .scope([PUBLIC, WITH_ROLES])
-          .findAndCountAll(options);
+        const result = await this.usersRepository.findAndCount(options);
+        return {
+          rows: result[0],
+          count: result[1],
+          page: options.skip! / options.take! + 1,
+          limit: options.take,
+        };
       } else {
         return {
-          rows: await this.usersRepository
-            .scope([PUBLIC, WITH_ROLES])
-            .findAll(options),
+          rows: await this.usersRepository.find(options),
+          page: options.skip! / options.take! + 1,
+          limit: options.take,
         };
       }
     } catch (error) {
@@ -183,12 +215,11 @@ export class UsersService {
 
   async countByRole(roleId: string): Promise<number> {
     try {
-      return await this.usersRepository.count({
-        include: {
-          model: RoleModel,
-          where: { id: roleId },
-        },
-      });
+      return await this.usersRepository
+        .createQueryBuilder('user')
+        .innerJoin('user.roles', 'role')
+        .where('role.id = :roleId', { roleId })
+        .getCount();
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -197,135 +228,178 @@ export class UsersService {
 
   private async update(
     fields: TUpdateUser,
-    options: UpdateOptions<UserModel>,
-  ): Promise<boolean> {
-    let affectedCount = 0;
+    options: FindOptionsWhere<UserEntity>,
+  ): Promise<void> {
+    let result: UpdateResult;
+
+    if (Object.keys(fields).length === 0) {
+      throw new BadRequestException();
+    }
 
     try {
-      [affectedCount] = await this.usersRepository.update(fields, options);
+      result = await this.usersRepository.update(options, fields);
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
     }
 
-    if (affectedCount === 0) {
+    if (result.affected === 0) {
       throw new NotFoundException();
     }
-
-    return true;
   }
 
-  updateFields(id: string, fields: TUpdateUser): Promise<boolean> {
-    return this.update(fields, { where: { id } });
+  async updateFields(id: string, fields: TUpdateUser): Promise<void> {
+    await this.update(fields, { id });
   }
 
-  updateVerificationCode(
+  async updateVerificationCode(
     email: string,
     verificationCode: string,
-  ): Promise<boolean> {
-    return this.update({ verificationCode }, { where: { email } });
+  ): Promise<void> {
+    await this.update({ verificationCode }, { email });
   }
 
-  updateVerificationStatus(
+  async updateVerificationStatus(
     email: string,
     verificationCode: string,
-  ): Promise<boolean> {
-    return this.update(
+  ): Promise<void> {
+    await this.update(
       { verificationCode: null, verified: true },
-      { where: { email, verificationCode } },
+      { email, verificationCode },
     );
   }
 
-  updateResetPasswordCode(
+  async updateResetPasswordCode(
     email: string,
     resetPasswordCode: string,
-  ): Promise<boolean> {
-    return this.update({ resetPasswordCode }, { where: { email } });
+  ): Promise<void> {
+    await this.update({ resetPasswordCode }, { email });
   }
 
   async updatePasswordWithCode(
     email: string,
     resetPasswordCode: string,
     newPassword: string,
-  ): Promise<boolean> {
-    return this.update(
+  ): Promise<void> {
+    await this.update(
       {
         resetPasswordCode: null,
         password: await createHash(newPassword),
       },
-      { where: { email, resetPasswordCode } },
+      { email, resetPasswordCode },
     );
   }
 
-  async updatePassword(id: string, newPassword: string): Promise<boolean> {
-    return this.update(
-      { password: await createHash(newPassword) },
-      { where: { id } },
-    );
+  async updatePassword(id: string, newPassword: string): Promise<void> {
+    await this.update({ password: await createHash(newPassword) }, { id });
   }
 
-  updateChangeEmailCode(
+  async updateChangeEmailCode(
     id: string,
     changeEmailCode: string,
     newEmail: string,
-  ): Promise<boolean> {
-    return this.update(
-      { changeEmailCode, temporaryEmail: newEmail },
-      { where: { id } },
-    );
+  ): Promise<void> {
+    await this.update({ changeEmailCode, temporaryEmail: newEmail }, { id });
   }
 
   async updateEmailWithCode(
     id: string,
     changeEmailCode: string,
-  ): Promise<boolean> {
-    const user = await this.getOne({ where: { id, changeEmailCode } });
+  ): Promise<void> {
+    let user: UserEntity | null;
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
     try {
-      await user.update({
-        email: user.get('temporaryEmail'),
-        changeEmailCode: null,
-        temporaryEmail: null,
+      user = await queryRunner.manager.findOne(UserEntity, {
+        where: { id, changeEmailCode },
       });
     } catch (error) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
       Logger.error(error);
       throw new InternalServerErrorException();
     }
 
-    return true;
-  }
-
-  async updateRoles(id: string, usersRoles: IUsersRoles[]): Promise<boolean> {
-    const user = await this.getOne({ where: { id } });
+    if (!user) {
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
+      throw new NotFoundException();
+    }
 
     try {
-      await user.$set(
-        'roles',
-        usersRoles
-          .filter((value) => value.userId === id)
-          .map((value) => value.roleId),
+      await queryRunner.manager.update(
+        UserEntity,
+        { id },
+        {
+          email: user.temporaryEmail,
+          changeEmailCode: null,
+          temporaryEmail: null,
+        },
       );
+
+      await queryRunner.commitTransaction();
     } catch (error) {
+      await queryRunner.rollbackTransaction();
       Logger.error(error);
       throw new InternalServerErrorException();
+    } finally {
+      await queryRunner.release();
     }
-
-    return true;
   }
 
-  async delete(ids: string[]): Promise<boolean> {
-    let destroyedCount = 0;
+  async updateRoles(id: string, usersRoles: IUsersRoles[]): Promise<void> {
+    let user: UserEntity | null;
 
     try {
-      destroyedCount = await this.usersRepository.destroy({
-        where: { id: ids },
+      user = await this.usersRepository.findOne({
+        where: { id },
       });
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
     }
 
-    if (destroyedCount === 0) {
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager.delete(UsersRolesEntity, { userId: id });
+      await queryRunner.manager.insert(
+        UsersRolesEntity,
+        usersRoles.filter((value) => value.userId === id),
+      );
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      Logger.error(error);
+      throw new InternalServerErrorException();
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async delete(ids: string[]): Promise<void> {
+    let result: DeleteResult;
+
+    try {
+      result = await this.usersRepository.delete({
+        id: In(ids),
+      });
+    } catch (error) {
+      Logger.error(error);
+      throw new InternalServerErrorException();
+    }
+
+    if (result.affected === 0) {
       throw new NotFoundException();
     }
 
@@ -336,7 +410,5 @@ export class UsersService {
         await this.cacheService.mdel(keys);
       }
     }
-
-    return true;
   }
 }

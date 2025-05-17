@@ -37,20 +37,20 @@ const usersApi = createApi({
       providesTags: ['Entities'],
     }),
 
-    update: builder.mutation<boolean, IUpdateReq<TUpdateUser, IUser['id']>>({
+    update: builder.mutation<undefined, IUpdateReq<TUpdateUser, IUser['id']>>({
       query: usersService.updateArgs,
       invalidatesTags: ['Entity'],
     }),
 
     updateRoles: builder.mutation<
-      boolean,
-      IUpdateReq<IUsersRoles[], IUser['id']>
+      undefined,
+      IUpdateReq<IQueryItems<IUsersRoles>, IUser['id']>
     >({
       query: usersService.updateRolesArgs,
       invalidatesTags: ['Entity'],
     }),
 
-    delete: builder.mutation<boolean, IQueryItems<IUser['id']>>({
+    delete: builder.mutation<undefined, IQueryItems<IUser['id']>>({
       query: usersService.deleteArgs,
       invalidatesTags: ['CountedEntities'],
     }),

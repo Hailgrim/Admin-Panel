@@ -1,6 +1,6 @@
 import { PickType } from '@nestjs/swagger';
 
-import { TCreateUser } from '@ap/shared';
+import { TCreateUser, WithoutNulls } from '@ap/shared';
 import { UserDto } from './user.dto';
 
 export class CreateUserDto
@@ -10,4 +10,4 @@ export class CreateUserDto
     'name',
     'enabled',
   ])
-  implements TCreateUser {}
+  implements WithoutNulls<TCreateUser> {}

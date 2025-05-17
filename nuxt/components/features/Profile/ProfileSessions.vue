@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { locale } = useI18n()
-const { data, error, execute, pending } = profileApi.getSessions()
+const { data, error, execute, status } = profileApi.getSessions()
 const mainStore = useMainStore()
 const sessions = ref<IExternalSession[] | null>(null)
 
@@ -25,7 +25,7 @@ onMounted(() => {
 
 <template>
   <v-skeleton-loader
-    v-if="pending"
+    v-if="status === 'pending'"
     height="68"
   />
   <SessionForm

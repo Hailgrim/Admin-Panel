@@ -17,7 +17,7 @@ const UpdatePasswordForm: FC = () => {
   const lRef = useLanguageRef();
   const tRef = useTranslateRef();
   const t = useTranslate();
-  const [update, { data, isLoading, error }] =
+  const [update, { isSuccess, isLoading, error }] =
     profileApi.useUpdatePasswordMutation();
   const rights = useRights(ROUTES.api.profile);
   const [oldPassword, setOldPassword] = useState('');
@@ -53,10 +53,10 @@ const UpdatePasswordForm: FC = () => {
   }, [dispatch, error, lRef]);
 
   useEffect(() => {
-    if (data) {
+    if (isSuccess) {
       dispatch(addAlert({ type: 'success', text: tRef.current.success }));
     }
-  }, [data, dispatch, tRef]);
+  }, [isSuccess, dispatch, tRef]);
 
   return (
     <FormBase onSubmit={submitHandler}>

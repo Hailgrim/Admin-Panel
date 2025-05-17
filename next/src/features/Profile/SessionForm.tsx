@@ -58,14 +58,15 @@ const SessionForm: FC<{ session: IExternalSession; onDelete?: () => void }> = ({
   }, [dispatch, removeReq.error, lRef]);
 
   useEffect(() => {
-    if (removeReq.data) {
+    if (removeReq.isSuccess) {
       dispatch(addAlert({ type: 'success', text: tRef.current.success }));
       onDelete?.();
+
       if (session.current) {
         dispatch(setProfile(null));
       }
     }
-  }, [removeReq.data, dispatch, session, tRef, onDelete]);
+  }, [removeReq.isSuccess, dispatch, session, tRef, onDelete]);
 
   return (
     <FormBase onSubmit={submitHandler}>
@@ -119,7 +120,7 @@ const SessionForm: FC<{ session: IExternalSession; onDelete?: () => void }> = ({
             color="error"
             aria-label="sign out"
             title={t.signOut}
-            disabled={!rights.updating || removeReq.isLoading || removeReq.data}
+            disabled={!rights.updating || removeReq.isLoading || removeReq.isSuccess}
             type="submit"
           >
             <DeleteIcon />

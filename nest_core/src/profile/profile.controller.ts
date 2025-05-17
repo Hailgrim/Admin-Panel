@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
+import { plainToInstance } from 'class-transformer';
 
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Roles } from 'src/roles/roles.decorator';
@@ -40,32 +41,40 @@ export class ProfileController {
   @Roles({ path: route, action: ERights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get()
-  getProfile(@Req() req: TFastifyRequestWithToken): IUser {
-    return req.originalUser;
+  getProfile(
+    @Req() req: TFastifyRequestWithToken,
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): IUser {
+    res.status(HttpStatus.OK);
+    return plainToInstance(ExternalUserDto, req.originalUser);
   }
 
   @ApiOperation({ summary: d['en'].updateProfile })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @Roles({ path: route, action: ERights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch()
-  updateProfile(
+  async updateProfile(
     @Req() req: TFastifyRequestWithToken,
     @Body() updateProfileDto: UpdateProfileDto,
-  ): Promise<boolean> {
-    return this.profileService.updateProfile(req.user.userId, updateProfileDto);
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<void> {
+    res.status(HttpStatus.NO_CONTENT);
+    await this.profileService.updateProfile(req.user.userId, updateProfileDto);
   }
 
   @ApiOperation({ summary: d['en'].updatePassword })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @Roles({ path: route, action: ERights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('update-password')
-  updatePassword(
+  async updatePassword(
     @Req() req: TFastifyRequestWithToken,
     @Body() updatePasswordDto: UpdatePasswordDto,
-  ): Promise<boolean> {
-    return this.profileService.updatePassword(
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<void> {
+    res.status(HttpStatus.NO_CONTENT);
+    await this.profileService.updatePassword(
       req.user.userId,
       updatePasswordDto.newPassword,
       updatePasswordDto.oldPassword,
@@ -73,32 +82,34 @@ export class ProfileController {
   }
 
   @ApiOperation({ summary: d['en'].changeEmailRequest })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @Roles({ path: route, action: ERights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Post('change-email')
-  changeEmailRequest(
+  async changeEmailRequest(
     @Req() req: TFastifyRequestWithToken,
-    @Res({ passthrough: true }) res: FastifyReply,
     @Body() dhangeEmailRequestDto: ChangeEmailRequestDto,
-  ): Promise<boolean> {
-    res.status(HttpStatus.OK);
-    return this.profileService.changeEmailRequest(
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<void> {
+    res.status(HttpStatus.NO_CONTENT);
+    await this.profileService.changeEmailRequest(
       req.user.userId,
       dhangeEmailRequestDto.newEmail,
     );
   }
 
   @ApiOperation({ summary: d['en'].changeEmailConfirm })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @Roles({ path: route, action: ERights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('change-email')
-  changeEmail(
+  async changeEmailConfirm(
     @Req() req: TFastifyRequestWithToken,
     @Body() changeEmailDto: ChangeEmailDto,
-  ): Promise<boolean> {
-    return this.profileService.changeEmail(
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<void> {
+    res.status(HttpStatus.NO_CONTENT);
+    await this.profileService.changeEmailConfirm(
       req.user.userId,
       changeEmailDto.code,
     );
@@ -111,20 +122,24 @@ export class ProfileController {
   @Get('sessions')
   getSessions(
     @Req() req: TFastifyRequestWithToken,
+    @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<IExternalSession[]> {
+    res.status(HttpStatus.OK);
     return this.profileService.getSessions(req.user.userId, req.user.sessionId);
   }
 
   @ApiOperation({ summary: d['en'].deleteSessions })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @Roles({ path: route, action: ERights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
   @Delete('sessions')
-  deleteSessions(
+  async deleteSessions(
     @Req() req: TFastifyRequestWithToken,
     @Body() QueryItemsDto: QueryItemsDto<IExternalSession['id']>,
-  ): Promise<boolean> {
-    return this.profileService.deleteSessions(
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<void> {
+    res.status(HttpStatus.NO_CONTENT);
+    await this.profileService.deleteSessions(
       req.user.userId,
       QueryItemsDto.items,
     );

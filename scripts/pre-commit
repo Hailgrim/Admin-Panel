@@ -1,0 +1,24 @@
+#!/bin/sh
+
+echo "🔍 Linting nest_core..."
+npm --prefix nest_core run lint || exit 1
+
+echo "🧪 Running tests in nest_core..."
+npm --prefix nest_core run test:e2e || exit 1
+
+echo "🔍 Linting nest_mailer..."
+npm --prefix nest_mailer run lint || exit 1
+
+echo "🔍 Linting next..."
+npm --prefix next run lint:fix || exit 1
+
+echo "🧪 Running tests in next..."
+npm --prefix next run test || exit 1
+
+echo "🔍 Linting nuxt..."
+npm --prefix nuxt run lint:fix || exit 1
+
+echo "🧪 Running tests in nuxt..."
+npm --prefix nuxt run test || exit 1
+
+echo "✅ All checks passed!"

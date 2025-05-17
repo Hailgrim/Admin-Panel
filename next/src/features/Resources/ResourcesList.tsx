@@ -54,13 +54,13 @@ const ResourcesList: FC<IList<IResource>> = (props) => {
   }, [props.rows, getList]);
 
   useEffect(() => {
-    if (destroyReq.data) {
+    if (destroyReq.isSuccess) {
       getList({
         reqPage: paginationModel.current.page + 1,
         reqLimit: paginationModel.current.pageSize,
       });
     }
-  }, [destroyReq.data, getList]);
+  }, [destroyReq.isSuccess, getList]);
 
   useEffect(() => {
     if (destroyReq.error) {

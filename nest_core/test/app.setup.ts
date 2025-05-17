@@ -3,7 +3,6 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
-import { Sequelize } from 'sequelize-typescript';
 import fastifyCookie from '@fastify/cookie';
 import fastifyHelmet from '@fastify/helmet';
 import { ValidationPipe } from '@nestjs/common';
@@ -14,12 +13,12 @@ import { NGINX_HOST } from 'libs/config';
 import { AppModule } from 'src/app.module';
 import { DatabaseModule } from 'src/database/database.module';
 import { DatabaseTestModule } from './database-test.module';
-import { MAIL_SERVER, REDIS, SEQUELIZE } from 'libs/constants';
+import { MAIL_SERVER, REDIS } from 'libs/constants';
 import { SignUpDto } from 'src/auth/dto/sign-up.dto';
 
 export let app: NestFastifyApplication;
 export const queue: Record<string, string>[] = [];
-export const wrongValue = '($)*#(@';
+export const wrongValue = '!!!';
 export const admin: SignUpDto = {
   name: 'Tester 1',
   email: 'test1@mail.com',
@@ -106,8 +105,8 @@ export const createApp = async () => {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,
       transform: true,
+      whitelist: true,
       errorHttpStatusCode: 400,
     }),
   );
@@ -117,16 +116,10 @@ export const createApp = async () => {
 };
 
 export const closeApp = async () => {
-  if (app) {
-    await app.close();
-  } else {
+  if (!app) {
     console.warn('App does not exist');
+    return;
   }
 
-  const sequelize = app.get<Sequelize>(SEQUELIZE);
-  if (sequelize) {
-    await sequelize.close();
-  } else {
-    console.warn('Sequelize does not exist');
-  }
+  await app.close();
 };

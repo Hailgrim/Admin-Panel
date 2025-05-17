@@ -15,7 +15,7 @@ const codeIsValid = (value: string) =>
 const password = ref('')
 const passwordIsValid = (value: string) =>
   testString(PASSWORD_REGEX, value) || t('passwordValidation')
-const { data, error, execute, pending } = authApi.resetPassword()
+const { status, error, execute } = authApi.resetPassword()
 const errorText = ref<string | null>(null)
 const router = useRouter()
 
@@ -40,8 +40,8 @@ watch(error, () => {
     }
 })
 
-watch(data, () => {
-  if (data.value) {
+watch(status, () => {
+  if (status.value === 'success') {
     emit('close')
     router.push(ROUTES.ui.signIn)
   }
@@ -74,7 +74,7 @@ watch(data, () => {
     <FormButton
       block
       color="success"
-      :loading="pending || Boolean(data)"
+      :loading="status === 'pending' || status === 'success'"
       type="submit"
     >
       {{ $t('confirm') }}

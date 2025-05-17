@@ -8,7 +8,7 @@ const newData = ref<TCreateRole>({
   enabled: false,
 })
 const nameIsValid = (value: string) => value.length > 0
-const { data, error, execute, pending } = rolesApi.create()
+const { data, error, execute, status } = rolesApi.create()
 const mainStore = useMainStore()
 const router = useRouter()
 const rights = useRights(ROUTES.api.roles)
@@ -43,11 +43,11 @@ watch(data, () => {
       name="name"
       required
       :rules="[nameIsValid]"
-      @update:model-value="newData = { ...newData, name: $event }"
+      @update:model-value="newData = { ...newData, name: $event || '' }"
     />
     <FormField
       :label="$t('description')"
-      :model-value="newData.description"
+      :model-value="newData.description || undefined"
       name="description"
       @update:model-value="newData = { ...newData, description: $event }"
     />
@@ -55,12 +55,12 @@ watch(data, () => {
       :label="$t('enabled')"
       :model-value="newData.enabled"
       name="enabled"
-      @update:model-value="newData = { ...newData, enabled: $event }"
+      @update:model-value="newData = { ...newData, enabled: Boolean($event) }"
     />
     <FormButton
       color="info"
       :disabled="!rights.creating"
-      :loading="pending || Boolean(data)"
+      :loading="status === 'pending' || Boolean(data)"
       prepand-icon="mdi-plus"
       type="submit"
     >

@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
+import { plainToInstance } from 'class-transformer';
 
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
@@ -40,12 +41,13 @@ export class RolesController {
   @Roles({ path: route, action: ERights.Creating })
   @UseGuards(JwtGuard, RolesGuard)
   @Post()
-  create(
-    @Res({ passthrough: true }) res: FastifyReply,
+  async create(
     @Body() createRoleDto: CreateRoleDto,
+    @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<IRole> {
     res.status(HttpStatus.CREATED);
-    return this.roleService.create(createRoleDto);
+    const role = await this.roleService.create(createRoleDto);
+    return plainToInstance(ExternalRoleDto, role);
   }
 
   @ApiOperation({ summary: d['en'].getEntity })
@@ -53,8 +55,13 @@ export class RolesController {
   @Roles({ path: route, action: ERights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get('/:id')
-  getOne(@Param('id') id: string): Promise<IRole> {
-    return this.roleService.getOnePublic(id);
+  async getOne(
+    @Param('id') id: string,
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<IRole> {
+    res.status(HttpStatus.OK);
+    const role = await this.roleService.getOne(id);
+    return plainToInstance(ExternalRoleDto, role);
   }
 
   @ApiOperation({ summary: d['en'].getEntities })
@@ -62,40 +69,53 @@ export class RolesController {
   @Roles({ path: route, action: ERights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get()
-  getList(@Query() getRolesDto: GetRolesDto): Promise<IGetListResponse<IRole>> {
-    return this.roleService.getListPublic(getRolesDto);
+  async getList(
+    @Query() getRolesDto: GetRolesDto,
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<IGetListResponse<IRole>> {
+    res.status(HttpStatus.OK);
+    const roles = await this.roleService.getList(getRolesDto);
+    return plainToInstance(RolesListDto, roles);
   }
 
   @ApiOperation({ summary: d['en'].updateEntity })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @Roles({ path: route, action: ERights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('/:id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateRoleDto: UpdateRoleDto,
-  ): Promise<boolean> {
-    return this.roleService.updateFields(id, updateRoleDto);
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<void> {
+    res.status(HttpStatus.NO_CONTENT);
+    await this.roleService.update(id, updateRoleDto);
   }
 
   @ApiOperation({ summary: d['en'].updateEntity })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @Roles({ path: route, action: ERights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
-  @Patch('/:id/resources')
-  updateResources(
+  @Patch('/:id/rights')
+  async updateRights(
     @Param('id') id: string,
     @Body() rightsQueryItemsDta: RightsQueryItemsDto,
-  ): Promise<boolean> {
-    return this.roleService.updateResources(id, rightsQueryItemsDta.items);
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<void> {
+    res.status(HttpStatus.NO_CONTENT);
+    await this.roleService.updateRights(id, rightsQueryItemsDta.items);
   }
 
   @ApiOperation({ summary: d['en'].deleteEntity })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @Roles({ path: route, action: ERights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
   @Delete()
-  delete(@Body() QueryItemsDto: QueryItemsDto<IRole['id']>): Promise<boolean> {
-    return this.roleService.delete(QueryItemsDto.items);
+  async delete(
+    @Body() QueryItemsDto: QueryItemsDto<IRole['id']>,
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<void> {
+    res.status(HttpStatus.NO_CONTENT);
+    await this.roleService.delete(QueryItemsDto.items);
   }
 }

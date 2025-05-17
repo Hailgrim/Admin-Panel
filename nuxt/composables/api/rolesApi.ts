@@ -17,14 +17,14 @@ class RolesApi {
     options: { method: 'GET', credentials: 'include', params: payload },
   }))
 
-  update = useAPI<boolean, IUpdateReq<TUpdateRole, IRole['id']>>(payload => ({
+  update = useAPI<undefined, IUpdateReq<TUpdateRole, IRole['id']>>(payload => ({
     url: ROUTES.api.role(payload.id),
     options: { method: 'PATCH', credentials: 'include', body: payload.fields },
   }))
 
-  updateResources = useAPI<boolean, IUpdateReq<IRights[], IRole['id']>>(
+  updateRights = useAPI<undefined, IUpdateReq<IQueryItems<IRights>, IRole['id']>>(
     payload => ({
-      url: ROUTES.api.roleResources(payload.id),
+      url: ROUTES.api.roleRights(payload.id),
       options: {
         method: 'PATCH',
         credentials: 'include',
@@ -33,7 +33,7 @@ class RolesApi {
     }),
   )
 
-  delete = useAPI<boolean, IQueryItems<IRole['id']>>(payload => ({
+  delete = useAPI<undefined, IQueryItems<IRole['id']>>(payload => ({
     url: ROUTES.api.roles,
     options: { method: 'DELETE', credentials: 'include', body: payload },
   }))

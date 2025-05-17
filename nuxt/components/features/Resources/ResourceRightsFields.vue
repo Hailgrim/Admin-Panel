@@ -37,25 +37,25 @@ function updateHandler(permisson: keyof Omit<IRights, 'roleId' | 'resourceId'>, 
       :label="$t('create')"
       :model-value="newRights.creating"
       :name="`${resource.name}.creating`"
-      @update:model-value="updateHandler('creating', $event)"
+      @update:model-value="updateHandler('creating', Boolean($event))"
     />
     <FormCheckbox
       :label="$t('read')"
       :model-value="newRights.reading"
       :name="`${resource.name}.reading`"
-      @update:model-value="updateHandler('reading', $event)"
+      @update:model-value="updateHandler('reading', Boolean($event))"
     />
     <FormCheckbox
       :label="$t('update')"
       :model-value="newRights.updating"
       :name="`${resource.name}.updating`"
-      @update:model-value="updateHandler('updating', $event)"
+      @update:model-value="updateHandler('updating', Boolean($event))"
     />
     <FormCheckbox
       :label="$t('delete')"
       :model-value="newRights.deleting"
       :name="`${resource.name}.deleting`"
-      @update:model-value="updateHandler('deleting', $event)"
+      @update:model-value="updateHandler('deleting', Boolean($event))"
     />
   </fieldset>
 </template>

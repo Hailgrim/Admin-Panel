@@ -29,15 +29,15 @@ export function useRights(path: string) {
             break
           }
 
-          if (role.resources) {
-            for (const resource of role.resources) {
-              if (resource.path !== route || resource.RightsModel === undefined)
+          if (role.rights) {
+            for (const right of role.rights) {
+              if (right.resource?.path !== route)
                 continue
 
-              newRights.creating = resource.RightsModel.creating
-              newRights.reading = resource.RightsModel.reading
-              newRights.updating = resource.RightsModel.updating
-              newRights.deleting = resource.RightsModel.deleting
+              newRights.creating = right.creating
+              newRights.reading = right.reading
+              newRights.updating = right.updating
+              newRights.deleting = right.deleting
             }
           }
         }

@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
+import { plainToInstance } from 'class-transformer';
 
 import { ResourcesService } from './resources.service';
 import { CreateResourceDto } from './dto/create-resource.dto';
@@ -39,12 +40,13 @@ export class ResourcesController {
   @Roles({ path: route, action: ERights.Creating })
   @UseGuards(JwtGuard, RolesGuard)
   @Post()
-  create(
-    @Res({ passthrough: true }) res: FastifyReply,
+  async create(
     @Body() createResourceDto: CreateResourceDto,
+    @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<IResource> {
     res.status(HttpStatus.CREATED);
-    return this.resourceService.create(createResourceDto);
+    const resource = await this.resourceService.create(createResourceDto);
+    return plainToInstance(ExternalResourceDto, resource);
   }
 
   @ApiOperation({ summary: d['en'].getEntity })
@@ -52,8 +54,13 @@ export class ResourcesController {
   @Roles({ path: route, action: ERights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get('/:id')
-  getOne(@Param('id') id: string): Promise<IResource> {
-    return this.resourceService.getOnePublic(id);
+  async getOne(
+    @Param('id') id: string,
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<IResource> {
+    res.status(HttpStatus.OK);
+    const resource = await this.resourceService.getOne(id);
+    return plainToInstance(ExternalResourceDto, resource);
   }
 
   @ApiOperation({ summary: d['en'].getEntities })
@@ -61,32 +68,39 @@ export class ResourcesController {
   @Roles({ path: route, action: ERights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get()
-  getList(
+  async getList(
     @Query() getResourcesDto: GetResourcesDto,
+    @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<IGetListResponse<IResource>> {
-    return this.resourceService.getListPublic(getResourcesDto);
+    res.status(HttpStatus.OK);
+    const resources = await this.resourceService.getList(getResourcesDto);
+    return plainToInstance(ResourcesListDto, resources);
   }
 
   @ApiOperation({ summary: d['en'].updateEntity })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @Roles({ path: route, action: ERights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
   @Patch('/:id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateResourceDto: UpdateResourceDto,
-  ): Promise<boolean> {
-    return this.resourceService.updateFields(id, updateResourceDto);
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<void> {
+    res.status(HttpStatus.NO_CONTENT);
+    await this.resourceService.update(id, updateResourceDto);
   }
 
   @ApiOperation({ summary: d['en'].deleteEntity })
-  @ApiResponse({ status: HttpStatus.OK, type: Boolean })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @Roles({ path: route, action: ERights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
   @Delete()
-  delete(
+  async delete(
     @Body() QueryItemsDto: QueryItemsDto<IResource['id']>,
-  ): Promise<boolean> {
-    return this.resourceService.delete(QueryItemsDto.items);
+    @Res({ passthrough: true }) res: FastifyReply,
+  ): Promise<void> {
+    res.status(HttpStatus.NO_CONTENT);
+    await this.resourceService.delete(QueryItemsDto.items);
   }
 }

@@ -1,27 +1,16 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { RolesController } from './roles.controller';
-import { DatabaseModule } from 'src/database/database.module';
 import { RolesService } from './roles.service';
 import { UsersModule } from 'src/users/users.module';
-import { ROLES_REPOSITORY, ROLES_RESOURCES_REPOSITORY } from 'libs/constants';
-import { RightsModel } from '../database/rights.entity';
-import { RoleModel } from './role.entity';
+import { RoleEntity } from './role.entity';
+import { DatabaseService } from 'src/database/database.service';
 
 @Module({
-  imports: [DatabaseModule, UsersModule],
+  imports: [TypeOrmModule.forFeature([RoleEntity]), UsersModule],
   controllers: [RolesController],
-  providers: [
-    {
-      provide: ROLES_REPOSITORY,
-      useValue: RoleModel,
-    },
-    {
-      provide: ROLES_RESOURCES_REPOSITORY,
-      useValue: RightsModel,
-    },
-    RolesService,
-  ],
+  providers: [RolesService, DatabaseService],
   exports: [RolesService],
 })
 export class RolesModule {}

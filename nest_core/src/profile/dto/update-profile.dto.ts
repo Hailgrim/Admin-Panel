@@ -1,13 +1,8 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
-import { IsOptional, Matches } from 'class-validator';
+import { PartialType, PickType } from '@nestjs/swagger';
 
-import { NAME_REGEX, TUpdateUser } from '@ap/shared';
+import { TUpdateUser } from '@ap/shared';
+import { UserDto } from 'src/users/dto/user.dto';
 
-export class UpdateProfileDto implements TUpdateUser {
-  @ApiPropertyOptional({ type: String, example: 'Linus Torvalds' })
-  @IsOptional()
-  @Matches(NAME_REGEX)
-  @Transform(({ value }) => (value as string).trim())
-  name?: string;
-}
+export class UpdateProfileDto
+  extends PartialType(PickType<UserDto, keyof TUpdateUser>(UserDto, ['name']))
+  implements TUpdateUser {}

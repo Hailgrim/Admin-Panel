@@ -17,7 +17,7 @@ class ResourcesApi {
     options: { method: 'GET', credentials: 'include', params: payload },
   }))
 
-  update = useAPI<boolean, IUpdateReq<TUpdateResource, IResource['id']>>(
+  update = useAPI<undefined, IUpdateReq<TUpdateResource, IResource['id']>>(
     payload => ({
       url: ROUTES.api.resource(payload.id),
       options: {
@@ -28,7 +28,7 @@ class ResourcesApi {
     }),
   )
 
-  delete = useAPI<boolean, IQueryItems<IResource['id']>>(payload => ({
+  delete = useAPI<undefined, IQueryItems<IResource['id']>>(payload => ({
     url: ROUTES.api.resources,
     options: { method: 'DELETE', credentials: 'include', body: payload },
   }))

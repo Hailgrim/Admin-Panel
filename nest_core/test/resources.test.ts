@@ -72,7 +72,7 @@ const runResourcesTests = () => {
       });
     });
 
-    describe('Find All', () => {
+    describe('Get List', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
           .get(ROUTES.api.resources)
@@ -92,6 +92,8 @@ const runResourcesTests = () => {
           .then((res) => res.body as IGetListResponse<IResource>);
 
         expect(findAllResBody).toHaveProperty('count', 5);
+        expect(findAllResBody).toHaveProperty('page', 1);
+        expect(findAllResBody).toHaveProperty('limit', 1);
 
         findAllResBody = await request(app.getHttpServer())
           .get(ROUTES.api.resources)
@@ -116,7 +118,7 @@ const runResourcesTests = () => {
       });
     });
 
-    describe('Find One', () => {
+    describe('Get One', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
           .get(ROUTES.api.resource(entity.id))
@@ -161,15 +163,21 @@ const runResourcesTests = () => {
           .expect(HttpStatus.UNAUTHORIZED);
 
         await request(app.getHttpServer())
-          .patch(ROUTES.api.resource(wrongValue))
+          .patch(ROUTES.api.resource(entity.id))
           .set('Cookie', adminCookies)
-          .expect(HttpStatus.NOT_FOUND);
+          .expect(HttpStatus.BAD_REQUEST);
+
+        await request(app.getHttpServer())
+          .patch(ROUTES.api.resource(entity.id))
+          .set('Cookie', adminCookies)
+          .send({ enabled: wrongValue })
+          .expect(HttpStatus.BAD_REQUEST);
 
         await request(app.getHttpServer())
           .patch(ROUTES.api.resource(wrongValue))
           .set('Cookie', adminCookies)
-          .send({ enabled: wrongValue })
-          .expect(HttpStatus.BAD_REQUEST);
+          .send({ enabled: true } satisfies TUpdateResource)
+          .expect(HttpStatus.NOT_FOUND);
       });
 
       it('Correct (admin)', async () => {
@@ -179,7 +187,7 @@ const runResourcesTests = () => {
           .send({
             name: entity.name + entity.name,
           } satisfies TUpdateResource)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         entity.name = entity.name + entity.name;
 
@@ -219,7 +227,7 @@ const runResourcesTests = () => {
           .delete(ROUTES.api.resources)
           .set('Cookie', adminCookies)
           .send({ items: [entity.id] } satisfies IQueryItems<IResource['id']>)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         await request(app.getHttpServer())
           .get(ROUTES.api.resource(entity.id))

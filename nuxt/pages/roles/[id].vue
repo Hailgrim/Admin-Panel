@@ -33,7 +33,7 @@ await resourcesExecute(undefined)
   >
     {{ $t('resources') }}
   </v-card-title>
-  <UpdateRoleResourcesForm
+  <UpdateRoleRightsForm
     v-if="roleData && resourcesData"
     :resources="resourcesData.rows"
     :role="roleData"

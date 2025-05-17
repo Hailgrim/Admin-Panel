@@ -21,7 +21,7 @@ const ForgotPasswordForm: FC = () => {
   const [email, setEmail] = useState('');
   const [resetModal, setResetModal] = useState(false);
   const [errorText, setErrorText] = useState<string | null>(null);
-  const [forgotPassword, { data, error, isFetching, originalArgs }] =
+  const [forgotPassword, { isSuccess, error, isFetching }] =
     authApi.useLazyForgotPasswordQuery();
 
   const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
@@ -52,10 +52,10 @@ const ForgotPasswordForm: FC = () => {
   }, [error, tRef, lRef]);
 
   useEffect(() => {
-    if (data) {
+    if (isSuccess) {
       setResetModal(true);
     }
-  }, [data]);
+  }, [isSuccess]);
 
   return (
     <>
@@ -69,6 +69,7 @@ const ForgotPasswordForm: FC = () => {
           value={email}
           onChange={(event) => setEmail(event.currentTarget.value)}
           autoFocus
+          disabled={isFetching}
         />
         <FormButton type="submit" fullWidth loading={isFetching}>
           {t.confirm}
@@ -85,10 +86,7 @@ const ForgotPasswordForm: FC = () => {
         title={t.resetPassword}
         onClose={() => setResetModal(false)}
       >
-        <ResetPasswordForm
-          email={originalArgs?.email || ''}
-          onClose={() => setResetModal(false)}
-        />
+        <ResetPasswordForm email={email} onClose={() => setResetModal(false)} />
       </CustomModal>
     </>
   );

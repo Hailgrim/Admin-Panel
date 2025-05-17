@@ -5,16 +5,14 @@ const { role } = defineProps<{ role: IRole }>()
 
 const { t, locale } = useI18n()
 const {
-  data: uData,
   error: uError,
   execute: uExecute,
-  pending: uPending,
+  status: uStatus,
 } = rolesApi.update()
 const {
-  data: dData,
   error: dError,
   execute: dExecute,
-  pending: dPending,
+  status: dStatus,
 } = rolesApi.delete()
 const oldData = ref<IRole>(role)
 const newData = ref<IRole>(role)
@@ -46,8 +44,8 @@ watch(uError, () => {
     })
 })
 
-watch(uData, () => {
-  if (uData.value) {
+watch(uStatus, () => {
+  if (uStatus.value === 'success') {
     oldData.value = newData.value
     mainStore.addAlert({ type: 'success', text: t('success') })
   }
@@ -61,8 +59,8 @@ watch(dError, () => {
     })
 })
 
-watch(dData, () => {
-  if (dData.value) {
+watch(dStatus, () => {
+  if (dStatus.value === 'success') {
     mainStore.addAlert({ type: 'success', text: t('success') })
     router.push(ROUTES.ui.roles)
   }
@@ -77,11 +75,11 @@ watch(dData, () => {
       name="name"
       required
       :rules="[nameIsValid]"
-      @update:model-value="newData = { ...newData, name: $event }"
+      @update:model-value="newData = { ...newData, name: $event || '' }"
     />
     <FormField
       :label="$t('description')"
-      :model-value="newData.description"
+      :model-value="newData.description || undefined"
       name="description"
       @update:model-value="newData = { ...newData, description: $event }"
     />
@@ -89,12 +87,12 @@ watch(dData, () => {
       :label="$t('enabled')"
       :model-value="newData.enabled"
       name="enabled"
-      @update:model-value="newData = { ...newData, enabled: $event }"
+      @update:model-value="newData = { ...newData, enabled: Boolean($event) }"
     />
     <FormButton
       color="success"
-      :disabled="!rights.updating || role.default || dPending || Boolean(dData)"
-      :loading="uPending"
+      :disabled="!rights.updating || role.default || dStatus === 'pending' || dStatus === 'success'"
+      :loading="uStatus === 'pending'"
       prepand-icon="mdi-content-save"
       type="submit"
     >
@@ -103,7 +101,7 @@ watch(dData, () => {
     <FormButton
       color="error"
       :disabled="!rights.deleting || role.default"
-      :loading="dPending || Boolean(dData)"
+      :loading="dStatus === 'pending' || dStatus === 'success'"
       prepand-icon="mdi-delete"
       type="button"
       @click="dExecute({ items: [role.id] })"

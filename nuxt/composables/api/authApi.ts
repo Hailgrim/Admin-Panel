@@ -4,17 +4,17 @@ class AuthApi {
     options: { method: 'POST', body: payload },
   }))
 
-  forgotPassword = useAPI<boolean, IForgotPassword>(payload => ({
+  forgotPassword = useAPI<undefined, IForgotPassword>(payload => ({
     url: ROUTES.api.forgotPassword,
     options: { method: 'POST', body: payload },
   }))
 
-  resetPassword = useAPI<boolean, IResetPassword>(payload => ({
+  resetPassword = useAPI<undefined, IResetPassword>(payload => ({
     url: ROUTES.api.resetPassword,
     options: { method: 'POST', body: payload },
   }))
 
-  verifyUser = useAPI<boolean, IVerifyUser>(payload => ({
+  verifyUser = useAPI<undefined, IVerifyUser>(payload => ({
     url: ROUTES.api.verifyUser,
     options: { method: 'POST', body: payload },
   }))
@@ -29,7 +29,7 @@ class AuthApi {
     options: { method: 'POST', credentials: 'include', body: payload },
   }))
 
-  signOut = useAPI<boolean>(() => ({
+  signOut = useAPI<undefined>(() => ({
     url: ROUTES.api.signOut,
     options: { method: 'DELETE', credentials: 'include' },
   }))

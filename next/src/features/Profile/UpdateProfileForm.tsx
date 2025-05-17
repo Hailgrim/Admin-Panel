@@ -24,7 +24,7 @@ const UpdateProfileForm: FC = () => {
   const lRef = useLanguageRef();
   const tRef = useTranslateRef();
   const t = useTranslate();
-  const [update, { data, isLoading, error }] =
+  const [update, { isSuccess, isLoading, error }] =
     profileApi.useUpdateProfileMutation();
   const rights = useRights(ROUTES.api.profile);
   const profile = useAppSelector((store) => store.main.profile);
@@ -46,7 +46,7 @@ const UpdateProfileForm: FC = () => {
     if (profile && nameIsValid) {
       const updatedValues = getUpdatedValues<IUser>(profile, newData);
 
-      if (Object.keys(updatedValues).length == 0) {
+      if (Object.keys(updatedValues).length === 0) {
         dispatch(addAlert({ type: 'warning', text: t.nothingToUpdate }));
       } else {
         update(updatedValues);
@@ -74,11 +74,11 @@ const UpdateProfileForm: FC = () => {
   }, [dispatch, error, lRef]);
 
   useEffect(() => {
-    if (data) {
+    if (isSuccess) {
       dispatch(setProfile(newProfile.current));
       dispatch(addAlert({ type: 'success', text: tRef.current.success }));
     }
-  }, [data, dispatch, tRef]);
+  }, [isSuccess, dispatch, tRef]);
 
   return (
     <FormBase onSubmit={submitHandler}>
@@ -94,13 +94,13 @@ const UpdateProfileForm: FC = () => {
         required
         name="name"
         label={t.name}
-        value={newData?.name || ''}
+        value={newData.name || ''}
         onChange={(event) =>
           newData && setNewData({ ...newData, name: event.currentTarget.value })
         }
         helperText={t.nameValidation}
         color={nameIsValid ? 'success' : 'error'}
-        error={!nameIsValid && (newData?.name || '').length > 0}
+        error={!nameIsValid && (newData.name || '').length > 0}
       />
       <FormButton
         type="submit"

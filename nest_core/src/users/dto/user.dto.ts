@@ -7,7 +7,7 @@ import {
   Matches,
   ValidateNested,
 } from 'class-validator';
-import { Exclude, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 
 import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX, IUser } from '@ap/shared';
 import { ExternalRoleDto } from 'src/roles/dto/external-role.dto';
@@ -44,16 +44,20 @@ export class UserDto implements IUser {
   @IsBoolean()
   verified: boolean;
 
-  @Exclude()
+  @ApiProperty({ type: String, example: '1234' })
+  @IsString()
   verificationCode: string | null;
 
-  @Exclude()
+  @ApiProperty({ type: String, example: '1234' })
+  @IsString()
   resetPasswordCode: string | null;
 
-  @Exclude()
+  @ApiProperty({ type: String, example: '1234' })
+  @IsString()
   changeEmailCode: string | null;
 
-  @Exclude()
+  @ApiProperty({ type: String, example: '1234' })
+  @IsString()
   temporaryEmail: string | null;
 
   @ApiProperty({ type: [ExternalRoleDto] })

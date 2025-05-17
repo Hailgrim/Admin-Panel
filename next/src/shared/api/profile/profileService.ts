@@ -51,7 +51,7 @@ class ProfileService {
     };
   }
 
-  changeEmailArgs(payload: IChangeEmail): IReqArgs {
+  changeEmailConfirmArgs(payload: IChangeEmail): IReqArgs {
     return {
       url: ROUTES.api.changeEmail,
       method: 'PATCH',

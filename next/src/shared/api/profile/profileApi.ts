@@ -20,20 +20,20 @@ const profileApi = createApi({
       query: profileService.getProfileArgs,
     }),
 
-    updateProfile: builder.mutation<boolean, TUpdateUser>({
+    updateProfile: builder.mutation<undefined, TUpdateUser>({
       query: profileService.updateProfileArgs,
     }),
 
-    updatePassword: builder.mutation<boolean, IUpdatePassword>({
+    updatePassword: builder.mutation<undefined, IUpdatePassword>({
       query: profileService.updatePasswordArgs,
     }),
 
-    changeEmailRequest: builder.mutation<boolean, IChangeEmailRequest>({
+    changeEmailRequest: builder.mutation<undefined, IChangeEmailRequest>({
       query: profileService.changeEmailRequestArgs,
     }),
 
-    changeEmail: builder.mutation<boolean, IChangeEmail>({
-      query: profileService.changeEmailArgs,
+    changeEmailConfirm: builder.mutation<undefined, IChangeEmail>({
+      query: profileService.changeEmailConfirmArgs,
     }),
 
     getSessions: builder.query<IExternalSession[], void>({
@@ -41,7 +41,7 @@ const profileApi = createApi({
     }),
 
     deleteSessions: builder.mutation<
-      boolean,
+      undefined,
       IQueryItems<IExternalSession['id']>
     >({
       query: profileService.deleteSessionsArgs,

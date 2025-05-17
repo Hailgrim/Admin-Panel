@@ -19,7 +19,7 @@ import {
   MAIL_FORGOT_PASSWORD,
   MAIL_REGISTRATION,
 } from 'libs/config';
-import { RoleModel } from 'src/roles/role.entity';
+import { RoleEntity } from 'src/roles/role.entity';
 import { CacheService } from 'src/cache/cache.service';
 import { IToken, ITokensPair } from './auth.types';
 import { QueueService } from 'src/queue/queue.service';
@@ -37,7 +37,7 @@ export class AuthService {
     private cacheService: CacheService,
   ) {}
 
-  async checkDefaultData(): Promise<RoleModel> {
+  async checkDefaultData(): Promise<RoleEntity> {
     // Verify the existence of the Administrator Role
     const adminRole = await this.rolesService.findOrCreateDefault(
       'Administrator',
@@ -53,7 +53,7 @@ export class AuthService {
 
     // Verify the existence of the Default Resources
     const defaultResources = await this.resourcesService
-      .getListPublic(undefined, true)
+      .getList(undefined, true)
       .then((result) => result.rows);
 
     const missingResources: TCreateResource[] = [
@@ -64,7 +64,7 @@ export class AuthService {
     ]
       .filter(
         (value) =>
-          !defaultResources.find((resource) => resource.get('path') === value),
+          !defaultResources.some((resource) => resource.path === value),
       )
       .map((value) => {
         return {
@@ -79,17 +79,13 @@ export class AuthService {
       await this.resourcesService.createManyDefault(missingResources);
 
     // Open the Profile Resource for the User Role
-    if (
-      !userRole.resources?.find(
-        (resource) => resource.get('path') === 'profile',
-      )
-    ) {
+    if (!userRole.rights?.some((right) => right.resource?.path === 'profile')) {
       const profileResource = createdResources
         .concat(defaultResources)
-        .find((resource) => resource.get('path') === 'profile');
+        .find((resource) => resource.path === 'profile');
 
       if (profileResource) {
-        await this.rolesService.updateResources(
+        await this.rolesService.updateRights(
           userRole.id,
           [
             {
@@ -114,32 +110,27 @@ export class AuthService {
 
   async signUp(signUpFields: TSignUp): Promise<IUser> {
     const defaultRole = await this.checkDefaultData();
-    const user = await this.usersService
-      .create({ ...signUpFields, enabled: true }, [defaultRole])
-      .then((result) => result.get({ plain: true }));
-    delete user.password;
-    return user;
+    return this.usersService.create({ ...signUpFields, enabled: true }, [
+      defaultRole,
+    ]);
   }
 
-  async forgotPassword(email: string): Promise<boolean> {
+  async forgotPassword(email: string): Promise<void> {
     const code = generateCode();
 
-    if (await this.usersService.updateResetPasswordCode(email, code)) {
-      this.queueService.sendEmail(
-        { method: MAIL_FORGOT_PASSWORD },
-        { email, code },
-      );
-    }
-
-    return true;
+    await this.usersService.updateResetPasswordCode(email, code);
+    this.queueService.sendEmail(
+      { method: MAIL_FORGOT_PASSWORD },
+      { email, code },
+    );
   }
 
-  resetPassword(
+  async resetPassword(
     email: string,
     code: string,
     password: string,
-  ): Promise<boolean> {
-    return this.usersService.updatePasswordWithCode(email, code, password);
+  ): Promise<void> {
+    await this.usersService.updatePasswordWithCode(email, code, password);
   }
 
   async createTokens(
@@ -158,20 +149,17 @@ export class AuthService {
     };
   }
 
-  async validateUser(email: string, password: string): Promise<IUser> {
+  async validateUser(email: string, password: string): Promise<IUser | false> {
     try {
-      const user: IUser = await this.usersService
-        .getOneAuth(email)
-        .then((result) => result.get({ plain: true }));
+      const user: IUser = await this.usersService.getOneAuth(email);
 
       if (!user.password || !(await verifyHash(user.password, password))) {
-        throw new Error();
+        return false;
       }
 
-      delete user.password;
       return user;
     } catch {
-      throw new UnauthorizedException();
+      return false;
     }
   }
 
@@ -214,8 +202,8 @@ export class AuthService {
     return this.createTokens({ userId: user.id, sessionId }, sessionTtl);
   }
 
-  verifyUser(email: string, code: string): Promise<boolean> {
-    return this.usersService.updateVerificationStatus(email, code);
+  async verifyUser(email: string, code: string): Promise<void> {
+    await this.usersService.updateVerificationStatus(email, code);
   }
 
   async signInGoogle(
@@ -240,9 +228,11 @@ export class AuthService {
     }
 
     const defaultRole = await this.checkDefaultData();
-    const user = await this.usersService
-      .createByGoogle(googleUser['id'], googleUser['name'], [defaultRole])
-      .then((result) => result.get({ plain: true }));
+    const user = await this.usersService.createByGoogle(
+      googleUser['id'],
+      googleUser['name'],
+      [defaultRole],
+    );
 
     return {
       ...(await this.signIn(user, sessionTtl, ip, userAgent)),
@@ -280,7 +270,7 @@ export class AuthService {
     return this.createTokens({ userId, sessionId }, sessionTtl);
   }
 
-  signOut(userId: string, sessionId: string): Promise<boolean> {
-    return this.cacheService.del(`sessions:${userId}:${sessionId}`);
+  async signOut(userId: string, sessionId: string): Promise<void> {
+    await this.cacheService.del(`sessions:${userId}:${sessionId}`);
   }
 }

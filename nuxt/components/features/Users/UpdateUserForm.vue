@@ -5,16 +5,14 @@ const { user } = defineProps<{ user: IUser }>()
 
 const { t, locale } = useI18n()
 const {
-  data: uData,
   error: uError,
   execute: uExecute,
-  pending: uPending,
+  status: uStatus,
 } = usersApi.update()
 const {
-  data: dData,
   error: dError,
   execute: dExecute,
-  pending: dPending,
+  status: dStatus,
 } = usersApi.delete()
 const oldData = ref<IUser>(user)
 const newData = ref<IUser>(user)
@@ -46,8 +44,8 @@ watch(uError, () => {
     })
 })
 
-watch(uData, () => {
-  if (uData.value) mainStore.addAlert({ type: 'success', text: t('success') })
+watch(uStatus, () => {
+  if (uStatus.value === 'success') mainStore.addAlert({ type: 'success', text: t('success') })
 })
 
 watch(dError, () => {
@@ -58,8 +56,8 @@ watch(dError, () => {
     })
 })
 
-watch(dData, () => {
-  if (dData.value) {
+watch(dStatus, () => {
+  if (dStatus.value === 'success') {
     mainStore.addAlert({ type: 'success', text: t('success') })
     router.push(ROUTES.ui.users)
   }
@@ -71,9 +69,8 @@ watch(dData, () => {
     <FormField
       :hint="$t('emailValidationI18N')"
       :label="$t('email')"
-      :model-value="newData.email"
+      :model-value="newData.email || undefined"
       name="email"
-      required
       :rules="[emailIsValid]"
       type="email"
       @update:model-value="newData = { ...newData, email: $event }"
@@ -85,18 +82,18 @@ watch(dData, () => {
       name="name"
       required
       :rules="[nameIsValid]"
-      @update:model-value="newData = { ...newData, name: $event }"
+      @update:model-value="newData = { ...newData, name: $event || '' }"
     />
     <FormCheckbox
       :label="$t('enabled')"
       :model-value="newData.enabled"
       name="enabled"
-      @update:model-value="newData = { ...newData, enabled: $event }"
+      @update:model-value="newData = { ...newData, enabled: Boolean($event) }"
     />
     <FormButton
       color="success"
-      :disabled="!rights.updating || dPending || Boolean(dData)"
-      :loading="uPending"
+      :disabled="!rights.updating || dStatus === 'pending' || dStatus === 'success'"
+      :loading="uStatus === 'pending'"
       prepand-icon="mdi-content-save"
       type="submit"
     >
@@ -105,7 +102,7 @@ watch(dData, () => {
     <FormButton
       color="error"
       :disabled="!rights.deleting || user.roles?.some((role) => role.admin)"
-      :loading="dPending || Boolean(dData)"
+      :loading="dStatus === 'pending' || dStatus === 'success'"
       prepand-icon="mdi-delete"
       type="button"
       @click="dExecute({ items: [user.id] })"

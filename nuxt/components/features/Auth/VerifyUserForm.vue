@@ -13,7 +13,7 @@ const { t, locale } = useI18n()
 const code = ref('')
 const codeIsValid = (value: string) =>
   value.length > 0 || `${t('codeFromEmail')} (${email})`
-const { data, error, execute, pending } = authApi.verifyUser()
+const { status, error, execute } = authApi.verifyUser()
 
 const errorText = ref<string | null>(null)
 
@@ -37,8 +37,8 @@ watch(error, () => {
     }
 })
 
-watch(data, () => {
-  if (data.value) {
+watch(status, () => {
+  if (status.value === 'success') {
     emit('close')
     emit('success')
   }
@@ -63,7 +63,7 @@ watch(data, () => {
     <FormButton
       block
       color="success"
-      :loading="pending || Boolean(data)"
+      :loading="status === 'pending' || status === 'success'"
       type="submit"
     >
       {{ $t('confirm') }}

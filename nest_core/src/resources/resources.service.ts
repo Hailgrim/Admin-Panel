@@ -1,14 +1,20 @@
 import {
-  Inject,
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { FindOptions } from 'sequelize';
+import {
+  DeleteResult,
+  FindManyOptions,
+  In,
+  Repository,
+  UpdateResult,
+} from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { ResourceModel } from './resource.entity';
-import { PUBLIC, RESOURCES_REPOSITORY } from 'libs/constants';
+import { ResourceEntity } from './resource.entity';
 import {
   TCreateResource,
   TGetResources,
@@ -21,14 +27,15 @@ import { DatabaseService } from 'src/database/database.service';
 @Injectable()
 export class ResourcesService {
   constructor(
-    @Inject(RESOURCES_REPOSITORY)
-    private resourcesRepository: typeof ResourceModel,
+    @InjectRepository(ResourceEntity)
+    private resourcesRepository: Repository<ResourceEntity>,
     private databaseService: DatabaseService,
   ) {}
 
-  async create(fields: TCreateResource): Promise<ResourceModel> {
+  async create(fields: TCreateResource): Promise<ResourceEntity> {
     try {
-      return await this.resourcesRepository.create(fields);
+      const resource = this.resourcesRepository.create(fields);
+      return await this.resourcesRepository.save(resource);
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -36,25 +43,24 @@ export class ResourcesService {
   }
 
   async createManyDefault(
-    resources: TCreateResource[],
-  ): Promise<ResourceModel[]> {
+    fieldsArr: TCreateResource[],
+  ): Promise<ResourceEntity[]> {
     try {
-      return await this.resourcesRepository.bulkCreate(
-        resources.map((resource) => ({ ...resource, default: true })),
+      const resources = fieldsArr.map((fields) =>
+        this.resourcesRepository.create({ ...fields, default: true }),
       );
+      return await this.resourcesRepository.save(resources);
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
     }
   }
 
-  async getOnePublic(id: string): Promise<ResourceModel> {
-    let resource: ResourceModel | null;
+  async getOne(id: string): Promise<ResourceEntity> {
+    let resource: ResourceEntity | null;
 
     try {
-      resource = await this.resourcesRepository
-        .scope(PUBLIC)
-        .findOne({ where: { id } });
+      resource = await this.resourcesRepository.findOne({ where: { id } });
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -70,27 +76,27 @@ export class ResourcesService {
   prepareGetListOptions(
     fields?: TGetListRequest<TGetResources>,
     isDefault?: boolean,
-  ): FindOptions<ResourceModel> {
-    const options: FindOptions<ResourceModel> =
+  ): FindManyOptions<ResourceEntity> {
+    const options: FindManyOptions<ResourceEntity> =
       this.databaseService.preparePaginationOptions<
-        ResourceModel,
+        ResourceEntity,
         TGetResources
       >(fields);
 
     options.where = {};
 
     if (fields?.name !== undefined) {
-      options.where.name = { [this.databaseService.iLike]: `%${fields.name}%` };
+      options.where.name = this.databaseService.iLike(`%${fields.name}%`);
     }
 
     if (fields?.path !== undefined) {
-      options.where.path = { [this.databaseService.iLike]: `%${fields.path}%` };
+      options.where.path = this.databaseService.iLike(`%${fields.path}%`);
     }
 
     if (fields?.description !== undefined) {
-      options.where.description = {
-        [this.databaseService.iLike]: `%${fields.description}%`,
-      };
+      options.where.description = this.databaseService.iLike(
+        `%${fields.description}%`,
+      );
     }
 
     if (isDefault !== undefined) {
@@ -100,20 +106,26 @@ export class ResourcesService {
     return options;
   }
 
-  async getListPublic(
+  async getList(
     fields?: TGetListRequest<TGetResources>,
     isDefault?: boolean,
-  ): Promise<IGetListResponse<ResourceModel>> {
+  ): Promise<IGetListResponse<ResourceEntity>> {
     const options = this.prepareGetListOptions(fields, isDefault);
 
     try {
       if (fields?.reqCount) {
-        return await this.resourcesRepository
-          .scope(PUBLIC)
-          .findAndCountAll(options);
+        const result = await this.resourcesRepository.findAndCount(options);
+        return {
+          rows: result[0],
+          count: result[1],
+          page: options.skip! / options.take! + 1,
+          limit: options.take,
+        };
       } else {
         return {
-          rows: await this.resourcesRepository.scope(PUBLIC).findAll(options),
+          rows: await this.resourcesRepository.find(options),
+          page: options.skip! / options.take! + 1,
+          limit: options.take,
         };
       }
     } catch (error) {
@@ -122,41 +134,43 @@ export class ResourcesService {
     }
   }
 
-  async updateFields(id: string, fields: TUpdateResource): Promise<boolean> {
-    let affectedCount = 0;
+  async update(id: string, fields: TUpdateResource): Promise<void> {
+    let result: UpdateResult;
+
+    if (Object.keys(fields).length === 0) {
+      throw new BadRequestException();
+    }
 
     try {
-      [affectedCount] = await this.resourcesRepository.update(fields, {
-        where: { id, default: false },
-      });
+      result = await this.resourcesRepository.update(
+        { id, default: false },
+        fields,
+      );
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
     }
 
-    if (affectedCount === 0) {
+    if (result.affected === 0) {
       throw new NotFoundException();
     }
-
-    return true;
   }
 
-  async delete(ids: string[]): Promise<boolean> {
-    let destroyedCount = 0;
+  async delete(ids: string[]): Promise<void> {
+    let result: DeleteResult;
 
     try {
-      destroyedCount = await this.resourcesRepository.destroy({
-        where: { id: ids, default: false },
+      result = await this.resourcesRepository.delete({
+        id: In(ids),
+        default: false,
       });
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
     }
 
-    if (destroyedCount === 0) {
+    if (result.affected === 0) {
       throw new NotFoundException();
     }
-
-    return true;
   }
 }

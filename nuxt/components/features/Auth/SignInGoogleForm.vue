@@ -4,6 +4,33 @@ const errorText = ref<string | null>(null)
 const hash = new URLSearchParams(location?.hash.slice(1) || '')
 const { data, error, execute } = authApi.signInGoogle()
 
+const messageHandler = (event: MessageEvent<IWindowMessage<string>>) => {
+  if (event.data.type !== ROUTES.ui.signInGoogle || !data.value) return
+
+  if (event.data.payload === hash.get('state')) {
+    const message: IWindowMessage<IUser> = {
+      type: ROUTES.ui.signInGoogle,
+      payload: toRaw(data.value),
+    }
+
+    event.source?.postMessage(message)
+    window.removeEventListener('message', messageHandler)
+  }
+
+  window.close()
+}
+
+onMounted(() => {
+  if (hash.has('access_token')) {
+    execute({ googleAccessToken: hash.get('access_token')! })
+  }
+  else {
+    errorText.value = t('error')
+  }
+
+  window.addEventListener('message', messageHandler)
+})
+
 watch(error, () => {
   if (error.value)
     switch (error.value?.status) {
@@ -15,28 +42,8 @@ watch(error, () => {
     }
 })
 
-onMounted(() => {
-  if (hash.has('access_token')) {
-    execute({ googleAccessToken: hash.get('access_token')! })
-  }
-  else {
-    errorText.value = t('error')
-  }
-
-  const messageHandler = (event: MessageEvent<string>) => {
-    if (!data.value) return
-    if (event.data === hash.get('state')) {
-      const result: IWindowMessage<IUser> = {
-        type: ROUTES.ui.signInGoogle,
-        payload: toRaw(data.value),
-      }
-      event.source?.postMessage(result)
-      window.removeEventListener('message', messageHandler)
-    }
-    window.close()
-  }
-
-  window.addEventListener('message', messageHandler)
+onUnmounted(() => {
+  window.removeEventListener('message', messageHandler)
 })
 </script>
 

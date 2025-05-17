@@ -17,12 +17,12 @@ class UsersApi {
     options: { method: 'GET', credentials: 'include', params: payload },
   }))
 
-  update = useAPI<boolean, IUpdateReq<TUpdateUser, IUser['id']>>(payload => ({
+  update = useAPI<undefined, IUpdateReq<TUpdateUser, IUser['id']>>(payload => ({
     url: ROUTES.api.user(payload.id),
     options: { method: 'PATCH', credentials: 'include', body: payload.fields },
   }))
 
-  updateRoles = useAPI<boolean, IUpdateReq<IUsersRoles[], IUser['id']>>(
+  updateRoles = useAPI<undefined, IUpdateReq<IQueryItems<IUsersRoles>, IUser['id']>>(
     payload => ({
       url: ROUTES.api.userRoles(payload.id),
       options: {
@@ -33,7 +33,7 @@ class UsersApi {
     }),
   )
 
-  delete = useAPI<boolean, IQueryItems<IUser['id']>>(payload => ({
+  delete = useAPI<undefined, IQueryItems<IUser['id']>>(payload => ({
     url: ROUTES.api.users,
     options: { method: 'DELETE', credentials: 'include', body: payload },
   }))

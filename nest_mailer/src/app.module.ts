@@ -19,7 +19,7 @@ import {
     (async () => {
       let host = MAIL_HOST;
       let port = MAIL_PORT;
-      let secure = MAIL_PORT == 465;
+      let secure = MAIL_PORT === 587;
       let user = MAIL_USER;
       let pass = MAIL_PASSWORD;
 

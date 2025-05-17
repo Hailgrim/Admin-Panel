@@ -40,7 +40,7 @@ describe('App (e2e)', () => {
       const resHeaders = await request(app.getHttpServer())
         .delete('/auth/sign-out')
         .set('Cookie', adminCookies)
-        .expect(HttpStatus.OK)
+        .expect(HttpStatus.NO_CONTENT)
         .then((res) => res.headers);
 
       expect(resHeaders).toHaveProperty('set-cookie');
@@ -50,7 +50,7 @@ describe('App (e2e)', () => {
       const resHeaders = await request(app.getHttpServer())
         .delete('/auth/sign-out')
         .set('Cookie', userCookies)
-        .expect(HttpStatus.OK)
+        .expect(HttpStatus.NO_CONTENT)
         .then((res) => res.headers);
 
       expect(resHeaders).toHaveProperty('set-cookie');

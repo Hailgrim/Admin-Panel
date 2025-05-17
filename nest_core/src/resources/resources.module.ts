@@ -1,22 +1,16 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { DatabaseModule } from 'src/database/database.module';
 import { ResourcesController } from './resources.controller';
 import { ResourcesService } from './resources.service';
 import { UsersModule } from 'src/users/users.module';
-import { RESOURCES_REPOSITORY } from 'libs/constants';
-import { ResourceModel } from './resource.entity';
+import { ResourceEntity } from './resource.entity';
+import { DatabaseService } from 'src/database/database.service';
 
 @Module({
-  imports: [DatabaseModule, UsersModule],
+  imports: [TypeOrmModule.forFeature([ResourceEntity]), UsersModule],
   controllers: [ResourcesController],
-  providers: [
-    {
-      provide: RESOURCES_REPOSITORY,
-      useValue: ResourceModel,
-    },
-    ResourcesService,
-  ],
+  providers: [ResourcesService, DatabaseService],
   exports: [ResourcesService],
 })
 export class ResourcesModule {}

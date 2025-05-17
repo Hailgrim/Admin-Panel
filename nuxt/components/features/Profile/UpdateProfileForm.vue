@@ -5,7 +5,7 @@ const { t, locale } = useI18n()
 const mainStore = useMainStore()
 const { email, ...profile } = mainStore.profile || ({} as Partial<IUser>)
 const newData = ref(profile)
-const { data, error, execute, pending } = profileApi.updateProfile()
+const { status, error, execute } = profileApi.updateProfile()
 const nameIsValid = (value = '') =>
   testString(NAME_REGEX, value) || t('nameValidation')
 const rights = useRights(ROUTES.api.profile)
@@ -32,8 +32,8 @@ watch(error, () => {
     })
 })
 
-watch(data, () => {
-  if (data.value) {
+watch(status, () => {
+  if (status.value === 'success') {
     if (mainStore.profile)
       mainStore.setProfile({ ...mainStore.profile, ...newData.value })
     mainStore.addAlert({ type: 'success', text: t('success') })
@@ -61,7 +61,7 @@ watch(data, () => {
     <FormButton
       color="success"
       :disabled="!rights.updating"
-      :loading="pending"
+      :loading="status === 'pending'"
       prepand-icon="mdi-content-save"
       type="submit"
     >

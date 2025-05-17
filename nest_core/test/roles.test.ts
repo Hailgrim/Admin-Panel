@@ -74,7 +74,7 @@ const runRolesTests = () => {
       });
     });
 
-    describe('Find All', () => {
+    describe('Get List', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
           .get(ROUTES.api.roles)
@@ -94,6 +94,8 @@ const runRolesTests = () => {
           .then((res) => res.body as IGetListResponse<IRole>);
 
         expect(findAllResBody).toHaveProperty('count', 3);
+        expect(findAllResBody).toHaveProperty('page', 1);
+        expect(findAllResBody).toHaveProperty('limit', 1);
 
         findAllResBody = await request(app.getHttpServer())
           .get(ROUTES.api.roles)
@@ -118,7 +120,7 @@ const runRolesTests = () => {
       });
     });
 
-    describe('Find One', () => {
+    describe('Get One', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
           .get(ROUTES.api.role(entity.id))
@@ -163,15 +165,21 @@ const runRolesTests = () => {
           .expect(HttpStatus.UNAUTHORIZED);
 
         await request(app.getHttpServer())
-          .patch(ROUTES.api.role(wrongValue))
+          .patch(ROUTES.api.role(entity.id))
           .set('Cookie', adminCookies)
-          .expect(HttpStatus.NOT_FOUND);
+          .expect(HttpStatus.BAD_REQUEST);
+
+        await request(app.getHttpServer())
+          .patch(ROUTES.api.role(entity.id))
+          .set('Cookie', adminCookies)
+          .send({ enabled: wrongValue })
+          .expect(HttpStatus.BAD_REQUEST);
 
         await request(app.getHttpServer())
           .patch(ROUTES.api.role(wrongValue))
           .set('Cookie', adminCookies)
-          .send({ enabled: wrongValue })
-          .expect(HttpStatus.BAD_REQUEST);
+          .send({ enabled: true } satisfies TUpdateRole)
+          .expect(HttpStatus.NOT_FOUND);
       });
 
       it('Correct (admin)', async () => {
@@ -181,7 +189,7 @@ const runRolesTests = () => {
           .send({
             name: entity.name + entity.name,
           } satisfies TUpdateRole)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         entity.name = entity.name + entity.name;
 
@@ -205,19 +213,20 @@ const runRolesTests = () => {
     describe('Update Resources', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .patch(ROUTES.api.roleResources(entity.id))
+          .patch(ROUTES.api.roleRights(entity.id))
           .expect(HttpStatus.UNAUTHORIZED);
 
         await request(app.getHttpServer())
-          .patch(ROUTES.api.roleResources(wrongValue))
+          .patch(ROUTES.api.roleRights(entity.id))
           .set('Cookie', adminCookies)
-          .expect(HttpStatus.NOT_FOUND);
+          .send({ test: wrongValue })
+          .expect(HttpStatus.BAD_REQUEST);
 
         await request(app.getHttpServer())
-          .patch(ROUTES.api.roleResources(entity.id))
+          .patch(ROUTES.api.roleRights(wrongValue))
           .set('Cookie', adminCookies)
-          .send([{ test: wrongValue }])
-          .expect(HttpStatus.BAD_REQUEST);
+          .send({ items: [] } satisfies IQueryItems<IRights>)
+          .expect(HttpStatus.NOT_FOUND);
       });
 
       it('Correct (admin)', async () => {
@@ -235,7 +244,7 @@ const runRolesTests = () => {
         const resource = findAllResBody.rows[0];
 
         await request(app.getHttpServer())
-          .patch(ROUTES.api.roleResources(entity.id))
+          .patch(ROUTES.api.roleRights(entity.id))
           .set('Cookie', adminCookies)
           .send({
             items: [
@@ -249,7 +258,7 @@ const runRolesTests = () => {
               },
             ],
           } satisfies IQueryItems<IRights>)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         entity.name = entity.name + entity.name;
 
@@ -259,30 +268,21 @@ const runRolesTests = () => {
           .expect(HttpStatus.OK)
           .then((res) => res.body as IRole);
 
-        expect(findOneResBody.resources).toBeDefined();
-        expect(findOneResBody.resources).toHaveProperty('length', 1);
-        expect(findOneResBody.resources![0]).toHaveProperty('id', resource.id);
-        expect(findOneResBody.resources![0].RightsModel).toHaveProperty(
-          'creating',
-          true,
+        expect(findOneResBody.rights).toBeDefined();
+        expect(findOneResBody.rights).toHaveProperty('length', 1);
+        expect(findOneResBody.rights![0]).toHaveProperty(
+          'resourceId',
+          resource.id,
         );
-        expect(findOneResBody.resources![0].RightsModel).toHaveProperty(
-          'reading',
-          true,
-        );
-        expect(findOneResBody.resources![0].RightsModel).toHaveProperty(
-          'updating',
-          false,
-        );
-        expect(findOneResBody.resources![0].RightsModel).toHaveProperty(
-          'deleting',
-          false,
-        );
+        expect(findOneResBody.rights![0]).toHaveProperty('creating', true);
+        expect(findOneResBody.rights![0]).toHaveProperty('reading', true);
+        expect(findOneResBody.rights![0]).toHaveProperty('updating', false);
+        expect(findOneResBody.rights![0]).toHaveProperty('deleting', false);
       });
 
       it('Correct (user)', async () => {
         await request(app.getHttpServer())
-          .patch(ROUTES.api.roleResources(entity.id))
+          .patch(ROUTES.api.roleRights(entity.id))
           .set('Cookie', userCookies)
           .expect(HttpStatus.FORBIDDEN);
       });
@@ -307,7 +307,7 @@ const runRolesTests = () => {
           .delete(ROUTES.api.roles)
           .set('Cookie', adminCookies)
           .send({ items: [entity.id] } satisfies IQueryItems<IRole['id']>)
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NO_CONTENT);
 
         await request(app.getHttpServer())
           .get(ROUTES.api.role(entity.id))

@@ -33,7 +33,7 @@ const UpdateRoleForm: FC<{ data: IRole }> = ({ data }) => {
 
     const updatedValues = getUpdatedValues<IRole>(oldData, newData);
 
-    if (Object.keys(updatedValues).length == 0) {
+    if (Object.keys(updatedValues).length === 0) {
       dispatch(addAlert({ type: 'warning', text: t.nothingToUpdate }));
     } else {
       update({ id: data.id, fields: updatedValues });
@@ -41,11 +41,11 @@ const UpdateRoleForm: FC<{ data: IRole }> = ({ data }) => {
   };
 
   useEffect(() => {
-    if (updateReq.data) {
+    if (updateReq.isSuccess) {
       dispatch(addAlert({ type: 'success', text: tRef.current.success }));
       setOldData((prev) => ({ ...prev, ...updateReq.originalArgs?.fields }));
     }
-  }, [updateReq.data, updateReq.originalArgs, dispatch, tRef]);
+  }, [updateReq.isSuccess, updateReq.originalArgs, dispatch, tRef]);
 
   useEffect(() => {
     if (updateReq.error) {
@@ -59,11 +59,11 @@ const UpdateRoleForm: FC<{ data: IRole }> = ({ data }) => {
   }, [updateReq.error, dispatch, lRef]);
 
   useEffect(() => {
-    if (deleteReq.data) {
+    if (deleteReq.isSuccess) {
       dispatch(addAlert({ type: 'success', text: tRef.current.success }));
       router.push(ROUTES.ui.roles);
     }
-  }, [deleteReq.data, dispatch, router, tRef]);
+  }, [deleteReq.isSuccess, dispatch, router, tRef]);
 
   useEffect(() => {
     if (deleteReq.error) {
@@ -113,7 +113,7 @@ const UpdateRoleForm: FC<{ data: IRole }> = ({ data }) => {
           !rights.updating ||
           data.default ||
           deleteReq.isLoading ||
-          deleteReq.data
+          deleteReq.isSuccess
         }
         loading={updateReq.isLoading}
       >
@@ -124,7 +124,7 @@ const UpdateRoleForm: FC<{ data: IRole }> = ({ data }) => {
         startIcon={<DeleteIcon />}
         onClick={() => destroy({ items: [data.id] })}
         disabled={!rights.deleting || data.default}
-        loading={deleteReq.isLoading || deleteReq.data}
+        loading={deleteReq.isLoading || deleteReq.isSuccess}
       >
         {t.delete}
       </FormButton>

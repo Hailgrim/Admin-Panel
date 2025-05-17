@@ -10,8 +10,7 @@ import {
 import { Type } from 'class-transformer';
 
 import { IRole } from '@ap/shared';
-import { UsersRolesDto } from 'src/database/dto/users-roles.dto';
-import { ExternalResourceDto } from 'src/resources/dto/external-resource.dto';
+import { RightsDto } from 'src/database/dto/rights.dto';
 
 export class RoleDto implements IRole {
   @ApiProperty({
@@ -41,14 +40,9 @@ export class RoleDto implements IRole {
   @IsBoolean()
   default: boolean;
 
-  @ApiProperty({ type: [ExternalResourceDto] })
+  @ApiProperty({ type: [RightsDto] })
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => ExternalResourceDto)
-  resources: ExternalResourceDto[];
-
-  @ApiProperty({ type: UsersRolesDto })
-  @ValidateNested()
-  @Type(() => UsersRolesDto)
-  UsersRolesModel: UsersRolesDto;
+  @Type(() => RightsDto)
+  rights: RightsDto[];
 }

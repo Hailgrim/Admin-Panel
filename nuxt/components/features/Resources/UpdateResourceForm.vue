@@ -5,16 +5,14 @@ const { resource } = defineProps<{ resource: IResource }>()
 
 const { t, locale } = useI18n()
 const {
-  data: uData,
   error: uError,
   execute: uExecute,
-  pending: uPending,
+  status: uStatus,
 } = resourcesApi.update()
 const {
-  data: dData,
   error: dError,
   execute: dExecute,
-  pending: dPending,
+  status: dStatus,
 } = resourcesApi.delete()
 const oldData = ref<IResource>(resource)
 const newData = ref<IResource>(resource)
@@ -50,8 +48,8 @@ watch(uError, () => {
     })
 })
 
-watch(uData, () => {
-  if (uData.value) {
+watch(uStatus, () => {
+  if (uStatus.value === 'success') {
     oldData.value = newData.value
     mainStore.addAlert({ type: 'success', text: t('success') })
   }
@@ -65,8 +63,8 @@ watch(dError, () => {
     })
 })
 
-watch(dData, () => {
-  if (dData.value) {
+watch(dStatus, () => {
+  if (dStatus.value === 'success') {
     mainStore.addAlert({ type: 'success', text: t('success') })
     router.push(ROUTES.ui.resources)
   }
@@ -81,7 +79,7 @@ watch(dData, () => {
       name="name"
       required
       :rules="[nameIsValid]"
-      @update:model-value="newData = { ...newData, name: $event }"
+      @update:model-value="newData = { ...newData, name: $event || '' }"
     />
     <FormField
       :label="$t('path')"
@@ -89,11 +87,11 @@ watch(dData, () => {
       name="path"
       required
       :rules="[pathIsValid]"
-      @update:model-value="newData = { ...newData, path: $event }"
+      @update:model-value="newData = { ...newData, path: $event || '' }"
     />
     <FormField
       :label="$t('description')"
-      :model-value="newData.description"
+      :model-value="newData.description || undefined"
       name="description"
       @update:model-value="newData = { ...newData, description: $event }"
     />
@@ -101,13 +99,13 @@ watch(dData, () => {
       :label="$t('enabled')"
       :model-value="newData.enabled"
       name="enabled"
-      @update:model-value="newData = { ...newData, enabled: $event }"
+      @update:model-value="newData = { ...newData, enabled: Boolean($event) }"
     />
     <FormButton
       color="success"
-      :disabled="!rights.updating || resource.default || dPending || Boolean(dData)
+      :disabled="!rights.updating || resource.default || dStatus === 'pending' || dStatus === 'success'
       "
-      :loading="uPending"
+      :loading="uStatus === 'pending'"
       prepand-icon="mdi-content-save"
       type="submit"
     >
@@ -116,7 +114,7 @@ watch(dData, () => {
     <FormButton
       color="error"
       :disabled="!rights.deleting || resource.default"
-      :loading="dPending || Boolean(dData)"
+      :loading="dStatus === 'pending' || dStatus === 'success'"
       prepand-icon="mdi-delete"
       type="button"
       @click="dExecute({ items: [resource.id] })"

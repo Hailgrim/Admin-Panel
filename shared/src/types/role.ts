@@ -1,5 +1,5 @@
-import { IUsersRoles } from './database';
-import { IResource } from './resource';
+import { IRights } from './database';
+import { IUser } from './user';
 
 export interface IRole {
   id: string;
@@ -8,8 +8,8 @@ export interface IRole {
   enabled: boolean;
   admin: boolean;
   default: boolean;
-  resources?: IResource[];
-  UsersRolesModel?: IUsersRoles;
+  users?: IUser[];
+  rights?: IRights[];
 }
 
 export type TCreateRole = Pick<IRole, 'name' | 'description' | 'enabled'> &

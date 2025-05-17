@@ -18,7 +18,7 @@ const ChangeEmailRequestForm: FC = () => {
   const lRef = useLanguageRef();
   const t = useTranslate();
   const [confirmModal, setConfirmModal] = useState(false);
-  const [changeEmailRequest, { data, error, isLoading, originalArgs }] =
+  const [changeEmailRequest, { isSuccess, error, isLoading }] =
     profileApi.useChangeEmailRequestMutation();
   const rights = useRights(ROUTES.api.profile);
   const profile = useAppSelector((store) => store.main.profile);
@@ -52,10 +52,10 @@ const ChangeEmailRequestForm: FC = () => {
   }, [dispatch, error, lRef]);
 
   useEffect(() => {
-    if (data) {
+    if (isSuccess) {
       setConfirmModal(true);
     }
-  }, [data]);
+  }, [isSuccess]);
 
   return (
     <>
@@ -70,6 +70,7 @@ const ChangeEmailRequestForm: FC = () => {
           helperText={t.emailValidation}
           color={emailIsValid ? 'success' : 'error'}
           error={!emailIsValid && email.length > 0}
+          disabled={isLoading}
         />
         <FormButton
           type="submit"
@@ -82,7 +83,7 @@ const ChangeEmailRequestForm: FC = () => {
       </FormBase>
       <CustomModal open={confirmModal} title={t.changeEmail} onClose={onClose}>
         <ChangeEmailConfirmForm
-          email={originalArgs?.newEmail || ''}
+          email={email}
           onClose={onClose}
         />
       </CustomModal>

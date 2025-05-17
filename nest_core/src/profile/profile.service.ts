@@ -15,18 +15,16 @@ export class ProfileService {
     private cacheService: CacheService,
   ) {}
 
-  updateProfile(userId: string, fields: TUpdateUser): Promise<boolean> {
-    return this.usersService.updateFields(userId, fields);
+  async updateProfile(userId: string, fields: TUpdateUser): Promise<void> {
+    await this.usersService.updateFields(userId, fields);
   }
 
   async updatePassword(
     userId: string,
     newPassword: string,
     oldPassword?: string,
-  ): Promise<boolean> {
-    const user = await this.usersService
-      .getOneProfile(userId)
-      .then((result) => result.get({ plain: true }));
+  ): Promise<void> {
+    const user = await this.usersService.getOneFlat(userId);
 
     if (
       user.password &&
@@ -35,24 +33,21 @@ export class ProfileService {
       throw new ConflictException();
     }
 
-    return this.usersService.updatePassword(userId, newPassword);
+    await this.usersService.updatePassword(userId, newPassword);
   }
 
-  async changeEmailRequest(userId: string, newEmail: string): Promise<boolean> {
+  async changeEmailRequest(userId: string, newEmail: string): Promise<void> {
     const code = generateCode();
 
-    if (await this.usersService.updateChangeEmailCode(userId, code, newEmail)) {
-      this.queueService.sendEmail(
-        { method: MAIL_CHANGE_EMAIL },
-        { email: newEmail, code },
-      );
-    }
-
-    return true;
+    await this.usersService.updateChangeEmailCode(userId, code, newEmail);
+    this.queueService.sendEmail(
+      { method: MAIL_CHANGE_EMAIL },
+      { email: newEmail, code },
+    );
   }
 
-  changeEmail(userId: string, code: string): Promise<boolean> {
-    return this.usersService.updateEmailWithCode(userId, code);
+  async changeEmailConfirm(userId: string, code: string): Promise<void> {
+    await this.usersService.updateEmailWithCode(userId, code);
   }
 
   async getSessions(
@@ -73,9 +68,8 @@ export class ProfileService {
     return sessions;
   }
 
-  async deleteSessions(userId: string, sessions: string[]): Promise<boolean> {
+  async deleteSessions(userId: string, sessions: string[]): Promise<void> {
     const keys = await this.cacheService.keys(`sessions:${userId}:*`);
     await this.cacheService.mdel(sessions.filter((key) => keys.includes(key)));
-    return true;
   }
 }

@@ -7,7 +7,7 @@ export interface IResource {
   description?: string | null;
   enabled: boolean;
   default: boolean;
-  RightsModel?: IRights;
+  rights?: IRights[];
 }
 
 export type TCreateResource = Pick<

@@ -96,6 +96,7 @@ const SignInForm: FC = () => {
           value={email}
           onChange={(event) => setEmail(event.currentTarget.value)}
           autoFocus
+          disabled={isFetching || Boolean(data)}
         />
         <FormPassword
           required
@@ -103,6 +104,7 @@ const SignInForm: FC = () => {
           label={t.password}
           value={password}
           onChange={(event) => setPassword(event.currentTarget.value)}
+          disabled={isFetching || Boolean(data)}
         />
         <FormCheckbox
           labelProps={{ label: t.rememberMe }}
@@ -110,6 +112,7 @@ const SignInForm: FC = () => {
           value="remember"
           checked={rememberMe}
           onChange={() => setRememberMe(!rememberMe)}
+          disabled={isFetching || Boolean(data)}
         />
         <FormButton
           type="submit"
@@ -132,7 +135,7 @@ const SignInForm: FC = () => {
         onClose={() => setVerifyModal(false)}
       >
         <VerifyUserForm
-          email={originalArgs?.username || ''}
+          email={email}
           onClose={() => setVerifyModal(false)}
           onSuccess={() => (timeout.current = setTimeout(submitHandler, 1000))}
         />

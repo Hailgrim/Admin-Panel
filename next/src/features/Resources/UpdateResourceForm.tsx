@@ -33,7 +33,7 @@ const UpdateResourceForm: FC<{ data: IResource }> = ({ data }) => {
 
     const updatedValues = getUpdatedValues<IResource>(oldData, newData);
 
-    if (Object.keys(updatedValues).length == 0) {
+    if (Object.keys(updatedValues).length === 0) {
       dispatch(addAlert({ type: 'warning', text: t.nothingToUpdate }));
     } else {
       update({ id: data.id, fields: updatedValues });
@@ -41,11 +41,11 @@ const UpdateResourceForm: FC<{ data: IResource }> = ({ data }) => {
   };
 
   useEffect(() => {
-    if (updateReq.data) {
+    if (updateReq.isSuccess) {
       dispatch(addAlert({ type: 'success', text: tRef.current.success }));
       setOldData((prev) => ({ ...prev, ...updateReq.originalArgs?.fields }));
     }
-  }, [updateReq.data, updateReq.originalArgs, dispatch, tRef]);
+  }, [updateReq.isSuccess, updateReq.originalArgs, dispatch, tRef]);
 
   useEffect(() => {
     if (updateReq.error) {
@@ -59,11 +59,11 @@ const UpdateResourceForm: FC<{ data: IResource }> = ({ data }) => {
   }, [updateReq.error, dispatch, lRef]);
 
   useEffect(() => {
-    if (deleteReq.data) {
+    if (deleteReq.isSuccess) {
       dispatch(addAlert({ type: 'success', text: tRef.current.success }));
       router.push(ROUTES.ui.resources);
     }
-  }, [deleteReq.data, dispatch, router, tRef]);
+  }, [deleteReq.isSuccess, dispatch, router, tRef]);
 
   useEffect(() => {
     if (deleteReq.error) {
@@ -122,7 +122,7 @@ const UpdateResourceForm: FC<{ data: IResource }> = ({ data }) => {
           !rights.updating ||
           data.default ||
           deleteReq.isLoading ||
-          deleteReq.data
+          deleteReq.isSuccess
         }
         loading={updateReq.isLoading}
       >
@@ -135,7 +135,7 @@ const UpdateResourceForm: FC<{ data: IResource }> = ({ data }) => {
         disabled={
           !rights.deleting ||
           deleteReq.isLoading ||
-          deleteReq.data ||
+          deleteReq.isSuccess ||
           data.default
         }
       >

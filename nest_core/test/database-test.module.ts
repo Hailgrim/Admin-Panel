@@ -1,37 +1,32 @@
 import { Module } from '@nestjs/common';
-import { Sequelize } from 'sequelize-typescript';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DatabaseService } from 'src/database/database.service';
-import { SEQUELIZE } from 'libs/constants';
-import { UserModel } from 'src/users/user.entity';
-import { RoleModel } from 'src/roles/role.entity';
-import { UsersRolesModel } from 'src/database/users-roles.entity';
-import { ResourceModel } from 'src/resources/resource.entity';
-import { RightsModel } from 'src/database/rights.entity';
+import { UserEntity } from 'src/users/user.entity';
+import { RoleEntity } from 'src/roles/role.entity';
+import { UsersRolesEntity } from 'src/database/users-roles.entity';
+import { ResourceEntity } from 'src/resources/resource.entity';
+import { RightsEntity } from 'src/database/rights.entity';
 
 @Module({
-  providers: [
-    {
-      provide: SEQUELIZE,
-      useFactory: async () => {
-        const sequelize = new Sequelize({
-          dialect: 'sqlite',
-          storage: ':memory:',
-          logging: false,
-        });
-        sequelize.addModels([
-          UserModel,
-          RoleModel,
-          UsersRolesModel,
-          ResourceModel,
-          RightsModel,
-        ]);
-        await sequelize.sync({ force: true });
-        return sequelize;
-      },
-    },
-    DatabaseService,
+  imports: [
+    TypeOrmModule.forRootAsync({
+      useFactory: () => ({
+        type: 'sqlite',
+        database: ':memory:',
+        logging: false,
+        synchronize: true,
+        entities: [
+          UserEntity,
+          RoleEntity,
+          UsersRolesEntity,
+          ResourceEntity,
+          RightsEntity,
+        ],
+      }),
+    }),
   ],
+  providers: [DatabaseService],
   exports: [DatabaseService],
 })
 export class DatabaseTestModule {}

@@ -10,7 +10,7 @@ const password = ref('')
 const passwordIsValid = (value: string) => value.length > 0
 const rememberMe = ref(false)
 const mainStore = useMainStore()
-const { data, error, execute, pending } = authApi.signIn()
+const { data, error, execute, status } = authApi.signIn()
 const errorText = ref<string | null>(null)
 const verifyModal = ref(false)
 
@@ -72,6 +72,7 @@ watch(data, () => {
       required
       :rules="[emailIsValid]"
       type="email"
+      :disabled="status === 'pending' || Boolean(data)"
     />
     <FormPassword
       v-model="password"
@@ -79,16 +80,18 @@ watch(data, () => {
       name="password"
       required
       :rules="[passwordIsValid]"
+      :disabled="status === 'pending' || Boolean(data)"
     />
     <FormCheckbox
       v-model="rememberMe"
       :label="$t('rememberMe')"
       name="rememberMe"
+      :disabled="status === 'pending' || Boolean(data)"
     />
     <FormButton
       block
       color="info"
-      :loading="pending || Boolean(data)"
+      :loading="status === 'pending' || Boolean(data)"
       type="submit"
     >
       {{ $t('signIn') }}

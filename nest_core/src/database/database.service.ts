@@ -1,36 +1,32 @@
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import { FindOptions, Op, Sequelize } from 'sequelize';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { DataSource, FindManyOptions, ILike, Like } from 'typeorm';
 
 import { TGetListRequest } from '@ap/shared';
-import { SEQUELIZE } from 'libs/constants';
 
 @Injectable()
 export class DatabaseService implements OnModuleInit {
-  constructor(
-    @Inject(SEQUELIZE)
-    private sequelize: Sequelize,
-  ) {}
+  constructor(private dataSource: DataSource) {}
 
-  public iLike: symbol = Op.iLike;
+  public iLike: typeof Like | typeof ILike = ILike;
 
   async onModuleInit() {
-    if (this.sequelize.getDialect() === 'sqlite') {
-      await this.sequelize.query('PRAGMA case_sensitive_like = OFF;');
-      this.iLike = Op.like;
+    if (this.dataSource.options.type === 'sqlite') {
+      await this.dataSource.query('PRAGMA case_sensitive_like = OFF;');
+      this.iLike = Like;
     }
   }
 
   preparePaginationOptions<T = unknown, U = unknown>(
     fields?: TGetListRequest<U>,
-  ): FindOptions<T> {
-    const options: FindOptions<T> = { offset: 0, limit: 25 };
+  ): FindManyOptions<T> {
+    const options: FindManyOptions<T> = { skip: 0, take: 25 };
 
     if (fields?.reqLimit && fields.reqLimit > 0 && fields.reqLimit <= 100) {
-      options.limit = fields.reqLimit;
+      options.take = fields.reqLimit;
     }
 
-    if (fields?.reqPage && fields.reqPage > 0 && options.limit) {
-      options.offset = (fields.reqPage - 1) * options.limit;
+    if (fields?.reqPage && fields.reqPage > 0 && options.take) {
+      options.skip = (fields.reqPage - 1) * options.take;
     }
 
     return options;

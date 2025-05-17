@@ -5,7 +5,7 @@ const { t, locale } = useI18n()
 const email = ref('')
 const emailIsValid = (value: string) =>
   value.length > 0 || t('emailValidationI18N')
-const { data, error, execute, pending, args } = authApi.forgotPassword()
+const { status, error, execute } = authApi.forgotPassword()
 const errorText = ref<string | null>(null)
 const resetModal = ref(false)
 
@@ -29,8 +29,8 @@ watch(error, () => {
     }
 })
 
-watch(data, () => {
-  if (data.value) resetModal.value = true
+watch(status, () => {
+  if (status.value === 'success') resetModal.value = true
 })
 </script>
 
@@ -49,11 +49,12 @@ watch(data, () => {
       required
       :rules="[emailIsValid]"
       type="email"
+      :disabled="status === 'pending'"
     />
     <FormButton
       block
       color="success"
-      :loading="pending"
+      :loading="status === 'pending'"
       type="submit"
     >
       {{ $t('confirm') }}
@@ -71,7 +72,7 @@ watch(data, () => {
       :title="$t('resetPassword')"
     >
       <ResetPasswordForm
-        :email="args?.email || ''"
+        :email="email"
         @close="resetModal = false"
       />
     </CustomModal>

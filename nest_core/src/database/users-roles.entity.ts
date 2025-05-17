@@ -1,25 +1,13 @@
-import {
-  Column,
-  DataType,
-  ForeignKey,
-  Model,
-  Table,
-} from 'sequelize-typescript';
+import { Entity, PrimaryColumn } from 'typeorm';
 
-import { UserModel } from '../users/user.entity';
-import { RoleModel } from '../roles/role.entity';
 import { IRole, IUser, IUsersRoles } from '@ap/shared';
+import { USERS_ROLES_TABLE } from 'libs/constants';
 
-@Table({ tableName: 'users_roles' })
-export class UsersRolesModel
-  extends Model<UsersRolesModel, IUsersRoles>
-  implements IUsersRoles
-{
-  @ForeignKey(() => UserModel)
-  @Column({ type: DataType.UUID })
-  declare userId: IUser['id'];
+@Entity(USERS_ROLES_TABLE)
+export class UsersRolesEntity implements IUsersRoles {
+  @PrimaryColumn('uuid')
+  userId: IUser['id'];
 
-  @ForeignKey(() => RoleModel)
-  @Column({ type: DataType.UUID })
-  declare roleId: IRole['id'];
+  @PrimaryColumn('uuid')
+  roleId: IRole['id'];
 }

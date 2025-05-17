@@ -3,7 +3,7 @@ import type { SubmitEventPromise } from 'vuetify'
 
 const { t, locale } = useI18n()
 const mainStore = useMainStore()
-const { data, error, execute, pending } = profileApi.updatePassword()
+const { status, error, execute } = profileApi.updatePassword()
 const oldPassword = ref('')
 const newPassword = ref('')
 const passwordIsValid = (value: string) =>
@@ -32,8 +32,8 @@ watch(error, () => {
     })
 })
 
-watch(data, () => {
-  if (data.value) mainStore.addAlert({ type: 'success', text: t('success') })
+watch(status, () => {
+  if (status.value === 'success') mainStore.addAlert({ type: 'success', text: t('success') })
 })
 </script>
 
@@ -41,13 +41,13 @@ watch(data, () => {
   <FormBase @submit="submitHandler">
     <FormPassword
       v-model="oldPassword"
-      :label="$t('newPassword')"
+      :label="$t('oldPassword')"
       name="old-password"
     />
     <FormPassword
       v-model="newPassword"
       :hint="$t('passwordValidation')"
-      :label="$t('oldPassword')"
+      :label="$t('newPassword')"
       name="new-password"
       required
       :rules="[passwordIsValid]"
@@ -55,7 +55,7 @@ watch(data, () => {
     <FormButton
       color="success"
       :disabled="!rights.updating"
-      :loading="pending"
+      :loading="status === 'pending'"
       prepand-icon="mdi-content-save"
       type="submit"
     >

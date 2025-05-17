@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { Typography } from '@mui/material';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
@@ -22,6 +22,31 @@ const SignInGoogleForm: FC = () => {
   const [errorText, setErrorText] = useState<string | null>(null);
   const [signInGoogle, { data, error }] = authApi.useLazySignInGoogleQuery();
 
+  const messageHandler = useCallback(
+    (event: MessageEvent<IWindowMessage<string>>) => {
+      if (event.data.type !== ROUTES.ui.signInGoogle || !data) return;
+
+      if (event.data.payload === hash.current.get('state')) {
+        const message: IWindowMessage<IUser> = {
+          type: ROUTES.ui.signInGoogle,
+          payload: data,
+        };
+
+        event.source?.postMessage(message);
+      }
+
+      window.close();
+    },
+    [data]
+  );
+
+  useEffect(() => {
+    window.addEventListener('message', messageHandler);
+    return () => {
+      window.removeEventListener('message', messageHandler);
+    };
+  }, [messageHandler]);
+
   useEffect(() => {
     if (hash.current.has('access_token')) {
       signInGoogle({ googleAccessToken: hash.current.get('access_token')! });
@@ -42,24 +67,6 @@ const SignInGoogleForm: FC = () => {
       }
     }
   }, [error, tRef, lRef]);
-
-  useEffect(() => {
-    if (!data) return;
-
-    const messageHandler = (event: MessageEvent<string>) => {
-      if (event.data === hash.current.get('state')) {
-        const result: IWindowMessage<IUser> = {
-          type: ROUTES.ui.signInGoogle,
-          payload: data,
-        };
-        event.source?.postMessage(result);
-        window.removeEventListener('message', messageHandler);
-      }
-      window.close();
-    };
-
-    window.addEventListener('message', messageHandler);
-  }, [data]);
 
   return (
     <FormBase>

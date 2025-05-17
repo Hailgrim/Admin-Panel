@@ -33,7 +33,7 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
 
     const updatedValues = getUpdatedValues<Partial<IUser>>(oldData, newData);
 
-    if (Object.keys(updatedValues).length == 0) {
+    if (Object.keys(updatedValues).length === 0) {
       dispatch(addAlert({ type: 'warning', text: t.nothingToUpdate }));
     } else {
       update({ id: data.id, fields: updatedValues });
@@ -41,11 +41,11 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
   };
 
   useEffect(() => {
-    if (updateReq.data) {
+    if (updateReq.isSuccess) {
       dispatch(addAlert({ type: 'success', text: tRef.current.success }));
       setOldData((prev) => ({ ...prev, ...updateReq.originalArgs?.fields }));
     }
-  }, [updateReq.data, updateReq.originalArgs, dispatch, tRef]);
+  }, [updateReq.isSuccess, updateReq.originalArgs, dispatch, tRef]);
 
   useEffect(() => {
     if (updateReq.error) {
@@ -59,11 +59,11 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
   }, [updateReq.error, dispatch, lRef]);
 
   useEffect(() => {
-    if (deleteReq.data) {
+    if (deleteReq.isSuccess) {
       dispatch(addAlert({ type: 'success', text: tRef.current.success }));
       router.push(ROUTES.ui.users);
     }
-  }, [deleteReq.data, dispatch, router, tRef]);
+  }, [deleteReq.isSuccess, dispatch, router, tRef]);
 
   useEffect(() => {
     if (deleteReq.error) {
@@ -79,7 +79,6 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
   return (
     <FormBase onSubmit={submitHandler}>
       <FormField
-        required
         name="email"
         type="email"
         label={t.email}
@@ -108,7 +107,7 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
         type="submit"
         color="success"
         startIcon={<SaveIcon />}
-        disabled={!rights.updating || deleteReq.isLoading || deleteReq.data}
+        disabled={!rights.updating || deleteReq.isLoading || deleteReq.isSuccess}
         loading={updateReq.isLoading}
       >
         {t.update}
@@ -118,7 +117,7 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
         startIcon={<DeleteIcon />}
         onClick={() => destroy({ items: [data.id] })}
         disabled={!rights.deleting || data.roles?.some((role) => role.admin)}
-        loading={deleteReq.isLoading || deleteReq.data}
+        loading={deleteReq.isLoading || deleteReq.isSuccess}
       >
         {t.delete}
       </FormButton>

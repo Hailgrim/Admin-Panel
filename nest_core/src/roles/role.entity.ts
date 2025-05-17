@@ -1,65 +1,38 @@
 import {
-  BelongsToMany,
   Column,
-  DataType,
-  Model,
-  Scopes,
-  Table,
-} from 'sequelize-typescript';
+  Entity,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-import { UserModel } from '../users/user.entity';
-import { UsersRolesModel } from '../database/users-roles.entity';
-import { ResourceModel } from '../resources/resource.entity';
-import { PUBLIC, WITH_RESOURCES } from 'libs/constants';
-import { TCreateRole, IRole } from '@ap/shared';
-import { RightsModel } from '../database/rights.entity';
+import { UserEntity } from '../users/user.entity';
+import { IRole } from '@ap/shared';
+import { RightsEntity } from 'src/database/rights.entity';
 
-@Scopes(() => ({
-  [PUBLIC]: {
-    attributes: {
-      exclude: ['createdAt', 'updatedAt'],
-    },
-  },
-  [WITH_RESOURCES]: {
-    include: [
-      {
-        model: ResourceModel,
-        attributes: {
-          exclude: ['createdAt', 'updatedAt'],
-        },
-      },
-    ],
-  },
-}))
-@Table({ tableName: 'roles' })
-export class RoleModel extends Model<RoleModel, TCreateRole> implements IRole {
-  @Column({
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV4,
-    primaryKey: true,
-  })
-  declare id: string;
+@Entity('roles')
+export class RoleEntity implements IRole {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column({ type: DataType.STRING(100), allowNull: false, unique: true })
-  declare name: string;
+  @Column({ type: 'varchar', length: 100, unique: true })
+  name: string;
 
-  @Column({ type: DataType.STRING(1000), allowNull: true })
-  declare description?: string | null;
+  @Column({ type: 'varchar', length: 1000, nullable: true })
+  description?: string | null;
 
-  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
-  declare enabled: boolean;
+  @Column({ type: 'boolean', default: false })
+  enabled: boolean;
 
-  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
-  declare admin: boolean;
+  @Column({ type: 'boolean', default: false })
+  admin: boolean;
 
-  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
-  declare default: boolean;
+  @Column({ type: 'boolean', default: false })
+  default: boolean;
 
-  @BelongsToMany(() => UserModel, () => UsersRolesModel)
-  declare users?: UserModel[];
+  @ManyToMany(() => UserEntity, (user) => user.roles)
+  users?: UserEntity[];
 
-  @BelongsToMany(() => ResourceModel, () => RightsModel)
-  declare resources?: ResourceModel[];
-
-  declare UsersRolesModel?: UsersRolesModel;
+  @OneToMany(() => RightsEntity, (rights) => rights.role)
+  rights?: RightsEntity[];
 }

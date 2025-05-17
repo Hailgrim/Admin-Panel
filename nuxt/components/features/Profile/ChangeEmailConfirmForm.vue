@@ -13,7 +13,7 @@ const mainStore = useMainStore()
 const code = ref('')
 const codeIsValid = (value: string) =>
   value.length > 0 || `${t('codeFromEmail')} (${email})`
-const { data, error, execute, pending } = profileApi.changeEmail()
+const { status, error, execute } = profileApi.changeEmailConfirm()
 const rights = useRights(ROUTES.api.profile)
 
 async function submitHandler(event: SubmitEventPromise) {
@@ -36,8 +36,8 @@ watch(error, () => {
     }
 })
 
-watch(data, () => {
-  if (data.value) {
+watch(status, () => {
+  if (status.value === 'success') {
     emit('close')
     if (mainStore.profile)
       mainStore.setProfile({ ...mainStore.profile, email })
@@ -59,7 +59,7 @@ watch(data, () => {
       block
       color="success"
       :disabled="!rights.updating"
-      :loading="pending || Boolean(data)"
+      :loading="status === 'pending' || status === 'success'"
       type="submit"
     >
       {{ $t('confirm') }}

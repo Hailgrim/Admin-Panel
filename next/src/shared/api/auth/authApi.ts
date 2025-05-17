@@ -20,15 +20,15 @@ const authApi = createApi({
       query: authService.signUpArgs,
     }),
 
-    forgotPassword: builder.query<boolean, IForgotPassword>({
+    forgotPassword: builder.query<undefined, IForgotPassword>({
       query: authService.forgotPasswordArgs,
     }),
 
-    resetPassword: builder.query<boolean, IResetPassword>({
+    resetPassword: builder.query<undefined, IResetPassword>({
       query: authService.resetPasswordArgs,
     }),
 
-    verifyUser: builder.query<boolean, IVerifyUser>({
+    verifyUser: builder.query<undefined, IVerifyUser>({
       query: authService.verifyUserArgs,
     }),
 
@@ -40,11 +40,11 @@ const authApi = createApi({
       query: authService.signInGoogleArgs,
     }),
 
-    refresh: builder.query<boolean, void>({
+    refresh: builder.query<undefined, void>({
       query: authService.refreshArgs,
     }),
 
-    signOut: builder.mutation<boolean, void>({
+    signOut: builder.mutation<undefined, void>({
       query: authService.signOutArgs,
     }),
   }),

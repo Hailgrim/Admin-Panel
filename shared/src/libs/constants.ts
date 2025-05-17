@@ -46,7 +46,7 @@ export const ROUTES = {
     userRoles: (id: string) => `/users/${id}/roles`,
     roles: '/roles',
     role: (id: string) => `/roles/${id}`,
-    roleResources: (id: string) => `/roles/${id}/resources`,
+    roleRights: (id: string) => `/roles/${id}/rights`,
     resources: '/resources',
     resource: (id: string) => `/resources/${id}`,
   },

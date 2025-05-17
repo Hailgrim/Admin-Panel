@@ -19,7 +19,7 @@ const VerifyUserForm: FC<{
   const lRef = useLanguageRef();
   const tRef = useTranslateRef();
   const t = useTranslate();
-  const [verifyUser, { data, error, isFetching }] =
+  const [verifyUser, { isSuccess, error, isFetching }] =
     authApi.useLazyVerifyUserQuery();
   const [errorText, setErrorText] = useState<string | null>(null);
   const [code, setCode] = useState('');
@@ -49,11 +49,11 @@ const VerifyUserForm: FC<{
   }, [error, lRef, tRef]);
 
   useEffect(() => {
-    if (data) {
+    if (isSuccess) {
       onClose?.();
       onSuccess?.();
     }
-  }, [data, onClose, onSuccess]);
+  }, [isSuccess, onClose, onSuccess]);
 
   return (
     <FormBase onSubmit={submitHandler}>
@@ -67,7 +67,7 @@ const VerifyUserForm: FC<{
         onChange={(event) => setCode(event.currentTarget.value)}
         helperText={`${t.codeFromEmail} (${email})`}
       />
-      <FormButton type="submit" fullWidth loading={isFetching || data}>
+      <FormButton type="submit" fullWidth loading={isFetching || isSuccess}>
         {t.confirm}
       </FormButton>
       <FormButton color="error" onClick={onClose} fullWidth>

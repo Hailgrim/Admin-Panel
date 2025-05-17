@@ -15,13 +15,12 @@ const {
   data: faData,
   error: faError,
   execute: faExecute,
-  pending: faPending,
+  status: faStatus,
 } = resourcesApi.getList()
 const {
-  data: dData,
   error: dError,
   execute: dExecute,
-  pending: dPending,
+  status: dStatus,
 } = resourcesApi.delete()
 const page = ref(props.page || 1)
 const quantity = ref(props.quantity || 25)
@@ -63,8 +62,8 @@ watch(faError, () => {
     })
 })
 
-watch(dData, () => {
-  if (dData.value) {
+watch(dStatus, () => {
+  if (dStatus.value === 'success') {
     faExecute({
       reqPage: page.value,
       reqLimit: quantity.value,
@@ -98,7 +97,7 @@ watch(dError, () => {
     <v-btn
       color="error"
       :disabled="!rights.deleting || selected.length === 0"
-      :loading="dPending"
+      :loading="dStatus === 'pending'"
       prepend-icon="mdi-delete"
       variant="flat"
       @click="dExecute({ items: selected })"
@@ -111,7 +110,7 @@ watch(dError, () => {
     v-model:quantity="quantity"
     v-model:selected="selected"
     :count="count"
-    :loading="dPending || faPending"
+    :loading="dStatus === 'pending' || faStatus === 'pending'"
     :rows="items"
     @update:page="$emit('update:page', $event)"
     @update:quantity="$emit('update:quantity', $event)"

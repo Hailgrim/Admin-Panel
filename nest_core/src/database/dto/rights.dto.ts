@@ -1,7 +1,10 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsUUID } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsBoolean, IsOptional, IsUUID, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 import { IResource, IRole, IRights } from '@ap/shared';
+import { RoleDto } from 'src/roles/dto/role.dto';
+import { ResourceDto } from 'src/resources/dto/resource.dto';
 
 export class RightsDto implements IRights {
   @ApiProperty({
@@ -11,12 +14,24 @@ export class RightsDto implements IRights {
   @IsUUID()
   roleId: IRole['id'];
 
+  @ApiPropertyOptional({ type: RoleDto })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => RoleDto)
+  role?: RoleDto;
+
   @ApiProperty({
     type: String,
     example: '00000000-0000-0000-0000-000000000000',
   })
   @IsUUID()
   resourceId: IResource['id'];
+
+  @ApiPropertyOptional({ type: ResourceDto })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ResourceDto)
+  resource?: ResourceDto;
 
   @ApiProperty({ type: Boolean, example: false })
   @IsBoolean()

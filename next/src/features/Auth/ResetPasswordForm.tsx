@@ -21,7 +21,7 @@ const ResetPasswordForm: FC<{
   const lRef = useLanguageRef();
   const tRef = useTranslateRef();
   const t = useTranslate();
-  const [resetPassword, { data, error, isLoading }] =
+  const [resetPassword, { isSuccess, error, isLoading }] =
     authApi.useLazyResetPasswordQuery();
   const [errorText, setErrorText] = useState<string | null>(null);
   const [code, setCode] = useState('');
@@ -59,11 +59,11 @@ const ResetPasswordForm: FC<{
   }, [error, tRef, lRef]);
 
   useEffect(() => {
-    if (data) {
+    if (isSuccess) {
       onClose?.();
       router.push(ROUTES.ui.signIn);
     }
-  }, [data, onClose, router]);
+  }, [isSuccess, onClose, router]);
 
   return (
     <FormBase onSubmit={submitHandler}>
@@ -88,7 +88,7 @@ const ResetPasswordForm: FC<{
         color={passwordIsValid ? 'success' : 'error'}
         error={!passwordIsValid && password.length > 0}
       />
-      <FormButton type="submit" fullWidth loading={isLoading || data}>
+      <FormButton type="submit" fullWidth loading={isLoading || isSuccess}>
         {t.confirm}
       </FormButton>
       <FormButton fullWidth color="error" onClick={onClose}>
