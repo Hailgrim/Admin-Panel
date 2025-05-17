@@ -1,4 +1,4 @@
-import { FC, FormEvent, useEffect, useState } from 'react';
+import { FC, FormEvent, useEffect, useMemo, useState } from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useRouter } from 'next/navigation';
@@ -13,7 +13,15 @@ import FormCheckbox from '@/shared/ui/Form/FormCheckbox';
 import { useAppDispatch } from '@/shared/store/hooks';
 import usersApi from '@/shared/api/users/usersApi';
 import { addAlert } from '@/shared/store/main/main';
-import { getErrorText, getUpdatedValues, IUser, ROUTES } from '@ap/shared';
+import {
+  EMAIL_REGEX,
+  getErrorText,
+  getUpdatedValues,
+  IUser,
+  NAME_REGEX,
+  ROUTES,
+  testString,
+} from '@ap/shared';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
 
 const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
@@ -27,6 +35,14 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
   const [oldData, setOldData] = useState<IUser>(data);
   const [newData, setNewData] = useState<IUser>(data);
   const rights = useRights(ROUTES.api.users);
+  const emailIsValid = useMemo(
+    () => newData.name && testString(EMAIL_REGEX, newData.email || ''),
+    [newData]
+  );
+  const nameIsValid = useMemo(
+    () => newData.name && testString(NAME_REGEX, newData.name),
+    [newData]
+  );
 
   const submitHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -82,10 +98,13 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
         name="email"
         type="email"
         label={t.email}
-        value={newData.email}
+        value={newData.email || ''}
         onChange={(event) =>
           setNewData({ ...newData, email: event.currentTarget.value })
         }
+        helperText={t.emailValidation}
+        color={emailIsValid ? 'success' : 'error'}
+        error={!emailIsValid && (newData.email || '').length > 0}
       />
       <FormField
         required
@@ -95,6 +114,9 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
         onChange={(event) =>
           setNewData({ ...newData, name: event.currentTarget.value })
         }
+        helperText={t.nameValidation}
+        color={nameIsValid ? 'success' : 'error'}
+        error={!nameIsValid && newData.name.length > 0}
       />
       <FormCheckbox
         labelProps={{ label: t.enabled }}
@@ -107,7 +129,9 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
         type="submit"
         color="success"
         startIcon={<SaveIcon />}
-        disabled={!rights.updating || deleteReq.isLoading || deleteReq.isSuccess}
+        disabled={
+          !rights.updating || deleteReq.isLoading || deleteReq.isSuccess
+        }
         loading={updateReq.isLoading}
       >
         {t.update}
