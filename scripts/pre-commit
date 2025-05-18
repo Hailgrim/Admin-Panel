@@ -1,76 +1,33 @@
 #!/bin/sh
 
+run_check() {
+  local label="$1"
+  local command="$2"
+
+  echo "$label"
+  output=$($command 2>&1)
+  status=$?
+  if [ $status -ne 0 ]; then
+    echo "❌ Command \"${command}\" failed"
+    echo "$output"
+    exit $status
+  fi
+}
+
 # nest_core
-
-echo "🔍 Linting nest_core..."
-output=$(npm --prefix nest_core run lint 2>&1)
-status=$?
-if [ $status -ne 0 ]; then
-  echo "❌ Lint failed in nest_core"
-  echo "$output"
-  exit $status
-fi
-
-echo "🧪 Running tests in nest_core..."
-output=$(npm --prefix nest_core run test:e2e 2>&1)
-status=$?
-if [ $status -ne 0 ]; then
-  echo "❌ Test failed in nest_core"
-  echo "$output"
-  exit $status
-fi
+run_check "🔍 Linting nest_core..." "npm --prefix nest_core run lint"
+run_check "🧪 Running tests in nest_core..." "npm --prefix nest_core run test:e2e"
 
 # nest_mailer
-
-echo "🔍 Linting nest_mailer..."
-output=$(npm --prefix nest_mailer run lint 2>&1)
-status=$?
-if [ $status -ne 0 ]; then
-  echo "❌ Lint failed in nest_mailer"
-  echo "$output"
-  exit $status
-fi
+run_check "🔍 Linting nest_mailer..." "npm --prefix nest_mailer run lint"
 
 # next
-
-echo "🔍 Linting next..."
-output=$(npm --prefix next run lint:fix 2>&1)
-status=$?
-if [ $status -ne 0 ]; then
-  echo "❌ Lint failed in next"
-  echo "$output"
-  exit $status
-fi
-
-echo "🧪 Running tests in next..."
-output=$(npm --prefix next run test 2>&1)
-status=$?
-if [ $status -ne 0 ]; then
-  echo "❌ Test failed in next"
-  echo "$output"
-  exit $status
-fi
+run_check "🔍 Linting next..." "npm --prefix next run lint:fix"
+run_check "🧪 Running tests in next..." "npm --prefix next run test"
 
 # nuxt
-
-echo "🔍 Linting nuxt..."
-output=$(npm --prefix nuxt run lint:fix 2>&1)
-status=$?
-if [ $status -ne 0 ]; then
-  echo "❌ Lint failed in nuxt"
-  echo "$output"
-  exit $status
-fi
-
-echo "🧪 Running tests in nuxt..."
-output=$(npm --prefix nuxt run test:ci 2>&1)
-status=$?
-if [ $status -ne 0 ]; then
-  echo "❌ Test failed in nuxt"
-  echo "$output"
-  exit $status
-fi
+run_check "🔍 Linting nuxt..." "npm --prefix nuxt run lint:fix"
+run_check "🧪 Running tests in nuxt..." "npm --prefix nuxt run test:ci"
 
 # final
-
 echo "✅ All checks passed!"
