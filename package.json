@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "This is a boilerplate project that implements the functionality of the admin panel.\r The project is built using microservices architecture.\r To run it, you will need to install [Docker](https://github.com/docker).",
   "scripts": {
-    "install:all": "npm --prefix nest_core ci && npm --prefix nest_mailer ci && npm --prefix next ci && npm --prefix nuxt ci"
+    "install:all": "npm --prefix nest_core ci && npm --prefix nest_mailer ci && npm --prefix next ci && npm --prefix nuxt ci && npm --prefix scripts ci"
   },
   "keywords": [],
   "author": "",
