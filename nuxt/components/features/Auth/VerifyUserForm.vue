@@ -13,28 +13,31 @@ const { t, locale } = useI18n()
 const code = ref('')
 const codeIsValid = (value: string) =>
   value.length > 0 || `${t('codeFromEmail')} (${email})`
-const { status, error, execute } = authApi.verifyUser()
+const { status, error, execute } = authApi.verifyUser({ email, code })
 
 const errorText = ref<string | null>(null)
 
 async function submitHandler(event: SubmitEventPromise) {
   const results = await event
 
-  if (results.valid) execute({ email: email, code: code.value })
+  if (!results.valid) {
+    return
+  }
+
+  execute()
 }
 
 watch(error, () => {
-  if (error.value)
-    switch (error.value?.status) {
-      case 404:
-        errorText.value = t('wrongCode')
-        break
-      case undefined:
-        errorText.value = null
-        break
-      default:
-        errorText.value = getErrorText(error.value, locale.value)
-    }
+  switch (error.value?.statusCode) {
+    case 404:
+      errorText.value = t('wrongCode')
+      break
+    case undefined:
+      errorText.value = null
+      break
+    default:
+      errorText.value = getErrorText(error.value, locale.value)
+  }
 })
 
 watch(status, () => {

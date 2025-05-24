@@ -3,7 +3,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import profileService from '@/shared/api/profile/profileService';
 import baseQueryWithReprofile from '../baseQueryWithReauth';
 import {
-  IChangeEmail,
+  IChangeEmailConfirm,
   IChangeEmailRequest,
   IExternalSession,
   IQueryItems,
@@ -32,7 +32,7 @@ const profileApi = createApi({
       query: profileService.changeEmailRequestArgs,
     }),
 
-    changeEmailConfirm: builder.mutation<undefined, IChangeEmail>({
+    changeEmailConfirm: builder.mutation<undefined, IChangeEmailConfirm>({
       query: profileService.changeEmailConfirmArgs,
     }),
 

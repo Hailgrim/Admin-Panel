@@ -16,8 +16,9 @@ watch(
     const pathArr = route.path.split('/')
     const linkArr = href?.split('/') || []
     linkArr.forEach((value, index) => {
-      if (value !== pathArr[index])
+      if (value !== pathArr[index]) {
         result = false
+      }
     })
     selected.value = result
   },

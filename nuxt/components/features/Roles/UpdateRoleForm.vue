@@ -4,32 +4,38 @@ import type { SubmitEventPromise } from 'vuetify'
 const { role } = defineProps<{ role: IRole }>()
 
 const { t, locale } = useI18n()
+const rights = useRights(ROUTES.api.roles)
+const mainStore = useMainStore()
+const router = useRouter()
+const oldData = ref<IRole>(role)
+const newData = ref<IRole>(role)
+const updatedValues = ref<TUpdateRole>({})
+const nameIsValid = (value: string) => value.length > 0
 const {
   error: uError,
   execute: uExecute,
   status: uStatus,
-} = rolesApi.update()
+} = rolesApi.update({
+  id: role.id,
+  fields: updatedValues,
+})
 const {
   error: dError,
   execute: dExecute,
   status: dStatus,
-} = rolesApi.delete()
-const oldData = ref<IRole>(role)
-const newData = ref<IRole>(role)
-const nameIsValid = (value: string) => value.length > 0
-const mainStore = useMainStore()
-const router = useRouter()
-const rights = useRights(ROUTES.api.roles)
+} = rolesApi.delete({ items: [role.id] })
 
 async function submitHandler(event: SubmitEventPromise) {
   const results = await event
-  const updatedValues = getUpdatedValues<IRole>(oldData.value, newData.value)
 
-  if (results.valid && Object.keys(updatedValues).length > 0) {
-    uExecute({
-      id: role.id,
-      fields: updatedValues,
-    })
+  if (!results.valid) {
+    return
+  }
+
+  updatedValues.value = getUpdatedValues<IRole>(oldData.value, newData.value)
+
+  if (Object.keys(updatedValues.value).length > 0) {
+    uExecute()
   }
   else {
     mainStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
@@ -37,11 +43,14 @@ async function submitHandler(event: SubmitEventPromise) {
 }
 
 watch(uError, () => {
-  if (uError.value)
-    mainStore.addAlert({
-      type: 'error',
-      text: getErrorText(uError.value, locale.value),
-    })
+  if (!uError.value) {
+    return
+  }
+
+  mainStore.addAlert({
+    type: 'error',
+    text: getErrorText(uError.value, locale.value),
+  })
 })
 
 watch(uStatus, () => {
@@ -52,11 +61,14 @@ watch(uStatus, () => {
 })
 
 watch(dError, () => {
-  if (dError.value)
-    mainStore.addAlert({
-      type: 'error',
-      text: getErrorText(dError.value, locale.value),
-    })
+  if (!dError.value) {
+    return
+  }
+
+  mainStore.addAlert({
+    type: 'error',
+    text: getErrorText(dError.value, locale.value),
+  })
 })
 
 watch(dStatus, () => {
@@ -104,7 +116,7 @@ watch(dStatus, () => {
       :loading="dStatus === 'pending' || dStatus === 'success'"
       prepand-icon="mdi-delete"
       type="button"
-      @click="dExecute({ items: [role.id] })"
+      @click="dExecute()"
     >
       {{ $t('delete') }}
     </FormButton>

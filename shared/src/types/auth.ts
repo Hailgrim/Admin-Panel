@@ -1,5 +1,5 @@
-import { IUser } from './user';
-import { WithoutNulls } from './utils';
+import type { IUser } from './user';
+import type { WithoutNulls } from './utils';
 
 export type TSignUp = WithoutNulls<
   Required<Pick<IUser, 'email' | 'password' | 'name'>>

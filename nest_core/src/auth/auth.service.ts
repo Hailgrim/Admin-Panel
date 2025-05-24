@@ -220,8 +220,9 @@ export class AuthService {
       );
       googleUser = (await googleRes.json()) as Record<string, string>;
 
-      if (!googleUser || !googleUser['id'] || !googleUser['name'])
+      if (!googleUser || !googleUser['id'] || !googleUser['name']) {
         throw new Error();
+      }
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();

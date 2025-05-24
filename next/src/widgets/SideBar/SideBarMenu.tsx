@@ -66,7 +66,9 @@ const SideBarMenu: FC = () => {
       });
     }
 
-    if (mainMenu.childs!.length > 0) root.push(mainMenu);
+    if (mainMenu.childs!.length > 0) {
+      root.push(mainMenu);
+    }
 
     return root;
   }, [t, profileRights, usersRights, rolesRights, resourcesRights]);

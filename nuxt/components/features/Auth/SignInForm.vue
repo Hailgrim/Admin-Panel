@@ -10,40 +10,42 @@ const password = ref('')
 const passwordIsValid = (value: string) => value.length > 0
 const rememberMe = ref(false)
 const mainStore = useMainStore()
-const { data, error, execute, status } = authApi.signIn()
+const { data, error, execute, status } = authApi.signIn({
+  username: email,
+  password,
+  rememberMe,
+})
 const errorText = ref<string | null>(null)
 const verifyModal = ref(false)
 
 async function submitHandler(event?: SubmitEventPromise) {
   const results = await event
-  if (results?.valid === false) return
 
-  execute({
-    username: email.value,
-    password: password.value,
-    rememberMe: rememberMe.value,
-  })
+  if (!results?.valid) {
+    return
+  }
+
+  execute()
 }
 
 watch(error, () => {
-  if (error.value)
-    switch (error.value?.status) {
-      case 410:
-        errorText.value = t('userDeleted')
-        break
-      case 403:
-        errorText.value = null
-        verifyModal.value = true
-        break
-      case 401:
-        errorText.value = t('wrongEmailOrPassword')
-        break
-      case undefined:
-        errorText.value = null
-        break
-      default:
-        errorText.value = getErrorText(error.value, locale.value)
-    }
+  switch (error.value?.statusCode) {
+    case 410:
+      errorText.value = t('userDeleted')
+      break
+    case 403:
+      errorText.value = null
+      verifyModal.value = true
+      break
+    case 401:
+      errorText.value = t('wrongEmailOrPassword')
+      break
+    case undefined:
+      errorText.value = null
+      break
+    default:
+      errorText.value = getErrorText(error.value, locale.value)
+  }
 })
 
 watch(data, () => {

@@ -24,7 +24,9 @@ const SignInGoogleForm: FC = () => {
 
   const messageHandler = useCallback(
     (event: MessageEvent<IWindowMessage<string>>) => {
-      if (event.data.type !== ROUTES.ui.signInGoogle || !data) return;
+      if (event.data.type !== ROUTES.ui.signInGoogle || !data) {
+        return;
+      }
 
       if (event.data.payload === hash.current.get('state')) {
         const message: IWindowMessage<IUser> = {

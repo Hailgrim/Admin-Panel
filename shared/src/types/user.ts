@@ -1,4 +1,5 @@
-import { IRole } from './role';
+import type { IRole } from './role';
+import type { WithoutNulls } from './utils';
 
 export interface IUser {
   id: string;
@@ -15,8 +16,8 @@ export interface IUser {
   roles?: IRole[];
 }
 
-export type TCreateUser = Required<
-  Pick<IUser, 'email' | 'password' | 'name' | 'enabled'>
+export type TCreateUser = WithoutNulls<
+  Required<Pick<IUser, 'email' | 'password' | 'name' | 'enabled'>>
 >;
 
 export type TCreateGoogleUser = Pick<

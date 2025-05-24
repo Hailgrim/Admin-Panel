@@ -11,7 +11,7 @@ const emailIsValid = (value: string) =>
 const password = ref('')
 const passwordIsValid = (value: string) =>
   testString(PASSWORD_REGEX, value) || t('passwordValidation')
-const { data, error, execute, status } = authApi.signUp()
+const { data, error, execute, status } = authApi.signUp({ name, email, password })
 const errorText = ref<string | null>(null)
 const successModal = ref(false)
 const router = useRouter()
@@ -19,8 +19,11 @@ const router = useRouter()
 async function submitHandler(event: SubmitEventPromise) {
   const results = await event
 
-  if (results.valid)
-    execute({ name: name.value, email: email.value, password: password.value })
+  if (!results.valid) {
+    return
+  }
+
+  execute()
 }
 
 function successHandler() {
@@ -29,21 +32,22 @@ function successHandler() {
 }
 
 watch(error, () => {
-  if (error.value)
-    switch (error.value?.status) {
-      case 409:
-        errorText.value = t('userAlreadyExist')
-        break
-      case undefined:
-        errorText.value = null
-        break
-      default:
-        errorText.value = getErrorText(error.value, locale.value)
-    }
+  switch (error.value?.statusCode) {
+    case 409:
+      errorText.value = t('userAlreadyExist')
+      break
+    case undefined:
+      errorText.value = null
+      break
+    default:
+      errorText.value = getErrorText(error.value, locale.value)
+  }
 })
 
 watch(data, () => {
-  if (data.value) successModal.value = true
+  if (data.value) {
+    successModal.value = true
+  }
 })
 </script>
 

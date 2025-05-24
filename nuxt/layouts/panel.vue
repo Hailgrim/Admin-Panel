@@ -15,18 +15,11 @@ router.beforeEach(() => loading.value = true)
 router.afterEach(() => loading.value = false)
 
 watch(
-  () => mainStore.profile,
-  () => {
-    if (mainStore.profile === null)
-      execute()
-  },
-)
-
-watch(
   [status, error],
   () => {
-    if (status.value === 'success' || error.value?.status === 401)
+    if (status.value === 'success' || error.value?.statusCode === 401) {
       router.push(ROUTES.ui.signIn)
+    }
   },
 )
 </script>
@@ -55,7 +48,7 @@ watch(
             icon="mdi-logout"
             :loading="status === 'pending' || status === 'success'"
             :title="$t('signOut')"
-            @click="mainStore.setProfile(null)"
+            @click="execute()"
           />
         </template>
       </v-app-bar>

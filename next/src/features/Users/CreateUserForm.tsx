@@ -1,4 +1,4 @@
-import { FC, FormEvent, useEffect, useState } from 'react';
+import { FC, FormEvent, useEffect, useMemo, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import { useRouter } from 'next/navigation';
 
@@ -11,7 +11,16 @@ import FormPassword from '@/shared/ui/Form/FormPassword';
 import usersApi from '@/shared/api/users/usersApi';
 import { useAppDispatch } from '@/shared/store/hooks';
 import { addAlert } from '@/shared/store/main/main';
-import { d, getErrorText, ROUTES, TCreateUser } from '@ap/shared';
+import {
+  d,
+  EMAIL_REGEX,
+  getErrorText,
+  NAME_REGEX,
+  PASSWORD_REGEX,
+  ROUTES,
+  TCreateUser,
+  testString,
+} from '@ap/shared';
 import useTranslate from '@/shared/hooks/useTranslate';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
 import useTranslateRef from '@/shared/hooks/useTranslateRef';
@@ -23,13 +32,25 @@ const CreateUserForm: FC = () => {
   const lRef = useLanguageRef();
   const t = useTranslate();
   const [create, createReq] = usersApi.useCreateMutation();
+  const rights = useRights(ROUTES.api.users);
   const [data, setData] = useState<TCreateUser>({
     email: '',
     name: '',
     password: '',
     enabled: false,
   });
-  const rights = useRights(ROUTES.api.users);
+  const emailIsValid = useMemo(
+    () => testString(EMAIL_REGEX, data.email),
+    [data]
+  );
+  const nameIsValid = useMemo(
+    () => testString(NAME_REGEX, data.name),
+    [data]
+  );
+  const passwordIsValid = useMemo(
+    () => testString(PASSWORD_REGEX, data.password),
+    [data]
+  );
 
   const submitHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -65,6 +86,9 @@ const CreateUserForm: FC = () => {
         onChange={(event) =>
           setData({ ...data, email: event.currentTarget.value })
         }
+        helperText={t.emailValidation}
+        color={emailIsValid ? 'success' : 'error'}
+        error={!emailIsValid && data.email.length > 0}
       />
       <FormField
         required
@@ -74,6 +98,9 @@ const CreateUserForm: FC = () => {
         onChange={(event) =>
           setData({ ...data, name: event.currentTarget.value })
         }
+        helperText={t.nameValidation}
+        color={nameIsValid ? 'success' : 'error'}
+        error={!nameIsValid && data.name.length > 0}
       />
       <FormPassword
         required
@@ -84,6 +111,9 @@ const CreateUserForm: FC = () => {
         onChange={(event) =>
           setData({ ...data, password: event.currentTarget.value })
         }
+        helperText={t.passwordValidation}
+        color={passwordIsValid ? 'success' : 'error'}
+        error={!passwordIsValid && data.password.length > 0}
       />
       <FormCheckbox
         labelProps={{ label: t.enabled }}

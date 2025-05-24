@@ -1,5 +1,5 @@
 import { getT } from '../locales/utils';
-import { IMenuItem } from '../types/ui';
+import type { IMenuItem } from '../types/ui';
 import { ROUTES } from './constants';
 
 /**
@@ -14,7 +14,9 @@ export const getDateString = (
   const parsedDate = new Date(date);
   const parsedTime = parsedDate.getTime();
 
-  if (isNaN(parsedTime)) return '-';
+  if (isNaN(parsedTime)) {
+    return '-';
+  }
 
   const differenceMS = now - parsedTime;
   const minuteMS = 1000 * 60;
@@ -44,7 +46,9 @@ export const getUpdatedValues = <T>(
   const result: Partial<T> = {};
 
   for (const value in newObject) {
-    if (newObject[value] !== oldObject[value]) result[value] = newObject[value];
+    if (newObject[value] !== oldObject[value]) {
+      result[value] = newObject[value];
+    }
   }
 
   return result;
@@ -71,7 +75,10 @@ export const getErrorText = (error?: unknown, lang: string = 'en'): string => {
     return t.unknownError;
   }
 
-  if ('status' in error && error.status === 429) {
+  if (
+    ('status' in error && error.status === 429) ||
+    ('statusCode' in error && error.statusCode === 429)
+  ) {
     return t.tooManyRequests;
   }
 

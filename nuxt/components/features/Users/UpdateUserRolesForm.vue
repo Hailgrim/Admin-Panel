@@ -5,15 +5,15 @@ const updatedRoles = ref<IUsersRoles[]>(
   user.roles?.map(role => ({ roleId: role.id, userId: user.id })) || [],
 )
 const { t, locale } = useI18n()
-const { status, error, execute } = usersApi.updateRoles()
+const { status, error, execute } = usersApi.updateRoles({
+  id: user.id,
+  fields: { items: updatedRoles },
+})
 const mainStore = useMainStore()
 const rights = useRights(ROUTES.api.users)
 
 function submitHandler() {
-  execute({
-    id: user.id,
-    fields: { items: updatedRoles.value },
-  })
+  execute()
 }
 
 function setRoles(newRole: IUsersRoles) {
@@ -29,21 +29,28 @@ function setRoles(newRole: IUsersRoles) {
     }
   })
 
-  if (!find) filtered.push(newRole)
+  if (!find) {
+    filtered.push(newRole)
+  }
 
   updatedRoles.value = filtered
 }
 
 watch(error, () => {
-  if (error.value)
-    mainStore.addAlert({
-      type: 'error',
-      text: getErrorText(error.value, locale.value),
-    })
+  if (!error.value) {
+    return
+  }
+
+  mainStore.addAlert({
+    type: 'error',
+    text: getErrorText(error.value, locale.value),
+  })
 })
 
 watch(status, () => {
-  if (status.value === 'success') mainStore.addAlert({ type: 'success', text: t('success') })
+  if (status.value === 'success') {
+    mainStore.addAlert({ type: 'success', text: t('success') })
+  }
 })
 </script>
 

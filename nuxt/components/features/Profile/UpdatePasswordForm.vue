@@ -2,38 +2,47 @@
 import type { SubmitEventPromise } from 'vuetify'
 
 const { t, locale } = useI18n()
+const rights = useRights(ROUTES.api.profile)
 const mainStore = useMainStore()
-const { status, error, execute } = profileApi.updatePassword()
 const oldPassword = ref('')
 const newPassword = ref('')
 const passwordIsValid = (value: string) =>
   testString(PASSWORD_REGEX, value) || t('passwordValidation')
-const rights = useRights(ROUTES.api.profile)
+const { status, error, execute } = profileApi.updatePassword({
+  oldPassword,
+  newPassword,
+})
 
 async function submitHandler(event: SubmitEventPromise) {
   const results = await event
 
-  if (results.valid) {
-    if (oldPassword.value === newPassword.value)
-      mainStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
-    else
-      execute({
-        oldPassword: oldPassword.value,
-        newPassword: newPassword.value,
-      })
+  if (!results.valid) {
+    return
+  }
+
+  if (oldPassword.value === newPassword.value) {
+    mainStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
+  }
+  else {
+    execute()
   }
 }
 
 watch(error, () => {
-  if (error.value)
-    mainStore.addAlert({
-      type: 'error',
-      text: getErrorText(error.value, locale.value),
-    })
+  if (!error.value) {
+    return
+  }
+
+  mainStore.addAlert({
+    type: 'error',
+    text: getErrorText(error.value, locale.value),
+  })
 })
 
 watch(status, () => {
-  if (status.value === 'success') mainStore.addAlert({ type: 'success', text: t('success') })
+  if (status.value === 'success') {
+    mainStore.addAlert({ type: 'success', text: t('success') })
+  }
 })
 </script>
 

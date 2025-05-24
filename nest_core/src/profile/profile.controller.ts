@@ -23,7 +23,7 @@ import { JwtGuard } from 'src/auth/jwt.guard';
 import { ProfileService } from './profile.service';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { ChangeEmailRequestDto } from './dto/change-email-request.dto';
-import { ChangeEmailDto } from './dto/change-email.dto';
+import { ChangeEmailConfirmDto } from './dto/change-email-confirm.dto';
 import { QueryItemsDto } from 'src/database/dto/query-items.dto';
 import { d, IExternalSession, IUser, ROUTES } from '@ap/shared';
 import { ExternalUserDto } from 'src/users/dto/external-user.dto';
@@ -105,13 +105,13 @@ export class ProfileController {
   @Patch('change-email')
   async changeEmailConfirm(
     @Req() req: TFastifyRequestWithToken,
-    @Body() changeEmailDto: ChangeEmailDto,
+    @Body() changeEmailConfirmDto: ChangeEmailConfirmDto,
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<void> {
     res.status(HttpStatus.NO_CONTENT);
     await this.profileService.changeEmailConfirm(
       req.user.userId,
-      changeEmailDto.code,
+      changeEmailConfirmDto.code,
     );
   }
 

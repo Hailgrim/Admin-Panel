@@ -4,56 +4,74 @@ import type { SubmitEventPromise } from 'vuetify'
 const { user } = defineProps<{ user: IUser }>()
 
 const { t, locale } = useI18n()
-const {
-  error: uError,
-  execute: uExecute,
-  status: uStatus,
-} = usersApi.update()
-const {
-  error: dError,
-  execute: dExecute,
-  status: dStatus,
-} = usersApi.delete()
+const rights = useRights(ROUTES.api.users)
+const mainStore = useMainStore()
+const router = useRouter()
 const oldData = ref<IUser>(user)
 const newData = ref<IUser>(user)
+const updatedValues = ref<TUpdateUser>({})
 const emailIsValid = (value: string) =>
   testString(EMAIL_REGEX, value) || t('emailValidationI18N')
 const nameIsValid = (value: string) =>
   testString(NAME_REGEX, value) || t('nameValidation')
-const mainStore = useMainStore()
-const rights = useRights(ROUTES.api.users)
-const router = useRouter()
+const {
+  error: uError,
+  execute: uExecute,
+  status: uStatus,
+} = usersApi.update({
+  id: user.id,
+  fields: updatedValues,
+})
+const {
+  error: dError,
+  execute: dExecute,
+  status: dStatus,
+} = usersApi.delete({ items: [user.id] })
 
 async function submitHandler(event: SubmitEventPromise) {
   const results = await event
-  const updatedValues = getUpdatedValues<IUser>(oldData.value, newData.value)
 
-  if (results.valid && Object.keys(updatedValues).length > 0) {
-    uExecute({
-      id: user.id,
-      fields: updatedValues,
-    })
+  if (!results.valid) {
+    return
+  }
+
+  updatedValues.value = getUpdatedValues<IUser>(oldData.value, newData.value)
+
+  if (Object.keys(updatedValues.value).length > 0) {
+    uExecute()
+  }
+  else {
+    mainStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
   }
 }
 
 watch(uError, () => {
-  if (uError.value)
-    mainStore.addAlert({
-      type: 'error',
-      text: getErrorText(uError.value, locale.value),
-    })
+  if (!uError.value) {
+    return
+  }
+
+  mainStore.addAlert({
+    type: 'error',
+    text: getErrorText(uError.value, locale.value),
+  })
 })
 
 watch(uStatus, () => {
-  if (uStatus.value === 'success') mainStore.addAlert({ type: 'success', text: t('success') })
+  if (uStatus.value === 'success') {
+    oldData.value = newData.value
+    mainStore.addAlert({ type: 'success', text: t('success') })
+  }
 })
 
 watch(dError, () => {
-  if (dError.value)
-    mainStore.addAlert({
-      type: 'error',
-      text: getErrorText(dError.value, locale.value),
-    })
+  if (!dError.value) {
+    return
+  }
+
+  mainStore.addAlert({
+    type: 'error',
+    text: getErrorText(dError.value, locale.value),
+  })
 })
 
 watch(dStatus, () => {
@@ -105,7 +123,7 @@ watch(dStatus, () => {
       :loading="dStatus === 'pending' || dStatus === 'success'"
       prepand-icon="mdi-delete"
       type="button"
-      @click="dExecute({ items: [user.id] })"
+      @click="dExecute()"
     >
       {{ $t('delete') }}
     </FormButton>

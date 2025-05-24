@@ -15,12 +15,30 @@ const parseRawCookies = (cookies: string) => {
   };
 
   const options = Object.fromEntries(tempCookie.slice(1));
-  if (options['Max-Age'] !== undefined) result.maxAge = options['Max-Age'];
-  if (options['Domain'] !== undefined) result.domain = options['Domain'];
-  if (options['Path'] !== undefined) result.path = options['Path'];
-  if ('HttpOnly' in options) result.httpOnly = true;
-  if ('Secure' in options) result.secure = true;
-  if (options['SameSite'] !== undefined) result.sameSite = options['SameSite'];
+
+  if (options['Max-Age'] !== undefined) {
+    result.maxAge = options['Max-Age'];
+  }
+
+  if (options['Domain'] !== undefined) {
+    result.domain = options['Domain'];
+  }
+
+  if (options['Path'] !== undefined) {
+    result.path = options['Path'];
+  }
+
+  if ('HttpOnly' in options) {
+    result.httpOnly = true;
+  }
+
+  if ('Secure' in options) {
+    result.secure = true;
+  }
+
+  if (options['SameSite'] !== undefined) {
+    result.sameSite = options['SameSite'];
+  }
 
   return result;
 };

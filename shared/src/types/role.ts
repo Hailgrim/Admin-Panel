@@ -1,5 +1,5 @@
-import { IRights } from './database';
-import { IUser } from './user';
+import type { IRights } from './database';
+import type { IUser } from './user';
 
 export interface IRole {
   id: string;

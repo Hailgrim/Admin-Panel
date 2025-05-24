@@ -1,42 +1,56 @@
 class UsersApi {
-  create = useAPI<IUser, TCreateUser>(payload => ({
-    url: ROUTES.api.users,
-    options: { method: 'POST', credentials: 'include', body: payload },
-  }))
+  create = (payload: TFetchPayload<TCreateUser>) =>
+    useAPI<IUser>(ROUTES.api.users, {
+      immediate: false,
+      watch: false,
+      method: 'POST',
+      credentials: 'include',
+      body: payload,
+    })
 
-  getOne = useAPI<IUser, IUser['id']>(payload => ({
-    url: ROUTES.api.user(payload),
-    options: { method: 'GET', credentials: 'include' },
-  }))
+  getOne = (payload: TFetchPayload<IUser['id']>) =>
+    useAPI<IUser>(() => ROUTES.api.user(unref(payload)), {
+      immediate: false,
+      watch: false,
+      method: 'GET',
+      credentials: 'include',
+    })
 
-  getList = useAPI<
-    IGetListResponse<IUser>,
-    TGetListRequest<TGetUsers> | undefined
-  >(payload => ({
-    url: ROUTES.api.users,
-    options: { method: 'GET', credentials: 'include', params: payload },
-  }))
+  getList = (payload?: TFetchPayload<TGetListRequest<TGetUsers>>) =>
+    useAPI<IGetListResponse<IUser>>(ROUTES.api.users, {
+      immediate: false,
+      watch: false,
+      method: 'GET',
+      credentials: 'include',
+      params: payload,
+    })
 
-  update = useAPI<undefined, IUpdateReq<TUpdateUser, IUser['id']>>(payload => ({
-    url: ROUTES.api.user(payload.id),
-    options: { method: 'PATCH', credentials: 'include', body: payload.fields },
-  }))
+  update = (payload: TFetchPayload<IUpdateReq<TUpdateUser, IUser['id']>>) =>
+    useAPI(() => ROUTES.api.user(unref(unref(payload).id)), {
+      immediate: false,
+      watch: false,
+      method: 'PATCH',
+      credentials: 'include',
+      body: unref(payload).fields,
+    })
 
-  updateRoles = useAPI<undefined, IUpdateReq<IQueryItems<IUsersRoles>, IUser['id']>>(
-    payload => ({
-      url: ROUTES.api.userRoles(payload.id),
-      options: {
-        method: 'PATCH',
-        credentials: 'include',
-        body: payload.fields,
-      },
-    }),
-  )
+  updateRoles = (payload: TFetchPayload<IUpdateReq<IQueryItems<IUsersRoles>, IUser['id']>>) =>
+    useAPI(() => ROUTES.api.userRoles(unref(unref(payload).id)), {
+      immediate: false,
+      watch: false,
+      method: 'PATCH',
+      credentials: 'include',
+      body: unref(payload).fields,
+    })
 
-  delete = useAPI<undefined, IQueryItems<IUser['id']>>(payload => ({
-    url: ROUTES.api.users,
-    options: { method: 'DELETE', credentials: 'include', body: payload },
-  }))
+  delete = (payload: TFetchPayload<IQueryItems<IUser['id']>>) =>
+    useAPI(ROUTES.api.users, {
+      immediate: false,
+      watch: false,
+      method: 'DELETE',
+      credentials: 'include',
+      body: payload,
+    })
 }
 
 const usersApi = new UsersApi()

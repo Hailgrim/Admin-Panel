@@ -13,7 +13,7 @@ import {
 import {
   ISignIn,
   IQueryItems,
-  IChangeEmail,
+  IChangeEmailConfirm,
   IChangeEmailRequest,
   IExternalSession,
   IUpdatePassword,
@@ -205,7 +205,7 @@ const runProfileTests = () => {
         await request(app.getHttpServer())
           .patch(ROUTES.api.changeEmail)
           .set('Cookie', adminCookies)
-          .send({ code: queue.at(-2)!.code } satisfies IChangeEmail)
+          .send({ code: queue.at(-2)!.code } satisfies IChangeEmailConfirm)
           .expect(HttpStatus.NO_CONTENT);
 
         const getProfileResBody = await request(app.getHttpServer())
@@ -221,7 +221,7 @@ const runProfileTests = () => {
         await request(app.getHttpServer())
           .patch(ROUTES.api.changeEmail)
           .set('Cookie', userCookies)
-          .send({ code: queue.at(-1)!.code } satisfies IChangeEmail)
+          .send({ code: queue.at(-1)!.code } satisfies IChangeEmailConfirm)
           .expect(HttpStatus.NO_CONTENT);
 
         const getProfileResBody = await request(app.getHttpServer())

@@ -10,7 +10,7 @@ const newData = ref<TCreateResource>({
 })
 const nameIsValid = (value: string) => value.length > 0
 const pathIsValid = (value: string) => value.length > 0
-const { data, error, execute, status } = resourcesApi.create()
+const { data, error, execute, status } = resourcesApi.create(newData)
 const mainStore = useMainStore()
 const router = useRouter()
 const rights = useRights(ROUTES.api.resources)
@@ -18,15 +18,22 @@ const rights = useRights(ROUTES.api.resources)
 async function submitHandler(event: SubmitEventPromise) {
   const results = await event
 
-  if (results.valid) execute(newData.value)
+  if (!results.valid) {
+    return
+  }
+
+  execute()
 }
 
 watch(error, () => {
-  if (error.value)
-    mainStore.addAlert({
-      type: 'error',
-      text: getErrorText(error.value, locale.value),
-    })
+  if (!error.value) {
+    return
+  }
+
+  mainStore.addAlert({
+    type: 'error',
+    text: getErrorText(error.value, locale.value),
+  })
 })
 
 watch(data, () => {

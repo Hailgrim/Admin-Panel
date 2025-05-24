@@ -7,7 +7,7 @@ export interface IChangeEmailRequest {
   newEmail: string;
 }
 
-export interface IChangeEmail {
+export interface IChangeEmailConfirm {
   code: string;
 }
 

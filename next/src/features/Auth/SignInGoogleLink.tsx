@@ -39,7 +39,9 @@ const SignInGoogleLink: FC = () => {
 
   useEffect(() => {
     const messageHandler = (event: MessageEvent<IWindowMessage<IUser>>) => {
-      if (event.data.type !== ROUTES.ui.signInGoogle) return;
+      if (event.data.type !== ROUTES.ui.signInGoogle) {
+        return;
+      }
 
       dispatch(setProfile(event.data.payload));
       router.push(

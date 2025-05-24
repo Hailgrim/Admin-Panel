@@ -7,32 +7,60 @@ const emit = defineEmits<{
 }>()
 
 const { t, locale } = useI18n()
-const mainStore = useMainStore()
-const { status, error, execute } = profileApi.deleteSessions()
+const router = useRouter()
 const rights = useRights(ROUTES.api.profile)
+const mainStore = useMainStore()
 const userAgent = new UAParser(session.userAgent).getResult()
 const updatedAt = getDateString(session.updatedAt)
+const { status: dsStatus, error: dsError, execute: dsExecute } = profileApi.deleteSessions({ items: [session.id] })
+const { status: soStatus, error: soError, execute: soExecute } = authApi.signOut()
 
 async function submitHandler() {
-  execute({ items: [session.id] })
+  if (session.current) {
+    soExecute()
+  }
+  else {
+    dsExecute()
+  }
 }
 
-watch(error, () => {
-  if (error.value)
-    mainStore.addAlert({
-      type: 'error',
-      text: getErrorText(error.value, locale.value),
-    })
+watch(dsError, () => {
+  if (!dsError.value) {
+    return
+  }
+
+  mainStore.addAlert({
+    type: 'error',
+    text: getErrorText(dsError.value, locale.value),
+  })
 })
 
-watch(status, () => {
-  if (status.value === 'success') {
+watch(dsStatus, () => {
+  if (dsStatus.value === 'success') {
     mainStore.addAlert({ type: 'success', text: t('success') })
     emit('delete')
+  }
+})
 
-    if (session.current) {
-      mainStore.setProfile(null)
-    }
+watch(soError, () => {
+  if (!soError.value) {
+    return
+  }
+
+  if (soError.value.statusCode === 401) {
+    router.push(ROUTES.ui.signIn)
+  }
+  else {
+    mainStore.addAlert({
+      type: 'error',
+      text: getErrorText(soError.value, locale.value),
+    })
+  }
+})
+
+watch(soStatus, () => {
+  if (soStatus.value === 'success') {
+    router.push(ROUTES.ui.signIn)
   }
 })
 </script>
@@ -83,7 +111,7 @@ watch(status, () => {
       <v-card-actions>
         <v-btn
           color="error"
-          :disabled="!rights.updating || status === 'pending' || status === 'success'"
+          :disabled="!rights.updating || dsStatus === 'pending' || dsStatus === 'success'"
           icon="mdi-delete"
           type="submit"
           variant="text"

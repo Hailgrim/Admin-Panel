@@ -33,7 +33,10 @@ export const mainSlice = createSlice({
     ) => {
       if (action.payload.delay) {
         state.alerts = state.alerts.map((alert) => {
-          if (alert.id === action.payload.id) alert.deleted = true;
+          if (alert.id === action.payload.id) {
+            alert.deleted = true;
+          }
+
           return alert;
         });
       } else {

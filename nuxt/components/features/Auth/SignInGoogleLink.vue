@@ -25,7 +25,9 @@ const googleHandler = (event: MouseEvent) => {
 }
 
 const messageHandler = (event: MessageEvent<IWindowMessage<IUser>>) => {
-  if (event.data.type !== ROUTES.ui.signInGoogle) return
+  if (event.data.type !== ROUTES.ui.signInGoogle) {
+    return
+  }
 
   mainStore.setProfile(event.data.payload)
   router.push(route.query.return ? decodeURIComponent(String(route.query.return)) : ROUTES.ui.home)

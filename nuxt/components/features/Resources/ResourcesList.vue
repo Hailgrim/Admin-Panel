@@ -11,73 +11,78 @@ defineEmits<{
 }>()
 
 const { locale } = useI18n()
+const rights = useRights(ROUTES.api.resources)
+const mainStore = useMainStore()
+const items = ref(props.rows)
+const page = ref(props.page || 1)
+const quantity = ref(props.quantity || 25)
+const reqCount = ref(false)
+const selected = ref<string[]>([])
 const {
-  data: faData,
-  error: faError,
-  execute: faExecute,
-  status: faStatus,
-} = resourcesApi.getList()
+  data: glData,
+  error: glError,
+  execute: glExecute,
+  status: glStatus,
+} = resourcesApi.getList({ reqPage: page, reqLimit: quantity, reqCount })
 const {
   error: dError,
   execute: dExecute,
   status: dStatus,
-} = resourcesApi.delete()
-const page = ref(props.page || 1)
-const quantity = ref(props.quantity || 25)
+} = resourcesApi.delete({ items: selected })
 const count = computed(
-  () => faData.value?.count || props.count || page.value * quantity.value,
+  () => glData.value?.count || props.count || page.value * quantity.value,
 )
-const items = ref(props.rows)
-const rights = useRights(ROUTES.api.resources)
-const mainStore = useMainStore()
-const selected = ref<string[]>([])
 
 watch(
   () => props.rows,
   () => {
     if (!props.rows) {
-      faExecute({
-        reqPage: page.value,
-        reqLimit: quantity.value,
-        reqCount: true,
-      })
+      reqCount.value = true
+      glExecute()
+      reqCount.value = false
     }
   },
   { immediate: true },
 )
 
 watch([page, quantity], () => {
-  faExecute({ reqPage: page.value, reqLimit: quantity.value })
+  glExecute()
 })
 
-watch(faData, () => {
-  if (faData.value) items.value = faData.value.rows
+watch(glData, () => {
+  if (glData.value) {
+    items.value = glData.value.rows
+  }
 })
 
-watch(faError, () => {
-  if (faError.value)
-    mainStore.addAlert({
-      type: 'error',
-      text: getErrorText(faError.value, locale.value),
-    })
+watch(glError, () => {
+  if (!glError.value) {
+    return
+  }
+
+  mainStore.addAlert({
+    type: 'error',
+    text: getErrorText(glError.value, locale.value),
+  })
 })
 
 watch(dStatus, () => {
   if (dStatus.value === 'success') {
-    faExecute({
-      reqPage: page.value,
-      reqLimit: quantity.value,
-      reqCount: true,
-    })
+    reqCount.value = true
+    glExecute()
+    reqCount.value = false
   }
 })
 
 watch(dError, () => {
-  if (dError.value)
-    mainStore.addAlert({
-      type: 'error',
-      text: getErrorText(dError.value, locale.value),
-    })
+  if (!dError.value) {
+    return
+  }
+
+  mainStore.addAlert({
+    type: 'error',
+    text: getErrorText(dError.value, locale.value),
+  })
 })
 </script>
 
@@ -100,7 +105,7 @@ watch(dError, () => {
       :loading="dStatus === 'pending'"
       prepend-icon="mdi-delete"
       variant="flat"
-      @click="dExecute({ items: selected })"
+      @click="dExecute()"
     >
       {{ $t('delete') }}
     </v-btn>
@@ -110,7 +115,7 @@ watch(dError, () => {
     v-model:quantity="quantity"
     v-model:selected="selected"
     :count="count"
-    :loading="dStatus === 'pending' || faStatus === 'pending'"
+    :loading="dStatus === 'pending' || glStatus === 'pending'"
     :rows="items"
     @update:page="$emit('update:page', $event)"
     @update:quantity="$emit('update:quantity', $event)"

@@ -2,10 +2,12 @@
 const { t, locale } = useI18n()
 const errorText = ref<string | null>(null)
 const hash = new URLSearchParams(location?.hash.slice(1) || '')
-const { data, error, execute } = authApi.signInGoogle()
+const { data, error, execute } = authApi.signInGoogle({ googleAccessToken: hash.get('access_token')! })
 
 const messageHandler = (event: MessageEvent<IWindowMessage<string>>) => {
-  if (event.data.type !== ROUTES.ui.signInGoogle || !data.value) return
+  if (event.data.type !== ROUTES.ui.signInGoogle || !data.value) {
+    return
+  }
 
   if (event.data.payload === hash.get('state')) {
     const message: IWindowMessage<IUser> = {
@@ -22,7 +24,7 @@ const messageHandler = (event: MessageEvent<IWindowMessage<string>>) => {
 
 onMounted(() => {
   if (hash.has('access_token')) {
-    execute({ googleAccessToken: hash.get('access_token')! })
+    execute()
   }
   else {
     errorText.value = t('error')
@@ -32,14 +34,13 @@ onMounted(() => {
 })
 
 watch(error, () => {
-  if (error.value)
-    switch (error.value?.status) {
-      case 410:
-        errorText.value = t('userDeleted')
-        break
-      default:
-        errorText.value = getErrorText(error.value, locale.value)
-    }
+  switch (error.value?.statusCode) {
+    case 410:
+      errorText.value = t('userDeleted')
+      break
+    default:
+      errorText.value = getErrorText(error.value, locale.value)
+  }
 })
 
 onUnmounted(() => {

@@ -4,36 +4,42 @@ import type { SubmitEventPromise } from 'vuetify'
 const { resource } = defineProps<{ resource: IResource }>()
 
 const { t, locale } = useI18n()
+const rights = useRights(ROUTES.api.resources)
+const mainStore = useMainStore()
+const router = useRouter()
+const oldData = ref<IResource>(resource)
+const newData = ref<IResource>(resource)
+const updatedValues = ref<TUpdateResource>({})
+const nameIsValid = (value: string) => value.length > 0
+const pathIsValid = (value: string) => value.length > 0
 const {
   error: uError,
   execute: uExecute,
   status: uStatus,
-} = resourcesApi.update()
+} = resourcesApi.update({
+  id: resource.id,
+  fields: updatedValues,
+})
 const {
   error: dError,
   execute: dExecute,
   status: dStatus,
-} = resourcesApi.delete()
-const oldData = ref<IResource>(resource)
-const newData = ref<IResource>(resource)
-const nameIsValid = (value: string) => value.length > 0
-const pathIsValid = (value: string) => value.length > 0
-const mainStore = useMainStore()
-const router = useRouter()
-const rights = useRights(ROUTES.api.resources)
+} = resourcesApi.delete({ items: [resource.id] })
 
 async function submitHandler(event: SubmitEventPromise) {
   const results = await event
-  const updatedValues = getUpdatedValues<IResource>(
+
+  if (!results.valid) {
+    return
+  }
+
+  updatedValues.value = getUpdatedValues<IResource>(
     oldData.value,
     newData.value,
   )
 
-  if (results.valid && Object.keys(updatedValues).length > 0) {
-    uExecute({
-      id: resource.id,
-      fields: updatedValues,
-    })
+  if (Object.keys(updatedValues.value).length > 0) {
+    uExecute()
   }
   else {
     mainStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
@@ -41,11 +47,14 @@ async function submitHandler(event: SubmitEventPromise) {
 }
 
 watch(uError, () => {
-  if (uError.value)
-    mainStore.addAlert({
-      type: 'error',
-      text: getErrorText(uError.value, locale.value),
-    })
+  if (!uError.value) {
+    return
+  }
+
+  mainStore.addAlert({
+    type: 'error',
+    text: getErrorText(uError.value, locale.value),
+  })
 })
 
 watch(uStatus, () => {
@@ -56,11 +65,14 @@ watch(uStatus, () => {
 })
 
 watch(dError, () => {
-  if (dError.value)
-    mainStore.addAlert({
-      type: 'error',
-      text: getErrorText(dError.value, locale.value),
-    })
+  if (!dError.value) {
+    return
+  }
+
+  mainStore.addAlert({
+    type: 'error',
+    text: getErrorText(dError.value, locale.value),
+  })
 })
 
 watch(dStatus, () => {
@@ -117,7 +129,7 @@ watch(dStatus, () => {
       :loading="dStatus === 'pending' || dStatus === 'success'"
       prepand-icon="mdi-delete"
       type="button"
-      @click="dExecute({ items: [resource.id] })"
+      @click="dExecute()"
     >
       {{ $t('delete') }}
     </FormButton>

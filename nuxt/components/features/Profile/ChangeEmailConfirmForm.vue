@@ -13,34 +13,43 @@ const mainStore = useMainStore()
 const code = ref('')
 const codeIsValid = (value: string) =>
   value.length > 0 || `${t('codeFromEmail')} (${email})`
-const { status, error, execute } = profileApi.changeEmailConfirm()
+const { status, error, execute } = profileApi.changeEmailConfirm({ code })
 const rights = useRights(ROUTES.api.profile)
 
 async function submitHandler(event: SubmitEventPromise) {
   const results = await event
 
-  if (results.valid) execute({ code: code.value })
+  if (!results.valid) {
+    return
+  }
+
+  execute()
 }
 
 watch(error, () => {
-  if (error.value)
-    switch (error.value?.status) {
-      case 404:
-        mainStore.addAlert({ type: 'error', text: t('wrongEmailOrCode') })
-        break
-      default:
-        mainStore.addAlert({
-          type: 'error',
-          text: getErrorText(error.value, locale.value),
-        })
-    }
+  if (!error.value) {
+    return
+  }
+
+  switch (error.value.statusCode) {
+    case 404:
+      mainStore.addAlert({ type: 'error', text: t('wrongEmailOrCode') })
+      break
+    default:
+      mainStore.addAlert({
+        type: 'error',
+        text: getErrorText(error.value, locale.value),
+      })
+  }
 })
 
 watch(status, () => {
   if (status.value === 'success') {
     emit('close')
-    if (mainStore.profile)
+
+    if (mainStore.profile) {
       mainStore.setProfile({ ...mainStore.profile, email })
+    }
   }
 })
 </script>

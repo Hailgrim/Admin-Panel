@@ -1,21 +1,22 @@
 <script setup lang="ts">
 const { locale } = useI18n()
-const { data, error, execute, status } = profileApi.getSessions()
 const mainStore = useMainStore()
 const sessions = ref<IExternalSession[] | null>(null)
+const { data, error, execute, status } = profileApi.getSessions()
 
 watch(data, () => {
-  sessions.value
-    = data.value
-      && Array.from(data.value).sort((a, b) => (!a.current && b.current ? 1 : -1))
+  sessions.value = data.value && Array.from(data.value).sort((a, b) => (!a.current && b.current ? 1 : -1))
 })
 
 watch(error, () => {
-  if (error.value)
-    mainStore.addAlert({
-      type: 'error',
-      text: getErrorText(error.value, locale.value),
-    })
+  if (!error.value) {
+    return
+  }
+
+  mainStore.addAlert({
+    type: 'error',
+    text: getErrorText(error.value, locale.value),
+  })
 })
 
 onMounted(() => {

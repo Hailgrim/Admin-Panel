@@ -1,37 +1,47 @@
 class ResourcesApi {
-  create = useAPI<IResource, TCreateResource>(payload => ({
-    url: ROUTES.api.resources,
-    options: { method: 'POST', credentials: 'include', body: payload },
-  }))
+  create = (payload: TFetchPayload<TCreateResource>) =>
+    useAPI<IResource>(ROUTES.api.resources, {
+      immediate: false,
+      watch: false,
+      method: 'POST',
+      credentials: 'include',
+      body: payload,
+    })
 
-  getOne = useAPI<IResource, IResource['id']>(payload => ({
-    url: ROUTES.api.resource(payload),
-    options: { method: 'GET', credentials: 'include' },
-  }))
+  getOne = (payload: TFetchPayload<IResource['id']>) =>
+    useAPI<IResource>(() => ROUTES.api.resource(unref(payload)), {
+      immediate: false,
+      watch: false,
+      method: 'GET',
+      credentials: 'include',
+    })
 
-  getList = useAPI<
-    IGetListResponse<IResource>,
-    TGetListRequest<TGetResources> | undefined
-  >(payload => ({
-    url: ROUTES.api.resources,
-    options: { method: 'GET', credentials: 'include', params: payload },
-  }))
+  getList = (payload?: TFetchPayload<TGetListRequest<TGetResources>>) =>
+    useAPI<IGetListResponse<IResource>>(ROUTES.api.resources, {
+      immediate: false,
+      watch: false,
+      method: 'GET',
+      credentials: 'include',
+      params: payload,
+    })
 
-  update = useAPI<undefined, IUpdateReq<TUpdateResource, IResource['id']>>(
-    payload => ({
-      url: ROUTES.api.resource(payload.id),
-      options: {
-        method: 'PATCH',
-        credentials: 'include',
-        body: payload.fields,
-      },
-    }),
-  )
+  update = (payload: TFetchPayload<IUpdateReq<TUpdateResource, IResource['id']>>) =>
+    useAPI(() => ROUTES.api.resource(unref(unref(payload).id)), {
+      immediate: false,
+      watch: false,
+      method: 'PATCH',
+      credentials: 'include',
+      body: unref(payload).fields,
+    })
 
-  delete = useAPI<undefined, IQueryItems<IResource['id']>>(payload => ({
-    url: ROUTES.api.resources,
-    options: { method: 'DELETE', credentials: 'include', body: payload },
-  }))
+  delete = (payload: TFetchPayload<IQueryItems<IResource['id']>>) =>
+    useAPI(ROUTES.api.resources, {
+      immediate: false,
+      watch: false,
+      method: 'DELETE',
+      credentials: 'include',
+      body: payload,
+    })
 }
 
 const resourcesApi = new ResourcesApi()

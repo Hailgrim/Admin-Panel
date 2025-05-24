@@ -29,12 +29,7 @@ const UpdateProfileForm: FC = () => {
   const rights = useRights(ROUTES.api.profile);
   const profile = useAppSelector((store) => store.main.profile);
   const newProfile = useRef(profile);
-  const [newData, setNewData] = useState(
-    (() => {
-      const { email, ...fields } = profile || ({} as Partial<IUser>);
-      return fields;
-    })()
-  );
+  const [newData, setNewData] = useState({ ...profile });
   const nameIsValid = useMemo(
     () => newData.name && testString(NAME_REGEX, newData.name),
     [newData]

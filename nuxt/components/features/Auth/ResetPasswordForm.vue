@@ -15,29 +15,31 @@ const codeIsValid = (value: string) =>
 const password = ref('')
 const passwordIsValid = (value: string) =>
   testString(PASSWORD_REGEX, value) || t('passwordValidation')
-const { status, error, execute } = authApi.resetPassword()
+const { status, error, execute } = authApi.resetPassword({ email, password, code })
 const errorText = ref<string | null>(null)
 const router = useRouter()
 
 async function submitHandler(event: SubmitEventPromise) {
   const results = await event
 
-  if (results.valid)
-    execute({ email: email, password: password.value, code: code.value })
+  if (!results.valid) {
+    return
+  }
+
+  execute()
 }
 
 watch(error, () => {
-  if (error.value)
-    switch (error.value?.status) {
-      case 404:
-        errorText.value = t('wrongEmailOrCode')
-        break
-      case undefined:
-        errorText.value = null
-        break
-      default:
-        errorText.value = getErrorText(error.value, locale.value)
-    }
+  switch (error.value?.statusCode) {
+    case 404:
+      errorText.value = t('wrongEmailOrCode')
+      break
+    case undefined:
+      errorText.value = null
+      break
+    default:
+      errorText.value = getErrorText(error.value, locale.value)
+  }
 })
 
 watch(status, () => {

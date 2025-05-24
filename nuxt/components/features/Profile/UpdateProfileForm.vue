@@ -2,40 +2,53 @@
 import type { SubmitEventPromise } from 'vuetify'
 
 const { t, locale } = useI18n()
+const rights = useRights(ROUTES.api.profile)
 const mainStore = useMainStore()
-const { email, ...profile } = mainStore.profile || ({} as Partial<IUser>)
-const newData = ref(profile)
-const { status, error, execute } = profileApi.updateProfile()
+const newData = ref({ ...mainStore.profile })
+const updatedValues = ref<TUpdateUser>({})
 const nameIsValid = (value = '') =>
   testString(NAME_REGEX, value) || t('nameValidation')
-const rights = useRights(ROUTES.api.profile)
+const { status, error, execute } = profileApi.updateProfile(updatedValues)
 
 async function submitHandler(event: SubmitEventPromise) {
   const results = await event
 
-  if (newData.value && mainStore.profile && results.valid) {
-    const updatedValues = getUpdatedValues<IUser>(
+  if (!results.valid) {
+    return
+  }
+
+  if (mainStore.profile) {
+    updatedValues.value = getUpdatedValues<IUser>(
       mainStore.profile,
       newData.value,
     )
 
-    if (Object.keys(updatedValues).length > 0) execute(updatedValues)
-    else mainStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
+    if (Object.keys(updatedValues.value).length > 0) {
+      execute()
+    }
+    else {
+      mainStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
+    }
   }
 }
 
 watch(error, () => {
-  if (error.value)
-    mainStore.addAlert({
-      type: 'error',
-      text: getErrorText(error.value, locale.value),
-    })
+  if (!error.value) {
+    return
+  }
+
+  mainStore.addAlert({
+    type: 'error',
+    text: getErrorText(error.value, locale.value),
+  })
 })
 
 watch(status, () => {
   if (status.value === 'success') {
-    if (mainStore.profile)
+    if (mainStore.profile) {
       mainStore.setProfile({ ...mainStore.profile, ...newData.value })
+    }
+
     mainStore.addAlert({ type: 'success', text: t('success') })
   }
 })

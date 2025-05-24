@@ -1,4 +1,4 @@
-import { IRights } from './database';
+import type { IRights } from './database';
 
 export interface IResource {
   id: string;

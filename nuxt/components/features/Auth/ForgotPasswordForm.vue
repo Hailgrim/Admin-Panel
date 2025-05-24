@@ -5,32 +5,37 @@ const { t, locale } = useI18n()
 const email = ref('')
 const emailIsValid = (value: string) =>
   value.length > 0 || t('emailValidationI18N')
-const { status, error, execute } = authApi.forgotPassword()
+const { status, error, execute } = authApi.forgotPassword({ email })
 const errorText = ref<string | null>(null)
 const resetModal = ref(false)
 
 async function submitHandler(event: SubmitEventPromise) {
   const results = await event
 
-  if (results.valid) execute({ email: email.value })
+  if (!results.valid) {
+    return
+  }
+
+  execute()
 }
 
 watch(error, () => {
-  if (error.value)
-    switch (error.value?.status) {
-      case 404:
-        errorText.value = t('wrongEmail')
-        break
-      case undefined:
-        errorText.value = null
-        break
-      default:
-        errorText.value = getErrorText(error.value, locale.value)
-    }
+  switch (error.value?.statusCode) {
+    case 404:
+      errorText.value = t('wrongEmail')
+      break
+    case undefined:
+      errorText.value = null
+      break
+    default:
+      errorText.value = getErrorText(error.value, locale.value)
+  }
 })
 
 watch(status, () => {
-  if (status.value === 'success') resetModal.value = true
+  if (status.value === 'success') {
+    resetModal.value = true
+  }
 })
 </script>
 

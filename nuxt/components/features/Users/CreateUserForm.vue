@@ -14,7 +14,7 @@ const nameIsValid = (value: string) =>
   testString(NAME_REGEX, value) || t('nameValidation')
 const passwordIsValid = (value: string) =>
   testString(PASSWORD_REGEX, value) || t('passwordValidation')
-const { data, error, execute, status } = usersApi.create()
+const { data, error, execute, status } = usersApi.create(newData)
 const mainStore = useMainStore()
 const router = useRouter()
 const rights = useRights(ROUTES.api.users)
@@ -22,15 +22,22 @@ const rights = useRights(ROUTES.api.users)
 async function submitHandler(event: SubmitEventPromise) {
   const results = await event
 
-  if (results.valid) execute(newData.value)
+  if (!results.valid) {
+    return
+  }
+
+  execute()
 }
 
 watch(error, () => {
-  if (error.value)
-    mainStore.addAlert({
-      type: 'error',
-      text: getErrorText(error.value, locale.value),
-    })
+  if (!error.value) {
+    return
+  }
+
+  mainStore.addAlert({
+    type: 'error',
+    text: getErrorText(error.value, locale.value),
+  })
 })
 
 watch(data, () => {

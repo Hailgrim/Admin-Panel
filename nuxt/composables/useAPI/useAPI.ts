@@ -1,67 +1,87 @@
-import type { IReqError } from './types'
+import type { UseFetchOptions } from '#app'
 
-export function useAPI<ResT = unknown, ReqT = void>(
-  initQuery: (payload: ReqT) => {
-    url: string
-    options: {
-      method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
-      params?: Record<string, unknown>
-      body?: unknown
-      credentials?: RequestCredentials
-    }
-  },
+export function useAPI<T>(
+  url: string | (() => string),
+  options?: UseFetchOptions<T>,
 ) {
-  return (cacheKey?: string) => {
-    const mainStore = useMainStore()
-    const customFetch = useNuxtApp().$api as typeof $fetch
-    const status = ref<'idle' | 'pending' | 'success' | 'error'>('idle')
-    const error = ref<IReqError | null>(null)
-    let cache = ref(null) as Ref<ResT | null>
+  const nuxtApp = useNuxtApp()
+  const event = useRequestEvent()
+  const config = useRuntimeConfig()
+  const cookie = useRequestHeader('cookie')
+  const userAgent = useRequestHeader('user-agent')
+  const baseURL = import.meta.client
+    ? config.public.EXTERNAL_API_HOST
+    : config.public.INTERNAL_API_HOST
+  const timeout = 5000
+  const mainStore = useMainStore()
 
-    if (cacheKey) {
-      const { data: nuxtData } = useNuxtData<ResT | null>(cacheKey)
-      cache = nuxtData
-    }
-
-    const data = ref(cache.value)
-
-    async function execute(arg: ReqT): Promise<ResT | null> {
-      const query = initQuery(arg)
-      const headers: HeadersInit = {}
-      error.value = null
-      data.value = null
-      status.value = 'pending'
-
-      try {
-        const result = await customFetch<ResT>(query.url, {
-          ...query.options,
-          body: query.options.body as
-          | BodyInit
-          | Record<string, unknown>
-          | null
-          | undefined,
-          headers,
-        })
-
-        cache.value = result
-        data.value = result
-        status.value = 'success'
-      }
-      catch (fail) {
-        error.value = {
-          status: Number((fail as Record<string, unknown>).statusCode) || 400,
-          message: String((fail as Record<string, unknown>).message),
-        }
-        status.value = 'error'
-
-        if (error.value.status === 401) {
-          mainStore.setProfile(null)
-        }
+  return useFetch(url, {
+    ...options,
+    mode: 'cors',
+    baseURL,
+    timeout,
+    retry: 1,
+    retryDelay: 0,
+    retryStatusCodes: [401],
+    onRequest({ options }) {
+      if (import.meta.client) {
+        return
       }
 
-      return data.value
-    }
+      if (cookie) {
+        options.headers.set('cookie', cookie)
+      }
 
-    return { data, error, status, execute }
-  }
+      if (userAgent) {
+        options.headers.set('user-agent', userAgent)
+      }
+    },
+    async onResponseError({ response, options }) {
+      if (response.status === 401) {
+        try {
+          const refresh = await $fetch.raw<boolean>(ROUTES.api.refresh, {
+            baseURL,
+            method: 'GET',
+            headers: options.headers,
+            mode: 'cors',
+            credentials: 'include',
+            timeout,
+          })
+          const newCookies = refresh.headers.get('set-cookie')
+
+          if (import.meta.server && event && newCookies) {
+            newCookies
+              .split(', ')
+              .map(cookie =>
+                event.node.res.appendHeader('set-cookie', cookie),
+              )
+          }
+        }
+        catch (error) {
+          if (
+            error instanceof Object
+            && 'statusCode' in error
+            && error.statusCode === 401
+          ) {
+            mainStore.setProfile(null)
+          }
+
+          if (
+            !nuxtApp._route.path.includes(ROUTES.ui.signUp)
+            && !nuxtApp._route.path.includes(ROUTES.ui.signIn)
+            && !nuxtApp._route.path.includes(ROUTES.ui.signInGoogle)
+            && !nuxtApp._route.path.includes(ROUTES.ui.forgotPassword)
+          ) {
+            navigateTo(
+              {
+                path: ROUTES.ui.signIn,
+                query: { return: encodeURIComponent(nuxtApp._route.path) },
+              },
+              { redirectCode: 302 },
+            )
+          }
+        }
+      }
+    },
+  })
 }

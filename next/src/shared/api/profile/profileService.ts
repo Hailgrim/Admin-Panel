@@ -1,7 +1,7 @@
 import { IFetchRes, IReqArgs } from '../types';
 import serverFetch from '../serverFetch';
 import {
-  IChangeEmail,
+  IChangeEmailConfirm,
   IChangeEmailRequest,
   IExternalSession,
   IQueryItems,
@@ -51,7 +51,7 @@ class ProfileService {
     };
   }
 
-  changeEmailConfirmArgs(payload: IChangeEmail): IReqArgs {
+  changeEmailConfirmArgs(payload: IChangeEmailConfirm): IReqArgs {
     return {
       url: ROUTES.api.changeEmail,
       method: 'PATCH',

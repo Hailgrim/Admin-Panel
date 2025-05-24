@@ -26,7 +26,6 @@ import {
   TCreateUser,
   TGetUsers,
   TUpdateUser,
-  WithoutNulls,
 } from '@ap/shared';
 import { CacheService } from 'src/cache/cache.service';
 import { DatabaseService } from 'src/database/database.service';
@@ -44,10 +43,7 @@ export class UsersService {
     private cacheService: CacheService,
   ) {}
 
-  async create(
-    fields: WithoutNulls<TCreateUser>,
-    roles?: RoleEntity[],
-  ): Promise<UserEntity> {
+  async create(fields: TCreateUser, roles?: RoleEntity[]): Promise<UserEntity> {
     let user: UserEntity | null;
 
     try {

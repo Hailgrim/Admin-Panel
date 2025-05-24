@@ -1,5 +1,7 @@
 export default defineNuxtRouteMiddleware(async (to) => {
-  if (import.meta.client) return
+  if (import.meta.client) {
+    return
+  }
 
   const accessToken = useCookie('accessToken')
   const refreshToken = useCookie('refreshToken')

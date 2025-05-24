@@ -40,12 +40,15 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!profile) signOut();
+    if (!profile) {
+      signOut();
+    }
   }, [profile, signOut]);
 
   useEffect(() => {
-    if (isSuccess || (error && 'status' in error && error.status === 401))
+    if (isSuccess || (error && 'status' in error && error.status === 401)) {
       router.push(`${ROUTES.ui.signIn}?return=${encodeURIComponent(pathname)}`);
+    }
   }, [isSuccess, router, pathname, error]);
 
   useEffect(() => {

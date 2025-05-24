@@ -17,7 +17,10 @@ export const useMainStore = defineStore('main', () => {
   function deleteAlert(id: number, delay?: number) {
     if (delay) {
       alerts.value = alerts.value.map((alert) => {
-        if (alert.id === id) alert.deleted = true
+        if (alert.id === id) {
+          alert.deleted = true
+        }
+
         return alert
       })
 

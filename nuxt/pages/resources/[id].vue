@@ -9,8 +9,8 @@ definePageMeta({
 
 const route = useRoute()
 const id = String(route.params.id)
-const { data: data, execute: execute } = resourcesApi.getOne(ROUTES.api.resource(id))
-await execute(id)
+const { data, execute } = resourcesApi.getOne(id)
+await execute()
 
 if (data.value === null) {
   showError({

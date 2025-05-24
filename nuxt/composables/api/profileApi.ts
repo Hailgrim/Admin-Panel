@@ -1,40 +1,64 @@
 class ProfileApi {
-  getProfile = useAPI<IUser>(() => ({
-    url: ROUTES.api.profile,
-    options: { method: 'GET', credentials: 'include' },
-  }))
+  getProfile = () =>
+    useAPI<IUser>(ROUTES.api.profile, {
+      immediate: false,
+      watch: false,
+      method: 'GET',
+      credentials: 'include',
+    })
 
-  updateProfile = useAPI<undefined, TUpdateUser>(payload => ({
-    url: ROUTES.api.profile,
-    options: { method: 'PATCH', credentials: 'include', body: payload },
-  }))
+  updateProfile = (payload: TFetchPayload<TUpdateUser>) =>
+    useAPI(ROUTES.api.profile, {
+      immediate: false,
+      watch: false,
+      method: 'PATCH',
+      credentials: 'include',
+      body: payload,
+    })
 
-  updatePassword = useAPI<undefined, IUpdatePassword>(payload => ({
-    url: ROUTES.api.updatePassword,
-    options: { method: 'PATCH', credentials: 'include', body: payload },
-  }))
+  updatePassword = (payload: TFetchPayload<IUpdatePassword>) =>
+    useAPI(ROUTES.api.updatePassword, {
+      immediate: false,
+      watch: false,
+      method: 'PATCH',
+      credentials: 'include',
+      body: payload,
+    })
 
-  changeEmailRequest = useAPI<undefined, IChangeEmailRequest>(payload => ({
-    url: ROUTES.api.changeEmail,
-    options: { method: 'POST', credentials: 'include', body: payload },
-  }))
+  changeEmailRequest = (payload: TFetchPayload<IChangeEmailRequest>) =>
+    useAPI(ROUTES.api.changeEmail, {
+      immediate: false,
+      watch: false,
+      method: 'POST',
+      credentials: 'include',
+      body: payload,
+    })
 
-  changeEmailConfirm = useAPI<undefined, IChangeEmail>(payload => ({
-    url: ROUTES.api.changeEmail,
-    options: { method: 'PATCH', credentials: 'include', body: payload },
-  }))
+  changeEmailConfirm = (payload: TFetchPayload<IChangeEmailConfirm>) =>
+    useAPI(ROUTES.api.changeEmail, {
+      immediate: false,
+      watch: false,
+      method: 'PATCH',
+      credentials: 'include',
+      body: payload,
+    })
 
-  getSessions = useAPI<IExternalSession[]>(() => ({
-    url: ROUTES.api.sessions,
-    options: { method: 'GET', credentials: 'include' },
-  }))
+  getSessions = () =>
+    useAPI<IExternalSession[]>(ROUTES.api.sessions, {
+      immediate: false,
+      watch: false,
+      method: 'GET',
+      credentials: 'include',
+    })
 
-  deleteSessions = useAPI<undefined, IQueryItems<IExternalSession['id']>>(
-    payload => ({
-      url: ROUTES.api.sessions,
-      options: { method: 'DELETE', credentials: 'include', body: payload },
-    }),
-  )
+  deleteSessions = (payload: TFetchPayload<IQueryItems<IExternalSession['id']>>) =>
+    useAPI(ROUTES.api.sessions, {
+      immediate: false,
+      watch: false,
+      method: 'DELETE',
+      credentials: 'include',
+      body: payload,
+    })
 }
 
 const profileApi = new ProfileApi()

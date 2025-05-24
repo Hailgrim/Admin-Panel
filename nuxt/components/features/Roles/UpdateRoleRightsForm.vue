@@ -5,16 +5,16 @@ const { role, resources } = defineProps<{
 }>()
 
 const { t, locale } = useI18n()
-const { status, error, execute } = rolesApi.updateRights()
+const rights = useRights(ROUTES.api.roles)
 const mainStore = useMainStore()
 const updatedRights = ref<IRights[]>(role.rights || [])
-const rights = useRights(ROUTES.api.roles)
+const { status, error, execute } = rolesApi.updateRights({
+  id: role.id,
+  fields: { items: updatedRights },
+})
 
 function submitHandler() {
-  execute({
-    id: role.id,
-    fields: { items: updatedRights.value },
-  })
+  execute()
 }
 
 function updateRights(newRights: IRights) {
@@ -43,15 +43,20 @@ function updateRights(newRights: IRights) {
 }
 
 watch(error, () => {
-  if (error.value)
-    mainStore.addAlert({
-      type: 'error',
-      text: getErrorText(error.value, locale.value),
-    })
+  if (!error.value) {
+    return
+  }
+
+  mainStore.addAlert({
+    type: 'error',
+    text: getErrorText(error.value, locale.value),
+  })
 })
 
 watch(status, () => {
-  if (status.value === 'success') mainStore.addAlert({ type: 'success', text: t('success') })
+  if (status.value === 'success') {
+    mainStore.addAlert({ type: 'success', text: t('success') })
+  }
 })
 </script>
 

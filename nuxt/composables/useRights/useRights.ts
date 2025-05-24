@@ -31,8 +31,9 @@ export function useRights(path: string) {
 
           if (role.rights) {
             for (const right of role.rights) {
-              if (right.resource?.path !== route)
+              if (right.resource?.path !== route) {
                 continue
+              }
 
               newRights.creating = right.creating
               newRights.reading = right.reading
