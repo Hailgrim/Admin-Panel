@@ -41,7 +41,7 @@ export class ProfileService {
 
     await this.usersService.updateChangeEmailCode(userId, code, newEmail);
     this.queueService.sendEmail(
-      { method: MAIL_CHANGE_EMAIL },
+      { cmd: MAIL_CHANGE_EMAIL },
       { email: newEmail, code },
     );
   }

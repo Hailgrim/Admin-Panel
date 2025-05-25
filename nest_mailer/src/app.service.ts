@@ -15,19 +15,16 @@ import {
   MAIL_FORGOT_PASSWORD,
   MAIL_REGISTRATION,
 } from 'libs/config';
-import { RegistrationDto } from './dto/registration.dto';
-import { ForgotPasswordDto } from './dto/forgot-password.dto';
-import { ChangeEmailDto } from './dto/change-email.dto';
 import { d } from '@ap/shared';
 
 @Injectable()
 export class AppService {
   constructor(private readonly mailerService: MailerService) {}
 
-  async registration(registrationDto: RegistrationDto): Promise<void> {
+  async registration(email: string, code: string): Promise<void> {
     try {
       const info = (await this.mailerService.sendMail({
-        to: registrationDto.email,
+        to: email,
         from: MAIL_FROM,
         subject: d['en'].subjectRegistration,
         template: MAIL_REGISTRATION,
@@ -35,7 +32,7 @@ export class AppService {
           host: HOST,
           title: d['en'].subjectRegistration,
           action: d['en'].verificationCode,
-          code: registrationDto.code,
+          code,
         },
       })) as SMTPTransport.SentMessageInfo;
 
@@ -48,10 +45,10 @@ export class AppService {
     }
   }
 
-  async forgotPassword(forgotPasswordDto: ForgotPasswordDto): Promise<void> {
+  async forgotPassword(email: string, code: string): Promise<void> {
     try {
       const info = (await this.mailerService.sendMail({
-        to: forgotPasswordDto.email,
+        to: email,
         from: MAIL_FROM,
         subject: d['en'].subjectForgotPassword,
         template: MAIL_FORGOT_PASSWORD,
@@ -59,7 +56,7 @@ export class AppService {
           host: HOST,
           title: d['en'].subjectForgotPassword,
           action: d['en'].resetPasswordCode,
-          code: forgotPasswordDto.code,
+          code,
         },
       })) as SMTPTransport.SentMessageInfo;
 
@@ -72,10 +69,10 @@ export class AppService {
     }
   }
 
-  async changeEmail(changeEmailDto: ChangeEmailDto): Promise<void> {
+  async changeEmail(email: string, code: string): Promise<void> {
     try {
       const info = (await this.mailerService.sendMail({
-        to: changeEmailDto.email,
+        to: email,
         from: MAIL_FROM,
         subject: d['en'].subjectChangeEmail,
         template: MAIL_CHANGE_EMAIL,
@@ -83,7 +80,7 @@ export class AppService {
           host: HOST,
           title: d['en'].subjectChangeEmail,
           action: d['en'].changeEmailCode,
-          code: changeEmailDto.code,
+          code,
         },
       })) as SMTPTransport.SentMessageInfo;
 

@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { RegistrationDto } from './dto/registration.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ChangeEmailDto } from './dto/change-email.dto';
+import { IQueuePattern } from '@ap/shared';
 import {
   MAIL_CHANGE_EMAIL,
   MAIL_FORGOT_PASSWORD,
@@ -15,18 +16,27 @@ import {
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @MessagePattern({ method: MAIL_REGISTRATION })
+  @MessagePattern<IQueuePattern>({ cmd: MAIL_REGISTRATION })
   registration(registrationDto: RegistrationDto) {
-    return this.appService.registration(registrationDto);
+    return this.appService.registration(
+      registrationDto.email,
+      registrationDto.code,
+    );
   }
 
-  @MessagePattern({ method: MAIL_FORGOT_PASSWORD })
+  @MessagePattern<IQueuePattern>({ cmd: MAIL_FORGOT_PASSWORD })
   forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
-    return this.appService.forgotPassword(forgotPasswordDto);
+    return this.appService.forgotPassword(
+      forgotPasswordDto.email,
+      forgotPasswordDto.code,
+    );
   }
 
-  @MessagePattern({ method: MAIL_CHANGE_EMAIL })
+  @MessagePattern<IQueuePattern>({ cmd: MAIL_CHANGE_EMAIL })
   changeEmail(changeEmailDto: ChangeEmailDto) {
-    return this.appService.changeEmail(changeEmailDto);
+    return this.appService.changeEmail(
+      changeEmailDto.email,
+      changeEmailDto.code,
+    );
   }
 }

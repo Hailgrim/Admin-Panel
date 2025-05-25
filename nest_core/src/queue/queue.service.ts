@@ -1,3 +1,4 @@
+import { IQueuePattern } from '@ap/shared';
 import {
   Inject,
   Injectable,
@@ -15,12 +16,11 @@ export class QueueService {
     private mailClient: ClientProxy,
   ) {}
 
-  sendEmail(
-    options: { method: string },
-    payload: Record<string, unknown>,
-  ): void {
+  sendEmail(pattern: IQueuePattern, payload: Record<string, unknown>): void {
     try {
-      this.mailClient.send(options, payload).subscribe();
+      this.mailClient
+        .send<IQueuePattern, Record<string, unknown>>(pattern, payload)
+        .subscribe();
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();

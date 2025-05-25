@@ -119,10 +119,7 @@ export class AuthService {
     const code = generateCode();
 
     await this.usersService.updateResetPasswordCode(email, code);
-    this.queueService.sendEmail(
-      { method: MAIL_FORGOT_PASSWORD },
-      { email, code },
-    );
+    this.queueService.sendEmail({ cmd: MAIL_FORGOT_PASSWORD }, { email, code });
   }
 
   async resetPassword(
@@ -178,7 +175,7 @@ export class AuthService {
         const code = generateCode();
         await this.usersService.updateVerificationCode(user.email, code);
         this.queueService.sendEmail(
-          { method: MAIL_REGISTRATION },
+          { cmd: MAIL_REGISTRATION },
           { email: user.email, code },
         );
       }

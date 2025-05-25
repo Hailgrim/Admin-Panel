@@ -21,7 +21,7 @@ const verifyModal = ref(false)
 async function submitHandler(event?: SubmitEventPromise) {
   const results = await event
 
-  if (!results?.valid) {
+  if (results && !results.valid) {
     return
   }
 

@@ -1,6 +1,6 @@
 FROM node:lts-alpine AS base
-ARG NEXT_TELEMETRY_DISABLED=1
-ARG HOME=/home/node
+ENV NEXT_TELEMETRY_DISABLED=1
+ARG HOME=/usr/src/app
 WORKDIR ${HOME}
 COPY ./next/package*.json .
 
@@ -25,10 +25,9 @@ RUN npm run build
 
 FROM base AS production
 ENV NODE_ENV=production
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+ARG USER=node
 COPY --from=builder ${HOME}/public ./public
-COPY --from=builder --chown=nextjs:nodejs ${HOME}/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs ${HOME}/.next/static ./.next/static
-USER nextjs
-CMD ["node", "server.js"]
+COPY --from=builder --chown=${USER}:${USER} ${HOME}/.next/standalone ./
+COPY --from=builder --chown=${USER}:${USER} ${HOME}/.next/static ./.next/static
+USER ${USER}
+ENTRYPOINT ["node", "server.js"]
