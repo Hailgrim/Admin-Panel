@@ -24,7 +24,14 @@ import { CacheService } from 'src/cache/cache.service';
 import { IToken, ITokensPair } from './auth.types';
 import { QueueService } from 'src/queue/queue.service';
 import { generateCode, verifyHash } from 'libs/utils';
-import { d, ISession, IUser, TCreateResource, TSignUp } from '@ap/shared';
+import {
+  d,
+  IEmailCode,
+  ISession,
+  IUser,
+  TCreateResource,
+  TSignUp,
+} from '@ap/shared';
 
 @Injectable()
 export class AuthService {
@@ -119,7 +126,10 @@ export class AuthService {
     const code = generateCode();
 
     await this.usersService.updateResetPasswordCode(email, code);
-    this.queueService.sendEmail({ cmd: MAIL_FORGOT_PASSWORD }, { email, code });
+    this.queueService.sendEmail<IEmailCode>(
+      { cmd: MAIL_FORGOT_PASSWORD },
+      { email, code },
+    );
   }
 
   async resetPassword(
@@ -174,7 +184,7 @@ export class AuthService {
       if (user.email) {
         const code = generateCode();
         await this.usersService.updateVerificationCode(user.email, code);
-        this.queueService.sendEmail(
+        this.queueService.sendEmail<IEmailCode>(
           { cmd: MAIL_REGISTRATION },
           { email: user.email, code },
         );

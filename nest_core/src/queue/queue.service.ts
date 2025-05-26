@@ -16,11 +16,12 @@ export class QueueService {
     private mailClient: ClientProxy,
   ) {}
 
-  sendEmail(pattern: IQueuePattern, payload: Record<string, unknown>): void {
+  sendEmail<T = Record<string, unknown>>(
+    pattern: IQueuePattern,
+    payload: T,
+  ): void {
     try {
-      this.mailClient
-        .send<IQueuePattern, Record<string, unknown>>(pattern, payload)
-        .subscribe();
+      this.mailClient.send<IQueuePattern, T>(pattern, payload).subscribe();
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();

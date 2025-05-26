@@ -2,9 +2,7 @@ import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 
 import { AppService } from './app.service';
-import { RegistrationDto } from './dto/registration.dto';
-import { ForgotPasswordDto } from './dto/forgot-password.dto';
-import { ChangeEmailDto } from './dto/change-email.dto';
+import { EmailCodeDto } from './dto/email-code.dto';
 import { IQueuePattern } from '@ap/shared';
 import {
   MAIL_CHANGE_EMAIL,
@@ -17,26 +15,20 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @MessagePattern<IQueuePattern>({ cmd: MAIL_REGISTRATION })
-  registration(registrationDto: RegistrationDto) {
-    return this.appService.registration(
-      registrationDto.email,
-      registrationDto.code,
-    );
+  registration(emailCodeDto: EmailCodeDto) {
+    return this.appService.registration(emailCodeDto.email, emailCodeDto.code);
   }
 
   @MessagePattern<IQueuePattern>({ cmd: MAIL_FORGOT_PASSWORD })
-  forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
+  forgotPassword(emailCodeDto: EmailCodeDto) {
     return this.appService.forgotPassword(
-      forgotPasswordDto.email,
-      forgotPasswordDto.code,
+      emailCodeDto.email,
+      emailCodeDto.code,
     );
   }
 
   @MessagePattern<IQueuePattern>({ cmd: MAIL_CHANGE_EMAIL })
-  changeEmail(changeEmailDto: ChangeEmailDto) {
-    return this.appService.changeEmail(
-      changeEmailDto.email,
-      changeEmailDto.code,
-    );
+  changeEmail(emailCodeDto: EmailCodeDto) {
+    return this.appService.changeEmail(emailCodeDto.email, emailCodeDto.code);
   }
 }

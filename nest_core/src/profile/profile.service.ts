@@ -5,7 +5,12 @@ import { CacheService } from 'src/cache/cache.service';
 import { QueueService } from 'src/queue/queue.service';
 import { generateCode, verifyHash } from 'libs/utils';
 import { MAIL_CHANGE_EMAIL } from 'libs/config';
-import { TUpdateUser, IExternalSession, ISession } from '@ap/shared';
+import {
+  TUpdateUser,
+  IExternalSession,
+  ISession,
+  IEmailCode,
+} from '@ap/shared';
 
 @Injectable()
 export class ProfileService {
@@ -40,7 +45,7 @@ export class ProfileService {
     const code = generateCode();
 
     await this.usersService.updateChangeEmailCode(userId, code, newEmail);
-    this.queueService.sendEmail(
+    this.queueService.sendEmail<IEmailCode>(
       { cmd: MAIL_CHANGE_EMAIL },
       { email: newEmail, code },
     );
