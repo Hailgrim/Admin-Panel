@@ -64,9 +64,9 @@ services:
     env_file:
       - .env
     volumes:
-      - ./nest_core:/home/node
-      - ./shared:/home/node/src/shared
-      - nest_core_node_modules:/home/node/node_modules
+      - ./nest_core:/usr/src/app
+      - ./shared:/usr/src/app/src/shared
+      - nest_core_node_modules:/usr/src/app/node_modules
 
   nest_mailer:
     build:
@@ -74,9 +74,9 @@ services:
     env_file:
       - .env
     volumes:
-      - ./nest_mailer:/home/node
-      - ./shared:/home/node/src/shared
-      - nest_mailer_node_modules:/home/node/node_modules
+      - ./nest_mailer:/usr/src/app
+      - ./shared:/usr/src/app/src/shared
+      - nest_mailer_node_modules:/usr/src/app/node_modules
 
   next:
     build:
@@ -84,9 +84,9 @@ services:
     env_file:
       - .env
     volumes:
-      - ./next:/home/node
-      - ./shared:/home/shared
-      - next_node_modules:/home/node/node_modules
+      - ./next:/usr/src/app
+      - ./shared:/usr/src/shared
+      - next_node_modules:/usr/src/app/node_modules
 
   nuxt:
     build:
@@ -94,6 +94,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./nuxt:/home/bun
-      - ./shared:/home/shared
-      - nuxt_node_modules:/home/bun/node_modules
+      - ./nuxt:/usr/src/app
+      - ./shared:/usr/src/shared
+      - nuxt_node_modules:/usr/src/app/node_modules

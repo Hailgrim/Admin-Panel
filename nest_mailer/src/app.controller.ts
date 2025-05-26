@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
 import { AppService } from './app.service';
 import { EmailCodeDto } from './dto/email-code.dto';
@@ -15,12 +15,12 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @MessagePattern<IQueuePattern>({ cmd: MAIL_REGISTRATION })
-  registration(emailCodeDto: EmailCodeDto) {
+  registration(@Payload() emailCodeDto: EmailCodeDto) {
     return this.appService.registration(emailCodeDto.email, emailCodeDto.code);
   }
 
   @MessagePattern<IQueuePattern>({ cmd: MAIL_FORGOT_PASSWORD })
-  forgotPassword(emailCodeDto: EmailCodeDto) {
+  forgotPassword(@Payload() emailCodeDto: EmailCodeDto) {
     return this.appService.forgotPassword(
       emailCodeDto.email,
       emailCodeDto.code,
@@ -28,7 +28,7 @@ export class AppController {
   }
 
   @MessagePattern<IQueuePattern>({ cmd: MAIL_CHANGE_EMAIL })
-  changeEmail(emailCodeDto: EmailCodeDto) {
+  changeEmail(@Payload() emailCodeDto: EmailCodeDto) {
     return this.appService.changeEmail(emailCodeDto.email, emailCodeDto.code);
   }
 }
