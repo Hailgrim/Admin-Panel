@@ -8,7 +8,6 @@ import {
 import {
   DataSource,
   DeleteResult,
-  FindManyOptions,
   In,
   Repository,
   UpdateResult,
@@ -26,6 +25,7 @@ import {
   TUpdateRole,
 } from '@ap/shared';
 import { DatabaseService } from 'src/database/database.service';
+import { TDatabaseGetList } from 'src/database/database.types';
 
 @Injectable()
 export class RolesService {
@@ -102,11 +102,11 @@ export class RolesService {
   prepareGetListOptions(
     fields?: TGetListRequest<TGetRoles>,
     isAdmin?: boolean,
-  ): FindManyOptions<RoleEntity> {
-    const options: FindManyOptions<RoleEntity> =
-      this.databaseService.preparePaginationOptions<RoleEntity, TGetRoles>(
-        fields,
-      );
+  ): TDatabaseGetList<RoleEntity> {
+    const options = this.databaseService.preparePaginationOptions<
+      RoleEntity,
+      TGetRoles
+    >(fields);
 
     options.where = {};
 
@@ -142,14 +142,14 @@ export class RolesService {
         const result = await this.rolesRepository.findAndCount(options);
         return {
           rows: result[0],
-          count: result[1],
-          page: options.skip! / options.take! + 1,
+          page: options.skip / options.take + 1,
           limit: options.take,
+          count: result[1],
         };
       } else {
         return {
           rows: await this.rolesRepository.find(options),
-          page: options.skip! / options.take! + 1,
+          page: options.skip / options.take + 1,
           limit: options.take,
         };
       }
@@ -189,24 +189,27 @@ export class RolesService {
     defaultResource?: boolean,
   ): Promise<void> {
     let role: RoleEntity | null;
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
     try {
-      role = await this.rolesRepository.findOne({
+      role = await queryRunner.manager.findOne(RoleEntity, {
         where: { id, default: Boolean(defaultResource) },
       });
     } catch (error) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
       Logger.error(error);
       throw new InternalServerErrorException();
     }
 
     if (!role) {
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
       throw new NotFoundException();
     }
-
-    const queryRunner = this.dataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
 
     try {
       await queryRunner.manager.delete(RightsEntity, { roleId: id });
@@ -216,6 +219,7 @@ export class RolesService {
           .filter((value) => value.roleId === id)
           .map((value) => ({ ...value, roleId: id })),
       );
+
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();

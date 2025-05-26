@@ -5,13 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import {
-  DeleteResult,
-  FindManyOptions,
-  In,
-  Repository,
-  UpdateResult,
-} from 'typeorm';
+import { DeleteResult, In, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ResourceEntity } from './resource.entity';
@@ -23,6 +17,7 @@ import {
   IGetListResponse,
 } from '@ap/shared';
 import { DatabaseService } from 'src/database/database.service';
+import { TDatabaseGetList } from 'src/database/database.types';
 
 @Injectable()
 export class ResourcesService {
@@ -76,12 +71,11 @@ export class ResourcesService {
   prepareGetListOptions(
     fields?: TGetListRequest<TGetResources>,
     isDefault?: boolean,
-  ): FindManyOptions<ResourceEntity> {
-    const options: FindManyOptions<ResourceEntity> =
-      this.databaseService.preparePaginationOptions<
-        ResourceEntity,
-        TGetResources
-      >(fields);
+  ): TDatabaseGetList<ResourceEntity> {
+    const options = this.databaseService.preparePaginationOptions<
+      ResourceEntity,
+      TGetResources
+    >(fields);
 
     options.where = {};
 
@@ -117,14 +111,14 @@ export class ResourcesService {
         const result = await this.resourcesRepository.findAndCount(options);
         return {
           rows: result[0],
-          count: result[1],
-          page: options.skip! / options.take! + 1,
+          page: options.skip / options.take + 1,
           limit: options.take,
+          count: result[1],
         };
       } else {
         return {
           rows: await this.resourcesRepository.find(options),
-          page: options.skip! / options.take! + 1,
+          page: options.skip / options.take + 1,
           limit: options.take,
         };
       }

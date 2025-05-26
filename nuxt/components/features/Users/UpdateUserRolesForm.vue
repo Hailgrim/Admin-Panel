@@ -66,6 +66,7 @@ watch(status, () => {
           :label="role.name"
           :model-value="updatedRoles.some((value) => value.roleId === role.id)"
           :name="`${role.name}.${role.id}`"
+          :disabled="role.admin"
           @update:model-value="setRoles({ roleId: role.id, userId: user.id })"
         />
       </span>

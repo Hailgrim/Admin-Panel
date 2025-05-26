@@ -6,9 +6,9 @@ export type TGetListRequest<T = unknown> = {
 
 export interface IGetListResponse<T = unknown> {
   rows: T[];
+  page: number;
+  limit: number;
   count?: number;
-  page?: number;
-  limit?: number;
 }
 
 export interface IQueryItems<T> {

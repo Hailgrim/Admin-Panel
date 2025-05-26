@@ -12,7 +12,6 @@ import {
   IUsersRoles,
   TGetListRequest,
   IRole,
-  TGetRoles,
   ROUTES,
 } from '@ap/shared';
 
@@ -78,7 +77,7 @@ const runUsersTests = () => {
       });
 
       it('Correct (admin)', async () => {
-        let findAllResBody = await request(app.getHttpServer())
+        let getListResBody = await request(app.getHttpServer())
           .get(ROUTES.api.users)
           .set('Cookie', adminCookies)
           .query({
@@ -89,11 +88,11 @@ const runUsersTests = () => {
           .expect(HttpStatus.OK)
           .then((res) => res.body as IGetListResponse<IUser>);
 
-        expect(findAllResBody).toHaveProperty('count', 3);
-        expect(findAllResBody).toHaveProperty('page', 1);
-        expect(findAllResBody).toHaveProperty('limit', 1);
+        expect(getListResBody).toHaveProperty('count', 3);
+        expect(getListResBody).toHaveProperty('page', 1);
+        expect(getListResBody).toHaveProperty('limit', 1);
 
-        findAllResBody = await request(app.getHttpServer())
+        getListResBody = await request(app.getHttpServer())
           .get(ROUTES.api.users)
           .set('Cookie', adminCookies)
           .query({
@@ -104,8 +103,8 @@ const runUsersTests = () => {
           .expect(HttpStatus.OK)
           .then((res) => res.body as IGetListResponse<IUser>);
 
-        expect(findAllResBody.rows).toHaveProperty('length', 1);
-        expect(findAllResBody.rows[0]).toHaveProperty('email', entity.email);
+        expect(getListResBody.rows).toHaveProperty('length', 1);
+        expect(getListResBody.rows[0]).toHaveProperty('email', entity.email);
       });
 
       it('Correct (user)', async () => {
@@ -129,16 +128,16 @@ const runUsersTests = () => {
       });
 
       it('Correct (admin)', async () => {
-        const findOneResBody = await request(app.getHttpServer())
+        const getOneResBody = await request(app.getHttpServer())
           .get(ROUTES.api.user(entity.id))
           .set('Cookie', adminCookies)
           .expect(HttpStatus.OK)
           .then((res) => res.body as IUser);
 
-        expect(findOneResBody).toHaveProperty('id', entity.id);
-        expect(findOneResBody).toHaveProperty('name', entity.name);
-        expect(findOneResBody).toHaveProperty('email', entity.email);
-        expect(findOneResBody).toHaveProperty('enabled', entity.enabled);
+        expect(getOneResBody).toHaveProperty('id', entity.id);
+        expect(getOneResBody).toHaveProperty('name', entity.name);
+        expect(getOneResBody).toHaveProperty('email', entity.email);
+        expect(getOneResBody).toHaveProperty('enabled', entity.enabled);
       });
 
       it('Correct (user)', async () => {
@@ -184,13 +183,13 @@ const runUsersTests = () => {
 
         entity.name = entity.name + entity.name;
 
-        const findOneResBody = await request(app.getHttpServer())
+        const getOneResBody = await request(app.getHttpServer())
           .get(ROUTES.api.user(entity.id))
           .set('Cookie', adminCookies)
           .expect(HttpStatus.OK)
           .then((res) => res.body as IUser);
 
-        expect(findOneResBody).toHaveProperty('name', entity.name);
+        expect(getOneResBody).toHaveProperty('name', entity.name);
       });
 
       it('Correct (user)', async () => {
@@ -221,18 +220,13 @@ const runUsersTests = () => {
       });
 
       it('Correct (admin)', async () => {
-        const findAllResBody = await request(app.getHttpServer())
+        const getListResBody = await request(app.getHttpServer())
           .get(ROUTES.api.roles)
           .set('Cookie', adminCookies)
-          .query({
-            reqLimit: 1,
-            reqPage: 1,
-            reqCount: true,
-          } satisfies TGetListRequest<TGetRoles>)
           .expect(HttpStatus.OK)
           .then((res) => res.body as IGetListResponse<IRole>);
 
-        const role = findAllResBody.rows[0];
+        const role = getListResBody.rows[1];
 
         await request(app.getHttpServer())
           .patch(ROUTES.api.userRoles(entity.id))
@@ -244,15 +238,15 @@ const runUsersTests = () => {
 
         entity.name = entity.name + entity.name;
 
-        const findOneResBody = await request(app.getHttpServer())
+        const getOneResBody = await request(app.getHttpServer())
           .get(ROUTES.api.user(entity.id))
           .set('Cookie', adminCookies)
           .expect(HttpStatus.OK)
           .then((res) => res.body as IUser);
 
-        expect(findOneResBody.roles).toBeDefined();
-        expect(findOneResBody.roles).toHaveProperty('length', 1);
-        expect(findOneResBody.roles![0]).toHaveProperty('id', role.id);
+        expect(getOneResBody.roles).toBeDefined();
+        expect(getOneResBody.roles).toHaveProperty('length', 1);
+        expect(getOneResBody.roles![0]).toHaveProperty('id', role.id);
       });
 
       it('Correct (user)', async () => {

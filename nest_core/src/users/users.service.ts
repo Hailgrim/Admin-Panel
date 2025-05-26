@@ -10,7 +10,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   DataSource,
   DeleteResult,
-  FindManyOptions,
   FindOneOptions,
   FindOptionsWhere,
   In,
@@ -32,6 +31,7 @@ import { DatabaseService } from 'src/database/database.service';
 import { createHash } from 'libs/utils';
 import { RoleEntity } from 'src/roles/role.entity';
 import { UsersRolesEntity } from 'src/database/users-roles.entity';
+import { TDatabaseGetList } from 'src/database/database.types';
 
 @Injectable()
 export class UsersService {
@@ -156,11 +156,11 @@ export class UsersService {
 
   prepareGetListOptions(
     fields?: TGetListRequest<TGetUsers>,
-  ): FindManyOptions<UserEntity> {
-    const options: FindManyOptions<UserEntity> =
-      this.databaseService.preparePaginationOptions<UserEntity, TGetUsers>(
-        fields,
-      );
+  ): TDatabaseGetList<UserEntity> {
+    const options = this.databaseService.preparePaginationOptions<
+      UserEntity,
+      TGetUsers
+    >(fields);
 
     options.where = {};
 
@@ -182,7 +182,7 @@ export class UsersService {
   async getList(
     fields?: TGetListRequest<TGetUsers>,
   ): Promise<IGetListResponse<UserEntity>> {
-    const options: FindManyOptions<UserEntity> = {
+    const options = {
       ...this.prepareGetListOptions(fields),
       relations: { roles: true },
     };
@@ -192,14 +192,14 @@ export class UsersService {
         const result = await this.usersRepository.findAndCount(options);
         return {
           rows: result[0],
-          count: result[1],
-          page: options.skip! / options.take! + 1,
+          page: options.skip / options.take + 1,
           limit: options.take,
+          count: result[1],
         };
       } else {
         return {
           rows: await this.usersRepository.find(options),
-          page: options.skip! / options.take! + 1,
+          page: options.skip / options.take + 1,
           limit: options.take,
         };
       }
@@ -348,31 +348,67 @@ export class UsersService {
 
   async updateRoles(id: string, usersRoles: IUsersRoles[]): Promise<void> {
     let user: UserEntity | null;
-
-    try {
-      user = await this.usersRepository.findOne({
-        where: { id },
-      });
-    } catch (error) {
-      Logger.error(error);
-      throw new InternalServerErrorException();
-    }
-
-    if (!user) {
-      throw new NotFoundException();
-    }
-
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      await queryRunner.manager.delete(UsersRolesEntity, { userId: id });
-      await queryRunner.manager.insert(
-        UsersRolesEntity,
-        usersRoles.filter((value) => value.userId === id),
+      user = await queryRunner.manager.findOne(UserEntity, {
+        where: { id },
+        relations: ['roles'],
+      });
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
+      Logger.error(error);
+      throw new InternalServerErrorException();
+    }
+
+    if (!user) {
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
+      throw new NotFoundException();
+    }
+
+    let newAdminRoles: RoleEntity[];
+
+    try {
+      newAdminRoles = await queryRunner.manager.find(RoleEntity, {
+        where: {
+          id: In(usersRoles.map((userRole) => userRole.roleId)),
+          admin: true,
+        },
+      });
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
+      Logger.error(error);
+      throw new InternalServerErrorException();
+    }
+
+    // Remove new admin roles
+    const newUsersRoles = usersRoles.filter(
+      (userRole) =>
+        userRole.userId === id &&
+        !newAdminRoles.some((role) => role.id === userRole.roleId),
+    );
+
+    // Add old admin roles
+    if (user.roles) {
+      newUsersRoles.push(
+        ...user.roles
+          .filter((role) => role.admin === true)
+          .map(
+            (role) => ({ roleId: role.id, userId: id }) satisfies IUsersRoles,
+          ),
       );
+    }
+
+    try {
+      await queryRunner.manager.delete(UsersRolesEntity, { userId: id });
+      await queryRunner.manager.insert(UsersRolesEntity, newUsersRoles);
+
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();

@@ -1,7 +1,8 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { DataSource, FindManyOptions, ILike, Like } from 'typeorm';
+import { DataSource, ILike, Like } from 'typeorm';
 
 import { TGetListRequest } from '@ap/shared';
+import { TDatabaseGetList } from './database.types';
 
 @Injectable()
 export class DatabaseService implements OnModuleInit {
@@ -18,8 +19,8 @@ export class DatabaseService implements OnModuleInit {
 
   preparePaginationOptions<T = unknown, U = unknown>(
     fields?: TGetListRequest<U>,
-  ): FindManyOptions<T> {
-    const options: FindManyOptions<T> = { skip: 0, take: 25 };
+  ): TDatabaseGetList<T> {
+    const options: TDatabaseGetList<T> = { skip: 0, take: 25 };
 
     if (fields?.reqLimit && fields.reqLimit > 0 && fields.reqLimit <= 100) {
       options.take = fields.reqLimit;

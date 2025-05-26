@@ -4,6 +4,7 @@ const props = defineProps<{
   name: string
   label?: string
   required?: boolean
+  disabled?: boolean
   color?: string
   rules?: ((value: string) => boolean | string)[]
   hint?: string

@@ -81,6 +81,7 @@ const UpdateUserRolesForm: FC<{
           value="allowed"
           checked={updatedRoles.some((value) => value.roleId === role.id)}
           onChange={() => updateRoles({ roleId: role.id, userId: user.id })}
+          disabled={role.admin}
         />
       ))}
       <br />

@@ -80,7 +80,7 @@ const runResourcesTests = () => {
       });
 
       it('Correct (admin)', async () => {
-        let findAllResBody = await request(app.getHttpServer())
+        let getListResBody = await request(app.getHttpServer())
           .get(ROUTES.api.resources)
           .set('Cookie', adminCookies)
           .query({
@@ -91,11 +91,11 @@ const runResourcesTests = () => {
           .expect(HttpStatus.OK)
           .then((res) => res.body as IGetListResponse<IResource>);
 
-        expect(findAllResBody).toHaveProperty('count', 5);
-        expect(findAllResBody).toHaveProperty('page', 1);
-        expect(findAllResBody).toHaveProperty('limit', 1);
+        expect(getListResBody).toHaveProperty('count', 5);
+        expect(getListResBody).toHaveProperty('page', 1);
+        expect(getListResBody).toHaveProperty('limit', 1);
 
-        findAllResBody = await request(app.getHttpServer())
+        getListResBody = await request(app.getHttpServer())
           .get(ROUTES.api.resources)
           .set('Cookie', adminCookies)
           .query({
@@ -106,8 +106,8 @@ const runResourcesTests = () => {
           .expect(HttpStatus.OK)
           .then((res) => res.body as IGetListResponse<IResource>);
 
-        expect(findAllResBody.rows).toHaveProperty('length', 1);
-        expect(findAllResBody.rows[0]).toHaveProperty('path', entity.path);
+        expect(getListResBody.rows).toHaveProperty('length', 1);
+        expect(getListResBody.rows[0]).toHaveProperty('path', entity.path);
       });
 
       it('Correct (user)', async () => {
@@ -131,21 +131,18 @@ const runResourcesTests = () => {
       });
 
       it('Correct (admin)', async () => {
-        const findOneResBody = await request(app.getHttpServer())
+        const getOneResBody = await request(app.getHttpServer())
           .get(ROUTES.api.resource(entity.id))
           .set('Cookie', adminCookies)
           .expect(HttpStatus.OK)
           .then((res) => res.body as IResource);
 
-        expect(findOneResBody).toHaveProperty('id', entity.id);
-        expect(findOneResBody).toHaveProperty('name', entity.name);
-        expect(findOneResBody).toHaveProperty('path', entity.path);
-        expect(findOneResBody).toHaveProperty(
-          'description',
-          entity.description,
-        );
-        expect(findOneResBody).toHaveProperty('enabled', entity.enabled);
-        expect(findOneResBody).toHaveProperty('default', entity.default);
+        expect(getOneResBody).toHaveProperty('id', entity.id);
+        expect(getOneResBody).toHaveProperty('name', entity.name);
+        expect(getOneResBody).toHaveProperty('path', entity.path);
+        expect(getOneResBody).toHaveProperty('description', entity.description);
+        expect(getOneResBody).toHaveProperty('enabled', entity.enabled);
+        expect(getOneResBody).toHaveProperty('default', entity.default);
       });
 
       it('Correct (user)', async () => {
@@ -191,13 +188,13 @@ const runResourcesTests = () => {
 
         entity.name = entity.name + entity.name;
 
-        const findOneResBody = await request(app.getHttpServer())
+        const getOneResBody = await request(app.getHttpServer())
           .get(ROUTES.api.resource(entity.id))
           .set('Cookie', adminCookies)
           .expect(HttpStatus.OK)
           .then((res) => res.body as IResource);
 
-        expect(findOneResBody).toHaveProperty('name', entity.name);
+        expect(getOneResBody).toHaveProperty('name', entity.name);
       });
 
       it('Correct (user)', async () => {
