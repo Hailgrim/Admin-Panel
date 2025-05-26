@@ -4,22 +4,18 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
 import { EmailCodeDto } from './dto/email-code.dto';
 import { IQueuePattern } from '@ap/shared';
-import {
-  MAIL_CHANGE_EMAIL,
-  MAIL_FORGOT_PASSWORD,
-  MAIL_REGISTRATION,
-} from 'libs/config';
+import { cfg } from 'config/configuration';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @MessagePattern<IQueuePattern>({ cmd: MAIL_REGISTRATION })
+  @MessagePattern<IQueuePattern>({ cmd: cfg.rmq.cmd.registration })
   registration(@Payload() emailCodeDto: EmailCodeDto) {
     return this.appService.registration(emailCodeDto.email, emailCodeDto.code);
   }
 
-  @MessagePattern<IQueuePattern>({ cmd: MAIL_FORGOT_PASSWORD })
+  @MessagePattern<IQueuePattern>({ cmd: cfg.rmq.cmd.forgotPassword })
   forgotPassword(@Payload() emailCodeDto: EmailCodeDto) {
     return this.appService.forgotPassword(
       emailCodeDto.email,
@@ -27,7 +23,7 @@ export class AppController {
     );
   }
 
-  @MessagePattern<IQueuePattern>({ cmd: MAIL_CHANGE_EMAIL })
+  @MessagePattern<IQueuePattern>({ cmd: cfg.rmq.cmd.changeEmail })
   changeEmail(@Payload() emailCodeDto: EmailCodeDto) {
     return this.appService.changeEmail(emailCodeDto.email, emailCodeDto.code);
   }

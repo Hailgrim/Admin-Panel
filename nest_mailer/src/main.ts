@@ -2,13 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 import { AppModule } from './app.module';
-import {
-  RMQ_HOST,
-  RMQ_MAIL_QUEUE,
-  RMQ_PASSWORD,
-  RMQ_PORT,
-  RMQ_USER,
-} from 'libs/config';
+import { cfg } from 'config/configuration';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
@@ -16,8 +10,10 @@ async function bootstrap() {
     {
       transport: Transport.RMQ,
       options: {
-        urls: [`amqp://${RMQ_USER}:${RMQ_PASSWORD}@${RMQ_HOST}:${RMQ_PORT}`],
-        queue: RMQ_MAIL_QUEUE,
+        urls: [
+          `amqp://${cfg.rmq.user}:${cfg.rmq.password}@${cfg.rmq.host}:${cfg.rmq.port}`,
+        ],
+        queue: cfg.rmq.mailQueue,
         queueOptions: {
           durable: false,
         },

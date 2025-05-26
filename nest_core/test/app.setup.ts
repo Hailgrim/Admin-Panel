@@ -9,12 +9,12 @@ import { ValidationPipe } from '@nestjs/common';
 import { of } from 'rxjs';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
-import { NGINX_HOST } from 'libs/config';
 import { AppModule } from 'src/app.module';
 import { DatabaseModule } from 'src/database/database.module';
 import { DatabaseTestModule } from './database-test.module';
 import { MAIL_SERVER, REDIS } from 'libs/constants';
 import { SignUpDto } from 'src/auth/dto/sign-up.dto';
+import { cfg } from 'config/configuration';
 
 export let app: NestFastifyApplication;
 export const queue: Record<string, string>[] = [];
@@ -95,9 +95,9 @@ export const createApp = async () => {
 
   app.enableCors({
     origin: [
-      `https://${NGINX_HOST}`,
-      `https://www.${NGINX_HOST}`,
-      `https://nuxt.${NGINX_HOST}`,
+      `https://${cfg.nginx.host}`,
+      `https://www.${cfg.nginx.host}`,
+      `https://nuxt.${cfg.nginx.host}`,
     ],
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     credentials: true,

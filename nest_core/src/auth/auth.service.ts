@@ -12,13 +12,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { UsersService } from '../users/users.service';
 import { RolesService } from 'src/roles/roles.service';
 import { ResourcesService } from 'src/resources/resources.service';
-import {
-  ACCESS_TOKEN_LIFETIME,
-  ACCESS_TOKEN_SECRET_KEY,
-  REFRESH_TOKEN_SECRET_KEY,
-  MAIL_FORGOT_PASSWORD,
-  MAIL_REGISTRATION,
-} from 'libs/config';
 import { RoleEntity } from 'src/roles/role.entity';
 import { CacheService } from 'src/cache/cache.service';
 import { IToken, ITokensPair } from './auth.types';
@@ -32,6 +25,7 @@ import {
   TCreateResource,
   TSignUp,
 } from '@ap/shared';
+import { cfg } from 'config/configuration';
 
 @Injectable()
 export class AuthService {
@@ -127,7 +121,7 @@ export class AuthService {
 
     await this.usersService.updateResetPasswordCode(email, code);
     this.queueService.sendEmail<IEmailCode>(
-      { cmd: MAIL_FORGOT_PASSWORD },
+      { cmd: cfg.rmq.cmd.forgotPassword },
       { email, code },
     );
   }
@@ -146,11 +140,11 @@ export class AuthService {
   ): Promise<ITokensPair> {
     return {
       accessToken: await this.jwtService.signAsync(payload, {
-        secret: ACCESS_TOKEN_SECRET_KEY,
-        expiresIn: ACCESS_TOKEN_LIFETIME,
+        secret: cfg.tokens.access.secret,
+        expiresIn: cfg.tokens.access.lifetime,
       }),
       refreshToken: await this.jwtService.signAsync(payload, {
-        secret: REFRESH_TOKEN_SECRET_KEY,
+        secret: cfg.tokens.refresh.secret,
         expiresIn: sessionTtl,
       }),
     };
@@ -185,7 +179,7 @@ export class AuthService {
         const code = generateCode();
         await this.usersService.updateVerificationCode(user.email, code);
         this.queueService.sendEmail<IEmailCode>(
-          { cmd: MAIL_REGISTRATION },
+          { cmd: cfg.rmq.cmd.registration },
           { email: user.email, code },
         );
       }

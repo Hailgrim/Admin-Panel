@@ -2,14 +2,8 @@ import { Module } from '@nestjs/common';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 
 import { QueueService } from './queue.service';
-import {
-  RMQ_HOST,
-  RMQ_MAIL_QUEUE,
-  RMQ_PASSWORD,
-  RMQ_PORT,
-  RMQ_USER,
-} from 'libs/config';
 import { MAIL_SERVER } from 'libs/constants';
+import { cfg } from 'config/configuration';
 
 @Module({
   providers: [
@@ -20,9 +14,9 @@ import { MAIL_SERVER } from 'libs/constants';
           transport: Transport.RMQ,
           options: {
             urls: [
-              `amqp://${RMQ_USER}:${RMQ_PASSWORD}@${RMQ_HOST}:${RMQ_PORT}`,
+              `amqp://${cfg.rmq.user}:${cfg.rmq.password}@${cfg.rmq.host}:${cfg.rmq.port}`,
             ],
-            queue: RMQ_MAIL_QUEUE,
+            queue: cfg.rmq.mailQueue,
             queueOptions: {
               durable: false,
             },

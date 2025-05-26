@@ -2,7 +2,7 @@ import { CookieSerializeOptions } from '@fastify/cookie';
 import { FastifyRequest } from 'fastify';
 import { hash, verify } from 'argon2';
 
-import { ACCESS_TOKEN_LIFETIME, NGINX_HOST } from './config';
+import { cfg } from 'config/configuration';
 
 /**
  * @returns {string} Random string of 4 digits
@@ -29,7 +29,7 @@ export const verifyHash = (hash: string, data: string): Promise<boolean> =>
  * @returns {CookieSerializeOptions} Object with universal cookie parameters
  */
 export const createCookieOptions = (
-  maxAge: number = ACCESS_TOKEN_LIFETIME,
+  maxAge: number = cfg.tokens.access.lifetime,
 ): CookieSerializeOptions => {
   return {
     httpOnly: true,
@@ -37,7 +37,7 @@ export const createCookieOptions = (
     secure: true,
     path: '/',
     maxAge,
-    domain: `.${NGINX_HOST}`,
+    domain: `.${cfg.nginx.host}`,
   };
 };
 

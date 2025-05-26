@@ -18,7 +18,6 @@ import { LocalAuthGuard } from './local-auth.guard';
 import { JwtGuard } from './jwt.guard';
 import { JwtRefreshGuard } from './jwt-refresh.guard';
 import { SignInDto } from './dto/sign-in.dto';
-import { ACCESS_TOKEN_LIFETIME, REFRESH_TOKEN_LIFETIME } from 'libs/config';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
 import { SignUpDto } from './dto/sign-up.dto';
@@ -31,6 +30,7 @@ import { SignInGoogleDto } from './dto/sign-in-google.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { d, IUser, ROUTES } from '@ap/shared';
 import { ExternalUserDto } from 'src/users/dto/external-user.dto';
+import { cfg } from 'config/configuration';
 
 @ApiTags(d['en'].authorization)
 @Controller(ROUTES.api.auth.substring(1))
@@ -85,8 +85,8 @@ export class AuthController {
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<IUser> {
     const sessionTtl = signInDto.rememberMe
-      ? REFRESH_TOKEN_LIFETIME
-      : ACCESS_TOKEN_LIFETIME * 2;
+      ? cfg.tokens.refresh.lifetime
+      : cfg.tokens.access.lifetime * 2;
     const { accessToken, refreshToken } = await this.authService.signIn(
       req.user,
       sessionTtl,
@@ -130,7 +130,7 @@ export class AuthController {
     const { accessToken, refreshToken, user } =
       await this.authService.signInGoogle(
         signInGoogleDto.googleAccessToken,
-        REFRESH_TOKEN_LIFETIME,
+        cfg.tokens.refresh.lifetime,
         getIP(req),
         req.headers['user-agent'],
       );
@@ -139,12 +139,12 @@ export class AuthController {
     res.cookie(
       'refreshToken',
       refreshToken,
-      createCookieOptions(REFRESH_TOKEN_LIFETIME),
+      createCookieOptions(cfg.tokens.refresh.lifetime),
     );
     res.cookie(
       'rememberMe',
       'true',
-      createCookieOptions(REFRESH_TOKEN_LIFETIME),
+      createCookieOptions(cfg.tokens.refresh.lifetime),
     );
     res.status(HttpStatus.CREATED);
 
@@ -161,8 +161,8 @@ export class AuthController {
   ): Promise<void> {
     const rememberMe = req.cookies['rememberMe'] !== undefined;
     const sessionTtl = rememberMe
-      ? REFRESH_TOKEN_LIFETIME
-      : ACCESS_TOKEN_LIFETIME * 2;
+      ? cfg.tokens.refresh.lifetime
+      : cfg.tokens.access.lifetime * 2;
     const { accessToken, refreshToken } = await this.authService.refresh(
       req.user.userId,
       req.user.sessionId,

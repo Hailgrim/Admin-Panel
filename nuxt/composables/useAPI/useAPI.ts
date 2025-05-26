@@ -10,8 +10,8 @@ export function useAPI<T>(
   const cookie = useRequestHeader('cookie')
   const userAgent = useRequestHeader('user-agent')
   const baseURL = import.meta.client
-    ? config.public.EXTERNAL_API_HOST
-    : config.public.INTERNAL_API_HOST
+    ? config.public.externalApiHost
+    : config.public.internalApiHost
   const timeout = 5000
   const mainStore = useMainStore()
 

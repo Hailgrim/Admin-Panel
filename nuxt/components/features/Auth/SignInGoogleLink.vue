@@ -13,7 +13,7 @@ const googleHandler = (event: MouseEvent) => {
     payload: String(Math.random()),
   }
   const googleWindow = window.open(
-    getGoogleSignInUrl(config.public.GOOGLE_CLIENT_ID, config.public.HOST, message.payload),
+    getGoogleSignInUrl(config.public.googleClientId, config.public.host, message.payload),
     undefined,
     'top=100,left=100,width=500,height=500',
   )

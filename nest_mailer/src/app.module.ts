@@ -5,26 +5,19 @@ import * as nodemailer from 'nodemailer';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import {
-  HOST,
-  MAIL_FROM,
-  MAIL_PASSWORD,
-  MAIL_TEST,
-  MAIL_USER,
-  PORT,
-} from 'libs/config';
+import { cfg } from 'config/configuration';
 
 @Module({
   imports: [
     MailerModule.forRootAsync({
       useFactory: async () => {
-        let host = HOST;
-        let port = PORT;
+        let host = cfg.host;
+        let port = cfg.port;
         let secure = port === 587;
-        let user = MAIL_USER;
-        let pass = MAIL_PASSWORD;
+        let user = cfg.mail.user;
+        let pass = cfg.mail.password;
 
-        if (MAIL_TEST) {
+        if (cfg.mail.test) {
           const testMailAccount = await nodemailer.createTestAccount();
           Logger.log(testMailAccount);
           host = testMailAccount.smtp.host;
@@ -45,9 +38,9 @@ import {
             },
           },
           defaults: {
-            from: MAIL_FROM,
+            from: cfg.mail.from,
           },
-          preview: MAIL_TEST,
+          preview: cfg.mail.test,
           template: {
             dir: `${process.cwd()}/templates`,
             adapter: new PugAdapter(),

@@ -7,15 +7,9 @@ import { MailerService } from '@nestjs-modules/mailer';
 import * as nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 
-import {
-  HOST,
-  MAIL_FROM,
-  MAIL_TEST,
-  MAIL_CHANGE_EMAIL,
-  MAIL_FORGOT_PASSWORD,
-  MAIL_REGISTRATION,
-} from 'libs/config';
 import { d } from '@ap/shared';
+import { cfg } from 'config/configuration';
+import { ETemplates } from 'libs/constants';
 
 @Injectable()
 export class AppService {
@@ -25,18 +19,18 @@ export class AppService {
     try {
       const info = (await this.mailerService.sendMail({
         to: email,
-        from: MAIL_FROM,
+        from: cfg.mail.from,
         subject: d['en'].subjectRegistration,
-        template: MAIL_REGISTRATION,
+        template: ETemplates.Registration,
         context: {
-          host: HOST,
+          host: cfg.host,
           title: d['en'].subjectRegistration,
           action: d['en'].verificationCode,
           code,
         },
       })) as SMTPTransport.SentMessageInfo;
 
-      if (MAIL_TEST) {
+      if (cfg.mail.test) {
         Logger.log(nodemailer.getTestMessageUrl(info));
       }
     } catch (error) {
@@ -49,18 +43,18 @@ export class AppService {
     try {
       const info = (await this.mailerService.sendMail({
         to: email,
-        from: MAIL_FROM,
+        from: cfg.mail.from,
         subject: d['en'].subjectForgotPassword,
-        template: MAIL_FORGOT_PASSWORD,
+        template: ETemplates.ForgotPassword,
         context: {
-          host: HOST,
+          host: cfg.host,
           title: d['en'].subjectForgotPassword,
           action: d['en'].resetPasswordCode,
           code,
         },
       })) as SMTPTransport.SentMessageInfo;
 
-      if (MAIL_TEST) {
+      if (cfg.mail.test) {
         Logger.log(nodemailer.getTestMessageUrl(info));
       }
     } catch (error) {
@@ -73,18 +67,18 @@ export class AppService {
     try {
       const info = (await this.mailerService.sendMail({
         to: email,
-        from: MAIL_FROM,
+        from: cfg.mail.from,
         subject: d['en'].subjectChangeEmail,
-        template: MAIL_CHANGE_EMAIL,
+        template: ETemplates.ChangeEmail,
         context: {
-          host: HOST,
+          host: cfg.host,
           title: d['en'].subjectChangeEmail,
           action: d['en'].changeEmailCode,
           code,
         },
       })) as SMTPTransport.SentMessageInfo;
 
-      if (MAIL_TEST) {
+      if (cfg.mail.test) {
         Logger.log(nodemailer.getTestMessageUrl(info));
       }
     } catch (error) {

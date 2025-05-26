@@ -4,13 +4,13 @@ import { UsersService } from '../users/users.service';
 import { CacheService } from 'src/cache/cache.service';
 import { QueueService } from 'src/queue/queue.service';
 import { generateCode, verifyHash } from 'libs/utils';
-import { MAIL_CHANGE_EMAIL } from 'libs/config';
 import {
   TUpdateUser,
   IExternalSession,
   ISession,
   IEmailCode,
 } from '@ap/shared';
+import { cfg } from 'config/configuration';
 
 @Injectable()
 export class ProfileService {
@@ -46,7 +46,7 @@ export class ProfileService {
 
     await this.usersService.updateChangeEmailCode(userId, code, newEmail);
     this.queueService.sendEmail<IEmailCode>(
-      { cmd: MAIL_CHANGE_EMAIL },
+      { cmd: cfg.rmq.cmd.changeEmail },
       { email: newEmail, code },
     );
   }

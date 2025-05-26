@@ -3,8 +3,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { FastifyRequest } from 'fastify';
 
-import { REFRESH_TOKEN_SECRET_KEY } from 'libs/config';
 import { IToken } from './auth.types';
+import { cfg } from 'config/configuration';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
@@ -17,7 +17,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
         (req) => req.cookies['refreshToken'] || null,
       ]),
       ignoreExpiration: false,
-      secretOrKey: REFRESH_TOKEN_SECRET_KEY,
+      secretOrKey: cfg.tokens.refresh.secret,
     });
   }
 

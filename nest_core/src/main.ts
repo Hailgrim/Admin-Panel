@@ -10,8 +10,8 @@ import fastifyHelmet from '@fastify/helmet';
 
 import { AppModule } from './app.module';
 import { version, name } from '../package.json';
-import { HOST, NGINX_HOST, PORT } from 'libs/config';
 import { d } from '@ap/shared';
+import { cfg } from 'config/configuration';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -33,9 +33,9 @@ async function bootstrap() {
 
   app.enableCors({
     origin: [
-      `https://${NGINX_HOST}`,
-      `https://www.${NGINX_HOST}`,
-      `https://nuxt.${NGINX_HOST}`,
+      `https://${cfg.nginx.host}`,
+      `https://www.${cfg.nginx.host}`,
+      `https://nuxt.${cfg.nginx.host}`,
     ],
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     credentials: true,
@@ -49,6 +49,6 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(PORT, HOST);
+  await app.listen(cfg.port, cfg.host);
 }
 bootstrap();
