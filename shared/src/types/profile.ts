@@ -12,12 +12,13 @@ export interface IChangeEmailConfirm {
 }
 
 export interface ISession {
-  userAgent?: string;
   ip: string;
+  userAgent?: string;
   updatedAt: Date;
+  sign: string;
 }
 
-export interface IExternalSession extends ISession {
+export type TExternalSession = Omit<ISession, 'sign'> & {
   id: string;
   current: boolean;
-}
+};

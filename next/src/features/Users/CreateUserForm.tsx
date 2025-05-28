@@ -12,7 +12,6 @@ import usersApi from '@/shared/api/users/usersApi';
 import { useAppDispatch } from '@/shared/store/hooks';
 import { addAlert } from '@/shared/store/main/main';
 import {
-  d,
   EMAIL_REGEX,
   getErrorText,
   NAME_REGEX,

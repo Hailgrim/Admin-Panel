@@ -9,7 +9,7 @@ import { setProfile } from '@/shared/store/main/main';
 const StoreProvider: FC<
   PropsWithChildren & { profileJson?: string | null }
 > = ({ children, profileJson }) => {
-  const storeRef = useRef<AppStore>();
+  const storeRef = useRef<AppStore>(undefined);
 
   if (!storeRef.current) {
     storeRef.current = makeStore();

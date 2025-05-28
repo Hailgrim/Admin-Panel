@@ -5,7 +5,7 @@ import baseQueryWithReprofile from '../baseQueryWithReauth';
 import {
   IChangeEmailConfirm,
   IChangeEmailRequest,
-  IExternalSession,
+  TExternalSession,
   IQueryItems,
   IUpdatePassword,
   IUser,
@@ -36,13 +36,13 @@ const profileApi = createApi({
       query: profileService.changeEmailConfirmArgs,
     }),
 
-    getSessions: builder.query<IExternalSession[], void>({
+    getSessions: builder.query<TExternalSession[], void>({
       query: profileService.getSessionsArgs,
     }),
 
     deleteSessions: builder.mutation<
       undefined,
-      IQueryItems<IExternalSession['id']>
+      IQueryItems<TExternalSession['id']>
     >({
       query: profileService.deleteSessionsArgs,
     }),

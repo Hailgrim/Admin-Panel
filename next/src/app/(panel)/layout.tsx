@@ -1,6 +1,6 @@
 'use client';
 
-import { ThemeProvider } from '@mui/material/styles';
+import { styled, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -15,7 +15,6 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import Divider from '@mui/material/Divider';
-import { styled } from '@mui/material/styles';
 
 import { useAppSelector } from '@/shared/store/hooks';
 import useTranslate from '@/shared/hooks/useTranslate';

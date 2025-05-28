@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { locale } = useI18n()
 const mainStore = useMainStore()
-const sessions = ref<IExternalSession[] | null>(null)
+const sessions = ref<TExternalSession[] | null>(null)
 const { data, error, execute, status } = profileApi.getSessions()
 
 watch(data, () => {

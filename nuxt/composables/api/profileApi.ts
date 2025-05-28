@@ -44,14 +44,14 @@ class ProfileApi {
     })
 
   getSessions = () =>
-    useAPI<IExternalSession[]>(ROUTES.api.sessions, {
+    useAPI<TExternalSession[]>(ROUTES.api.sessions, {
       immediate: false,
       watch: false,
       method: 'GET',
       credentials: 'include',
     })
 
-  deleteSessions = (payload: TFetchPayload<IQueryItems<IExternalSession['id']>>) =>
+  deleteSessions = (payload: TFetchPayload<IQueryItems<TExternalSession['id']>>) =>
     useAPI(ROUTES.api.sessions, {
       immediate: false,
       watch: false,

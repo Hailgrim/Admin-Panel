@@ -4,9 +4,9 @@ export const useMainStore = defineStore('main', () => {
     isSideBarOpened.value = value
   }
 
-  const profile = ref<IUser | null>(null)
-  function setProfile(payload: IUser | null) {
-    profile.value = payload
+  const language = ref<TLangList>('en')
+  function setLanguage(value: TLangList) {
+    language.value = value
   }
 
   const alerts = ref<IAlert[]>([])
@@ -34,9 +34,20 @@ export const useMainStore = defineStore('main', () => {
     }
   }
 
+  const profile = ref<IUser | null>(null)
+  function setProfile(payload: IUser | null) {
+    profile.value = payload
+
+    if (!payload) {
+      alerts.value = []
+    }
+  }
+
   return {
     isSideBarOpened,
     toggleSideBar,
+    language,
+    setLanguage,
     alerts,
     addAlert,
     deleteAlert,

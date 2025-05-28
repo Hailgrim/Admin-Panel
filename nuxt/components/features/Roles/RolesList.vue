@@ -1,13 +1,13 @@
 <script setup lang="ts">
 const props = defineProps<{
   rows?: IRole[]
-  count?: number
   page?: number
-  quantity?: number
+  limit?: number
+  count?: number
 }>()
 defineEmits<{
   'update:page': [value: number]
-  'update:quantity': [value: number]
+  'update:limit': [value: number]
 }>()
 
 const { locale } = useI18n()
@@ -15,7 +15,7 @@ const rights = useRights(ROUTES.api.roles)
 const mainStore = useMainStore()
 const items = ref(props.rows)
 const page = ref(props.page || 1)
-const quantity = ref(props.quantity || 25)
+const limit = ref(props.limit || 25)
 const reqCount = ref(false)
 const selected = ref<string[]>([])
 const {
@@ -23,14 +23,14 @@ const {
   error: glError,
   execute: glExecute,
   status: glStatus,
-} = rolesApi.getList({ reqPage: page, reqLimit: quantity, reqCount })
+} = rolesApi.getList({ reqPage: page, reqLimit: limit, reqCount })
 const {
   error: dError,
   execute: dExecute,
   status: dStatus,
 } = rolesApi.delete({ items: selected })
 const count = computed(
-  () => glData.value?.count || props.count || page.value * quantity.value,
+  () => glData.value?.count || props.count || page.value * limit.value,
 )
 
 watch(
@@ -45,7 +45,7 @@ watch(
   { immediate: true },
 )
 
-watch([page, quantity], () => {
+watch([page, limit], () => {
   glExecute()
 })
 
@@ -112,12 +112,12 @@ watch(dError, () => {
   </div>
   <RolesTable
     v-model:page="page"
-    v-model:quantity="quantity"
+    v-model:quantity="limit"
     v-model:selected="selected"
     :count="count"
     :loading="dStatus === 'pending' || glStatus === 'pending'"
     :rows="items"
     @update:page="$emit('update:page', $event)"
-    @update:quantity="$emit('update:quantity', $event)"
+    @update:quantity="$emit('update:limit', $event)"
   />
 </template>

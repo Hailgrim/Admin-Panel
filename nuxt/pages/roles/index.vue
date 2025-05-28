@@ -9,33 +9,33 @@ definePageMeta({
 
 const router = useRouter()
 const route = useRoute()
-const page = ref(Number(route.query.page) || 1)
-const quantity = ref(Number(route.query.quantity) || 25)
-const { data, execute } = rolesApi.getList({ reqPage: page, reqLimit: quantity, reqCount: true })
+const reqPage = ref(Number(route.query.reqPage) || 1)
+const reqLimit = ref(Number(route.query.reqLimit) || 25)
+const { data, execute } = rolesApi.getList({ reqPage, reqLimit, reqCount: true })
 
 if (import.meta.server) {
   await execute()
 }
 
 watch(
-  page,
+  reqPage,
   () => {
-    router.push({ query: { ...route.query, page: page.value } })
+    router.push({ query: { ...route.query, reqPage: reqPage.value } })
   },
 )
 
 watch(
-  quantity,
+  reqLimit,
   () => {
-    router.push({ query: { ...route.query, quantity: quantity.value } })
+    router.push({ query: { ...route.query, reqLimit: reqLimit.value } })
   },
 )
 </script>
 
 <template>
   <RolesList
-    v-model:page="page"
-    v-model:quantity="quantity"
+    v-model:page="reqPage"
+    v-model:limit="reqLimit"
     :count="data?.count"
     :rows="data?.rows"
   />

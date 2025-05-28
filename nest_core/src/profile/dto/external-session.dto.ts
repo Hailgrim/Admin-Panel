@@ -1,9 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator';
 
-import { IExternalSession } from '@ap/shared';
+import { TExternalSession } from '@ap/shared';
+import { Exclude } from 'class-transformer';
 
-export class ExternalSessionDto implements IExternalSession {
+export class ExternalSessionDto implements TExternalSession {
   @ApiProperty({
     type: String,
     example:
@@ -16,6 +17,10 @@ export class ExternalSessionDto implements IExternalSession {
   @IsBoolean()
   current: boolean;
 
+  @ApiProperty({ type: String, example: '127.0.0.1' })
+  @IsString()
+  ip: string;
+
   @ApiPropertyOptional({
     type: String,
     example:
@@ -25,11 +30,10 @@ export class ExternalSessionDto implements IExternalSession {
   @IsString()
   userAgent?: string;
 
-  @ApiProperty({ type: String, example: '127.0.0.1' })
-  @IsString()
-  ip: string;
-
   @ApiProperty({ type: Date, example: new Date() })
   @IsDate()
   updatedAt: Date;
+
+  @Exclude()
+  sign: string;
 }

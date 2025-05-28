@@ -1,13 +1,13 @@
 'use client';
 
 import { styled, ThemeProvider } from '@mui/material/styles';
-import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
-import { FC, PropsWithChildren } from 'react';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import Container from '@mui/material/Container';
+import { FC, PropsWithChildren } from 'react';
 
 import theme from '@/shared/lib/theme';
 

@@ -16,7 +16,7 @@ import { RoleEntity } from 'src/roles/role.entity';
 import { CacheService } from 'src/cache/cache.service';
 import { IToken, ITokensPair } from './auth.types';
 import { QueueService } from 'src/queue/queue.service';
-import { generateCode, verifyHash } from 'libs/utils';
+import { createHash, generateCode, verifyHash } from 'libs/utils';
 import {
   d,
   IEmailCode,
@@ -138,8 +138,11 @@ export class AuthService {
     payload: IToken,
     sessionTtl: number,
   ): Promise<ITokensPair> {
+    const accessPayload = { ...payload };
+    delete accessPayload.sign;
+
     return {
-      accessToken: await this.jwtService.signAsync(payload, {
+      accessToken: await this.jwtService.signAsync(accessPayload, {
         secret: cfg.tokens.access.secret,
         expiresIn: cfg.tokens.access.lifetime,
       }),
@@ -188,10 +191,12 @@ export class AuthService {
     }
 
     const sessionId = uuidv4();
+    const sign = await createHash();
     const sessionData: ISession = {
       ip,
       userAgent,
       updatedAt: new Date(),
+      sign,
     };
 
     await this.cacheService.set(
@@ -200,7 +205,7 @@ export class AuthService {
       sessionTtl * 1000,
     );
 
-    return this.createTokens({ userId: user.id, sessionId }, sessionTtl);
+    return this.createTokens({ userId: user.id, sessionId, sign }, sessionTtl);
   }
 
   async verifyUser(email: string, code: string): Promise<void> {
@@ -243,25 +248,27 @@ export class AuthService {
   }
 
   async refresh(
-    userId: string,
-    sessionId: string,
+    token: IToken,
     sessionTtl: number,
     ip: string,
     userAgent?: string,
   ): Promise<ITokensPair> {
     const session = await this.cacheService.get<ISession>(
-      `sessions:${userId}:${sessionId}`,
+      `sessions:${token.userId}:${token.sessionId}`,
     );
+    let sign: string;
 
-    if (session) {
+    if (session?.sign === token.sign) {
+      sign = await createHash();
       const sessionData: ISession = {
         ip,
         userAgent,
         updatedAt: new Date(),
+        sign,
       };
 
       await this.cacheService.set(
-        `sessions:${userId}:${sessionId}`,
+        `sessions:${token.userId}:${token.sessionId}`,
         sessionData,
         sessionTtl * 1000,
       );
@@ -269,7 +276,10 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    return this.createTokens({ userId, sessionId }, sessionTtl);
+    return this.createTokens(
+      { userId: token.userId, sessionId: token.sessionId, sign },
+      sessionTtl,
+    );
   }
 
   async signOut(userId: string, sessionId: string): Promise<void> {

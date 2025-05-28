@@ -6,7 +6,7 @@ import { QueueService } from 'src/queue/queue.service';
 import { generateCode, verifyHash } from 'libs/utils';
 import {
   TUpdateUser,
-  IExternalSession,
+  TExternalSession,
   ISession,
   IEmailCode,
 } from '@ap/shared';
@@ -58,7 +58,7 @@ export class ProfileService {
   async getSessions(
     userId: string,
     currentSessionId?: string,
-  ): Promise<IExternalSession[]> {
+  ): Promise<TExternalSession[]> {
     const keys = await this.cacheService.keys(`sessions:${userId}:*`);
     const current = `sessions:${userId}:${currentSessionId}`;
     const sessions = await this.cacheService

@@ -5,21 +5,17 @@ import { IAlert, IUser, TLangList } from '@ap/shared';
 export const mainSliceName = 'main';
 
 const initialState = {
-  profile: null as IUser | null,
   language: 'en' as TLangList,
   alerts: [] as IAlert[],
   alertCounter: 0,
+  profile: null as IUser | null,
 };
 
 export const mainSlice = createSlice({
   name: mainSliceName,
   initialState: initialState,
   reducers: {
-    setProfile: (state, action: PayloadAction<IUser | null>) => {
-      state.profile = action.payload;
-    },
-
-    setUserLang: (state, action: PayloadAction<TLangList>) => {
+    setLanguage: (state, action: PayloadAction<TLangList>) => {
       state.language = action.payload;
     },
 
@@ -45,9 +41,17 @@ export const mainSlice = createSlice({
         );
       }
     },
+
+    setProfile: (state, action: PayloadAction<IUser | null>) => {
+      state.profile = action.payload;
+
+      if (!action.payload) {
+        state.alerts = [];
+      }
+    },
   },
 });
 
-export const { setProfile, setUserLang, addAlert, deleteAlert } =
+export const { setProfile, setLanguage, addAlert, deleteAlert } =
   mainSlice.actions;
 export default mainSlice.reducer;

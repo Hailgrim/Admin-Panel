@@ -12,7 +12,7 @@ const SignInGoogleLink: FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
-  const timeout = useRef<NodeJS.Timeout>();
+  const timeout = useRef<NodeJS.Timeout>(undefined);
 
   const googleHandler: MouseEventHandler<HTMLAnchorElement> = (event) => {
     event.preventDefault();

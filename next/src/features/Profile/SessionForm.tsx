@@ -1,5 +1,5 @@
 import { FC, FormEvent, useEffect, useRef } from 'react';
-import UAParser from 'ua-parser-js';
+import { UAParser } from 'ua-parser-js';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ComputerIcon from '@mui/icons-material/Computer';
 import SmartphoneIcon from '@mui/icons-material/Smartphone';
@@ -22,14 +22,14 @@ import profileApi from '@/shared/api/profile/profileApi';
 import {
   getDateString,
   getErrorText,
-  IExternalSession,
+  TExternalSession,
   ROUTES,
 } from '@ap/shared';
 import useTranslate from '@/shared/hooks/useTranslate';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
 import useTranslateRef from '@/shared/hooks/useTranslateRef';
 
-const SessionForm: FC<{ session: IExternalSession; onDelete?: () => void }> = ({
+const SessionForm: FC<{ session: TExternalSession; onDelete?: () => void }> = ({
   session,
   onDelete,
 }) => {

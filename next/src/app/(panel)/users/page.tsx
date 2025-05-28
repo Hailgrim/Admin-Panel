@@ -14,13 +14,12 @@ export const generateMetadata = async (): Promise<Metadata> => {
   };
 };
 
-const Page: FC<IAppPage> = async (props) => {
+const Page: FC<IAppPage> = async ({ searchParams }) => {
   const t = getT();
-  const page = Number(props.searchParams.page) || 1;
-  const quantity = Number(props.searchParams.quantity) || 25;
+  const { reqPage, reqLimit } = await searchParams;
   const { data } = await usersService.getList({
-    reqPage: page,
-    reqLimit: quantity,
+    reqPage: Number(reqPage),
+    reqLimit: Number(reqLimit),
     reqCount: true,
   });
 

@@ -1,5 +1,4 @@
 import { NextMiddleware, NextResponse } from 'next/server';
-import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 
 import profileService from './shared/api/profile/profileService';
 import { IUser, ROUTES } from '@ap/shared';
@@ -39,8 +38,8 @@ export const middleware: NextMiddleware = async (request) => {
 
   const accessToken = request.cookies.get('accessToken');
   const refreshToken = request.cookies.get('refreshToken');
-  let updatedCookies: ResponseCookie[] | null | undefined = null;
   let profile: IUser | null = null;
+  let newCookiesRaw: string[] | null | undefined = null;
   let response = NextResponse.next();
   const isAuthRoute =
     request.nextUrl.pathname === ROUTES.ui.signIn ||
@@ -49,15 +48,12 @@ export const middleware: NextMiddleware = async (request) => {
     request.nextUrl.pathname === ROUTES.ui.forgotPassword;
 
   if (accessToken || refreshToken) {
-    const { data, newCookies } = await profileService.getProfile();
-    updatedCookies = newCookies;
-    profile = data;
+    ({ data: profile, newCookiesRaw } = await profileService.getProfile());
   }
 
   if (profile) {
     if (isAuthRoute) {
       const searchParams = new URLSearchParams(request.nextUrl.search);
-
       response = NextResponse.redirect(
         new URL(
           decodeURIComponent(searchParams.get('return') || ROUTES.ui.home),
@@ -66,6 +62,11 @@ export const middleware: NextMiddleware = async (request) => {
         { status: 302 }
       );
     }
+
+    response.headers.set(
+      'store-profile',
+      encodeURIComponent(JSON.stringify(profile))
+    );
   } else {
     if (!isAuthRoute && !request.headers.has('referer')) {
       response = NextResponse.redirect(
@@ -80,16 +81,9 @@ export const middleware: NextMiddleware = async (request) => {
     }
   }
 
-  if (updatedCookies) {
-    for (const cookie of updatedCookies) {
-      response.cookies.set(cookie);
-    }
-  }
-
-  if (profile) {
-    response.headers.set(
-      'store-profile',
-      encodeURIComponent(JSON.stringify(profile))
+  if (newCookiesRaw) {
+    newCookiesRaw.forEach((cookie) =>
+      response.headers.append('set-cookie', cookie)
     );
   }
 

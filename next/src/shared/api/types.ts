@@ -1,9 +1,7 @@
-import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
-
 export interface IFetchRes<T = unknown> {
   data: T | null;
   error: number | null;
-  newCookies?: ResponseCookie[] | null;
+  newCookiesRaw?: string[] | null;
 }
 
 export interface IReqArgs {

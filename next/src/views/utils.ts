@@ -1,17 +1,17 @@
 /**
  * @param {number | string} page Page for window search params
  */
-export const setPage = (page: number | string) => {
+export const setReqPage = (page: number | string) => {
   const queryParams = new URLSearchParams(window.location.search);
-  queryParams.set('page', String(page));
+  queryParams.set('reqPage', String(page));
   history.pushState(null, '', `?${queryParams.toString()}`);
 };
 
 /**
- * @param {number | string} quantity Quantity for window search params
+ * @param {number | string} limit Quantity for window search params
  */
-export const setQuantity = (quantity: number | string) => {
+export const setReqLimit = (limit: number | string) => {
   const queryParams = new URLSearchParams(window.location.search);
-  queryParams.set('quantity', String(quantity));
+  queryParams.set('reqLimit', String(limit));
   history.pushState(null, '', `?${queryParams.toString()}`);
 };

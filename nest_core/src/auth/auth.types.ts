@@ -10,6 +10,7 @@ export interface ITokensPair {
 export interface IToken {
   userId: string;
   sessionId: string;
+  sign?: string;
 }
 
 export type TFastifyRequestWithUser = FastifyRequest & { user: IUser };

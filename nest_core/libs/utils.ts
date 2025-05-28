@@ -1,6 +1,7 @@
 import { CookieSerializeOptions } from '@fastify/cookie';
 import { FastifyRequest } from 'fastify';
 import { hash, verify } from 'argon2';
+import * as crypto from 'crypto';
 
 import { cfg } from 'config/configuration';
 
@@ -12,9 +13,11 @@ export const generateCode = (): string => {
 };
 
 /**
+ * @param {string | undefined} payload Data to be hashed
  * @returns {string} Hash string generated from payload
  */
-export const createHash = (payload: string): Promise<string> => hash(payload);
+export const createHash = (payload?: string): Promise<string> =>
+  hash(payload || crypto.randomBytes(10));
 
 /**
  * @param {number} hash The hash to be recognized

@@ -3,7 +3,7 @@ import serverFetch from '../serverFetch';
 import {
   IChangeEmailConfirm,
   IChangeEmailRequest,
-  IExternalSession,
+  TExternalSession,
   IQueryItems,
   IUpdatePassword,
   IUser,
@@ -68,7 +68,7 @@ class ProfileService {
     };
   }
 
-  deleteSessionsArgs(payload: IQueryItems<IExternalSession['id']>): IReqArgs {
+  deleteSessionsArgs(payload: IQueryItems<TExternalSession['id']>): IReqArgs {
     return {
       url: ROUTES.api.sessions,
       method: 'DELETE',

@@ -27,7 +27,7 @@ const UsersList: FC<IList<IUser>> = (props) => {
   const [items, setItems] = useState(props.rows);
   const paginationModel = useRef<GridPaginationModel>({
     page: (props.page || 1) - 1,
-    pageSize: props.quantity || 25,
+    pageSize: props.limit || 25,
   });
   const count = useMemo(
     () =>
@@ -39,9 +39,19 @@ const UsersList: FC<IList<IUser>> = (props) => {
 
   const paginationHandler = (model: GridPaginationModel) => {
     getList({ reqPage: model.page + 1, reqLimit: model.pageSize });
+
+    if (props.onPageUpdate && model.page !== paginationModel.current.page) {
+      props.onPageUpdate(model.page + 1);
+    }
+
+    if (
+      props.onLimitUpdate &&
+      model.pageSize !== paginationModel.current.pageSize
+    ) {
+      props.onLimitUpdate(model.pageSize);
+    }
+
     paginationModel.current = model;
-    props.onPageUpdate?.(model.page + 1);
-    props.onQuantityUpdate?.(model.pageSize);
   };
 
   useEffect(() => {
@@ -137,7 +147,7 @@ const UsersList: FC<IList<IUser>> = (props) => {
         rowCount={count}
         loading={getListReq.isLoading || destroyReq.isLoading}
         onRowSelectionModelChange={(rowSelectionModel) =>
-          setSelectedRows(rowSelectionModel as string[])
+          setSelectedRows(rowSelectionModel.ids.values().toArray() as string[])
         }
         onPaginationModelChange={paginationHandler}
       />

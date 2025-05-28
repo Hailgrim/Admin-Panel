@@ -8,13 +8,13 @@ import { addAlert } from '@/shared/store/main/main';
 import { useAppDispatch } from '@/shared/store/hooks';
 import profileApi from '@/shared/api/profile/profileApi';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
-import { getErrorText, IExternalSession } from '@ap/shared';
+import { getErrorText, TExternalSession } from '@ap/shared';
 
 const ProfileSessions: FC = () => {
   const dispatch = useAppDispatch();
   const lRef = useLanguageRef();
   const { data, isLoading, error } = profileApi.useGetSessionsQuery();
-  const [sessions, setSessions] = useState<IExternalSession[]>();
+  const [sessions, setSessions] = useState<TExternalSession[]>();
 
   useEffect(() => {
     setSessions(

@@ -15,7 +15,7 @@ import {
   IQueryItems,
   IChangeEmailConfirm,
   IChangeEmailRequest,
-  IExternalSession,
+  TExternalSession,
   IUpdatePassword,
   IUser,
   TUpdateUser,
@@ -234,8 +234,8 @@ const runProfileTests = () => {
       });
     });
 
-    let adminSession: IExternalSession;
-    let userSession: IExternalSession;
+    let adminSession: TExternalSession;
+    let userSession: TExternalSession;
 
     describe('Get Sessions', () => {
       it('Incorrect', async () => {
@@ -249,7 +249,7 @@ const runProfileTests = () => {
           .get(ROUTES.api.sessions)
           .set('Cookie', adminCookies)
           .expect(HttpStatus.OK)
-          .then((res) => res.body as IExternalSession[]);
+          .then((res) => res.body as TExternalSession[]);
 
         expect(getSessionsResBody[0]).toHaveProperty('id');
         expect(getSessionsResBody[0]).toHaveProperty('current', true);
@@ -263,7 +263,7 @@ const runProfileTests = () => {
           .get(ROUTES.api.sessions)
           .set('Cookie', userCookies)
           .expect(HttpStatus.OK)
-          .then((res) => res.body as IExternalSession[]);
+          .then((res) => res.body as TExternalSession[]);
 
         expect(getSessionsResBody[0]).toHaveProperty('id');
         expect(getSessionsResBody[0]).toHaveProperty('current', true);
@@ -291,7 +291,7 @@ const runProfileTests = () => {
           .delete(ROUTES.api.sessions)
           .set('Cookie', adminCookies)
           .send({ items: [adminSession.id] } satisfies IQueryItems<
-            IExternalSession['id']
+            TExternalSession['id']
           >)
           .expect(HttpStatus.NO_CONTENT);
 
@@ -319,7 +319,7 @@ const runProfileTests = () => {
           .delete(ROUTES.api.sessions)
           .set('Cookie', userCookies)
           .send({ items: [userSession.id] } satisfies IQueryItems<
-            IExternalSession['id']
+            TExternalSession['id']
           >)
           .expect(HttpStatus.NO_CONTENT);
 

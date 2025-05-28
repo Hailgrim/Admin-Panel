@@ -32,9 +32,9 @@ const SignInForm: FC = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [verifyModal, setVerifyModal] = useState(false);
   const [errorText, setErrorText] = useState<string | null>(null);
-  const [signIn, { data, error, isFetching, originalArgs }] =
+  const [signIn, { data, error, isFetching }] =
     authApi.useLazySignInQuery();
-  const timeout = useRef<NodeJS.Timeout>();
+  const timeout = useRef<NodeJS.Timeout>(undefined);
 
   const submitHandler = (event?: FormEvent<HTMLFormElement>) => {
     event?.preventDefault();

@@ -1,5 +1,6 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
   reactStrictMode: true,
   output: 'standalone',
   env: {
@@ -11,6 +12,9 @@ const nextConfig = {
     }`,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || '',
   },
+  allowedDevOrigins: [
+    `${process.env.NEXT_HOST_PREFIX}${process.env.NGINX_HOST}` || 'localhost',
+  ],
 };
 
 export default nextConfig;

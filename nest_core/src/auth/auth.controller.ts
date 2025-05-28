@@ -164,8 +164,7 @@ export class AuthController {
       ? cfg.tokens.refresh.lifetime
       : cfg.tokens.access.lifetime * 2;
     const { accessToken, refreshToken } = await this.authService.refresh(
-      req.user.userId,
-      req.user.sessionId,
+      req.user,
       sessionTtl,
       getIP(req),
       req.headers['user-agent'],

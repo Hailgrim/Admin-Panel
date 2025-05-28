@@ -25,7 +25,7 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 import { ChangeEmailRequestDto } from './dto/change-email-request.dto';
 import { ChangeEmailConfirmDto } from './dto/change-email-confirm.dto';
 import { QueryItemsDto } from 'src/database/dto/query-items.dto';
-import { d, IExternalSession, IUser, ROUTES } from '@ap/shared';
+import { d, TExternalSession, IUser, ROUTES } from '@ap/shared';
 import { ExternalUserDto } from 'src/users/dto/external-user.dto';
 import { ExternalSessionDto } from './dto/external-session.dto';
 
@@ -120,12 +120,16 @@ export class ProfileController {
   @Roles({ path: route, action: ERights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
   @Get('sessions')
-  getSessions(
+  async getSessions(
     @Req() req: TFastifyRequestWithToken,
     @Res({ passthrough: true }) res: FastifyReply,
-  ): Promise<IExternalSession[]> {
+  ): Promise<TExternalSession[]> {
     res.status(HttpStatus.OK);
-    return this.profileService.getSessions(req.user.userId, req.user.sessionId);
+    const sessions = await this.profileService.getSessions(
+      req.user.userId,
+      req.user.sessionId,
+    );
+    return plainToInstance(ExternalSessionDto, sessions);
   }
 
   @ApiOperation({ summary: d['en'].deleteSessions })
@@ -135,7 +139,7 @@ export class ProfileController {
   @Delete('sessions')
   async deleteSessions(
     @Req() req: TFastifyRequestWithToken,
-    @Body() QueryItemsDto: QueryItemsDto<IExternalSession['id']>,
+    @Body() QueryItemsDto: QueryItemsDto<TExternalSession['id']>,
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<void> {
     res.status(HttpStatus.NO_CONTENT);

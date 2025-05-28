@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UAParser } from 'ua-parser-js'
 
-const { session } = defineProps<{ session: IExternalSession }>()
+const { session } = defineProps<{ session: TExternalSession }>()
 const emit = defineEmits<{
   delete: []
 }>()
