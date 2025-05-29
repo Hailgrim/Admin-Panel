@@ -8,7 +8,7 @@ To run it, you will need to install [Docker](https://github.com/docker).
 
 For a local proxy, add this to hosts:
 
-```
+```sh
 # C:\Windows\System32\drivers\etc\hosts on Windows
 # or
 # /etc/hosts on Linux
