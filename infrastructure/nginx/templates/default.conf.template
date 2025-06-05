@@ -1,0 +1,87 @@
+proxy_hide_header X-Powered-By;
+
+# SSL
+ssl_certificate /usr/share/nginx/ssl/localhost.com.crt;
+ssl_certificate_key /usr/share/nginx/ssl/localhost.com.key;
+
+# HTTP request proxy
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_set_header X-Content-Type-Options nosniff;
+
+# WS request proxy
+proxy_http_version 1.1;
+proxy_set_header Upgrade $http_upgrade;
+proxy_set_header Connection "upgrade";
+proxy_cache_bypass $http_upgrade;
+
+
+
+# api: redirect to HTTPS
+server {
+    listen ${NGINX_PORT};
+    listen [::]:${NGINX_PORT};
+    server_name ${API_URL};
+    return 301 https://$host$request_uri;
+}
+
+# api: main
+server {
+    # HTTPS
+    listen ${NGINX_SSL_PORT} ssl;
+    listen [::]:${NGINX_SSL_PORT} ssl;
+
+    server_name ${API_URL};
+
+    location / {
+        proxy_pass http://${API_HOST}:${API_PORT};
+    }
+}
+
+
+
+# panel-react: redirect to HTTPS
+server {
+    listen ${NGINX_PORT};
+    listen [::]:${NGINX_PORT};
+    server_name ${PANEL_REACT_URL};
+    return 301 https://$host$request_uri;
+}
+
+# panel-react: main
+server {
+    # HTTPS
+    listen ${NGINX_SSL_PORT} ssl default_server;
+    listen [::]:${NGINX_SSL_PORT} ssl default_server;
+
+    server_name ${PANEL_REACT_URL};
+
+    location / {
+        proxy_pass http://${PANEL_REACT_HOST}:${PANEL_REACT_PORT};
+    }
+}
+
+
+
+# panel-vue: redirect to HTTPS
+server {
+    listen ${NGINX_PORT};
+    listen [::]:${NGINX_PORT};
+    server_name ${PANEL_VUE_URL};
+    return 301 https://$host$request_uri;
+}
+
+# panel-vue: main
+server {
+    # HTTPS
+    listen ${NGINX_SSL_PORT} ssl;
+    listen [::]:${NGINX_SSL_PORT} ssl;
+
+    server_name ${PANEL_VUE_URL};
+
+    location / {
+        proxy_pass http://${PANEL_VUE_HOST}:${PANEL_VUE_PORT};
+    }
+}

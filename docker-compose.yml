@@ -1,20 +1,20 @@
 networks:
   main:
-    name: ${PROJECT_TAG}_main
+    name: ${PROJECT_TAG}-main
 
 volumes:
-  rabbitmq_data:
-    name: ${PROJECT_TAG}_rabbitmq_data
-  postgres_data:
-    name: ${PROJECT_TAG}_postgres_data
-  redis_data:
-    name: ${PROJECT_TAG}_redis_data
+  rabbitmq-data:
+    name: ${PROJECT_TAG}-rabbitmq-data
+  postgres-data:
+    name: ${PROJECT_TAG}-postgres-data
+  redis-data:
+    name: ${PROJECT_TAG}-redis-data
 
 services:
   nginx:
     build:
-      context: ./nginx
-    container_name: ${PROJECT_TAG}_nginx
+      context: ./infrastructure/nginx
+    container_name: ${PROJECT_TAG}-nginx
     restart: always
     networks:
       - main
@@ -26,7 +26,7 @@ services:
 
   rabbitmq:
     build:
-      context: ./rabbitmq
+      context: ./infrastructure/rabbitmq
     container_name: ${PROJECT_TAG}_rabbitmq
     restart: always
     networks:
@@ -34,37 +34,50 @@ services:
     expose:
       - ${RABBITMQ_PORT}
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq-data:/var/lib/rabbitmq
 
   postgres:
     build:
-      context: ./postgres
-    container_name: ${PROJECT_TAG}_postgres
+      context: ./infrastructure/postgres
+    container_name: ${PROJECT_TAG}-postgres
     restart: always
     networks:
       - main
     expose:
       - ${POSTGRES_PORT}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
 
   redis:
     build:
-      context: ./redis
-    container_name: ${PROJECT_TAG}_redis
+      context: ./infrastructure/redis
+    container_name: ${PROJECT_TAG}-redis
     restart: always
     networks:
       - main
     expose:
       - ${REDIS_PORT}
     volumes:
-      - redis_data:/data
+      - redis-data:/data
 
-  nest_core:
+  mailer:
     build:
       context: .
-      dockerfile: ./nest_core/Dockerfile
-    container_name: ${PROJECT_TAG}_nest_core
+      dockerfile: ./apps/backend/mailer/Dockerfile
+    container_name: ${PROJECT_TAG}-mailer
+    restart: always
+    depends_on:
+      - rabbitmq
+    networks:
+      - main
+    expose:
+      - ${MAILER_PORT}
+
+  api:
+    build:
+      context: .
+      dockerfile: ./apps/backend/api/Dockerfile
+    container_name: ${PROJECT_TAG}-api
     restart: always
     depends_on:
       - rabbitmq
@@ -73,45 +86,32 @@ services:
     networks:
       - main
     expose:
-      - ${NEST_CORE_PORT}
+      - ${API_PORT}
 
-  nest_mailer:
+  panel-react:
     build:
       context: .
-      dockerfile: ./nest_mailer/Dockerfile
-    container_name: ${PROJECT_TAG}_nest_mailer
-    restart: always
-    depends_on:
-      - rabbitmq
-    networks:
-      - main
-    expose:
-      - ${NEST_MAILER_PORT}
-
-  next:
-    build:
-      context: .
-      dockerfile: ./next/Dockerfile
-    container_name: ${PROJECT_TAG}_next
+      dockerfile: ./apps/frontend/panel-react/Dockerfile
+    container_name: ${PROJECT_TAG}-panel-react
     restart: always
     networks:
       - main
     expose:
-      - ${NEXT_PORT}
+      - ${PANEL_REACT_PORT}
     environment:
-      - HOSTNAME=${NEXT_HOST}
-      - PORT=${NEXT_PORT}
+      - HOSTNAME=${PANEL_REACT_HOST}
+      - PORT=${PANEL_REACT_PORT}
 
-  nuxt:
+  panel-vue:
     build:
       context: .
-      dockerfile: ./nuxt/Dockerfile
-    container_name: ${PROJECT_TAG}_nuxt
+      dockerfile: ./apps/frontend/panel-vue/Dockerfile
+    container_name: ${PROJECT_TAG}-panel-vue
     restart: always
     networks:
       - main
     expose:
-      - ${NUXT_PORT}
+      - ${PANEL_VUE_PORT}
     environment:
-      - HOSTNAME=${NUXT_HOST}
-      - PORT=${NUXT_PORT}
+      - HOSTNAME=${PANEL_VUE_HOST}
+      - PORT=${PANEL_VUE_PORT}

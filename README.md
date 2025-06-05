@@ -14,15 +14,15 @@ For a local proxy, add this to hosts:
 # /etc/hosts on Linux
 127.0.0.1 localhost.com
 127.0.0.1 www.localhost.com
-127.0.0.1 nuxt.localhost.com
+127.0.0.1 vue.localhost.com
 127.0.0.1 api.localhost.com
 ```
 
 After that, you must add the self-signed certificate to your browser as a certificate authority
-(in this case, it is the `./nginx/ssl/myCA.pem` file).
+(in this case, it is the `infrastructure/nginx/ssl/myCA.pem` file).
 Or just use your own purchased domain and certificate for it.
 
-Some startup parameters can be edited in the `./.env` file.
+Some startup parameters can be edited in the `.env` file.
 
 ## Project launch
 
@@ -51,83 +51,107 @@ This startup option leaves a minimal build and does not track changes in microse
 docker compose down --remove-orphans
 ```
 
+### Additional commands
+
+```sh
+npm --prefix scripts ci # install git pre-commit
+npm run install:all # install all dependencies in apps
+npm run lint:all # run linting for all apps
+```
+
 ## Microservices
 
-### [Next.js](https://github.com/vercel/next.js) `./next`
+### Frontend
 
-![sign-in-preview.png](sign-in-preview.png 'Sign In Screen preview')
+#### React
 
-![profile-preview.png](profile-preview.png 'Profile Screen preview')
-
-![roles-preview.png](roles-preview.png 'Role Screen preview')
+![preview-sign-in.png](preview-sign-in.png 'Sign In Screen preview')
+![preview-profile.png](preview-profile.png 'Profile Screen preview')
+![preview-roles.png](preview-roles.png 'Role Screen preview')
 
 This microservice provides a graphical interface for administration.
 In it, you can set a list of protected links, create roles with rights for links, manage registered users.
-The service is written in [React](https://github.com/facebook/react)
+The service is written in [React](https://github.com/facebook/react), [Next.js](https://github.com/vercel/next.js)
 and [TypeScript](https://github.com/microsoft/TypeScript) with **FSD**-like structure.
 [Material UI](https://github.com/mui/material-ui) is used as the UI kit.
 [Redux Toolkit](https://github.com/reduxjs/redux-toolkit) is used as the application state manager.
 [RTK Query](https://github.com/rtk-incubator/rtk-query) is used for API requests.
-The `./next/src/shared/lib/config.ts` file contains the settings received from Docker during project startup.
 
-### [Nuxt](https://github.com/nuxt/nuxt) `./nuxt`
+Service folder: `apps/frontend/panel-react`.
 
-Implements the same functionality as Next.js, but [Vue](https://github.com/vuejs/core) is used instead of React.
+#### Vue
+
+Implements the same functionality as the first frontend, but instead of React, [Vue](https://github.com/vuejs/core) is used,
+and instead of Next.js, [Nuxt](https://github.com/nuxt/nuxt) is used.
 Instead of [Node.js](https://github.com/nodejs), the container uses [Bun](https://github.com/oven-sh/bun).
 State manager - [Pinia](https://github.com/vuejs/pinia).
 UI kit - [Vuetify](https://github.com/vuetifyjs/vuetify).
 
-### Main server `./nest_core`
+Service folder: `apps/frontend/panel-vue`.
+
+### Backend
+
+#### API server
 
 The main server that provides the client's interaction with databases,
 authorization (JWT), creation of requests for sending emails.
 When registering the first user, creates standard API-endpoints,
 roles and assigns administrator role to the first registered user.
 Written in [NestJS](https://github.com/nestjs/nest).
-The `./nest_core/libs/config.ts` file contains the settings received from Docker during project startup.
 
-### Mail server `./nest_mailer`
+Service folder: `apps/backend/api`.
+
+#### Mail server
 
 This service is engaged in sending emails.
 It is built using the same technologies as the main server.
 If the mailer is running in testing mode, then links to view the contents
 of sent emails are available in the container console.
-This behavior is changed in the file `./nest_mailer/libs/config.ts` using the variable `MAIL_TEST`.
 
-### [nginx](https://github.com/nginx/agent) `./nginx`
+Service folder: `apps/backend/mailer`.
 
-Nginx is used as a proxy server and provides the HTTPS protocol.
-In the `./nginx/html` folder you can change the default nginx response pages.
-The `./nginx/ssl` folder is used to store the SSL certificate files.
-In the file `./nginx/templates/default.conf.template` you can set routing rules.
+### Proxy
 
-### [PostgreSQL](https://github.com/postgres/postgres) `./postgres`
+[Nginx](https://github.com/nginx/agent) is used as a proxy server and provides the HTTPS protocol.
 
-This is the main database of the project.
-In the file `./postgres/postgresql.conf` you can set the parameters of PostgreSQL.
+Service folder: `infrastructure/nginx`.
+In the `./html` folder you can change the default nginx response pages.
+The `./ssl` folder is used to store the SSL certificate files.
+In the file `./templates/default.conf.template` you can set routing rules.
 
-### [Redis](https://github.com/redis/redis) `./redis`
+### Database
 
-This storage is used to store user sessions.
-In the file `./redis/redis.conf` you can set the parameters of Redis.
+[PostgreSQL](https://github.com/postgres/postgres) is used as the main database of the project.
 
-### [RabbitMQ](https://github.com/rabbitmq/rabbitmq-tutorials) `./rabbitmq`
+Service folder: `infrastructure/postgres`.
+In the file `./postgresql.conf` you can set the parameters of PostgreSQL.
 
-A queue manager that is used to send requests for sending emails.
-In the file `./rabbitmq/conf.d/rabbitmq.conf` you can set the parameters of RabbitMQ.
+### Cache store
+
+[Redis](https://github.com/redis/redis) is used to store user sessions.
+
+Service folder: `infrastructure/redis`.
+In the file `./redis.conf` you can set the parameters of Redis.
+
+### Message broker
+
+[RabbitMQ](https://github.com/rabbitmq/rabbitmq-tutorials) is used to send requests for sending emails.
+
+Service folder: `infrastructure/rabbitmq`.
+In the file `./rabbitmq.conf` you can set the parameters of RabbitMQ.
 
 ## SSL update
 
 Without a certificate, the project will not function normally (CORS policy).
-The standard certificate is registered for addresses _localhost.com_ (Next.js),
-_nuxt.localhost.com_ (Nuxt.js) and _api.localhost.com_ (main server).
+The standard certificate is registered for addresses _localhost.com_ ([React](#react)),
+_vue.localhost.com_ ([Vue](#vue)) and _api.localhost.com_ ([API server](#api-server)).
 It has a limited duration.
 To create a new certificate, you can use the following commands:
 
 1. Launching a Docker container to create a certificate
 
    ```sh
-   docker run -it --entrypoint /bin/ash frapsoft/openssl
+   docker run --rm -v ./infrastructure/nginx/ssl:/usr/ssl -w /usr/ssl -it --entrypoint /bin/ash frapsoft/openssl
    ```
 
 2. Generate private key
@@ -171,7 +195,7 @@ To create a new certificate, you can use the following commands:
    [alt_names]
    DNS.1 = $NAME
    DNS.2 = www.$NAME
-   DNS.3 = nuxt.$NAME
+   DNS.3 = vue.$NAME
    DNS.4 = api.$NAME
    IP.1 = 127.0.0.1
    EOF
@@ -182,6 +206,12 @@ To create a new certificate, you can use the following commands:
    ```sh
    openssl x509 -req -in $NAME.csr -CA myCA.pem -CAkey myCA.key -CAcreateserial \
    -out $NAME.crt -days 825 -sha256 -extfile $NAME.ext
+   ```
+
+9. Exit from the container
+
+   ```sh
+   exit
    ```
 
 ## Conclusion

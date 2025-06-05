@@ -1,0 +1,37 @@
+#!/bin/sh
+
+run_check() {
+  local label="$1"
+  local command="$2"
+
+  echo "$label"
+  output=$($command 2>&1)
+  status=$?
+  if [ $status -ne 0 ]; then
+    echo "❌ Command \"${command}\" failed"
+    echo "$output"
+    exit $status
+  fi
+}
+
+# api
+api_folder="apps/backend/api"
+run_check "🔍 Linting ${api_folder}..." "npm --prefix ${api_folder} run lint"
+run_check "🧪 Running tests in ${api_folder}..." "npm --prefix ${api_folder} run test:e2e"
+
+# mailer
+mailer_folder="apps/backend/mailer"
+run_check "🔍 Linting ${mailer_folder}..." "npm --prefix ${mailer_folder} run lint"
+
+# panel-react
+panel_react_folder="apps/frontend/panel-react"
+run_check "🔍 Linting ${panel_react_folder}..." "npm --prefix ${panel_react_folder} run lint:fix"
+run_check "🧪 Running tests in ${panel_react_folder}..." "npm --prefix ${panel_react_folder} run test"
+
+# panel-vue
+panel_vue_folder="apps/frontend/panel-vue"
+run_check "🔍 Linting ${panel_vue_folder}..." "npm --prefix ${panel_vue_folder} run lint:fix"
+run_check "🧪 Running tests in ${panel_vue_folder}..." "npm --prefix ${panel_vue_folder} run test:ci"
+
+# final
+echo "✅ All checks passed!"

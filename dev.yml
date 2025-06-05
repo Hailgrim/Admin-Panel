@@ -1,12 +1,12 @@
 volumes:
-  nest_core_node_modules:
-    name: ${PROJECT_TAG}_nest_core_node_modules
-  nest_mailer_node_modules:
-    name: ${PROJECT_TAG}_nest_mailer_node_modules
-  next_node_modules:
-    name: ${PROJECT_TAG}_next_node_modules
-  nuxt_node_modules:
-    name: ${PROJECT_TAG}_nuxt_node_modules
+  api-node-modules:
+    name: ${PROJECT_TAG}-api-node-modules
+  mailer-node-modules:
+    name: ${PROJECT_TAG}-mailer-node-modules
+  panel-react-node-modules:
+    name: ${PROJECT_TAG}-panel-react-node-modules
+  panel-vue-node-modules:
+    name: ${PROJECT_TAG}-panel-vue-node-modules
 
 services:
   nginx:
@@ -15,9 +15,9 @@ services:
     env_file:
       - .env
     volumes:
-      - ./nginx/html:/home/nginx/html
-      - ./nginx/ssl:/home/nginx/ssl
-      - ./nginx/templates:/home/nginx/templates
+      - ./infrastructure/nginx/html:/usr/share/nginx/html
+      - ./infrastructure/nginx/ssl:/usr/share/nginx/ssl
+      - ./infrastructure/nginx/templates:/etc/nginx/templates
 
   rabbitmq:
     build:
@@ -27,7 +27,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./rabbitmq/conf.d:/home/rabbitmq/conf.d
+      - ./infrastructure/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
 
   postgres:
     build:
@@ -35,11 +35,11 @@ services:
     env_file:
       - .env
     volumes:
-      - ./postgres/postgresql.conf:/home/postgres/postgresql.conf
+      - ./infrastructure/postgres/postgresql.conf:/etc/postgresql/postgresql.conf
 
   adminer:
     image: adminer:standalone
-    container_name: ${PROJECT_TAG}_adminer
+    container_name: ${PROJECT_TAG}-adminer
     restart: always
     networks:
       - main
@@ -56,44 +56,44 @@ services:
     env_file:
       - .env
     volumes:
-      - ./redis/redis-stack.conf:/redis-stack.conf
+      - ./infrastructure/redis/redis-stack.conf:/redis-stack.conf
 
-  nest_core:
+  mailer:
     build:
       target: development
     env_file:
       - .env
     volumes:
-      - ./nest_core:/usr/src/app
+      - ./apps/backend/mailer:/usr/src/app
       - ./shared:/usr/src/app/src/shared
-      - nest_core_node_modules:/usr/src/app/node_modules
+      - mailer-node-modules:/usr/src/app/node_modules
 
-  nest_mailer:
+  api:
     build:
       target: development
     env_file:
       - .env
     volumes:
-      - ./nest_mailer:/usr/src/app
+      - ./apps/backend/api:/usr/src/app
       - ./shared:/usr/src/app/src/shared
-      - nest_mailer_node_modules:/usr/src/app/node_modules
+      - api-node-modules:/usr/src/app/node_modules
 
-  next:
+  panel-react:
     build:
       target: development
     env_file:
       - .env
     volumes:
-      - ./next:/usr/src/app
+      - ./apps/frontend/panel-react:/usr/src/app
       - ./shared:/usr/src/shared
-      - next_node_modules:/usr/src/app/node_modules
+      - panel-react-node-modules:/usr/src/app/node_modules
 
-  nuxt:
+  panel-vue:
     build:
       target: development
     env_file:
       - .env
     volumes:
-      - ./nuxt:/usr/src/app
-      - ./shared:/usr/src/shared
-      - nuxt_node_modules:/usr/src/app/node_modules
+      - ./apps/frontend/panel-vue:/usr/src/app
+      - ./shared:/usr/src/app/utils
+      - panel-vue-node-modules:/usr/src/app/node_modules

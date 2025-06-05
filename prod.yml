@@ -6,13 +6,15 @@ services:
       - NGINX_HOST
       - NGINX_PORT
       - NGINX_SSL_PORT
-      - NGINX_ENVSUBST_TEMPLATE_DIR
-      - NEXT_HOST
-      - NEXT_PORT
-      - NUXT_HOST
-      - NUXT_PORT
-      - NEST_CORE_HOST
-      - NEST_CORE_PORT
+      - API_HOST
+      - API_PORT
+      - API_URL
+      - PANEL_REACT_HOST
+      - PANEL_REACT_PORT
+      - PANEL_REACT_URL
+      - PANEL_VUE_HOST
+      - PANEL_VUE_PORT
+      - PANEL_VUE_URL
 
   rabbitmq:
     build:
@@ -43,21 +45,47 @@ services:
       - REDIS_ARGS
       - REDIS_INSIGHT_PORT
 
-  nest_core:
+  mailer:
     build:
       target: production
     environment:
-      - NEST_CORE_HOST
-      - NEST_CORE_PORT
-      - NGINX_HOST
+      - MAILER_HOST
+      - MAILER_PORT
+      - MAILER_SMTP_HOST
+      - MAILER_SMTP_PORT
+      - MAILER_SMTP_USER
+      - MAILER_SMTP_PASSWORD
+      - MAILER_CMD_REGISTRATION
+      - MAILER_CMD_FORGOT_PASSWORD
+      - MAILER_CMD_CHANGE_EMAIL
+      - PROJECT_TAG
       - RABBITMQ_HOST
       - RABBITMQ_PORT
       - RABBITMQ_DEFAULT_USER
       - RABBITMQ_DEFAULT_PASS
       - RABBITMQ_MAIL_QUEUE
-      - MAIL_REGISTRATION
-      - MAIL_FORGOT_PASSWORD
-      - MAIL_CHANGE_EMAIL
+
+  api:
+    build:
+      target: production
+    environment:
+      - API_HOST
+      - API_PORT
+      - API_ACCESS_TOKEN_LIFETIME
+      - API_ACCESS_TOKEN_SECRET_KEY
+      - API_REFRESH_TOKEN_LIFETIME
+      - API_REFRESH_TOKEN_SECRET_KEY
+      - NGINX_HOST
+      - PANEL_REACT_URL
+      - PANEL_VUE_URL
+      - RABBITMQ_HOST
+      - RABBITMQ_PORT
+      - RABBITMQ_DEFAULT_USER
+      - RABBITMQ_DEFAULT_PASS
+      - RABBITMQ_MAIL_QUEUE
+      - MAILER_CMD_REGISTRATION
+      - MAILER_CMD_FORGOT_PASSWORD
+      - MAILER_CMD_CHANGE_EMAIL
       - POSTGRES_HOST
       - POSTGRES_PORT
       - POSTGRES_USER
@@ -68,47 +96,23 @@ services:
       - REDIS_USER
       - REDIS_PASSWORD
       - REDIS_DB
-      - ACCESS_TOKEN_LIFETIME
-      - ACCESS_TOKEN_SECRET_KEY
-      - REFRESH_TOKEN_LIFETIME
-      - REFRESH_TOKEN_SECRET_KEY
 
-  nest_mailer:
-    build:
-      target: production
-    environment:
-      - PROJECT_TAG
-      - NEST_MAILER_HOST
-      - NEST_MAILER_PORT
-      - RABBITMQ_HOST
-      - RABBITMQ_PORT
-      - RABBITMQ_DEFAULT_USER
-      - RABBITMQ_DEFAULT_PASS
-      - RABBITMQ_MAIL_QUEUE
-      - MAIL_REGISTRATION
-      - MAIL_FORGOT_PASSWORD
-      - MAIL_CHANGE_EMAIL
-      - NEST_MAILER_MAIL_HOST
-      - NEST_MAILER_MAIL_PORT
-      - NEST_MAILER_MAIL_USER
-      - NEST_MAILER_MAIL_PASSWORD
-
-  next:
+  panel-react:
     build:
       target: production
       args:
-        - NGINX_HOST
-        - NEXT_HOST_PREFIX
-        - NEST_CORE_HOST
-        - NEST_CORE_PORT
+        - PANEL_REACT_URL
+        - API_HOST
+        - API_PORT
+        - API_URL
         - GOOGLE_CLIENT_ID
 
-  nuxt:
+  panel-vue:
     build:
       target: production
       args:
-        - NGINX_HOST
-        - NUXT_HOST_PREFIX
-        - NEST_CORE_HOST
-        - NEST_CORE_PORT
+        - PANEL_VUE_URL
+        - API_HOST
+        - API_PORT
+        - API_URL
         - GOOGLE_CLIENT_ID

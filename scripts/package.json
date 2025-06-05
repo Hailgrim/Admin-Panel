@@ -2,7 +2,7 @@
   "name": "scripts",
   "version": "1.0.0",
   "scripts": {
-    "prepare": "node ./install-hooks.js"
+    "prepare": "node ./git/install-hooks.js"
   },
   "keywords": [],
   "author": "",

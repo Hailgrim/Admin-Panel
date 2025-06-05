@@ -1,26 +1,15 @@
-# nest_core
-nest_core/Dockerfile
-nest_core/.dockerignore
-nest_core/node_modules
-nest_core/dist
-nest_core/*.log
-nest_core/*.md
+# general
+apps/**/Dockerfile
+apps/**/node_modules
 
-# nest_mailer
-nest_mailer/Dockerfile
-nest_mailer/.dockerignore
-nest_mailer/node_modules
-nest_mailer/dist
-nest_mailer/*.log
-nest_mailer/*.md
+# backend
+apps/backend/**/dist
+apps/backend/**/*.log
+apps/backend/**/*.md
 
-# next
-next/Dockerfile
-next/node_modules
-next/.next
+# panel-react
+apps/frontend/panel-react/.next
 
-# nuxt
-nuxt/Dockerfile
-nuxt/node_modules
-nuxt/.nuxt
-nuxt/.output
+# panel-vue
+apps/frontend/panel-vue/.nuxt
+apps/frontend/panel-vue/.output
