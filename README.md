@@ -53,10 +53,22 @@ docker compose down --remove-orphans
 
 ### Additional commands
 
+Install git pre-commit hook:
+
 ```sh
-npm --prefix scripts ci # install git pre-commit
-npm run install:all # install all dependencies in apps
-npm run lint:all # run linting for all apps
+npm --prefix scripts ci
+```
+
+Install all dependencies in apps:
+
+```sh
+npm run install:all
+```
+
+Run linting for all apps:
+
+```sh
+npm run lint:all
 ```
 
 ## Microservices
