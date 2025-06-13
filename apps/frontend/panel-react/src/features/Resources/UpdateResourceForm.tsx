@@ -84,7 +84,7 @@ const UpdateResourceForm: FC<{ data: IResource }> = ({ data }) => {
         label={t.name}
         value={newData.name}
         onChange={(event) =>
-          setNewData({ ...newData, name: event.currentTarget.value })
+          setNewData({ ...newData, name: event.target.value })
         }
       />
       <FormField
@@ -93,7 +93,7 @@ const UpdateResourceForm: FC<{ data: IResource }> = ({ data }) => {
         label={t.path}
         value={newData.path}
         onChange={(event) =>
-          setNewData({ ...newData, path: event.currentTarget.value })
+          setNewData({ ...newData, path: event.target.value })
         }
       />
       <FormField
@@ -103,7 +103,7 @@ const UpdateResourceForm: FC<{ data: IResource }> = ({ data }) => {
         onChange={(event) =>
           setNewData({
             ...newData,
-            description: event.currentTarget.value,
+            description: event.target.value,
           })
         }
       />

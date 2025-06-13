@@ -94,7 +94,7 @@ const SignInForm: FC = () => {
           type="email"
           label={t.email}
           value={email}
-          onChange={(event) => setEmail(event.currentTarget.value)}
+          onChange={(event) => setEmail(event.target.value)}
           autoFocus
           disabled={isFetching || Boolean(data)}
         />
@@ -103,7 +103,7 @@ const SignInForm: FC = () => {
           name="password"
           label={t.password}
           value={password}
-          onChange={(event) => setPassword(event.currentTarget.value)}
+          onChange={(event) => setPassword(event.target.value)}
           disabled={isFetching || Boolean(data)}
         />
         <FormCheckbox

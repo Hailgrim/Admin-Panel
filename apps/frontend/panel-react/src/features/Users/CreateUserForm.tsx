@@ -83,7 +83,7 @@ const CreateUserForm: FC = () => {
         label={t.email}
         value={data.email}
         onChange={(event) =>
-          setData({ ...data, email: event.currentTarget.value })
+          setData({ ...data, email: event.target.value })
         }
         helperText={t.emailValidation}
         color={emailIsValid ? 'success' : 'error'}
@@ -95,7 +95,7 @@ const CreateUserForm: FC = () => {
         label={t.name}
         value={data.name}
         onChange={(event) =>
-          setData({ ...data, name: event.currentTarget.value })
+          setData({ ...data, name: event.target.value })
         }
         helperText={t.nameValidation}
         color={nameIsValid ? 'success' : 'error'}
@@ -108,7 +108,7 @@ const CreateUserForm: FC = () => {
         label={t.password}
         value={data.password}
         onChange={(event) =>
-          setData({ ...data, password: event.currentTarget.value })
+          setData({ ...data, password: event.target.value })
         }
         helperText={t.passwordValidation}
         color={passwordIsValid ? 'success' : 'error'}

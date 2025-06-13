@@ -7,7 +7,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import * as nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 
-import { d } from '@ap/shared';
+import { getT } from '@ap/shared';
 import { cfg } from 'config/configuration';
 import { ETemplates } from 'libs/constants';
 
@@ -20,12 +20,12 @@ export class AppService {
       const info = (await this.mailerService.sendMail({
         to: email,
         from: cfg.smtp.from,
-        subject: d['en'].subjectRegistration,
+        subject: getT().subjectRegistration,
         template: ETemplates.Registration,
         context: {
           host: cfg.host,
-          title: d['en'].subjectRegistration,
-          action: d['en'].verificationCode,
+          title: getT().subjectRegistration,
+          action: getT().verificationCode,
           code,
         },
       })) as SMTPTransport.SentMessageInfo;
@@ -44,12 +44,12 @@ export class AppService {
       const info = (await this.mailerService.sendMail({
         to: email,
         from: cfg.smtp.from,
-        subject: d['en'].subjectForgotPassword,
+        subject: getT().subjectForgotPassword,
         template: ETemplates.ForgotPassword,
         context: {
           host: cfg.host,
-          title: d['en'].subjectForgotPassword,
-          action: d['en'].resetPasswordCode,
+          title: getT().subjectForgotPassword,
+          action: getT().resetPasswordCode,
           code,
         },
       })) as SMTPTransport.SentMessageInfo;
@@ -68,12 +68,12 @@ export class AppService {
       const info = (await this.mailerService.sendMail({
         to: email,
         from: cfg.smtp.from,
-        subject: d['en'].subjectChangeEmail,
+        subject: getT().subjectChangeEmail,
         template: ETemplates.ChangeEmail,
         context: {
           host: cfg.host,
-          title: d['en'].subjectChangeEmail,
-          action: d['en'].changeEmailCode,
+          title: getT().subjectChangeEmail,
+          action: getT().changeEmailCode,
           code,
         },
       })) as SMTPTransport.SentMessageInfo;

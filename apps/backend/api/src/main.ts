@@ -10,7 +10,7 @@ import fastifyHelmet from '@fastify/helmet';
 
 import { AppModule } from './app.module';
 import { version, name } from '../package.json';
-import { d } from '@ap/shared';
+import { getT } from '@ap/shared';
 import { cfg } from 'config/configuration';
 
 async function bootstrap() {
@@ -23,8 +23,8 @@ async function bootstrap() {
   await app.register(fastifyHelmet);
 
   const config = new DocumentBuilder()
-    .setTitle(d['en'].adminPanel)
-    .setDescription(d['en'].adminPanelAPIDescription)
+    .setTitle(getT().adminPanel)
+    .setDescription(getT().adminPanelAPIDescription)
     .setVersion(version)
     .addTag(name)
     .build();

@@ -8,6 +8,7 @@ import {
   Get,
   HttpStatus,
   Delete,
+  HttpCode,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FastifyReply, FastifyRequest } from 'fastify';
@@ -28,46 +29,41 @@ import {
 import { createCookieOptions, getIP } from 'libs/utils';
 import { SignInGoogleDto } from './dto/sign-in-google.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
-import { d, IUser, ROUTES } from '@ap/shared';
+import { getT, IUser, ROUTES } from '@ap/shared';
 import { ExternalUserDto } from 'src/users/dto/external-user.dto';
 import { cfg } from 'config/configuration';
 
-@ApiTags(d['en'].authorization)
+@ApiTags(getT().authorization)
 @Controller(ROUTES.api.auth.substring(1))
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @ApiOperation({ summary: d['en'].signUp })
+  @ApiOperation({ summary: getT().signUp })
   @ApiResponse({ status: HttpStatus.CREATED, type: ExternalUserDto })
+  @HttpCode(HttpStatus.CREATED)
   @Post('sign-up')
-  async signUp(
-    @Body() signUpDto: SignUpDto,
-    @Res({ passthrough: true }) res: FastifyReply,
-  ): Promise<IUser> {
-    res.status(HttpStatus.CREATED);
+  async signUp(@Body() signUpDto: SignUpDto): Promise<IUser> {
     const user = await this.authService.signUp(signUpDto);
     return plainToInstance(ExternalUserDto, user);
   }
 
-  @ApiOperation({ summary: d['en'].forgotPassword })
+  @ApiOperation({ summary: getT().forgotPassword })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Post('forgot-password')
   async forgotPassword(
     @Body() ForgotPasswordDto: ForgotPasswordDto,
-    @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<void> {
-    res.status(HttpStatus.NO_CONTENT);
     await this.authService.forgotPassword(ForgotPasswordDto.email);
   }
 
-  @ApiOperation({ summary: d['en'].resetPassword })
+  @ApiOperation({ summary: getT().resetPassword })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Post('reset-password')
   async resetPassword(
     @Body() resetPasswordDto: ResetPasswordDto,
-    @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<void> {
-    res.status(HttpStatus.NO_CONTENT);
     await this.authService.resetPassword(
       resetPasswordDto.email,
       resetPasswordDto.code,
@@ -75,8 +71,9 @@ export class AuthController {
     );
   }
 
-  @ApiOperation({ summary: d['en'].signIn })
+  @ApiOperation({ summary: getT().signIn })
   @ApiResponse({ status: HttpStatus.CREATED, type: ExternalUserDto })
+  @HttpCode(HttpStatus.CREATED)
   @UseGuards(LocalAuthGuard)
   @Post('sign-in')
   async signIn(
@@ -103,24 +100,20 @@ export class AuthController {
       res.clearCookie('rememberMe', createCookieOptions());
     }
 
-    res.status(HttpStatus.CREATED);
-
     return plainToInstance(ExternalUserDto, req.user);
   }
 
-  @ApiOperation({ summary: d['en'].confirmRegistration })
+  @ApiOperation({ summary: getT().confirmRegistration })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Post('verify-user')
-  async verifyUser(
-    @Body() verifyUserDto: VerifyUserDto,
-    @Res({ passthrough: true }) res: FastifyReply,
-  ): Promise<void> {
-    res.status(HttpStatus.NO_CONTENT);
+  async verifyUser(@Body() verifyUserDto: VerifyUserDto): Promise<void> {
     await this.authService.verifyUser(verifyUserDto.email, verifyUserDto.code);
   }
 
-  @ApiOperation({ summary: d['en'].signUp })
+  @ApiOperation({ summary: getT().signUp })
   @ApiResponse({ status: HttpStatus.CREATED, type: ExternalUserDto })
+  @HttpCode(HttpStatus.CREATED)
   @Post('sign-in/google')
   async signInGoogle(
     @Req() req: FastifyRequest,
@@ -146,13 +139,13 @@ export class AuthController {
       'true',
       createCookieOptions(cfg.tokens.refresh.lifetime),
     );
-    res.status(HttpStatus.CREATED);
 
     return plainToInstance(ExternalUserDto, user);
   }
 
-  @ApiOperation({ summary: d['en'].refreshToken })
+  @ApiOperation({ summary: getT().refreshToken })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtRefreshGuard)
   @Get('refresh')
   async refresh(
@@ -176,12 +169,11 @@ export class AuthController {
     if (rememberMe) {
       res.cookie('rememberMe', 'true', createCookieOptions(sessionTtl));
     }
-
-    res.status(HttpStatus.NO_CONTENT);
   }
 
-  @ApiOperation({ summary: d['en'].signOut })
+  @ApiOperation({ summary: getT().signOut })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtGuard)
   @Delete('sign-out')
   async signOut(
@@ -194,6 +186,5 @@ export class AuthController {
     res.clearCookie('accessToken', cookieOptions);
     res.clearCookie('refreshToken', cookieOptions);
     res.clearCookie('rememberMe', cookieOptions);
-    res.status(HttpStatus.NO_CONTENT);
   }
 }

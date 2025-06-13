@@ -100,7 +100,7 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
         label={t.email}
         value={newData.email || ''}
         onChange={(event) =>
-          setNewData({ ...newData, email: event.currentTarget.value })
+          setNewData({ ...newData, email: event.target.value })
         }
         helperText={t.emailValidation}
         color={emailIsValid ? 'success' : 'error'}
@@ -112,7 +112,7 @@ const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
         label={t.name}
         value={newData.name}
         onChange={(event) =>
-          setNewData({ ...newData, name: event.currentTarget.value })
+          setNewData({ ...newData, name: event.target.value })
         }
         helperText={t.nameValidation}
         color={nameIsValid ? 'success' : 'error'}

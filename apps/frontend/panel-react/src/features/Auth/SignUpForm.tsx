@@ -92,7 +92,7 @@ const SignUpForm: FC = () => {
           name="name"
           label={t.name}
           value={name}
-          onChange={(event) => setName(event.currentTarget.value)}
+          onChange={(event) => setName(event.target.value)}
           helperText={t.nameValidation}
           color={nameIsValid ? 'success' : 'error'}
           error={!nameIsValid && name.length > 0}
@@ -104,7 +104,7 @@ const SignUpForm: FC = () => {
           type="email"
           label={t.email}
           value={email}
-          onChange={(event) => setEmail(event.currentTarget.value)}
+          onChange={(event) => setEmail(event.target.value)}
           helperText={t.emailValidation}
           color={emailIsValid ? 'success' : 'error'}
           error={!emailIsValid && email.length > 0}
@@ -114,7 +114,7 @@ const SignUpForm: FC = () => {
           name="password"
           label={t.password}
           value={password}
-          onChange={(event) => setPassword(event.currentTarget.value)}
+          onChange={(event) => setPassword(event.target.value)}
           helperText={t.passwordValidation}
           color={passwordIsValid ? 'success' : 'error'}
           error={!passwordIsValid && password.length > 0}

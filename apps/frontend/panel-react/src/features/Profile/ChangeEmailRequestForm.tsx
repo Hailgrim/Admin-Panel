@@ -66,7 +66,7 @@ const ChangeEmailRequestForm: FC = () => {
           type="email"
           label={t.email}
           value={email}
-          onChange={(event) => setEmail(event.currentTarget.value)}
+          onChange={(event) => setEmail(event.target.value)}
           helperText={t.emailValidation}
           color={emailIsValid ? 'success' : 'error'}
           error={!emailIsValid && email.length > 0}

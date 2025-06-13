@@ -81,7 +81,7 @@ const ChangeEmailConfirmForm: FC<{
         name="code"
         label={t.code}
         value={code}
-        onChange={(event) => setCode(event.currentTarget.value)}
+        onChange={(event) => setCode(event.target.value)}
         helperText={`${t.codeFromEmail} (${email})`}
       />
       <FormButton

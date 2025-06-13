@@ -74,7 +74,7 @@ const ResetPasswordForm: FC<{
         name="code"
         label={t.code}
         value={code}
-        onChange={(event) => setCode(event.currentTarget.value)}
+        onChange={(event) => setCode(event.target.value)}
         helperText={`${t.codeFromEmail} (${email})`}
       />
       <FormPassword
@@ -83,7 +83,7 @@ const ResetPasswordForm: FC<{
         name="newPassword"
         label={t.newPassword}
         value={password}
-        onChange={(event) => setPassword(event.currentTarget.value)}
+        onChange={(event) => setPassword(event.target.value)}
         helperText={t.passwordValidation}
         color={passwordIsValid ? 'success' : 'error'}
         error={!passwordIsValid && password.length > 0}

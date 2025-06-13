@@ -84,7 +84,7 @@ const UpdateRoleForm: FC<{ data: IRole }> = ({ data }) => {
         label={t.name}
         value={newData.name}
         onChange={(event) =>
-          setNewData({ ...newData, name: event.currentTarget.value })
+          setNewData({ ...newData, name: event.target.value })
         }
       />
       <FormField
@@ -94,7 +94,7 @@ const UpdateRoleForm: FC<{ data: IRole }> = ({ data }) => {
         onChange={(event) =>
           setNewData({
             ...newData,
-            description: event.currentTarget.value,
+            description: event.target.value,
           })
         }
       />

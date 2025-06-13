@@ -67,7 +67,7 @@ const ForgotPasswordForm: FC = () => {
           type="email"
           label={t.email}
           value={email}
-          onChange={(event) => setEmail(event.currentTarget.value)}
+          onChange={(event) => setEmail(event.target.value)}
           autoFocus
           disabled={isFetching}
         />

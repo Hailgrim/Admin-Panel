@@ -18,7 +18,7 @@ import { IToken, ITokensPair } from './auth.types';
 import { QueueService } from 'src/queue/queue.service';
 import { createHash, generateCode, verifyHash } from 'libs/utils';
 import {
-  d,
+  getT,
   IEmailCode,
   ISession,
   IUser,
@@ -42,14 +42,14 @@ export class AuthService {
     // Verify the existence of the Administrator Role
     const adminRole = await this.rolesService.findOrCreateDefault(
       'Administrator',
-      d['en'].defaultAdminRole,
+      getT().defaultAdminRole,
       true,
     );
 
     // Verify the existence of the User Role
     const userRole = await this.rolesService.findOrCreateDefault(
       'User',
-      d['en'].defaultUserRole,
+      getT().defaultUserRole,
     );
 
     // Verify the existence of the Default Resources
@@ -71,7 +71,7 @@ export class AuthService {
         return {
           path: value,
           name: value.replace(value[0], value[0].toUpperCase()),
-          description: d['en'].defaultResource(value),
+          description: getT().defaultResource(value),
           enabled: true,
         };
       });

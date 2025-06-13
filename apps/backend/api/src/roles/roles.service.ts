@@ -39,7 +39,7 @@ export class RolesService {
   async create(fields: TCreateRole): Promise<RoleEntity> {
     try {
       const role = this.rolesRepository.create(fields);
-      return await this.rolesRepository.save(role);
+      return this.rolesRepository.save(role);
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();

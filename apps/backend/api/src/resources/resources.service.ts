@@ -30,7 +30,7 @@ export class ResourcesService {
   async create(fields: TCreateResource): Promise<ResourceEntity> {
     try {
       const resource = this.resourcesRepository.create(fields);
-      return await this.resourcesRepository.save(resource);
+      return this.resourcesRepository.save(resource);
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();
@@ -44,7 +44,7 @@ export class ResourcesService {
       const resources = fieldsArr.map((fields) =>
         this.resourcesRepository.create({ ...fields, default: true }),
       );
-      return await this.resourcesRepository.save(resources);
+      return this.resourcesRepository.save(resources);
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();

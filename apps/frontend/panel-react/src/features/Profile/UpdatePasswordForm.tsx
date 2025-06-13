@@ -64,14 +64,14 @@ const UpdatePasswordForm: FC = () => {
         name="old-password"
         label={t.oldPassword}
         value={oldPassword}
-        onChange={(event) => setOldPassword(event.currentTarget.value)}
+        onChange={(event) => setOldPassword(event.target.value)}
       />
       <FormPassword
         required
         name="new-password"
         label={t.newPassword}
         value={newPassword}
-        onChange={(event) => setNewPassword(event.currentTarget.value)}
+        onChange={(event) => setNewPassword(event.target.value)}
         helperText={t.passwordValidation}
         color={passwordIsValid ? 'success' : 'error'}
         error={!passwordIsValid && newPassword.length > 0}

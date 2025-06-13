@@ -60,7 +60,7 @@ const CreateRoleForm: FC = () => {
         label={t.name}
         value={data.name}
         onChange={(event) =>
-          setData({ ...data, name: event.currentTarget.value })
+          setData({ ...data, name: event.target.value })
         }
       />
       <FormField
@@ -68,7 +68,7 @@ const CreateRoleForm: FC = () => {
         label={t.description}
         value={data.description}
         onChange={(event) =>
-          setData({ ...data, description: event.currentTarget.value })
+          setData({ ...data, description: event.target.value })
         }
       />
       <FormCheckbox

@@ -91,7 +91,7 @@ const UpdateProfileForm: FC = () => {
         label={t.name}
         value={newData.name || ''}
         onChange={(event) =>
-          newData && setNewData({ ...newData, name: event.currentTarget.value })
+          newData && setNewData({ ...newData, name: event.target.value })
         }
         helperText={t.nameValidation}
         color={nameIsValid ? 'success' : 'error'}

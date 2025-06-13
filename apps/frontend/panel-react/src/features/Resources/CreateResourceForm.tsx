@@ -61,7 +61,7 @@ const CreateResourceForm: FC = () => {
         label={t.name}
         value={data.name}
         onChange={(event) =>
-          setData({ ...data, name: event.currentTarget.value })
+          setData({ ...data, name: event.target.value })
         }
       />
       <FormField
@@ -70,7 +70,7 @@ const CreateResourceForm: FC = () => {
         label={t.path}
         value={data.path}
         onChange={(event) =>
-          setData({ ...data, path: event.currentTarget.value })
+          setData({ ...data, path: event.target.value })
         }
       />
       <FormField
@@ -78,7 +78,7 @@ const CreateResourceForm: FC = () => {
         label={t.description}
         value={data.description}
         onChange={(event) =>
-          setData({ ...data, description: event.currentTarget.value })
+          setData({ ...data, description: event.target.value })
         }
       />
       <FormCheckbox
