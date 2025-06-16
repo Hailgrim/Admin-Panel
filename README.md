@@ -73,9 +73,11 @@ npm run lint:all
 
 ## Microservices
 
-### Frontend
+### Apps
 
-#### React
+#### Frontend
+
+##### React
 
 ![preview-sign-in.png](preview-sign-in.png 'Sign In Screen preview')
 ![preview-profile.png](preview-profile.png 'Profile Screen preview')
@@ -91,7 +93,7 @@ and [TypeScript](https://github.com/microsoft/TypeScript) with **FSD**-like stru
 
 Service folder: `apps/frontend/panel-react`.
 
-#### Vue
+##### Vue
 
 Implements the same functionality as the first frontend, but instead of React, [Vue](https://github.com/vuejs/core) is used,
 and instead of Next.js, [Nuxt](https://github.com/nuxt/nuxt) is used.
@@ -101,9 +103,9 @@ UI kit - [Vuetify](https://github.com/vuetifyjs/vuetify).
 
 Service folder: `apps/frontend/panel-vue`.
 
-### Backend
+#### Backend
 
-#### API server
+##### API server
 
 The main server that provides the client's interaction with databases,
 authorization (JWT), creation of requests for sending emails.
@@ -113,7 +115,7 @@ Written in [NestJS](https://github.com/nestjs/nest).
 
 Service folder: `apps/backend/api`.
 
-#### Mail server
+##### Mail server
 
 This service is engaged in sending emails.
 It is built using the same technologies as the main server.
@@ -122,7 +124,9 @@ of sent emails are available in the container console.
 
 Service folder: `apps/backend/mailer`.
 
-### Proxy
+### Infrastructure
+
+#### Proxy
 
 [Nginx](https://github.com/nginx/agent) is used as a proxy server and provides the HTTPS protocol.
 
@@ -131,26 +135,35 @@ In the `./html` folder you can change the default nginx response pages.
 The `./ssl` folder is used to store the SSL certificate files.
 In the file `./templates/default.conf.template` you can set routing rules.
 
-### Database
+#### Database
 
 [PostgreSQL](https://github.com/postgres/postgres) is used as the main database of the project.
 
 Service folder: `infrastructure/postgres`.
 In the file `./postgresql.conf` you can set the parameters of PostgreSQL.
 
-### Cache store
+#### Cache store
 
 [Redis](https://github.com/redis/redis) is used to store user sessions.
 
 Service folder: `infrastructure/redis`.
 In the file `./redis.conf` you can set the parameters of Redis.
 
-### Message broker
+#### Message broker
 
 [RabbitMQ](https://github.com/rabbitmq/rabbitmq-tutorials) is used to send requests for sending emails.
 
 Service folder: `infrastructure/rabbitmq`.
 In the file `./rabbitmq.conf` you can set the parameters of RabbitMQ.
+
+## Other folders
+
+The `shared` folder is intended to store common types, utilities, and dictionaries between the frontend and backend.
+Currently, containers are configured to use this folder (adding a dependency to `package.json` for development and `tsconfig.json` for build,
+and mounting volumes for Docker) without switching to _npm workspaces_.
+
+The `scripts` folder currently contains only a hook for _git_, which is configured to run
+tests and linters in applications before commit, and a small script for installing it.
 
 ## SSL update
 
