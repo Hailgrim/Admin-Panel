@@ -1,9 +1,9 @@
-import { DEV } from '@ap/shared';
+import { DEV, readSecret } from '@ap/shared';
 
 export const cfg = {
   mode: process.env.NODE_ENV || DEV,
   host: process.env.MAILER_HOST ? '0.0.0.0' : 'localhost',
-  port: Number(process.env.MAILER_PORT || 3001),
+  port: Number(process.env.MAILER_PORT || 3000),
   rmq: {
     host: process.env.RABBITMQ_HOST || 'localhost',
     port: Number(process.env.RABBITMQ_PORT) || 5672,
@@ -22,7 +22,7 @@ export const cfg = {
     host: process.env.MAILER_SMTP_HOST || 'localhost',
     port: Number(process.env.MAILER_SMTP_PORT) || 587,
     user: process.env.MAILER_SMTP_USER || 'user',
-    password: process.env.MAILER_SMTP_PASSWORD || 'password',
+    password: readSecret('/run/secrets/smtp') || 'password',
     from: `"No Reply" <no-reply@${process.env.PROJECT_TAG || 'AP'}>`,
   },
 };

@@ -103,8 +103,8 @@ export class UsersController {
   @UseGuards(JwtGuard, RolesGuard)
   @Delete()
   async delete(
-    @Body() QueryItemsDto: QueryItemsDto<IUser['id']>,
+    @Body() queryItemsDto: QueryItemsDto<IUser['id']>,
   ): Promise<void> {
-    await this.usersService.delete(QueryItemsDto.items);
+    await this.usersService.delete(queryItemsDto.items);
   }
 }

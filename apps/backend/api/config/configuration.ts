@@ -1,21 +1,21 @@
-import { DEV } from '@ap/shared';
+import { DEV, readSecret } from '@ap/shared';
 
 export const cfg = {
   mode: process.env.NODE_ENV || DEV,
   host: process.env.API_HOST || '0.0.0.0',
-  port: Number(process.env.API_PORT || 3000),
+  port: Number(process.env.API_PORT || 3001),
   tokens: {
     access: {
       /** Time in seconds */
       lifetime: Number(process.env.API_ACCESS_TOKEN_LIFETIME) || 60 * 60,
-      secret: process.env.API_ACCESS_TOKEN_SECRET_KEY || 'accessTokenSecretKey',
+      secret: readSecret('/run/secrets/access-token') || 'accessTokenSecretKey',
     },
     refresh: {
       /** Time in seconds */
       lifetime:
         Number(process.env.API_REFRESH_TOKEN_LIFETIME) || 60 * 60 * 24 * 7,
       secret:
-        process.env.API_REFRESH_TOKEN_SECRET_KEY || 'refreshTokenSecretKey',
+        readSecret('/run/secrets/refresh-token') || 'refreshTokenSecretKey',
     },
   },
   urls: {

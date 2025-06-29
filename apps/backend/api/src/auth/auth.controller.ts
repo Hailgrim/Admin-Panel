@@ -52,9 +52,9 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('forgot-password')
   async forgotPassword(
-    @Body() ForgotPasswordDto: ForgotPasswordDto,
+    @Body() forgotPasswordDto: ForgotPasswordDto,
   ): Promise<void> {
-    await this.authService.forgotPassword(ForgotPasswordDto.email);
+    await this.authService.forgotPassword(forgotPasswordDto.email);
   }
 
   @ApiOperation({ summary: getT().resetPassword })

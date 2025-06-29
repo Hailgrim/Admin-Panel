@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+
 import { getT } from '../locales/utils';
 import type { IMenuItem } from '../types/ui';
 import { ROUTES } from './constants';
@@ -142,4 +144,20 @@ export const getGoogleSignInUrl = (
   url += '&include_granted_scopes=true';
   url += '&response_type=token';
   return url;
+};
+
+/**
+ * @param {string} path Path to file with secret
+ * @returns {string | undefined} File contents or undefined
+ */
+export const readSecret = (path: string): string | undefined => {
+  try {
+    return fs.readFileSync(path, 'utf8').trim();
+  } catch (error) {
+    if ('message' in error) {
+      console.warn(error.message);
+    }
+
+    return undefined;
+  }
 };

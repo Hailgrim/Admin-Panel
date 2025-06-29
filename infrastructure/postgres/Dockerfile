@@ -1,5 +1,3 @@
-FROM postgres:alpine AS development
-CMD ["-c", "config_file=/etc/postgresql/postgresql.conf"]
-
-FROM development AS production
+FROM postgres:alpine
 COPY ./postgresql.conf /etc/postgresql/postgresql.conf
+CMD ["-c", "config_file=/etc/postgresql/postgresql.conf"]

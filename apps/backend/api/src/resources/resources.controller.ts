@@ -91,8 +91,8 @@ export class ResourcesController {
   @UseGuards(JwtGuard, RolesGuard)
   @Delete()
   async delete(
-    @Body() QueryItemsDto: QueryItemsDto<IResource['id']>,
+    @Body() queryItemsDto: QueryItemsDto<IResource['id']>,
   ): Promise<void> {
-    await this.resourceService.delete(QueryItemsDto.items);
+    await this.resourceService.delete(queryItemsDto.items);
   }
 }

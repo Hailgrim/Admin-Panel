@@ -1,4 +1,2 @@
-FROM rabbitmq:management-alpine AS development
-
-FROM rabbitmq:alpine AS production
+FROM rabbitmq:management-alpine
 COPY ./rabbitmq.conf /etc/rabbitmq/rabbitmq.conf

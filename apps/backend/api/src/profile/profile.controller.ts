@@ -131,11 +131,11 @@ export class ProfileController {
   @Delete('sessions')
   async deleteSessions(
     @Req() req: TFastifyRequestWithToken,
-    @Body() QueryItemsDto: QueryItemsDto<TExternalSession['id']>,
+    @Body() queryItemsDto: QueryItemsDto<TExternalSession['id']>,
   ): Promise<void> {
     await this.profileService.deleteSessions(
       req.user.userId,
-      QueryItemsDto.items,
+      queryItemsDto.items,
     );
   }
 }

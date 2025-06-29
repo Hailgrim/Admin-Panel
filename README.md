@@ -79,9 +79,9 @@ npm run lint:all
 
 ##### React
 
-![preview-sign-in.png](preview-sign-in.png 'Sign In Screen preview')
-![preview-profile.png](preview-profile.png 'Profile Screen preview')
-![preview-roles.png](preview-roles.png 'Role Screen preview')
+![Sign In Screen image](docs/images/preview-sign-in.png 'Sign In Screen preview')
+![Profile Screen image](docs/images/preview-profile.png 'Profile Screen preview')
+![Role Screen image](docs/images/preview-roles.png 'Role Screen preview')
 
 This microservice provides a graphical interface for administration.
 In it, you can set a list of protected links, create roles with rights for links, manage registered users.
@@ -156,11 +156,23 @@ In the file `./redis.conf` you can set the parameters of Redis.
 Service folder: `infrastructure/rabbitmq`.
 In the file `./rabbitmq.conf` you can set the parameters of RabbitMQ.
 
+#### Monitoring
+
+[Prometheus](https://github.com/prometheus/prometheus) and
+[Grafana](https://github.com/grafana/grafana) is used for monitoring.
+
+Service folders: `infrastructure/prometheus` and `infrastructure/grafana`.
+Prometheus parameters can be set in `infrastructure/prometheus/prometheus.yml`.
+The `infrastructure/grafana/provisioning` folder contains settings for Grafana,
+and `infrastructure/grafana/dashboards` contains pre-installed Grafana dashboards.
+
 ## Other folders
 
+The `secrets` folder is used to store passwords and keys. In a real project, it should be added to `.gitignore`.
+
 The `shared` folder is intended to store common types, utilities, and dictionaries between the frontend and backend.
-Currently, containers are configured to use this folder (adding a dependency to `package.json` for development and `tsconfig.json` for build,
-and mounting volumes for Docker) without switching to _npm workspaces_.
+Currently, containers are configured to use this folder (adding a dependency to `package.json` for development
+and `tsconfig.json` for build, and mounting volumes for Docker) without switching to _npm workspaces_.
 
 The `scripts` folder currently contains only a hook for _git_, which is configured to run
 tests and linters in applications before commit, and a small script for installing it.
@@ -200,28 +212,28 @@ To create a new certificate, you can use the following commands:
 5. Generate a private key
 
    ```sh
-   openssl genrsa -out $NAME.key 2048
+   openssl genrsa -out ${NAME}.key 2048
    ```
 
 6. Create a certificate-signing request
 
    ```sh
-   openssl req -new -key $NAME.key -out $NAME.csr
+   openssl req -new -key ${NAME}.key -out ${NAME}.csr
    ```
 
 7. Create a config file for the extensions
 
    ```sh
-   cat > $NAME.ext <<EOF
+   cat > ${NAME}.ext <<EOF
    authorityKeyIdentifier=keyid,issuer
    basicConstraints=CA:FALSE
    keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
    subjectAltName = @alt_names
    [alt_names]
-   DNS.1 = $NAME
-   DNS.2 = www.$NAME
-   DNS.3 = vue.$NAME
-   DNS.4 = api.$NAME
+   DNS.1 = ${NAME}
+   DNS.2 = www.${NAME}
+   DNS.3 = vue.${NAME}
+   DNS.4 = api.${NAME}
    IP.1 = 127.0.0.1
    EOF
    ```
@@ -229,8 +241,8 @@ To create a new certificate, you can use the following commands:
 8. Create the signed certificate
 
    ```sh
-   openssl x509 -req -in $NAME.csr -CA myCA.pem -CAkey myCA.key -CAcreateserial \
-   -out $NAME.crt -days 825 -sha256 -extfile $NAME.ext
+   openssl x509 -req -in ${NAME}.csr -CA myCA.pem -CAkey myCA.key -CAcreateserial \
+   -out ${NAME}.crt -days 825 -sha256 -extfile ${NAME}.ext
    ```
 
 9. Exit from the container

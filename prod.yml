@@ -1,8 +1,18 @@
 services:
-  nginx:
-    build:
-      target: production
+  grafana:
     environment:
+      - TZ
+      - GF_SECURITY_ADMIN_USER
+      - GF_SECURITY_ADMIN_PASSWORD__FILE
+      - GF_USERS_ALLOW_SIGN_UP
+      - GF_INSTALL_PLUGINS
+  prometheus:
+    environment:
+      - TZ
+
+  nginx:
+    environment:
+      - TZ
       - NGINX_HOST
       - NGINX_PORT
       - NGINX_SSL_PORT
@@ -17,18 +27,17 @@ services:
       - PANEL_VUE_URL
 
   rabbitmq:
-    build:
-      target: production
     environment:
+      - TZ
       - RABBITMQ_HOST
       - RABBITMQ_PORT
       - RABBITMQ_DEFAULT_USER
       - RABBITMQ_DEFAULT_PASS
+      - RABBITMQ_PROMETHEUS_RETENTION_POLICY
 
   postgres:
-    build:
-      target: production
     environment:
+      - TZ
       - POSTGRES_HOST
       - POSTGRES_PORT
       - POSTGRES_USER
@@ -39,22 +48,22 @@ services:
     build:
       target: production
     environment:
+      - TZ
       - REDIS_HOST
       - REDIS_PORT
       - REDIS_DB
       - REDIS_ARGS
-      - REDIS_INSIGHT_PORT
 
   mailer:
     build:
       target: production
     environment:
+      - TZ
       - MAILER_HOST
       - MAILER_PORT
       - MAILER_SMTP_HOST
       - MAILER_SMTP_PORT
       - MAILER_SMTP_USER
-      - MAILER_SMTP_PASSWORD
       - MAILER_CMD_REGISTRATION
       - MAILER_CMD_FORGOT_PASSWORD
       - MAILER_CMD_CHANGE_EMAIL
@@ -64,17 +73,15 @@ services:
       - RABBITMQ_DEFAULT_USER
       - RABBITMQ_DEFAULT_PASS
       - RABBITMQ_MAIL_QUEUE
-
   api:
     build:
       target: production
     environment:
+      - TZ
       - API_HOST
       - API_PORT
       - API_ACCESS_TOKEN_LIFETIME
-      - API_ACCESS_TOKEN_SECRET_KEY
       - API_REFRESH_TOKEN_LIFETIME
-      - API_REFRESH_TOKEN_SECRET_KEY
       - NGINX_HOST
       - PANEL_REACT_URL
       - PANEL_VUE_URL
@@ -96,21 +103,21 @@ services:
       - REDIS_USER
       - REDIS_PASSWORD
       - REDIS_DB
-
   panel-react:
     build:
       target: production
       args:
+        - TZ
         - PANEL_REACT_URL
         - API_HOST
         - API_PORT
         - API_URL
         - GOOGLE_CLIENT_ID
-
   panel-vue:
     build:
       target: production
       args:
+        - TZ
         - PANEL_VUE_URL
         - API_HOST
         - API_PORT

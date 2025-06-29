@@ -15,16 +15,16 @@ export class UserEntity implements IUser {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'varchar', length: 100, unique: true, nullable: true })
+  @Column({ type: 'varchar', length: 320, unique: true, nullable: true })
   email?: string | null;
 
-  @Column({ type: 'varchar', length: 1000, nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   password?: string | null;
 
   @Column({ type: 'varchar', length: 100 })
   name: string;
 
-  @Column({ type: 'varchar', length: 100, unique: true, nullable: true })
+  @Column({ type: 'varchar', length: 255, unique: true, nullable: true })
   googleId?: string | null;
 
   @Column({ type: 'boolean', default: false })
@@ -42,7 +42,7 @@ export class UserEntity implements IUser {
   @Column({ type: 'varchar', length: 4, nullable: true })
   changeEmailCode?: string | null;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
+  @Column({ type: 'varchar', length: 320, nullable: true })
   temporaryEmail?: string | null;
 
   @ManyToMany(() => RoleEntity, (role) => role.users)

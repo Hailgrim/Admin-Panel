@@ -103,8 +103,8 @@ export class RolesController {
   @UseGuards(JwtGuard, RolesGuard)
   @Delete()
   async delete(
-    @Body() QueryItemsDto: QueryItemsDto<IRole['id']>,
+    @Body() queryItemsDto: QueryItemsDto<IRole['id']>,
   ): Promise<void> {
-    await this.roleService.delete(QueryItemsDto.items);
+    await this.roleService.delete(queryItemsDto.items);
   }
 }

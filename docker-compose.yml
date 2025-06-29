@@ -1,16 +1,56 @@
 networks:
   main:
     name: ${PROJECT_TAG}-main
+    driver: bridge
 
 volumes:
   rabbitmq-data:
     name: ${PROJECT_TAG}-rabbitmq-data
   postgres-data:
     name: ${PROJECT_TAG}-postgres-data
+  prometheus-data:
+    name: ${PROJECT_TAG}-prometheus-data
+  grafana-storage:
+    name: ${PROJECT_TAG}-grafana-storage
   redis-data:
     name: ${PROJECT_TAG}-redis-data
 
+secrets:
+  grafana:
+    file: ./secrets/grafana.txt
+  smtp:
+    file: ./secrets/smtp.txt
+  access-token:
+    file: ./secrets/access-token.txt
+  refresh-token:
+    file: ./secrets/refresh-token.txt
+
 services:
+  grafana:
+    build:
+      context: ./infrastructure/grafana
+    container_name: ${PROJECT_TAG}-grafana
+    restart: always
+    networks:
+      - main
+    ports:
+      - 9000:3000
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    secrets:
+      - grafana
+  prometheus:
+    build:
+      context: ./infrastructure/prometheus
+    container_name: ${PROJECT_TAG}-prometheus
+    restart: always
+    networks:
+      - main
+    expose:
+      - 9090
+    volumes:
+      - prometheus-data:/prometheus
+
   nginx:
     build:
       context: ./infrastructure/nginx
@@ -33,6 +73,7 @@ services:
       - main
     expose:
       - ${RABBITMQ_PORT}
+      - 15692
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
 
@@ -47,6 +88,21 @@ services:
       - ${POSTGRES_PORT}
     volumes:
       - postgres-data:/var/lib/postgresql/data
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter
+    container_name: ${PROJECT_TAG}-postgres-exporter
+    restart: always
+    networks:
+      - main
+    depends_on:
+      - postgres
+    expose:
+      - 9187
+    environment:
+      - TZ
+      - DATA_SOURCE_URI=${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable
+      - DATA_SOURCE_USER=${POSTGRES_USER}
+      - DATA_SOURCE_PASS=${POSTGRES_PASSWORD}
 
   redis:
     build:
@@ -59,19 +115,21 @@ services:
       - ${REDIS_PORT}
     volumes:
       - redis-data:/data
-
-  mailer:
-    build:
-      context: .
-      dockerfile: ./apps/backend/mailer/Dockerfile
-    container_name: ${PROJECT_TAG}-mailer
+  redis-exporter:
+    image: oliver006/redis_exporter
+    container_name: ${PROJECT_TAG}-redis-exporter
     restart: always
-    depends_on:
-      - rabbitmq
     networks:
       - main
+    depends_on:
+      - redis
     expose:
-      - ${MAILER_PORT}
+      - 9121
+    environment:
+      - TZ
+      - REDIS_ADDR=redis://${REDIS_HOST}:${REDIS_PORT}
+      - REDIS_USER
+      - REDIS_PASSWORD
 
   api:
     build:
@@ -87,7 +145,23 @@ services:
       - main
     expose:
       - ${API_PORT}
-
+    secrets:
+      - access-token
+      - refresh-token
+  mailer:
+    build:
+      context: .
+      dockerfile: ./apps/backend/mailer/Dockerfile
+    container_name: ${PROJECT_TAG}-mailer
+    restart: always
+    depends_on:
+      - rabbitmq
+    networks:
+      - main
+    expose:
+      - ${MAILER_PORT}
+    secrets:
+      - smtp
   panel-react:
     build:
       context: .
@@ -101,7 +175,6 @@ services:
     environment:
       - HOSTNAME=${PANEL_REACT_HOST}
       - PORT=${PANEL_REACT_PORT}
-
   panel-vue:
     build:
       context: .
