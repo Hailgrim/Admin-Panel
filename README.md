@@ -177,7 +177,8 @@ of declaring it in environment variables, as is usually the case.
 As an example, I will consider a similar case for _RabbitMQ_.
 This image has by default `ENTRYPOINT["docker-entrypoint.sh"]` (the original entry point)
 and `CMD["rabbitmq-server"]` (the original argument passed).
-Let's assume that we have a secret file with a password `/run/secrets/rabbitmq`
+Let's assume we have a secret file with a password `/secrets/rabbitmq.txt`
+(`/run/secrets/rabbitmq` after passing it from Docker Secrets)
 and `./rabbitmq.conf.template` with the line `default_pass = ${RABBITMQ_PASSWORD}` inside.
 Now let's create our own entry point `./custom-entrypoint.sh`:
 
