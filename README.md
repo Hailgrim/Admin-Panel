@@ -166,6 +166,51 @@ Prometheus parameters can be set in `infrastructure/prometheus/prometheus.yml`.
 The `infrastructure/grafana/provisioning` folder contains settings for Grafana,
 and `infrastructure/grafana/dashboards` contains pre-installed Grafana dashboards.
 
+#### Custom entrypoint
+
+If you needed to perform some actions before each `CMD`/`ENTRYPOINT` call,
+one option is to extend the original container entry point.
+For example, if you need to open some service for external requests,
+it will be safer to define the password for it in a secret file instead
+of declaring it in environment variables, as is usually the case.
+
+As an example, I will consider a similar case for _RabbitMQ_.
+This image has by default `ENTRYPOINT["docker-entrypoint.sh"]` (the original entry point)
+and `CMD["rabbitmq-server"]` (the original argument passed).
+Let's assume that we have a secret file with a password `/run/secrets/rabbitmq`
+and `./rabbitmq.conf.template` with the line `default_pass = ${RABBITMQ_PASSWORD}` inside.
+Now let's create our own entry point `./custom-entrypoint.sh`:
+
+```sh
+#!/bin/sh
+# set command logging and error policy
+set -eux
+
+# some actions
+# for example, read the password from a file and create a configuration from a template
+RABBITMQ_PASSWORD="$(cat /run/secrets/rabbitmq)"
+envsubst < /etc/rabbitmq/templates/rabbitmq.conf.template > /etc/rabbitmq/rabbitmq.conf
+unset RABBITMQ_PASSWORD
+
+# optinal: pass the call arguments if none were specified
+if [ $# -eq 0 ]; then
+  set -- rabbitmq-server
+fi
+
+# execute original image entry point
+exec /usr/local/bin/docker-entrypoint.sh "$@"
+```
+
+Copy the new entry point into the container and call it:
+
+```dockerfile
+FROM rabbitmq:management-alpine
+COPY ./custom-entrypoint.sh .
+COPY ./rabbitmq.conf.template /etc/rabbitmq/templates/rabbitmq.conf.template
+RUN chmod +x ./custom-entrypoint.sh
+ENTRYPOINT ["./custom-entrypoint.sh"]
+```
+
 ## Other folders
 
 The `secrets` folder is used to store passwords and keys. In a real project, it should be added to `.gitignore`.
