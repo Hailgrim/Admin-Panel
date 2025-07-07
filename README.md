@@ -4,7 +4,7 @@ This is a boilerplate project that implements the functionality of the admin pan
 The project is built using microservices architecture.
 To run it, you will need to install [Docker](https://github.com/docker).
 
-## Before starting work
+## Preliminary Setup
 
 For a local proxy, add this to hosts:
 
@@ -24,7 +24,7 @@ Or just use your own purchased domain and certificate for it.
 
 Some startup parameters can be edited in the `.env` file.
 
-## Project launch
+## Project Launch
 
 ### Development
 
@@ -45,13 +45,13 @@ docker compose -f docker-compose.yml -f prod.yml up -d
 
 This startup option leaves a minimal build and does not track changes in microservices folders.
 
-### Shutting down
+### Shutting Down
 
 ```sh
 docker compose down --remove-orphans
 ```
 
-### Additional commands
+### Additional Commands
 
 Install git pre-commit hook:
 
@@ -105,7 +105,7 @@ Service folder: `apps/frontend/panel-vue`.
 
 #### Backend
 
-##### API server
+##### API Server
 
 The main server that provides the client's interaction with databases,
 authorization (JWT), creation of requests for sending emails.
@@ -115,7 +115,7 @@ Written in [NestJS](https://github.com/nestjs/nest).
 
 Service folder: `apps/backend/api`.
 
-##### Mail server
+##### Mail Server
 
 This service is engaged in sending emails.
 It is built using the same technologies as the main server.
@@ -142,14 +142,14 @@ In the file `./templates/default.conf.template` you can set routing rules.
 Service folder: `infrastructure/postgres`.
 In the file `./postgresql.conf` you can set the parameters of PostgreSQL.
 
-#### Cache store
+#### Cache Store
 
 [Redis](https://github.com/redis/redis) is used to store user sessions.
 
 Service folder: `infrastructure/redis`.
 In the file `./redis.conf` you can set the parameters of Redis.
 
-#### Message broker
+#### Message Broker
 
 [RabbitMQ](https://github.com/rabbitmq/rabbitmq-tutorials) is used to send requests for sending emails.
 
@@ -166,7 +166,7 @@ Prometheus parameters can be set in `infrastructure/prometheus/prometheus.yml`.
 The `infrastructure/grafana/provisioning` folder contains settings for Grafana,
 and `infrastructure/grafana/dashboards` contains pre-installed Grafana dashboards.
 
-#### Custom entrypoint
+#### Custom Entry Points
 
 If you needed to perform some actions before each `CMD`/`ENTRYPOINT` call,
 one option is to extend the original container entry point.
@@ -212,7 +212,7 @@ RUN chmod +x ./custom-entrypoint.sh
 ENTRYPOINT ["./custom-entrypoint.sh"]
 ```
 
-## Other folders
+## Other Folders
 
 The `secrets` folder is used to store passwords and keys. In a real project, it should be added to `.gitignore`.
 
@@ -223,7 +223,7 @@ and `tsconfig.json` for build, and mounting volumes for Docker) without switchin
 The `scripts` folder currently contains only a hook for _git_, which is configured to run
 tests and linters in applications before commit, and a small script for installing it.
 
-## SSL update
+## SSL Update
 
 Without a certificate, the project will not function normally (CORS policy).
 The standard certificate is registered for addresses _localhost.com_ ([React](#react)),
