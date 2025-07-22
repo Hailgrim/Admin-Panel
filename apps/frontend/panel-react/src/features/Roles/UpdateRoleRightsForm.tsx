@@ -9,9 +9,10 @@ import { useAppDispatch } from '@/shared/store/hooks';
 import rolesApi from '@/shared/api/roles/rolesApi';
 import { addAlert } from '@/shared/store/main/main';
 import useTranslate from '@/shared/hooks/useTranslate';
-import { getErrorText, IResource, IRights, IRole, ROUTES } from '@ap/shared';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
 import useTranslateRef from '@/shared/hooks/useTranslateRef';
+import { getErrorText, ROUTES } from '@ap/shared/src/libs';
+import { IResource, IRights, IRole } from '@ap/shared/src/types';
 
 const UpdateRoleRightsForm: FC<{
   role: IRole;

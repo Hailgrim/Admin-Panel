@@ -7,8 +7,8 @@ import {
 } from 'typeorm';
 
 import { UserEntity } from '../users/user.entity';
-import { IRole } from '@ap/shared';
 import { RightsEntity } from 'src/database/rights.entity';
+import { IRole } from '@ap/shared/src/types';
 
 @Entity('roles')
 export class RoleEntity implements IRole {

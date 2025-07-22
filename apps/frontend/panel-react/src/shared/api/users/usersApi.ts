@@ -2,17 +2,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import baseQueryWithReauth from '../baseQueryWithReauth';
 import usersService from '@/shared/api/users/usersService';
-import {
-  IGetListResponse,
-  IQueryItems,
-  IUpdateReq,
-  IUser,
-  IUsersRoles,
-  TCreateUser,
-  TGetListRequest,
-  TGetUsers,
-  TUpdateUser,
-} from '@ap/shared';
+import { IGetListResponse, IQueryItems, IUpdateReq, IUser, IUsersRoles, TCreateUser, TGetListRequest, TGetUsers, TUpdateUser } from '@ap/shared/src/types';
 
 const usersApi = createApi({
   reducerPath: 'users',

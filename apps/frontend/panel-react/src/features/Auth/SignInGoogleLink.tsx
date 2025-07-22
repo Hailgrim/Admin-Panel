@@ -5,7 +5,8 @@ import FormLink from '@/shared/ui/Form/FormLink';
 import { useAppDispatch } from '@/shared/store/hooks';
 import { setProfile } from '@/shared/store/main/main';
 import useTranslate from '@/shared/hooks/useTranslate';
-import { getGoogleSignInUrl, IUser, IWindowMessage, ROUTES } from '@ap/shared';
+import { IUser, IWindowMessage } from '@ap/shared/src/types';
+import { getGoogleSignInUrl, ROUTES } from '@ap/shared/src/libs';
 
 const SignInGoogleLink: FC = () => {
   const t = useTranslate();

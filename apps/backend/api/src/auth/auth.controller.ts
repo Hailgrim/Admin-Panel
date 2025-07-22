@@ -29,9 +29,11 @@ import {
 import { createCookieOptions, getIP } from 'libs/utils';
 import { SignInGoogleDto } from './dto/sign-in-google.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
-import { getT, IUser, ROUTES } from '@ap/shared';
 import { ExternalUserDto } from 'src/users/dto/external-user.dto';
 import { cfg } from 'config/configuration';
+import { ROUTES } from '@ap/shared/src/libs';
+import { getT } from '@ap/shared/src/locales';
+import { IUser } from '@ap/shared/src/types';
 
 @ApiTags(getT().authorization)
 @Controller(ROUTES.api.auth.substring(1))

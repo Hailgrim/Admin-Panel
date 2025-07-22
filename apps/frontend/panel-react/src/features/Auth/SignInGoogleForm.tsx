@@ -5,10 +5,11 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import FormBase from '@/shared/ui/Form/FormBase';
 import FormAlert from '@/shared/ui/Form/FormAlert';
 import authApi from '@/shared/api/auth/authApi';
-import { getErrorText, IUser, IWindowMessage, ROUTES } from '@ap/shared';
 import useTranslate from '@/shared/hooks/useTranslate';
 import useTranslateRef from '@/shared/hooks/useTranslateRef';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
+import { IUser, IWindowMessage } from '@ap/shared/src/types';
+import { getErrorText, ROUTES } from '@ap/shared/src/libs';
 
 const SignInGoogleForm: FC = () => {
   const lRef = useLanguageRef();

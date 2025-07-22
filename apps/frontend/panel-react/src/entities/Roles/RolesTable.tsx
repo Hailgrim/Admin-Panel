@@ -7,7 +7,8 @@ import Link from 'next/link';
 
 import useTranslate from '@/shared/hooks/useTranslate';
 import useRights from '@/shared/hooks/useRights';
-import { IRole, ROUTES } from '@ap/shared';
+import { IRole } from '@ap/shared/src/types';
+import { ROUTES } from '@ap/shared/src/libs';
 
 const RolesTable: FC<Omit<DataGridProps<IRole>, 'columns'>> = (props) => {
   const t = useTranslate();

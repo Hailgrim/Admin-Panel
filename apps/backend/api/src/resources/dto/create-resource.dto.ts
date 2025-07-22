@@ -1,7 +1,7 @@
 import { IntersectionType, PartialType, PickType } from '@nestjs/swagger';
 
-import { TCreateResource } from '@ap/shared';
 import { ResourceDto } from './resource.dto';
+import { TCreateResource } from '@ap/shared/src/types';
 
 export class CreateResourceDto
   extends IntersectionType(

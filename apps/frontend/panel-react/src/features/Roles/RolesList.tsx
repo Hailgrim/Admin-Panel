@@ -14,7 +14,8 @@ import rolesApi from '@/shared/api/roles/rolesApi';
 import { useAppDispatch } from '@/shared/store/hooks';
 import { addAlert } from '@/shared/store/main/main';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
-import { getErrorText, IRole, ROUTES } from '@ap/shared';
+import { IRole } from '@ap/shared/src/types';
+import { getErrorText, ROUTES } from '@ap/shared/src/libs';
 
 const RolesList: FC<IList<IRole>> = (props) => {
   const dispatch = useAppDispatch();

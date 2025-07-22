@@ -8,7 +8,7 @@ import UpdateRoleForm from '@/features/Roles/UpdateRoleForm';
 import useTranslate from '@/shared/hooks/useTranslate';
 import UpdateRoleRightsForm from '@/features/Roles/UpdateRoleRightsForm';
 import { IPage } from '@/views/types';
-import { IResource, IRole } from '@ap/shared';
+import { IResource, IRole } from '@ap/shared/src/types';
 
 const RolePage: FC<
   IPage<{

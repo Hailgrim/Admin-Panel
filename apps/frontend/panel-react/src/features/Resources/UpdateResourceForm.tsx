@@ -11,10 +11,11 @@ import FormCheckbox from '@/shared/ui/Form/FormCheckbox';
 import { useAppDispatch } from '@/shared/store/hooks';
 import resourcesApi from '@/shared/api/resources/resourcesApi';
 import { addAlert } from '@/shared/store/main/main';
-import { getErrorText, getUpdatedValues, IResource, ROUTES } from '@ap/shared';
 import useTranslate from '@/shared/hooks/useTranslate';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
 import useTranslateRef from '@/shared/hooks/useTranslateRef';
+import { IResource } from '@ap/shared/src/types';
+import { getErrorText, getUpdatedValues, ROUTES } from '@ap/shared/src/libs';
 
 const UpdateResourceForm: FC<{ data: IResource }> = ({ data }) => {
   const dispatch = useAppDispatch();

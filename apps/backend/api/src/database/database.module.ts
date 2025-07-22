@@ -7,8 +7,8 @@ import { RoleEntity } from 'src/roles/role.entity';
 import { UsersRolesEntity } from './users-roles.entity';
 import { ResourceEntity } from 'src/resources/resource.entity';
 import { RightsEntity } from './rights.entity';
-import { DEV } from '@ap/shared';
 import { cfg } from 'config/configuration';
+import { DEV } from '@ap/shared/src/libs';
 
 @Module({
   imports: [

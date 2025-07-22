@@ -10,7 +10,7 @@ import {
   IUser,
   IVerifyUser,
   TSignUp,
-} from '@ap/shared';
+} from '@ap/shared/src/types';
 
 const authApi = createApi({
   reducerPath: 'auth',

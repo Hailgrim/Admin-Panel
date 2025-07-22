@@ -5,12 +5,12 @@ import {
   IQueryItems,
   IResource,
   IUpdateReq,
-  ROUTES,
   TCreateResource,
   TGetListRequest,
   TGetResources,
   TUpdateResource,
-} from '@ap/shared';
+} from '@ap/shared/src/types';
+import { ROUTES } from '@ap/shared/src/libs';
 
 class ResourcesService {
   createArgs(payload: TCreateResource): IReqArgs {

@@ -10,7 +10,8 @@ import ApiIcon from '@mui/icons-material/Api';
 import useTranslate from '@/shared/hooks/useTranslate';
 import useRights from '@/shared/hooks/useRights';
 import SideBarMenuItem from './SideBarMenuItem';
-import { IMenuItem, ROUTES } from '@ap/shared';
+import { ROUTES } from '@ap/shared/src/libs';
+import { IMenuItem } from '@ap/shared/src/types';
 
 const SideBarMenu: FC = () => {
   const t = useTranslate();

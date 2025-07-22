@@ -18,20 +18,20 @@ import {
 } from 'typeorm';
 
 import { UserEntity } from './user.entity';
-import {
-  IGetListResponse,
-  IUsersRoles,
-  TGetListRequest,
-  TCreateUser,
-  TGetUsers,
-  TUpdateUser,
-} from '@ap/shared';
 import { CacheService } from 'src/cache/cache.service';
 import { DatabaseService } from 'src/database/database.service';
 import { createHash } from 'libs/utils';
 import { RoleEntity } from 'src/roles/role.entity';
 import { UsersRolesEntity } from 'src/database/users-roles.entity';
 import { TDatabaseGetList } from 'src/database/database.types';
+import {
+  IGetListResponse,
+  IUsersRoles,
+  TCreateUser,
+  TGetListRequest,
+  TGetUsers,
+  TUpdateUser,
+} from '@ap/shared/src/types';
 
 @Injectable()
 export class UsersService {

@@ -1,7 +1,8 @@
 import { NextMiddleware, NextResponse } from 'next/server';
 
 import profileService from './shared/api/profile/profileService';
-import { IUser, ROUTES } from '@ap/shared';
+import { ROUTES } from '@ap/shared/src/libs';
+import { IUser } from '@ap/shared/src/types';
 
 export const config = {
   matcher: [

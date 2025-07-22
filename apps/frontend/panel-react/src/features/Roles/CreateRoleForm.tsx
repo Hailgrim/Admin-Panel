@@ -11,9 +11,10 @@ import FormCheckbox from '@/shared/ui/Form/FormCheckbox';
 import rolesApi from '@/shared/api/roles/rolesApi';
 import { useAppDispatch } from '@/shared/store/hooks';
 import { addAlert } from '@/shared/store/main/main';
-import { getErrorText, ROUTES, TCreateRole } from '@ap/shared';
 import useTranslateRef from '@/shared/hooks/useTranslateRef';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
+import { TCreateRole } from '@ap/shared/src/types';
+import { getErrorText, ROUTES } from '@ap/shared/src/libs';
 
 const CreateRoleForm: FC = () => {
   const dispatch = useAppDispatch();

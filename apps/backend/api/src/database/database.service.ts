@@ -1,8 +1,8 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { DataSource, ILike, Like } from 'typeorm';
 
-import { TGetListRequest } from '@ap/shared';
 import { TDatabaseGetList } from './database.types';
+import { TGetListRequest } from '@ap/shared/src/types';
 
 @Injectable()
 export class DatabaseService implements OnModuleInit {

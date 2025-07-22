@@ -8,7 +8,7 @@ import { IPage } from '@/views/types';
 import ResourcesList from '@/features/Resources/ResourcesList';
 import { IList } from '@/shared/lib/types';
 import { setReqLimit, setReqPage } from '@/views/utils';
-import { IResource } from '@ap/shared';
+import { IResource } from '@ap/shared/src/types';
 
 const ResourcesPage: FC<IPage<IList<IResource>>> = ({ h1, data }) => {
   const searchParams = useSearchParams();

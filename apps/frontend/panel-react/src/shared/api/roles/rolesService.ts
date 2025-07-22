@@ -6,12 +6,12 @@ import {
   IRights,
   IRole,
   IUpdateReq,
-  ROUTES,
   TCreateRole,
   TGetListRequest,
   TGetRoles,
   TUpdateRole,
-} from '@ap/shared';
+} from '@ap/shared/src/types';
+import { ROUTES } from '@ap/shared/src/libs';
 
 class RolesService {
   createArgs(payload: TCreateRole): IReqArgs {
@@ -59,7 +59,9 @@ class RolesService {
     };
   }
 
-  updateRightsArgs(payload: IUpdateReq<IQueryItems<IRights>, IRole['id']>): IReqArgs {
+  updateRightsArgs(
+    payload: IUpdateReq<IQueryItems<IRights>, IRole['id']>
+  ): IReqArgs {
     return {
       url: ROUTES.api.roleRights(payload.id),
       method: 'PATCH',

@@ -4,7 +4,7 @@ import { Metadata } from 'next/types';
 import rolesService from '@/shared/api/roles/rolesService';
 import RolesPage from '@/views/Panel/Roles/RolesPage';
 import { IAppPage } from '@/app/types';
-import { getT } from '@ap/shared';
+import { getT } from '@ap/shared/src/locales';
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const t = getT();

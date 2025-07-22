@@ -2,14 +2,13 @@ import {
   checkActiveLink,
   EMAIL_REGEX,
   getErrorText,
-  getT,
   getUpdatedValues,
-  IMenuItem,
   NAME_REGEX,
   PASSWORD_REGEX,
   testString,
-  TLangList,
-} from '@ap/shared';
+} from '@ap/shared/src/libs';
+import { getT, TLangList } from '@ap/shared/src/locales';
+import { IMenuItem } from '@ap/shared/src/types';
 
 describe('checkActiveLink function', () => {
   test('checkActiveLink should return true if link found in the navigation tree', () => {

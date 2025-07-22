@@ -5,7 +5,7 @@ import { FC } from 'react';
 import PanelLayout from '../../PanelLayout';
 import UpdateResourceForm from '@/features/Resources/UpdateResourceForm';
 import { IPage } from '@/views/types';
-import { IResource } from '@ap/shared';
+import { IResource } from '@ap/shared/src/types';
 
 const ResourcePage: FC<IPage<IResource>> = ({ h1, data }) => {
   return (

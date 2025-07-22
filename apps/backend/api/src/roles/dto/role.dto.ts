@@ -9,8 +9,8 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { IRole } from '@ap/shared';
 import { RightsDto } from 'src/database/dto/rights.dto';
+import { IRole } from '@ap/shared/src/types';
 
 export class RoleDto implements IRole {
   @ApiProperty({

@@ -3,17 +3,17 @@ import { HttpStatus } from '@nestjs/common';
 
 import { adminCookies, app, userCookies, wrongValue } from './app.setup';
 import {
-  IUser,
-  TCreateUser,
-  TGetUsers,
-  TUpdateUser,
   IGetListResponse,
   IQueryItems,
-  IUsersRoles,
-  TGetListRequest,
   IRole,
-  ROUTES,
-} from '@ap/shared';
+  IUser,
+  IUsersRoles,
+  TCreateUser,
+  TGetListRequest,
+  TGetUsers,
+  TUpdateUser,
+} from '@ap/shared/src/types';
+import { ROUTES } from '@ap/shared/src/libs';
 
 const runUsersTests = () => {
   describe('Users', () => {

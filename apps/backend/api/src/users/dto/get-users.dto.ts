@@ -6,9 +6,9 @@ import {
 } from '@nestjs/swagger';
 
 import { GetListRequestDto } from 'src/database/dto/get-list-request.dto';
-import { TGetListRequest, TGetUsers } from '@ap/shared';
 import { UserDto } from './user.dto';
 import { IsOptional, IsString } from 'class-validator';
+import { TGetListRequest, TGetUsers } from '@ap/shared/src/types';
 
 export class GetUsersDto
   extends IntersectionType(

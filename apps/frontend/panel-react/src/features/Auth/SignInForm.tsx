@@ -15,10 +15,10 @@ import { useAppDispatch } from '@/shared/store/hooks';
 import authApi from '@/shared/api/auth/authApi';
 import { setProfile } from '@/shared/store/main/main';
 import SignInGoogleLink from './SignInGoogleLink';
-import { getErrorText, ROUTES } from '@ap/shared';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
 import useTranslateRef from '@/shared/hooks/useTranslateRef';
 import useTranslate from '@/shared/hooks/useTranslate';
+import { getErrorText, ROUTES } from '@ap/shared/src/libs';
 
 const SignInForm: FC = () => {
   const router = useRouter();

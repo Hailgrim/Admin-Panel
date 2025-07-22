@@ -5,13 +5,13 @@ import { adminCookies, app, userCookies, wrongValue } from './app.setup';
 import {
   IGetListResponse,
   IQueryItems,
-  TGetListRequest,
   IResource,
   TCreateResource,
+  TGetListRequest,
   TGetResources,
   TUpdateResource,
-  ROUTES,
-} from '@ap/shared';
+} from '@ap/shared/src/types';
+import { ROUTES } from '@ap/shared/src/libs';
 
 const runResourcesTests = () => {
   describe('Resources', () => {

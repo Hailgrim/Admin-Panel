@@ -13,16 +13,9 @@ import FormCheckbox from '@/shared/ui/Form/FormCheckbox';
 import { useAppDispatch } from '@/shared/store/hooks';
 import usersApi from '@/shared/api/users/usersApi';
 import { addAlert } from '@/shared/store/main/main';
-import {
-  EMAIL_REGEX,
-  getErrorText,
-  getUpdatedValues,
-  IUser,
-  NAME_REGEX,
-  ROUTES,
-  testString,
-} from '@ap/shared';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
+import { IUser } from '@ap/shared/src/types';
+import { EMAIL_REGEX, getErrorText, getUpdatedValues, NAME_REGEX, ROUTES, testString } from '@ap/shared/src/libs';
 
 const UpdateUserForm: FC<{ data: IUser }> = ({ data }) => {
   const dispatch = useAppDispatch();

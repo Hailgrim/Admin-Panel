@@ -18,7 +18,7 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@ap/shared": ["./src/shared/index"]
+      "@ap/shared/*": ["./src/shared/*"]
     }
   }
 }

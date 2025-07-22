@@ -1,6 +1,6 @@
 import { FastifyRequest } from 'fastify';
 
-import { IUser } from '@ap/shared';
+import { IUser } from '@ap/shared/src/types';
 
 export interface ITokensPair {
   accessToken: string;

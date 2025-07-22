@@ -8,7 +8,7 @@ import { IPage } from '@/views/types';
 import { IList } from '@/shared/lib/types';
 import UsersList from '@/features/Users/UsersList';
 import { setReqLimit, setReqPage } from '@/views/utils';
-import { IUser } from '@ap/shared';
+import { IUser } from '@ap/shared/src/types';
 
 const UsersPage: FC<IPage<IList<IUser>>> = ({ h1, data }) => {
   const searchParams = useSearchParams();

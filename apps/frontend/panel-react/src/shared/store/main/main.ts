@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { IAlert, IUser, TLangList } from '@ap/shared';
+import { TLangList } from '@ap/shared/src/locales';
+import { IAlert, IUser } from '@ap/shared/src/types';
 
 export const mainSliceName = 'main';
 

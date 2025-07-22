@@ -1,7 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString, Matches } from 'class-validator';
 
-import { IUpdatePassword, PASSWORD_REGEX } from '@ap/shared';
+import { PASSWORD_REGEX } from '@ap/shared/src/libs';
+import { IUpdatePassword } from '@ap/shared/src/types';
 
 export class UpdatePasswordDto implements IUpdatePassword {
   @ApiPropertyOptional({ type: String, example: '!Q1q2w3e4r' })

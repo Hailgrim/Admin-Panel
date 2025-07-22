@@ -3,17 +3,17 @@ import { HttpStatus } from '@nestjs/common';
 
 import { adminCookies, app, userCookies, wrongValue } from './app.setup';
 import {
-  IRole,
-  TCreateRole,
-  TGetRoles,
-  TUpdateRole,
   IGetListResponse,
   IQueryItems,
-  IRights,
-  TGetListRequest,
   IResource,
-  ROUTES,
-} from '@ap/shared';
+  IRights,
+  IRole,
+  TCreateRole,
+  TGetListRequest,
+  TGetRoles,
+  TUpdateRole,
+} from '@ap/shared/src/types';
+import { ROUTES } from '@ap/shared/src/libs';
 
 const runRolesTests = () => {
   describe('Roles', () => {

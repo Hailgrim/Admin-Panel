@@ -7,7 +7,8 @@ import Link from 'next/link';
 
 import useTranslate from '@/shared/hooks/useTranslate';
 import useRights from '@/shared/hooks/useRights';
-import { IRole, IUser, ROUTES } from '@ap/shared';
+import { ROUTES } from '@ap/shared/src/libs';
+import { IRole, IUser } from '@ap/shared/src/types';
 
 const UsersTable: FC<Omit<DataGridProps<IUser>, 'columns'>> = (props) => {
   const t = useTranslate();

@@ -23,9 +23,11 @@ import { JwtGuard } from 'src/auth/jwt.guard';
 import { GetResourcesDto } from './dto/get-resources.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
 import { QueryItemsDto } from 'src/database/dto/query-items.dto';
-import { IResource, IGetListResponse, ROUTES, getT } from '@ap/shared';
 import { ExternalResourceDto } from './dto/external-resource.dto';
 import { ResourcesListDto } from './dto/resources-list.dto';
+import { ROUTES } from '@ap/shared/src/libs';
+import { getT } from '@ap/shared/src/locales';
+import { IGetListResponse, IResource } from '@ap/shared/src/types';
 
 const route = ROUTES.api.resources.substring(1);
 

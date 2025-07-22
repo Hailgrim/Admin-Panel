@@ -12,9 +12,10 @@ import resourcesApi from '@/shared/api/resources/resourcesApi';
 import { IList } from '@/shared/lib/types';
 import { useAppDispatch } from '@/shared/store/hooks';
 import { addAlert } from '@/shared/store/main/main';
-import { getErrorText, IResource, ROUTES } from '@ap/shared';
 import useTranslate from '@/shared/hooks/useTranslate';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
+import { IResource } from '@ap/shared/src/types';
+import { getErrorText, ROUTES } from '@ap/shared/src/libs';
 
 const ResourcesList: FC<IList<IResource>> = (props) => {
   const dispatch = useAppDispatch();

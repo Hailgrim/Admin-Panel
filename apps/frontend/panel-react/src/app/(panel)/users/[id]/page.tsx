@@ -8,7 +8,7 @@ import usersService from '@/shared/api/users/usersService';
 import rolesService from '@/shared/api/roles/rolesService';
 import UserPage from '@/views/Panel/Users/UserPage';
 import { IAppPage } from '@/app/types';
-import { getT } from '@ap/shared';
+import { getT } from '@ap/shared/src/locales';
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const t = getT();

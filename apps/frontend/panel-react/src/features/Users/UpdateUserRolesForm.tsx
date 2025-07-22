@@ -9,9 +9,10 @@ import FormCheckbox from '@/shared/ui/Form/FormCheckbox';
 import { useAppDispatch } from '@/shared/store/hooks';
 import usersApi from '@/shared/api/users/usersApi';
 import { addAlert } from '@/shared/store/main/main';
-import { getErrorText, IRole, IUser, IUsersRoles, ROUTES } from '@ap/shared';
 import useTranslateRef from '@/shared/hooks/useTranslateRef';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
+import { IRole, IUser, IUsersRoles } from '@ap/shared/src/types';
+import { getErrorText, ROUTES } from '@ap/shared/src/libs';
 
 const UpdateUserRolesForm: FC<{
   user: IUser;

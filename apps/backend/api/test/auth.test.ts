@@ -11,15 +11,15 @@ import {
   userCookies,
   wrongValue,
 } from './app.setup';
+import { ROUTES } from '@ap/shared/src/libs';
 import {
   IForgotPassword,
   IResetPassword,
   ISignIn,
+  IUser,
   IVerifyUser,
   TSignUp,
-  IUser,
-  ROUTES,
-} from '@ap/shared';
+} from '@ap/shared/src/types';
 
 const runAuthTests = () => {
   describe('Auth', () => {

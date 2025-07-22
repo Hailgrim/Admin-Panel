@@ -5,12 +5,12 @@ import baseQueryWithReprofile from '../baseQueryWithReauth';
 import {
   IChangeEmailConfirm,
   IChangeEmailRequest,
-  TExternalSession,
   IQueryItems,
   IUpdatePassword,
   IUser,
+  TExternalSession,
   TUpdateUser,
-} from '@ap/shared';
+} from '@ap/shared/src/types';
 
 const profileApi = createApi({
   reducerPath: 'profile',

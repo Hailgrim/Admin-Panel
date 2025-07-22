@@ -6,12 +6,12 @@ import {
   IUpdateReq,
   IUser,
   IUsersRoles,
-  ROUTES,
   TCreateUser,
   TGetListRequest,
   TGetUsers,
   TUpdateUser,
-} from '@ap/shared';
+} from '@ap/shared/src/types';
+import { ROUTES } from '@ap/shared/src/libs';
 
 class UsersService {
   createArgs(payload: TCreateUser): IReqArgs {
@@ -59,7 +59,9 @@ class UsersService {
     };
   }
 
-  updateRolesArgs(payload: IUpdateReq<IQueryItems<IUsersRoles>, IUser['id']>): IReqArgs {
+  updateRolesArgs(
+    payload: IUpdateReq<IQueryItems<IUsersRoles>, IUser['id']>
+  ): IReqArgs {
     return {
       url: ROUTES.api.userRoles(payload.id),
       method: 'PATCH',

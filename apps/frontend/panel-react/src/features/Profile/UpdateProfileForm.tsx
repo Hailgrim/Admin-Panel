@@ -7,17 +7,17 @@ import useRights from '@/shared/hooks/useRights';
 import { useAppDispatch, useAppSelector } from '@/shared/store/hooks';
 import { addAlert, setProfile } from '@/shared/store/main/main';
 import profileApi from '@/shared/api/profile/profileApi';
-import {
-  getErrorText,
-  getUpdatedValues,
-  IUser,
-  NAME_REGEX,
-  ROUTES,
-  testString,
-} from '@ap/shared';
 import useTranslate from '@/shared/hooks/useTranslate';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
 import useTranslateRef from '@/shared/hooks/useTranslateRef';
+import {
+  getErrorText,
+  getUpdatedValues,
+  NAME_REGEX,
+  ROUTES,
+  testString,
+} from '@ap/shared/src/libs';
+import { IUser } from '@ap/shared/src/types';
 
 const UpdateProfileForm: FC = () => {
   const dispatch = useAppDispatch();

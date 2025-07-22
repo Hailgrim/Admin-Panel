@@ -8,7 +8,7 @@ import UpdateUserForm from '@/features/Users/UpdateUserForm';
 import UpdateUserRolesForm from '@/features/Users/UpdateUserRolesForm';
 import useTranslate from '@/shared/hooks/useTranslate';
 import { IPage } from '@/views/types';
-import { IRole, IUser } from '@ap/shared';
+import { IRole, IUser } from '@ap/shared/src/types';
 
 const UserPage: FC<
   IPage<{

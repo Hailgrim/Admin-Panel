@@ -1,8 +1,8 @@
 import { IntersectionType, PartialType, PickType } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 
-import { IUser } from '@ap/shared';
 import { UserDto } from './user.dto';
+import { IUser } from '@ap/shared/src/types';
 
 export class ExternalUserDto
   extends IntersectionType(

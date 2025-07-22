@@ -8,10 +8,10 @@ import { useAppDispatch, useAppSelector } from '@/shared/store/hooks';
 import { addAlert, setProfile } from '@/shared/store/main/main';
 import useRights from '@/shared/hooks/useRights';
 import profileApi from '@/shared/api/profile/profileApi';
-import { getErrorText, ROUTES } from '@ap/shared';
 import useTranslate from '@/shared/hooks/useTranslate';
 import useTranslateRef from '@/shared/hooks/useTranslateRef';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
+import { getErrorText, ROUTES } from '@ap/shared/src/libs';
 
 const ChangeEmailConfirmForm: FC<{
   email: string;

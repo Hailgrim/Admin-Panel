@@ -22,11 +22,13 @@ import { ERights } from 'libs/constants';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { GetUsersDto } from './dto/get-users.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { getT, IGetListResponse, IUser, ROUTES } from '@ap/shared';
 import { QueryItemsDto } from 'src/database/dto/query-items.dto';
 import { ExternalUserDto } from './dto/external-user.dto';
 import { UsersListDto } from './dto/users-list.dto';
 import { UsersRolesQueryItemsDto } from 'src/database/dto/users-roles-query-items.dto';
+import { ROUTES } from '@ap/shared/src/libs';
+import { getT } from '@ap/shared/src/locales';
+import { IGetListResponse, IUser } from '@ap/shared/src/types';
 
 const route = ROUTES.api.users.substring(1);
 

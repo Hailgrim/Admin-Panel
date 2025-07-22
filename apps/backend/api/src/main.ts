@@ -10,8 +10,8 @@ import fastifyHelmet from '@fastify/helmet';
 
 import { AppModule } from './app.module';
 import { version, name } from '../package.json';
-import { getT } from '@ap/shared';
 import { cfg } from 'config/configuration';
+import { getT } from '@ap/shared/src/locales';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(

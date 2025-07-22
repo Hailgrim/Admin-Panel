@@ -19,15 +19,11 @@ import { addAlert, setProfile } from '@/shared/store/main/main';
 import theme from '@/shared/lib/theme';
 import useRights from '@/shared/hooks/useRights';
 import profileApi from '@/shared/api/profile/profileApi';
-import {
-  getDateString,
-  getErrorText,
-  TExternalSession,
-  ROUTES,
-} from '@ap/shared';
 import useTranslate from '@/shared/hooks/useTranslate';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
 import useTranslateRef from '@/shared/hooks/useTranslateRef';
+import { TExternalSession } from '@ap/shared/src/types';
+import { getDateString, getErrorText, ROUTES } from '@ap/shared/src/libs';
 
 const SessionForm: FC<{ session: TExternalSession; onDelete?: () => void }> = ({
   session,
@@ -120,7 +116,9 @@ const SessionForm: FC<{ session: TExternalSession; onDelete?: () => void }> = ({
             color="error"
             aria-label="sign out"
             title={t.signOut}
-            disabled={!rights.updating || removeReq.isLoading || removeReq.isSuccess}
+            disabled={
+              !rights.updating || removeReq.isLoading || removeReq.isSuccess
+            }
             type="submit"
           >
             <DeleteIcon />

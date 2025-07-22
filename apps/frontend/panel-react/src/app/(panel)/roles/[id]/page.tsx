@@ -6,7 +6,7 @@ import rolesService from '@/shared/api/roles/rolesService';
 import resourcesService from '@/shared/api/resources/resourcesService';
 import RolePage from '@/views/Panel/Roles/RolePage';
 import { IAppPage } from '@/app/types';
-import { getT } from '@ap/shared';
+import { getT } from '@ap/shared/src/locales';
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const t = getT();

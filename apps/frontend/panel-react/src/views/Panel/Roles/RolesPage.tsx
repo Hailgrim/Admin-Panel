@@ -8,7 +8,7 @@ import { IPage } from '@/views/types';
 import { IList } from '@/shared/lib/types';
 import RolesList from '@/features/Roles/RolesList';
 import { setReqLimit, setReqPage } from '@/views/utils';
-import { IRole } from '@ap/shared';
+import { IRole } from '@ap/shared/src/types';
 
 const RolesPage: FC<IPage<IList<IRole>>> = ({ h1, data }) => {
   const searchParams = useSearchParams();

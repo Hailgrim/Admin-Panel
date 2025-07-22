@@ -7,9 +7,9 @@ import { MailerService } from '@nestjs-modules/mailer';
 import * as nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 
-import { getT } from '@ap/shared';
 import { cfg } from 'config/configuration';
 import { ETemplates } from 'libs/constants';
+import { getT } from '@ap/shared/src/locales';
 
 @Injectable()
 export class AppService {

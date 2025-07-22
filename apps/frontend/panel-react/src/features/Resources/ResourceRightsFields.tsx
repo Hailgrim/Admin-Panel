@@ -8,7 +8,7 @@ import {
 
 import useTranslate from '@/shared/hooks/useTranslate';
 import FormCheckbox from '@/shared/ui/Form/FormCheckbox';
-import { IResource, IRights } from '@ap/shared';
+import { IResource, IRights } from '@ap/shared/src/types';
 
 const ResourceRightsFields: React.FC<{
   roleId: string;

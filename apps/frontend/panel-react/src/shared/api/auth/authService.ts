@@ -1,13 +1,7 @@
-import {
-  IForgotPassword,
-  IResetPassword,
-  ISignIn,
-  ISignInGoogle,
-  IVerifyUser,
-  ROUTES,
-  TSignUp,
-} from '@ap/shared';
+
+import { IForgotPassword, IResetPassword, ISignIn, ISignInGoogle, IVerifyUser, TSignUp } from '@ap/shared/src/types';
 import { IReqArgs } from '../types';
+import { ROUTES } from '@ap/shared/src/libs';
 
 class AuthService {
   signUpArgs(payload: TSignUp): IReqArgs {

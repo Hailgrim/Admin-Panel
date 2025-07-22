@@ -8,7 +8,8 @@ import { addAlert } from '@/shared/store/main/main';
 import { useAppDispatch } from '@/shared/store/hooks';
 import profileApi from '@/shared/api/profile/profileApi';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
-import { getErrorText, TExternalSession } from '@ap/shared';
+import { TExternalSession } from '@ap/shared/src/types';
+import { getErrorText } from '@ap/shared/src/libs';
 
 const ProfileSessions: FC = () => {
   const dispatch = useAppDispatch();

@@ -1,4 +1,4 @@
-import { getT } from '@ap/shared';
+import { getT } from '@ap/shared/src/locales';
 import { useAppSelector } from '../store/hooks';
 
 const useTranslate = () => {

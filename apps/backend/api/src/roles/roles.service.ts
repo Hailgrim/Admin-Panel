@@ -16,16 +16,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { RoleEntity } from './role.entity';
 import { RightsEntity } from '../database/rights.entity';
+import { DatabaseService } from 'src/database/database.service';
+import { TDatabaseGetList } from 'src/database/database.types';
 import {
   IGetListResponse,
   IRights,
-  TGetListRequest,
   TCreateRole,
+  TGetListRequest,
   TGetRoles,
   TUpdateRole,
-} from '@ap/shared';
-import { DatabaseService } from 'src/database/database.service';
-import { TDatabaseGetList } from 'src/database/database.types';
+} from '@ap/shared/src/types';
 
 @Injectable()
 export class RolesService {

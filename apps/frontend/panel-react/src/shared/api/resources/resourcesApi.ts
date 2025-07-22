@@ -11,7 +11,7 @@ import {
   TGetListRequest,
   TGetResources,
   TUpdateResource,
-} from '@ap/shared';
+} from '@ap/shared/src/types';
 
 const resourcesApi = createApi({
   reducerPath: 'resources',

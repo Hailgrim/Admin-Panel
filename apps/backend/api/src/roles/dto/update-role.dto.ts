@@ -1,7 +1,7 @@
 import { PartialType, PickType } from '@nestjs/swagger';
 
-import { TUpdateRole } from '@ap/shared';
 import { RoleDto } from './role.dto';
+import { TUpdateRole } from '@ap/shared/src/types';
 
 export class UpdateRoleDto
   extends PartialType(

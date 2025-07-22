@@ -11,18 +11,11 @@ import FormPassword from '@/shared/ui/Form/FormPassword';
 import usersApi from '@/shared/api/users/usersApi';
 import { useAppDispatch } from '@/shared/store/hooks';
 import { addAlert } from '@/shared/store/main/main';
-import {
-  EMAIL_REGEX,
-  getErrorText,
-  NAME_REGEX,
-  PASSWORD_REGEX,
-  ROUTES,
-  TCreateUser,
-  testString,
-} from '@ap/shared';
 import useTranslate from '@/shared/hooks/useTranslate';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
 import useTranslateRef from '@/shared/hooks/useTranslateRef';
+import { EMAIL_REGEX, getErrorText, NAME_REGEX, PASSWORD_REGEX, ROUTES, testString } from '@ap/shared/src/libs';
+import { TCreateUser } from '@ap/shared/src/types';
 
 const CreateUserForm: FC = () => {
   const dispatch = useAppDispatch();

@@ -9,8 +9,9 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX, IUser } from '@ap/shared';
 import { ExternalRoleDto } from 'src/roles/dto/external-role.dto';
+import { IUser } from '@ap/shared/src/types';
+import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX } from '@ap/shared/src/libs';
 
 export class UserDto implements IUser {
   @ApiProperty({

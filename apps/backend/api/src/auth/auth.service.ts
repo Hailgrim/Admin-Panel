@@ -17,15 +17,15 @@ import { CacheService } from 'src/cache/cache.service';
 import { IToken, ITokensPair } from './auth.types';
 import { QueueService } from 'src/queue/queue.service';
 import { createHash, generateCode, verifyHash } from 'libs/utils';
+import { cfg } from 'config/configuration';
+import { getT } from '@ap/shared/src/locales';
 import {
-  getT,
   IEmailCode,
   ISession,
   IUser,
   TCreateResource,
   TSignUp,
-} from '@ap/shared';
-import { cfg } from 'config/configuration';
+} from '@ap/shared/src/types';
 
 @Injectable()
 export class AuthService {

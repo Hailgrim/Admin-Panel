@@ -9,15 +9,15 @@ import { DeleteResult, In, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ResourceEntity } from './resource.entity';
-import {
-  TCreateResource,
-  TGetResources,
-  TUpdateResource,
-  TGetListRequest,
-  IGetListResponse,
-} from '@ap/shared';
 import { DatabaseService } from 'src/database/database.service';
 import { TDatabaseGetList } from 'src/database/database.types';
+import {
+  IGetListResponse,
+  TCreateResource,
+  TGetListRequest,
+  TGetResources,
+  TUpdateResource,
+} from '@ap/shared/src/types';
 
 @Injectable()
 export class ResourcesService {

@@ -1,8 +1,8 @@
 import { IntersectionType, PartialType, PickType } from '@nestjs/swagger';
 
-import { TGetResources, TGetListRequest } from '@ap/shared';
 import { GetListRequestDto } from 'src/database/dto/get-list-request.dto';
 import { ResourceDto } from './resource.dto';
+import { TGetListRequest, TGetResources } from '@ap/shared/src/types';
 
 export class GetResourcesDto
   extends IntersectionType(

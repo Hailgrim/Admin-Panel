@@ -2,7 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { Matches } from 'class-validator';
 
-import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX, TSignUp } from '@ap/shared';
+import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX } from '@ap/shared/src/libs';
+import { TSignUp } from '@ap/shared/src/types';
 
 export class SignUpDto implements TSignUp {
   @ApiProperty({ type: String, example: 'example@mail.com' })

@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, Matches } from 'class-validator';
 
-import { IResetPassword, PASSWORD_REGEX } from '@ap/shared';
+import { PASSWORD_REGEX } from '@ap/shared/src/libs';
+import { IResetPassword } from '@ap/shared/src/types';
 
 export class ResetPasswordDto implements IResetPassword {
   @ApiProperty({ type: String, example: 'example@mail.com' })

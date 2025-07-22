@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { IResource } from '@ap/shared';
 import { RightsEntity } from 'src/database/rights.entity';
+import { IResource } from '@ap/shared/src/types';
 
 @Entity('resources')
 export class ResourceEntity implements IResource {

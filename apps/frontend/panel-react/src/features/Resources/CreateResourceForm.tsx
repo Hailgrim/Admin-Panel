@@ -10,10 +10,11 @@ import FormCheckbox from '@/shared/ui/Form/FormCheckbox';
 import { useAppDispatch } from '@/shared/store/hooks';
 import resourcesApi from '@/shared/api/resources/resourcesApi';
 import { addAlert } from '@/shared/store/main/main';
-import { getErrorText, ROUTES, TCreateResource } from '@ap/shared';
 import useTranslate from '@/shared/hooks/useTranslate';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
 import useTranslateRef from '@/shared/hooks/useTranslateRef';
+import { TCreateResource } from '@ap/shared/src/types';
+import { getErrorText, ROUTES } from '@ap/shared/src/libs';
 
 const CreateResourceForm: FC = () => {
   const dispatch = useAppDispatch();
@@ -60,18 +61,14 @@ const CreateResourceForm: FC = () => {
         name="name"
         label={t.name}
         value={data.name}
-        onChange={(event) =>
-          setData({ ...data, name: event.target.value })
-        }
+        onChange={(event) => setData({ ...data, name: event.target.value })}
       />
       <FormField
         required
         name="path"
         label={t.path}
         value={data.path}
-        onChange={(event) =>
-          setData({ ...data, path: event.target.value })
-        }
+        onChange={(event) => setData({ ...data, path: event.target.value })}
       />
       <FormField
         name="description"

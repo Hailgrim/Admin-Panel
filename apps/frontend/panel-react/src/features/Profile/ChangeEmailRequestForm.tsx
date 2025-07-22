@@ -9,9 +9,9 @@ import useRights from '@/shared/hooks/useRights';
 import { useAppDispatch, useAppSelector } from '@/shared/store/hooks';
 import { addAlert } from '@/shared/store/main/main';
 import ChangeEmailConfirmForm from './ChangeEmailConfirmForm';
-import { EMAIL_REGEX, getErrorText, ROUTES, testString } from '@ap/shared';
 import useTranslate from '@/shared/hooks/useTranslate';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
+import { EMAIL_REGEX, getErrorText, ROUTES, testString } from '@ap/shared/src/libs';
 
 const ChangeEmailRequestForm: FC = () => {
   const dispatch = useAppDispatch();

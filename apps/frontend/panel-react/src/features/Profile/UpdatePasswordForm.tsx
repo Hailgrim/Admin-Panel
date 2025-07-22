@@ -7,10 +7,15 @@ import { useAppDispatch } from '@/shared/store/hooks';
 import { addAlert } from '@/shared/store/main/main';
 import FormPassword from '@/shared/ui/Form/FormPassword';
 import profileApi from '@/shared/api/profile/profileApi';
-import { getErrorText, PASSWORD_REGEX, ROUTES, testString } from '@ap/shared';
 import useTranslate from '@/shared/hooks/useTranslate';
 import useTranslateRef from '@/shared/hooks/useTranslateRef';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
+import {
+  getErrorText,
+  PASSWORD_REGEX,
+  ROUTES,
+  testString,
+} from '@ap/shared/src/libs';
 
 const UpdatePasswordForm: FC = () => {
   const dispatch = useAppDispatch();

@@ -24,9 +24,11 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 import { ChangeEmailRequestDto } from './dto/change-email-request.dto';
 import { ChangeEmailConfirmDto } from './dto/change-email-confirm.dto';
 import { QueryItemsDto } from 'src/database/dto/query-items.dto';
-import { TExternalSession, IUser, ROUTES, getT } from '@ap/shared';
 import { ExternalUserDto } from 'src/users/dto/external-user.dto';
 import { ExternalSessionDto } from './dto/external-session.dto';
+import { ROUTES } from '@ap/shared/src/libs';
+import { getT } from '@ap/shared/src/locales';
+import { IUser, TExternalSession } from '@ap/shared/src/types';
 
 const route = ROUTES.api.profile.substring(1);
 

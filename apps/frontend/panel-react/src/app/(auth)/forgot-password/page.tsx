@@ -2,7 +2,7 @@ import { Metadata } from 'next/types';
 import { FC } from 'react';
 
 import ForgotPasswordPage from '@/views/Auth/ForgotPasswordPage';
-import { getT } from '@ap/shared';
+import { getT } from '@ap/shared/src/locales';
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const t = getT();

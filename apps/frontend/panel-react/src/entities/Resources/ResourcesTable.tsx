@@ -7,7 +7,8 @@ import Link from 'next/link';
 
 import useTranslate from '@/shared/hooks/useTranslate';
 import useRights from '@/shared/hooks/useRights';
-import { IResource, ROUTES } from '@ap/shared';
+import { IResource } from '@ap/shared/src/types';
+import { ROUTES } from '@ap/shared/src/libs';
 
 const ResourcesTable: FC<Omit<DataGridProps<IResource>, 'columns'>> = (
   props

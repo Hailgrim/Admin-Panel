@@ -7,8 +7,8 @@ import {
 } from 'typeorm';
 
 import { RoleEntity } from 'src/roles/role.entity';
-import { IRole, IUser, IUsersRoles } from '@ap/shared';
 import { USERS_ROLES_TABLE } from 'libs/constants';
+import { IRole, IUser, IUsersRoles } from '@ap/shared/src/types';
 
 @Entity('users')
 export class UserEntity implements IUser {

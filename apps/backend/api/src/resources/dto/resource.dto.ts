@@ -8,8 +8,8 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { IResource } from '@ap/shared';
 import { RightsDto } from 'src/database/dto/rights.dto';
+import { IResource } from '@ap/shared/src/types';
 
 export class ResourceDto implements IResource {
   @ApiProperty({

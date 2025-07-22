@@ -11,6 +11,9 @@ import FormAlert from '@/shared/ui/Form/FormAlert';
 import CustomModal from '@/shared/ui/CustomModal/CustomModal';
 import SignUpSuccessForm from './SignUpSuccessForm';
 import authApi from '@/shared/api/auth/authApi';
+import useTranslate from '@/shared/hooks/useTranslate';
+import useTranslateRef from '@/shared/hooks/useTranslateRef';
+import useLanguageRef from '@/shared/hooks/useLanguageRef';
 import {
   EMAIL_REGEX,
   getErrorText,
@@ -18,10 +21,7 @@ import {
   PASSWORD_REGEX,
   ROUTES,
   testString,
-} from '@ap/shared';
-import useTranslate from '@/shared/hooks/useTranslate';
-import useTranslateRef from '@/shared/hooks/useTranslateRef';
-import useLanguageRef from '@/shared/hooks/useLanguageRef';
+} from '@ap/shared/src/libs';
 
 const SignUpForm: FC = () => {
   const router = useRouter();

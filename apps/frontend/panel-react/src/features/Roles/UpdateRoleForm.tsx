@@ -12,9 +12,10 @@ import rolesApi from '@/shared/api/roles/rolesApi';
 import { useAppDispatch } from '@/shared/store/hooks';
 import { addAlert } from '@/shared/store/main/main';
 import useTranslate from '@/shared/hooks/useTranslate';
-import { getErrorText, getUpdatedValues, IRole, ROUTES } from '@ap/shared';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
 import useTranslateRef from '@/shared/hooks/useTranslateRef';
+import { IRole } from '@ap/shared/src/types';
+import { getErrorText, getUpdatedValues, ROUTES } from '@ap/shared/src/libs';
 
 const UpdateRoleForm: FC<{ data: IRole }> = ({ data }) => {
   const dispatch = useAppDispatch();

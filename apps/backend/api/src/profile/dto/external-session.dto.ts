@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator';
 
-import { TExternalSession } from '@ap/shared';
 import { Exclude } from 'class-transformer';
+import { TExternalSession } from '@ap/shared/src/types';
 
 export class ExternalSessionDto implements TExternalSession {
   @ApiProperty({

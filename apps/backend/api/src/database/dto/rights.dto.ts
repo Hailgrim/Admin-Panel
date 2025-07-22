@@ -2,9 +2,9 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsOptional, IsUUID, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { IResource, IRole, IRights } from '@ap/shared';
 import { RoleDto } from 'src/roles/dto/role.dto';
 import { ResourceDto } from 'src/resources/dto/resource.dto';
+import { IResource, IRights, IRole } from '@ap/shared/src/types';
 
 export class RightsDto implements IRights {
   @ApiProperty({

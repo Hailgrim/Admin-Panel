@@ -12,9 +12,10 @@ import usersApi from '@/shared/api/users/usersApi';
 import UsersTable from '@/entities/Users/UsersTable';
 import { useAppDispatch } from '@/shared/store/hooks';
 import { addAlert } from '@/shared/store/main/main';
-import { getErrorText, IUser, ROUTES } from '@ap/shared';
 import useTranslate from '@/shared/hooks/useTranslate';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
+import { IUser } from '@ap/shared/src/types';
+import { getErrorText, ROUTES } from '@ap/shared/src/libs';
 
 const UsersList: FC<IList<IUser>> = (props) => {
   const dispatch = useAppDispatch();

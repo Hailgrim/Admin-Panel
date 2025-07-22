@@ -4,13 +4,13 @@ import { UsersService } from '../users/users.service';
 import { CacheService } from 'src/cache/cache.service';
 import { QueueService } from 'src/queue/queue.service';
 import { generateCode, verifyHash } from 'libs/utils';
-import {
-  TUpdateUser,
-  TExternalSession,
-  ISession,
-  IEmailCode,
-} from '@ap/shared';
 import { cfg } from 'config/configuration';
+import {
+  IEmailCode,
+  ISession,
+  TExternalSession,
+  TUpdateUser,
+} from '@ap/shared/src/types';
 
 @Injectable()
 export class ProfileService {

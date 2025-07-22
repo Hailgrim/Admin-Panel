@@ -10,17 +10,17 @@ import {
   userCookies,
   wrongValue,
 } from './app.setup';
+import { ROUTES } from '@ap/shared/src/libs';
 import {
-  ISignIn,
-  IQueryItems,
   IChangeEmailConfirm,
   IChangeEmailRequest,
-  TExternalSession,
+  IQueryItems,
+  ISignIn,
   IUpdatePassword,
   IUser,
+  TExternalSession,
   TUpdateUser,
-  ROUTES,
-} from '@ap/shared';
+} from '@ap/shared/src/types';
 
 const runProfileTests = () => {
   describe('Profile', () => {

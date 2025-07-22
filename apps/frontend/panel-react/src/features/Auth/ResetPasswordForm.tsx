@@ -8,10 +8,15 @@ import FormField from '@/shared/ui/Form/FormField';
 import FormPassword from '@/shared/ui/Form/FormPassword';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import authApi from '@/shared/api/auth/authApi';
-import { getErrorText, PASSWORD_REGEX, ROUTES, testString } from '@ap/shared';
 import useTranslateRef from '@/shared/hooks/useTranslateRef';
 import useLanguageRef from '@/shared/hooks/useLanguageRef';
 import useTranslate from '@/shared/hooks/useTranslate';
+import {
+  getErrorText,
+  PASSWORD_REGEX,
+  ROUTES,
+  testString,
+} from '@ap/shared/src/libs';
 
 const ResetPasswordForm: FC<{
   email: string;

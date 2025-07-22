@@ -12,7 +12,7 @@ import {
   TGetListRequest,
   TGetRoles,
   TUpdateRole,
-} from '@ap/shared';
+} from '@ap/shared/src/types';
 
 const rolesApi = createApi({
   reducerPath: 'roles',
