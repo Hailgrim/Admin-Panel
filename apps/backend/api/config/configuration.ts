@@ -43,6 +43,8 @@ export const cfg = {
     user: process.env.POSTGRES_USER || 'user',
     password: process.env.POSTGRES_PASSWORD || 'password',
     db: process.env.POSTGRES_DB || 'main',
+    synchronize: process.env.NODE_ENV === DEV,
+    logging: process.env.NODE_ENV === DEV,
   },
   redis: {
     host: process.env.REDIS_HOST || 'localhost',

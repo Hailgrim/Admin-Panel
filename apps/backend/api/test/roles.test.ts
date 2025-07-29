@@ -1,7 +1,13 @@
 import * as request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
 
-import { adminCookies, app, userCookies, wrongValue } from './app.setup';
+import {
+  adminCookies,
+  app,
+  userCookies,
+  wrongId,
+  wrongValue,
+} from './app.setup';
 import {
   IGetListResponse,
   IQueryItems,
@@ -126,7 +132,7 @@ const runRolesTests = () => {
           .expect(HttpStatus.UNAUTHORIZED);
 
         await request(app.getHttpServer())
-          .get(ROUTES.api.role(wrongValue))
+          .get(ROUTES.api.role(wrongId))
           .set('Cookie', adminCookies)
           .expect(HttpStatus.NOT_FOUND);
       });
@@ -172,7 +178,7 @@ const runRolesTests = () => {
           .expect(HttpStatus.BAD_REQUEST);
 
         await request(app.getHttpServer())
-          .patch(ROUTES.api.role(wrongValue))
+          .patch(ROUTES.api.role(wrongId))
           .set('Cookie', adminCookies)
           .send({ enabled: true } satisfies TUpdateRole)
           .expect(HttpStatus.NOT_FOUND);
@@ -219,7 +225,7 @@ const runRolesTests = () => {
           .expect(HttpStatus.BAD_REQUEST);
 
         await request(app.getHttpServer())
-          .patch(ROUTES.api.roleRights(wrongValue))
+          .patch(ROUTES.api.roleRights(wrongId))
           .set('Cookie', adminCookies)
           .send({ items: [] } satisfies IQueryItems<IRights>)
           .expect(HttpStatus.NOT_FOUND);
@@ -289,7 +295,7 @@ const runRolesTests = () => {
         await request(app.getHttpServer())
           .delete(ROUTES.api.roles)
           .set('Cookie', adminCookies)
-          .send({ items: [wrongValue] } satisfies IQueryItems<IRole['id']>)
+          .send({ items: [wrongId] } satisfies IQueryItems<IRole['id']>)
           .expect(HttpStatus.NOT_FOUND);
       });
 

@@ -8,7 +8,6 @@ import { UsersRolesEntity } from './users-roles.entity';
 import { ResourceEntity } from 'src/resources/resource.entity';
 import { RightsEntity } from './rights.entity';
 import { cfg } from 'config/configuration';
-import { DEV } from '@ap/shared/src/libs';
 
 @Module({
   imports: [
@@ -20,8 +19,8 @@ import { DEV } from '@ap/shared/src/libs';
         username: cfg.postgres.user,
         password: cfg.postgres.password,
         database: cfg.postgres.db,
-        synchronize: cfg.mode === DEV,
-        logging: cfg.mode === DEV,
+        synchronize: cfg.postgres.synchronize,
+        logging: cfg.postgres.logging,
         entities: [
           UserEntity,
           RoleEntity,

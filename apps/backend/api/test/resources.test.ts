@@ -1,7 +1,13 @@
 import * as request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
 
-import { adminCookies, app, userCookies, wrongValue } from './app.setup';
+import {
+  adminCookies,
+  app,
+  userCookies,
+  wrongId,
+  wrongValue,
+} from './app.setup';
 import {
   IGetListResponse,
   IQueryItems,
@@ -125,7 +131,7 @@ const runResourcesTests = () => {
           .expect(HttpStatus.UNAUTHORIZED);
 
         await request(app.getHttpServer())
-          .get(ROUTES.api.resource(wrongValue))
+          .get(ROUTES.api.resource(wrongId))
           .set('Cookie', adminCookies)
           .expect(HttpStatus.NOT_FOUND);
       });
@@ -171,7 +177,7 @@ const runResourcesTests = () => {
           .expect(HttpStatus.BAD_REQUEST);
 
         await request(app.getHttpServer())
-          .patch(ROUTES.api.resource(wrongValue))
+          .patch(ROUTES.api.resource(wrongId))
           .set('Cookie', adminCookies)
           .send({ enabled: true } satisfies TUpdateResource)
           .expect(HttpStatus.NOT_FOUND);
@@ -215,7 +221,7 @@ const runResourcesTests = () => {
         await request(app.getHttpServer())
           .delete(ROUTES.api.resources)
           .set('Cookie', adminCookies)
-          .send({ items: [wrongValue] } satisfies IQueryItems<IResource['id']>)
+          .send({ items: [wrongId] } satisfies IQueryItems<IResource['id']>)
           .expect(HttpStatus.NOT_FOUND);
       });
 

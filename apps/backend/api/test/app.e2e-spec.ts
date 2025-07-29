@@ -6,6 +6,7 @@ import {
   app,
   closeApp,
   createApp,
+  timeout,
   userCookies,
 } from './app.setup';
 import runAuthTests from './auth.test';
@@ -17,7 +18,7 @@ import runUsersTests from './users.test';
 describe('App (e2e)', () => {
   beforeAll(async () => {
     await createApp();
-  });
+  }, timeout);
 
   afterAll(async () => {
     await closeApp();

@@ -8,17 +8,21 @@ import fastifyHelmet from '@fastify/helmet';
 import { ValidationPipe } from '@nestjs/common';
 import { of } from 'rxjs';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import {
+  PostgreSqlContainer,
+  StartedPostgreSqlContainer,
+} from '@testcontainers/postgresql';
 
 import { AppModule } from 'src/app.module';
-import { DatabaseModule } from 'src/database/database.module';
-import { DatabaseTestModule } from './database-test.module';
 import { MAIL_SERVER, REDIS } from 'libs/constants';
 import { SignUpDto } from 'src/auth/dto/sign-up.dto';
 import { cfg } from 'config/configuration';
 
+let pgContainer: StartedPostgreSqlContainer;
 export let app: NestFastifyApplication;
 export const queue: Record<string, string>[] = [];
 export const wrongValue = '!!!';
+export const wrongId = '00000000-0000-0000-0000-000000000000';
 export const admin: SignUpDto = {
   name: 'Tester 1',
   email: 'test1@mail.com',
@@ -31,8 +35,19 @@ export const user: SignUpDto = {
 };
 export const adminCookies: string[] = [];
 export const userCookies: string[] = [];
+export const timeout = 60000;
 
 export const createApp = async () => {
+  pgContainer = await new PostgreSqlContainer('postgres:alpine')
+    .withStartupTimeout(timeout)
+    .start();
+  cfg.postgres.host = pgContainer.getHost();
+  cfg.postgres.port = pgContainer.getPort();
+  cfg.postgres.user = pgContainer.getUsername();
+  cfg.postgres.password = pgContainer.getPassword();
+  cfg.postgres.db = pgContainer.getDatabase();
+  cfg.postgres.synchronize = true;
+
   const cache: Record<string, unknown> = {};
   const mockRedis = {
     keys: jest.fn((pattern: string) =>
@@ -76,8 +91,6 @@ export const createApp = async () => {
   const moduleFixture = await Test.createTestingModule({
     imports: [AppModule],
   })
-    .overrideModule(DatabaseModule)
-    .useModule(DatabaseTestModule)
     .overrideProvider(REDIS)
     .useValue(mockRedis)
     .overrideProvider(CACHE_MANAGER)
@@ -122,4 +135,8 @@ export const closeApp = async () => {
   }
 
   await app.close();
+
+  if (pgContainer) {
+    await pgContainer.stop();
+  }
 };
