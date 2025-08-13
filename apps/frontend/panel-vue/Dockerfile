@@ -10,7 +10,6 @@ ENV NODE_ENV=development
 # NOTE: Windows hot reload fix
 ENV CHOKIDAR_USEPOLLING=true
 RUN bun install
-COPY ${ROOT} .
 CMD ["bun", "--bun", "run", "dev"]
 
 FROM base AS builder
