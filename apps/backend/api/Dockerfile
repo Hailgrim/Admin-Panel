@@ -7,6 +7,7 @@ COPY ${ROOT}/package*.json .
 FROM base AS development
 ENV NODE_ENV=development
 RUN npm install
+COPY ${ROOT} .
 CMD ["npm", "run", "start:dev"]
 
 FROM base AS builder

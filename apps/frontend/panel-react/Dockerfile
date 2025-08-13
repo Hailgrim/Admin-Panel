@@ -10,6 +10,7 @@ ENV NODE_ENV=development
 # NOTE: Windows hot reload fix
 ENV WATCHPACK_POLLING=true
 RUN npm install
+COPY ${ROOT} .
 CMD ["npx", "next", "dev"]
 
 FROM base AS builder

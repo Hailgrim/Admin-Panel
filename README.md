@@ -79,9 +79,9 @@ npm run lint:all
 
 ##### React
 
-![Sign In Screen image](docs/images/preview-sign-in.png 'Sign In Screen preview')
-![Profile Screen image](docs/images/preview-profile.png 'Profile Screen preview')
-![Role Screen image](docs/images/preview-roles.png 'Role Screen preview')
+![Sign In Screen image](docs/images/preview-sign-in.png "Sign In Screen preview")
+![Profile Screen image](docs/images/preview-profile.png "Profile Screen preview")
+![Role Screen image](docs/images/preview-roles.png "Role Screen preview")
 
 This microservice provides a graphical interface for administration.
 In it, you can set a list of protected links, create roles with rights for links, manage registered users.
@@ -231,67 +231,33 @@ _vue.localhost.com_ ([Vue](#vue)) and _api.localhost.com_ ([API server](#api-ser
 It has a limited duration.
 To create a new certificate, you can use the following commands:
 
-1. Launching a Docker container to create a certificate
+1. Launching a Docker container to create a certificate:
 
    ```sh
    docker run --rm -v ./infrastructure/nginx/ssl:/usr/ssl -w /usr/ssl -it --entrypoint /bin/ash frapsoft/openssl
    ```
 
-2. Generate private key
+2. Generate SSL bundle:
 
    ```sh
-   openssl genrsa -des3 -out myCA.key 2048
+   HOST=localhost.com && \
+   openssl genrsa -out myCA.key 2048 && \
+   openssl req -x509 -new -key myCA.key -sha256 -days 825 -out myCA.pem -subj "/CN=My Root CA" && \
+   openssl genrsa -out ${HOST}.key 2048 && \
+   openssl req -new -key ${HOST}.key -out ${HOST}.csr -subj "/CN=${HOST}" && \
+   printf "authorityKeyIdentifier=keyid,issuer\n\
+   basicConstraints=CA:FALSE\n\
+   keyUsage=digitalSignature,nonRepudiation,keyEncipherment,dataEncipherment\n\
+   subjectAltName=@alt_names\n\
+   \n\
+   [alt_names]\n\
+   DNS.1=${HOST}\n\
+   DNS.2=*.${HOST}\n\
+   IP.1=127.0.0.1\n" > ${HOST}.ext && \
+   openssl x509 -req -in ${HOST}.csr -CA myCA.pem -CAkey myCA.key -CAcreateserial -out ${HOST}.crt -days 825 -sha256 -extfile ${HOST}.ext
    ```
 
-3. Generate root certificate
-
-   ```sh
-   openssl req -x509 -new -nodes -key myCA.key -sha256 -days 825 -out myCA.pem
-   ```
-
-4. Use your own domain name
-
-   ```sh
-   NAME=localhost.com
-   ```
-
-5. Generate a private key
-
-   ```sh
-   openssl genrsa -out ${NAME}.key 2048
-   ```
-
-6. Create a certificate-signing request
-
-   ```sh
-   openssl req -new -key ${NAME}.key -out ${NAME}.csr
-   ```
-
-7. Create a config file for the extensions
-
-   ```sh
-   cat > ${NAME}.ext <<EOF
-   authorityKeyIdentifier=keyid,issuer
-   basicConstraints=CA:FALSE
-   keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
-   subjectAltName = @alt_names
-   [alt_names]
-   DNS.1 = ${NAME}
-   DNS.2 = www.${NAME}
-   DNS.3 = vue.${NAME}
-   DNS.4 = api.${NAME}
-   IP.1 = 127.0.0.1
-   EOF
-   ```
-
-8. Create the signed certificate
-
-   ```sh
-   openssl x509 -req -in ${NAME}.csr -CA myCA.pem -CAkey myCA.key -CAcreateserial \
-   -out ${NAME}.crt -days 825 -sha256 -extfile ${NAME}.ext
-   ```
-
-9. Exit from the container
+3. Exit from the container:
 
    ```sh
    exit
