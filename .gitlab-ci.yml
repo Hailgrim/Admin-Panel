@@ -1,0 +1,356 @@
+stages:
+  - install
+  - lint
+  - test
+  - build
+  - deploy-staging
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  IMAGE_TAG: ${CI_REGISTRY}/${CI_PROJECT_PATH}/${CI_COMMIT_REF_SLUG}
+  # NOTE: These variables should be in GitLab CI/CD variables in the actual project
+  STAGING_HOST: host.docker.internal
+  STAGING_SSH_PORT: 222
+  STAGING_USER: vpsuser
+
+# Install
+
+install-api:
+  stage: install
+  image: node:lts-alpine
+  script:
+    - cd apps/backend/api
+    - npm install --prefer-offline --no-audit
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-api-deps
+    paths:
+      - apps/backend/api/node_modules/
+      - apps/backend/api/package-lock.json
+  rules:
+    - changes:
+      - apps/backend/api/**/*
+      - shared/**/*
+
+install-mailer:
+  stage: install
+  image: node:lts-alpine
+  script:
+    - cd apps/backend/mailer
+    - npm install --prefer-offline --no-audit
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-mailer-deps
+    paths:
+      - apps/backend/mailer/node_modules/
+      - apps/backend/mailer/package-lock.json
+  rules:
+    - changes:
+      - apps/backend/mailer/**/*
+      - shared/**/*
+
+install-panel-react:
+  stage: install
+  image: node:lts-alpine
+  script:
+    - cd apps/frontend/panel-react
+    - npm install --prefer-offline --no-audit
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-panel-react-deps
+    paths:
+      - apps/frontend/panel-react/node_modules/
+      - apps/frontend/panel-react/package-lock.json
+  rules:
+    - changes:
+      - apps/frontend/panel-react/**/*
+      - shared/**/*
+
+install-panel-vue:
+  stage: install
+  image: node:lts-alpine
+  script:
+    - cd apps/frontend/panel-vue
+    - npm install --prefer-offline --no-audit
+    - npm run postinstall
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-panel-vue-deps
+    paths:
+      - apps/frontend/panel-vue/node_modules/
+      - apps/frontend/panel-vue/.nuxt/
+      - apps/frontend/panel-vue/package-lock.json
+  rules:
+    - changes:
+      - apps/frontend/panel-vue/**/*
+      - shared/**/*
+
+# Lint
+
+lint-api:
+  stage: lint
+  needs: ["install-api"]
+  image: node:lts-alpine
+  script:
+    - cd apps/backend/api
+    - npm run lint
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-api-deps
+    paths:
+      - apps/backend/api/node_modules/
+    policy: pull
+  rules:
+    - changes:
+      - apps/backend/api/**/*
+      - shared/**/*
+
+lint-mailer:
+  stage: lint
+  needs: ["install-mailer"]
+  image: node:lts-alpine
+  script:
+    - cd apps/backend/mailer
+    - npm run lint
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-mailer-deps
+    paths:
+      - apps/backend/mailer/node_modules/
+    policy: pull
+  rules:
+    - changes:
+      - apps/backend/mailer/**/*
+      - shared/**/*
+
+lint-panel-react:
+  stage: lint
+  needs: ["install-panel-react"]
+  image: node:lts-alpine
+  script:
+    - cd apps/frontend/panel-react
+    - npm run lint
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-panel-react-deps
+    paths:
+      - apps/frontend/panel-react/node_modules/
+    policy: pull
+  rules:
+    - changes:
+      - apps/frontend/panel-react/**/*
+      - shared/**/*
+
+lint-panel-vue:
+  stage: lint
+  needs: ["install-panel-vue"]
+  image: node:lts-alpine
+  script:
+    - cd apps/frontend/panel-vue
+    - npm run lint
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-panel-vue-deps
+    paths:
+      - apps/frontend/panel-vue/node_modules/
+    policy: pull
+  rules:
+    - changes:
+      - apps/frontend/panel-vue/**/*
+      - shared/**/*
+
+# Tests
+
+test-panel-react:
+  stage: test
+  needs: ["lint-panel-react"]
+  image: node:lts-alpine
+  script:
+    - cd apps/frontend/panel-react
+    - npm run test
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-panel-react-deps
+    paths:
+      - apps/frontend/panel-react/node_modules/
+    policy: pull
+  rules:
+    - changes:
+      - apps/frontend/panel-react/**/*
+      - shared/**/*
+
+test-panel-vue:
+  stage: test
+  needs: ["lint-panel-vue"]
+  image: node:lts-alpine
+  script:
+    - cd apps/frontend/panel-vue
+    - npm run test
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-panel-vue-deps
+    paths:
+      - apps/frontend/panel-vue/node_modules/
+    policy: pull
+  rules:
+    - changes:
+      - apps/frontend/panel-vue/**/*
+      - shared/**/*
+
+# Build
+
+.build-docker-job:
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - echo ${CI_JOB_TOKEN} | docker login -u gitlab-ci-token --password-stdin ${CI_REGISTRY}
+
+build-grafana:
+  stage: build
+  extends: .build-docker-job
+  script:
+    - docker build -t ${IMAGE_TAG}/grafana ./infrastructure/grafana
+    - docker push ${IMAGE_TAG}/grafana
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
+        - infrastructure/grafana/**/*
+
+build-prometheus:
+  stage: build
+  extends: .build-docker-job
+  script:
+    - docker build -t ${IMAGE_TAG}/prometheus ./infrastructure/prometheus
+    - docker push ${IMAGE_TAG}/prometheus
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
+        - infrastructure/prometheus/**/*
+
+build-nginx:
+  stage: build
+  extends: .build-docker-job
+  script:
+    - docker build -t ${IMAGE_TAG}/nginx ./infrastructure/nginx
+    - docker push ${IMAGE_TAG}/nginx
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
+        - infrastructure/nginx/**/*
+
+build-rabbitmq:
+  stage: build
+  extends: .build-docker-job
+  script:
+    - docker build -t ${IMAGE_TAG}/rabbitmq ./infrastructure/rabbitmq
+    - docker push ${IMAGE_TAG}/rabbitmq
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
+        - infrastructure/rabbitmq/**/*
+
+build-postgres:
+  stage: build
+  extends: .build-docker-job
+  script:
+    - docker build -t ${IMAGE_TAG}/postgres ./infrastructure/postgres
+    - docker push ${IMAGE_TAG}/postgres
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
+        - infrastructure/postgres/**/*
+
+build-redis:
+  stage: build
+  extends: .build-docker-job
+  script:
+    - docker build --target production -t ${IMAGE_TAG}/redis ./infrastructure/redis
+    - docker push ${IMAGE_TAG}/redis
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
+        - infrastructure/redis/**/*
+
+build-api:
+  stage: build
+  needs: ["lint-api"]
+  extends: .build-docker-job
+  script:
+    # - docker build --target production -t ${IMAGE_TAG}/api -f ./apps/backend/api/Dockerfile ./
+    - docker-compose -f docker-compose.yml -f prod.yml -f ci.yml build api
+    - docker push ${IMAGE_TAG}/api
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
+        - apps/backend/api/**/*
+        - shared/**/*
+
+build-mailer:
+  stage: build
+  needs: ["lint-mailer"]
+  extends: .build-docker-job
+  script:
+    # - docker build --target production -t ${IMAGE_TAG}/mailer -f ./apps/backend/mailer/Dockerfile ./
+    - docker-compose -f docker-compose.yml -f prod.yml -f ci.yml build mailer
+    - docker push ${IMAGE_TAG}/mailer
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
+        - apps/backend/mailer/**/*
+        - shared/**/*
+
+build-panel-react:
+  stage: build
+  needs: ["test-panel-react"]
+  extends: .build-docker-job
+  script:
+    # - docker build --target production -t ${IMAGE_TAG}/panel-react -f ./apps/frontend/panel-react/Dockerfile ./
+    - docker-compose -f docker-compose.yml -f prod.yml -f ci.yml build panel-react
+    - docker push ${IMAGE_TAG}/panel-react
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
+        - apps/frontend/panel-react/**/*
+        - shared/**/*
+
+build-panel-vue:
+  stage: build
+  needs: ["test-panel-vue"]
+  extends: .build-docker-job
+  script:
+    # - docker build --target production -t ${IMAGE_TAG}/panel-vue -f ./apps/frontend/panel-vue/Dockerfile ./
+    - docker-compose -f docker-compose.yml -f prod.yml -f ci.yml build panel-vue
+    - docker push ${IMAGE_TAG}/panel-vue
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
+        - apps/frontend/panel-vue/**/*
+        - shared/**/*
+
+# Deploy
+
+deploy-staging:
+  stage: deploy-staging
+  image: alpine:latest
+  before_script:
+    - "which ssh-agent || ( apk update && apk add openssh )"
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo 'echo ${STAGING_SSH_PASSPHRASE}' > ~/.ssh/tmp && chmod 700 ~/.ssh/tmp
+    - echo "${STAGING_SSH_KEY}" | tr -d '\r' | DISPLAY=None SSH_ASKPASS=~/.ssh/tmp ssh-add -
+    - ssh-keyscan -p ${STAGING_SSH_PORT} ${STAGING_HOST} >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    # "if [ ! -d /path/to/project ]; then git clone ${CI_REPOSITORY_URL} /path/to/project; fi"
+    - ssh -o StrictHostKeyChecking=no -p ${STAGING_SSH_PORT} ${STAGING_USER}@${STAGING_HOST} "
+      echo ${CI_JOB_TOKEN} | docker login -u gitlab-ci-token --password-stdin ${CI_REGISTRY} &&
+      cd /opt/project &&
+      git checkout ${CI_COMMIT_REF_NAME} &&
+      git pull &&
+      export IMAGE_TAG=${IMAGE_TAG} &&
+      docker compose -f docker-compose.yml -f prod.yml -f ci.yml pull &&
+      docker compose -f docker-compose.yml -f prod.yml -f ci.yml up -d --remove-orphans"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
+        - apps/**/*
+        - shared/**/*
+        - infrastructure/**/*
+        - .env
+        - docker-compose.yml
+        - prod.yml
+        - ci.yml
+  # when: manual

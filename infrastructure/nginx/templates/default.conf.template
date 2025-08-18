@@ -1,8 +1,8 @@
 proxy_hide_header X-Powered-By;
 
 # SSL
-ssl_certificate /usr/share/nginx/ssl/localhost.com.crt;
-ssl_certificate_key /usr/share/nginx/ssl/localhost.com.key;
+ssl_certificate /usr/share/nginx/ssl/${NGINX_HOST}.crt;
+ssl_certificate_key /usr/share/nginx/ssl/${NGINX_HOST}.key;
 
 # HTTP request proxy
 proxy_set_header Host $host;

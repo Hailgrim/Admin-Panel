@@ -54,25 +54,6 @@ services:
       - REDIS_DB
       - REDIS_ARGS
 
-  mailer:
-    build:
-      target: production
-    environment:
-      - TZ
-      - MAILER_HOST
-      - MAILER_PORT
-      - MAILER_SMTP_HOST
-      - MAILER_SMTP_PORT
-      - MAILER_SMTP_USER
-      - MAILER_CMD_REGISTRATION
-      - MAILER_CMD_FORGOT_PASSWORD
-      - MAILER_CMD_CHANGE_EMAIL
-      - PROJECT_TAG
-      - RABBITMQ_HOST
-      - RABBITMQ_PORT
-      - RABBITMQ_DEFAULT_USER
-      - RABBITMQ_DEFAULT_PASS
-      - RABBITMQ_MAIL_QUEUE
   api:
     build:
       target: production
@@ -103,6 +84,25 @@ services:
       - REDIS_USER
       - REDIS_PASSWORD
       - REDIS_DB
+  mailer:
+    build:
+      target: production
+    environment:
+      - TZ
+      - MAILER_HOST
+      - MAILER_PORT
+      - MAILER_SMTP_HOST
+      - MAILER_SMTP_PORT
+      - MAILER_SMTP_USER
+      - MAILER_CMD_REGISTRATION
+      - MAILER_CMD_FORGOT_PASSWORD
+      - MAILER_CMD_CHANGE_EMAIL
+      - PROJECT_TAG
+      - RABBITMQ_HOST
+      - RABBITMQ_PORT
+      - RABBITMQ_DEFAULT_USER
+      - RABBITMQ_DEFAULT_PASS
+      - RABBITMQ_MAIL_QUEUE
   panel-react:
     build:
       target: production

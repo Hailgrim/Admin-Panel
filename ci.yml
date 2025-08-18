@@ -1,0 +1,26 @@
+services:
+  grafana:
+    image: ${IMAGE_TAG}/grafana
+  prometheus:
+    image: ${IMAGE_TAG}/prometheus
+
+  nginx:
+    image: ${IMAGE_TAG}/nginx
+
+  rabbitmq:
+    image: ${IMAGE_TAG}/rabbitmq
+
+  postgres:
+    image: ${IMAGE_TAG}/postgres
+
+  redis:
+    image: ${IMAGE_TAG}/redis
+
+  api:
+    image: ${IMAGE_TAG}/api
+  mailer:
+    image: ${IMAGE_TAG}/mailer
+  panel-react:
+    image: ${IMAGE_TAG}/panel-react
+  panel-vue:
+    image: ${IMAGE_TAG}/panel-vue
